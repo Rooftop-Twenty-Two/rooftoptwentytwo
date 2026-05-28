@@ -4,6 +4,7 @@ import Layout from "../../layouts/Layout.astro";
 import Signature from "../../components/Signature.astro";
 import PageCTA from "../../components/PageCTA.astro";
 import BreadcrumbSchema from "../../components/seo/BreadcrumbSchema.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
 
 const articles = (await getCollection("articles", ({ data }) => !data.draft)).sort(
   (a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime()
@@ -23,7 +24,8 @@ const dateFmt = new Intl.DateTimeFormat("en-IE", {
   <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "Latest", url: "/latest/" }]} />
 
   <section class="mx-auto max-w-[1440px] px-6 md:px-12 pt-12 md:pt-20 pb-12 md:pb-16">
-    <Signature text="Latest" tone="coral" rotate={-3} />
+    <Breadcrumbs items={[{ name: "Home", url: "/" }, { name: "Latest", url: "/latest/" }]} />
+    <div class="mt-6"><Signature text="Latest" tone="coral" rotate={-3} /></div>
     <h1
       class="mt-4 max-w-3xl"
       style="font-family:var(--font-display);font-size:clamp(2.75rem, 7vw, 5.5rem);color:var(--color-text-on-dark);letter-spacing:-0.02em;line-height:1.05;"

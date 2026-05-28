@@ -1,0 +1,75 @@
+---
+// Visible breadcrumb trail. Pair with seo/BreadcrumbSchema.astro for the
+// matching JSON-LD. The final item is rendered as the current page (no link).
+interface Crumb {
+  name: string;
+  url: string;
+}
+interface Props {
+  items: Crumb[];
+}
+const { items } = Astro.props;
+---
+
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <ol class="breadcrumbs__list">
+    {items.map((item, i) => {
+      const isLast = i === items.length - 1;
+      return (
+        <li class="breadcrumbs__item">
+          {isLast ? (
+            <span class="breadcrumbs__current" aria-current="page">{item.name}</span>
+          ) : (
+            <>
+              <a href={item.url} class="breadcrumbs__link">{item.name}</a>
+              <span class="breadcrumbs__sep" aria-hidden="true">/</span>
+            </>
+          )}
+        </li>
+      );
+    })}
+  </ol>
+</nav>
+
+<style>
+  .breadcrumbs {
+    font-family: var(--font-sans);
+  }
+  .breadcrumbs__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .breadcrumbs__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .breadcrumbs__link {
+    color: var(--color-text-on-dark-muted);
+    text-decoration: none;
+    transition: color 160ms ease;
+  }
+  .breadcrumbs__link:hover {
+    color: var(--color-coral);
+  }
+  .breadcrumbs__sep {
+    color: var(--color-text-on-dark-muted);
+    opacity: 0.5;
+  }
+  .breadcrumbs__current {
+    color: var(--color-text-on-dark);
+    /* Keep the current crumb to one line on small screens */
+    max-width: 60vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+</style>
