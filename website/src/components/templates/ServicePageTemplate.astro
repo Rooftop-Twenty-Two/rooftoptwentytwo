@@ -1,0 +1,226 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Signature from "../Signature.astro";
+import BtnFiller from "../BtnFiller.astro";
+import FAQBlock from "../FAQBlock.astro";
+import PageCTA from "../PageCTA.astro";
+import BreadcrumbSchema from "../seo/BreadcrumbSchema.astro";
+import ServiceSchema from "../seo/ServiceSchema.astro";
+
+type ProcessStep = { step: string; label: string; body: string };
+type FAQ = { question: string; answer: string };
+
+interface Props {
+  name: string;
+  slug: string;
+  cluster: string;
+  isClusterParent: boolean;
+  summary: string;
+  metaDescription: string;
+  heroEyebrow?: string;
+  heroHeading: string;
+  heroBody: string;
+  whatItIs: string;
+  whatsIncluded: string[];
+  process: ProcessStep[];
+  sectorsThatBuy: string[];
+  relatedServices: string[];
+  relatedProgrammes: string[];
+  caseStudySlugs: string[];
+  faq: FAQ[];
+}
+
+const {
+  name,
+  slug,
+  cluster,
+  isClusterParent,
+  summary,
+  metaDescription,
+  heroEyebrow,
+  heroHeading,
+  heroBody,
+  whatItIs,
+  whatsIncluded,
+  process,
+  sectorsThatBuy,
+  relatedServices,
+  relatedProgrammes,
+  caseStudySlugs,
+  faq,
+} = Astro.props;
+
+const pageUrl = `/services/${slug}/`;
+const title = `${name} | Rooftop Twenty Two`;
+
+const breadcrumbs = isClusterParent
+  ? [
+      { name: "Home", url: "/" },
+      { name: "Services", url: "/services/" },
+      { name, url: pageUrl },
+    ]
+  : [
+      { name: "Home", url: "/" },
+      { name: "Services", url: "/services/" },
+      { name: cluster.replace(/-/g, " "), url: `/services/${cluster}/` },
+      { name, url: pageUrl },
+    ];
+---
+
+<Layout title={title} description={metaDescription}>
+  <BreadcrumbSchema items={breadcrumbs} />
+  <ServiceSchema name={name} description={metaDescription} url={pageUrl} />
+
+  <!-- Hero -->
+  <section class="mx-auto max-w-[1200px] px-6 md:px-12 pt-12 md:pt-20 pb-16 md:pb-24">
+    {heroEyebrow && (
+      <Signature text={heroEyebrow} tone="coral" rotate={-3} size="clamp(2rem, 3.5vw, 3rem)" />
+    )}
+    <h1
+      class="mt-4 max-w-4xl"
+      style="font-family:var(--font-display);font-size:clamp(2.75rem, 7vw, 5.5rem);color:var(--color-text-on-dark);letter-spacing:-0.02em;line-height:1.05;"
+    >
+      {heroHeading}
+    </h1>
+    <p
+      class="mt-6 max-w-2xl"
+      style="font-family:var(--font-sans);font-size:1.25rem;color:var(--color-text-on-dark-muted);line-height:1.55;"
+    >
+      {heroBody}
+    </p>
+    <div class="mt-8 flex flex-wrap gap-3">
+      <BtnFiller href={`/contact/?service=${slug}#contact`} variant="solid-white">
+        Talk to us about {name.toLowerCase()}
+      </BtnFiller>
+      <BtnFiller href="/work/" variant="on-dark">See selected work</BtnFiller>
+    </div>
+  </section>
+
+  <!-- What it is -->
+  <section class="mx-auto max-w-[1100px] px-6 md:px-12 py-12 md:py-16 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16">
+    <div class="md:col-span-4">
+      <p style="font-family:var(--font-sans);font-size:0.85rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--color-text-on-dark-muted);">What it is</p>
+      <h2
+        class="mt-2"
+        style="font-family:var(--font-display);font-size:clamp(1.75rem, 3vw, 2.5rem);color:var(--color-text-on-dark);line-height:1.15;letter-spacing:-0.01em;"
+      >
+        How we approach {name.toLowerCase()}
+      </h2>
+    </div>
+    <div class="md:col-span-8 max-w-2xl">
+      <p style="font-family:var(--font-sans);font-size:1.125rem;color:var(--color-text-on-dark-muted);line-height:1.7;">
+        {whatItIs}
+      </p>
+    </div>
+  </section>
+
+  {whatsIncluded.length > 0 && (
+    <section class="mx-auto max-w-[1100px] px-6 md:px-12 py-12 md:py-16 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16">
+      <div class="md:col-span-4">
+        <p style="font-family:var(--font-sans);font-size:0.85rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--color-text-on-dark-muted);">What's included</p>
+        <h2
+          class="mt-2"
+          style="font-family:var(--font-display);font-size:clamp(1.75rem, 3vw, 2.5rem);color:var(--color-text-on-dark);line-height:1.15;letter-spacing:-0.01em;"
+        >
+          Scope
+        </h2>
+      </div>
+      <ul class="md:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 list-none p-0 m-0" style="font-family:var(--font-sans);font-size:1.0625rem;color:var(--color-text-on-dark);">
+        {whatsIncluded.map((it) => (
+          <li class="flex gap-3">
+            <span style="color:var(--color-mint);flex-shrink:0;">→</span>
+            <span>{it}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {process.length > 0 && (
+    <section class="mx-auto max-w-[1100px] px-6 md:px-12 py-12 md:py-16">
+      <p style="font-family:var(--font-sans);font-size:0.85rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--color-text-on-dark-muted);">How we work</p>
+      <h2
+        class="mt-2 mb-12"
+        style="font-family:var(--font-display);font-size:clamp(1.75rem, 3vw, 2.5rem);color:var(--color-text-on-dark);line-height:1.15;letter-spacing:-0.01em;"
+      >
+        Process
+      </h2>
+      <ol class="grid grid-cols-1 md:grid-cols-2 gap-8 list-none p-0 m-0">
+        {process.map((p) => (
+          <li>
+            <p style="font-family:var(--font-display);font-size:2.5rem;color:var(--color-mint);line-height:1;">{p.step}</p>
+            <h3
+              class="mt-3"
+              style="font-family:var(--font-display);font-size:1.5rem;color:var(--color-text-on-dark);line-height:1.2;"
+            >
+              {p.label}
+            </h3>
+            <p
+              class="mt-2 max-w-md"
+              style="font-family:var(--font-sans);font-size:1rem;color:var(--color-text-on-dark-muted);line-height:1.6;"
+            >
+              {p.body}
+            </p>
+          </li>
+        ))}
+      </ol>
+    </section>
+  )}
+
+  {sectorsThatBuy.length > 0 && (
+    <section class="mx-auto max-w-[1100px] px-6 md:px-12 py-12 md:py-16">
+      <p style="font-family:var(--font-sans);font-size:0.85rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--color-text-on-dark-muted);">Where this lands</p>
+      <h2
+        class="mt-2 mb-8"
+        style="font-family:var(--font-display);font-size:clamp(1.75rem, 3vw, 2.5rem);color:var(--color-text-on-dark);line-height:1.15;letter-spacing:-0.01em;"
+      >
+        Sectors that buy {name.toLowerCase()}
+      </h2>
+      <ul class="flex flex-wrap gap-3 list-none p-0 m-0">
+        {sectorsThatBuy.map((s) => (
+          <li>
+            <a
+              href={`/sectors/${s}/`}
+              class="inline-flex items-center px-5 py-3 transition-colors"
+              style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:9999px;color:var(--color-text-on-dark);font-family:var(--font-sans);font-size:0.95rem;text-decoration:none;"
+            >
+              {s.replace(/-/g, " ").replace(/\b\w/g, (m) => m.toUpperCase())}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {relatedServices.length > 0 && (
+    <section class="mx-auto max-w-[1100px] px-6 md:px-12 py-12 md:py-16">
+      <p style="font-family:var(--font-sans);font-size:0.85rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--color-text-on-dark-muted);">Often paired with</p>
+      <h2
+        class="mt-2 mb-8"
+        style="font-family:var(--font-display);font-size:clamp(1.75rem, 3vw, 2.5rem);color:var(--color-text-on-dark);line-height:1.15;letter-spacing:-0.01em;"
+      >
+        Related services
+      </h2>
+      <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 list-none p-0 m-0">
+        {relatedServices.map((s) => (
+          <li>
+            <a
+              href={`/services/${s}/`}
+              class="block p-5 transition-transform hover:-translate-y-1"
+              style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-card-md);color:var(--color-text-on-dark);text-decoration:none;"
+            >
+              <p style="font-family:var(--font-display);font-size:1.25rem;line-height:1.2;">{s.replace(/-/g, " ").replace(/\b\w/g, (m) => m.toUpperCase())}</p>
+              <p class="mt-2" style="font-family:var(--font-sans);font-size:0.875rem;color:var(--color-text-on-dark-muted);">Explore →</p>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {faq.length > 0 && (
+    <FAQBlock faqs={faq} heading={`${name} questions`} eyebrow="FAQ" />
+  )}
+
+  <PageCTA variant="service" service={slug} />
+</Layout>

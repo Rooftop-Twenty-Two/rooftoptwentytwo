@@ -1,0 +1,58 @@
+---
+// Sticky floating CTA. Bottom-right on mobile + tablet, hidden on desktop
+// (the header CTA + pre-footer CTA cover desktop). Coral pill, high z-index,
+// always visible while scrolling so any page reliably routes to /contact.
+---
+
+<a
+  href="/contact/"
+  class="sticky-cta"
+  data-sticky-cta
+  aria-label="Get in touch with Rooftop Twenty Two"
+>
+  <span class="sticky-cta__dot" aria-hidden="true"></span>
+  Get in touch
+</a>
+
+<style>
+  .sticky-cta {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 90;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.25rem;
+    background-color: var(--color-coral);
+    color: #ffffff;
+    border-radius: 9999px;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    box-shadow: 0 8px 24px rgba(225, 80, 71, 0.32);
+    transition: transform 200ms var(--ease-out-rooftop), box-shadow 200ms var(--ease-out-rooftop);
+  }
+  .sticky-cta:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(225, 80, 71, 0.42); }
+  .sticky-cta__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-mint);
+    box-shadow: 0 0 0 4px rgba(0, 255, 178, 0.18);
+    animation: sticky-cta-pulse 2.2s infinite ease-in-out;
+  }
+  @keyframes sticky-cta-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.25); }
+  }
+  /* Hide on desktop, the header CTA is enough up there */
+  @media (min-width: 1024px) {
+    .sticky-cta { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sticky-cta__dot { animation: none; }
+    .sticky-cta { transition: none; }
+  }
+</style>

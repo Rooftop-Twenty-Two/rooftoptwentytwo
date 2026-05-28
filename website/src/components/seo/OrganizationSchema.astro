@@ -1,0 +1,40 @@
+---
+// Organization JSON-LD. Rendered once site-wide from Layout. Covers brand,
+// contact, social, and a primary image. Establishes the entity for Google
+// Knowledge Graph and across SERP features.
+const site = "https://rooftoptwentytwo.ie";
+const data = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": `${site}/#organization`,
+  name: "Rooftop Twenty Two",
+  alternateName: ["Rooftop22", "R22"],
+  url: site,
+  logo: {
+    "@type": "ImageObject",
+    "@id": `${site}/#logo`,
+    url: `${site}/images/site/rooftop-logo-white.svg`,
+    width: 800,
+    height: 156,
+  },
+  image: `${site}/images/site/rooftop-logo-white.svg`,
+  description:
+    "Independent performance-and-creative agency in Dublin helping Irish businesses win at strategy, branding, web, SEO, paid media, and social.",
+  email: "hey@rooftoptwentytwo.ie",
+  telephone: "+353 1 699 1422",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Claremont Avenue, Glasnevin",
+    addressLocality: "Dublin 11",
+    postalCode: "D11 YNR2",
+    addressCountry: "IE",
+  },
+  areaServed: { "@type": "Country", name: "Ireland" },
+  sameAs: [
+    "https://ie.linkedin.com/company/rooftop-twenty-two",
+    "https://www.instagram.com/rooftoptwentytwo/",
+  ],
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(data)} />

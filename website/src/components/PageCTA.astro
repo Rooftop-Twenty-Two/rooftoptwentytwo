@@ -1,0 +1,192 @@
+---
+import BtnFiller from "./BtnFiller.astro";
+import Signature from "./Signature.astro";
+
+// Big pre-footer CTA. Sits before SiteFooter on any content page where we
+// want to push toward /contact. Supports pre-fill of the contact form via
+// the sector/programme/service params, clicking the primary CTA passes
+// these so the contact page can populate the form.
+
+type CTAVariant = "default" | "sector" | "programme" | "service" | "case-study";
+
+interface Props {
+  variant?: CTAVariant;
+  /** Pre-fill keys forwarded to /contact via query string. */
+  sector?: string;
+  programme?: string;
+  service?: string;
+  /** Visual customisation. Defaults are designed to drop into any context. */
+  eyebrow?: string;
+  heading?: string;
+  body?: string;
+  primaryLabel?: string;
+  secondaryLabel?: string;
+  secondaryHref?: string;
+}
+
+const {
+  variant = "default",
+  sector,
+  programme,
+  service,
+  eyebrow,
+  heading,
+  body,
+  primaryLabel,
+  secondaryLabel = "See selected work",
+  secondaryHref = "/work/",
+} = Astro.props;
+
+// Defaults per variant.
+const defaults: Record<CTAVariant, { eyebrow: string; heading: string; body: string; primary: string }> = {
+  default: {
+    eyebrow: "Let's chat",
+    heading: "Got a project in mind?",
+    body: "Tell us what you're scaling, launching, or rebuilding. We'll send a thoughtful reply and a time to talk it through.",
+    primary: "Start the conversation",
+  },
+  sector: {
+    eyebrow: "Tailored to your sector",
+    heading: "Marketing built for your industry",
+    body: "We know the buyer, the season, and the levers. Talk to us about your sector and the engagement we'd recommend.",
+    primary: "Talk to us",
+  },
+  programme: {
+    eyebrow: "Enterprise Ireland funded",
+    heading: "Apply this programme to your business",
+    body: "We'll walk you through eligibility, scope, and how the funding works. No commitment, no jargon.",
+    primary: "Discuss this programme",
+  },
+  service: {
+    eyebrow: "Ready when you are",
+    heading: "Let's talk about your next campaign",
+    body: "Tell us what you're trying to move and we'll come back with a scoped recommendation.",
+    primary: "Get a recommendation",
+  },
+  "case-study": {
+    eyebrow: "Inspired?",
+    heading: "Run a project like this with us",
+    body: "We'd be glad to walk you through how we'd approach your version of this.",
+    primary: "Start a similar project",
+  },
+};
+
+const d = defaults[variant];
+const finalEyebrow = eyebrow ?? d.eyebrow;
+const finalHeading = heading ?? d.heading;
+const finalBody = body ?? d.body;
+const finalPrimary = primaryLabel ?? d.primary;
+
+// Build the /contact URL with pre-fill params.
+const params = new URLSearchParams();
+if (sector) params.set("sector", sector);
+if (programme) params.set("programme", programme);
+if (service) params.set("service", service);
+const queryString = params.toString();
+const primaryHref = queryString ? `/contact/?${queryString}#contact` : "/contact/#contact";
+---
+
+<section class="page-cta" aria-labelledby="page-cta-heading">
+  <div class="mx-auto max-w-[1200px] px-6 md:px-12 py-16 md:py-24">
+    <div class="page-cta__grid">
+      <div class="page-cta__copy">
+        <Signature text={finalEyebrow} tone="mint" rotate={-3} size="clamp(1.75rem, 3vw, 2.5rem)" />
+        <h2
+          id="page-cta-heading"
+          class="page-cta__heading mt-4"
+        >
+          {finalHeading}
+        </h2>
+        <p class="page-cta__body mt-6">{finalBody}</p>
+        <div class="page-cta__actions">
+          <BtnFiller href={primaryHref} variant="solid-white">{finalPrimary}</BtnFiller>
+          <BtnFiller href={secondaryHref} variant="on-dark">{secondaryLabel}</BtnFiller>
+        </div>
+      </div>
+
+      <aside class="page-cta__aside" aria-hidden="true">
+        <div class="page-cta__stat">
+          <p class="page-cta__stat-value">8,000+</p>
+          <p class="page-cta__stat-label">completed projects</p>
+        </div>
+        <div class="page-cta__stat">
+          <p class="page-cta__stat-value">10+ yrs</p>
+          <p class="page-cta__stat-label">building Irish brands</p>
+        </div>
+        <div class="page-cta__stat">
+          <p class="page-cta__stat-value">Fully in-house</p>
+          <p class="page-cta__stat-label">creative, web, paid, SEO</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<style>
+  .page-cta {
+    position: relative;
+    background-color: var(--color-page-bg);
+    color: var(--color-text-on-dark);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .page-cta__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  @media (min-width: 1024px) {
+    .page-cta__grid {
+      grid-template-columns: 1.5fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+  }
+  .page-cta__heading {
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 5vw, 4rem);
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    color: var(--color-text-on-dark);
+  }
+  .page-cta__body {
+    font-family: var(--font-sans);
+    font-size: 1.125rem;
+    color: var(--color-text-on-dark-muted);
+    line-height: 1.55;
+    max-width: 38rem;
+  }
+  .page-cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+  .page-cta__aside {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-card-md);
+  }
+  @media (min-width: 1024px) {
+    .page-cta__aside {
+      grid-template-columns: 1fr;
+      padding: 2rem;
+    }
+  }
+  .page-cta__stat-value {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    line-height: 1;
+    color: var(--color-mint);
+    letter-spacing: -0.02em;
+  }
+  .page-cta__stat-label {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    color: var(--color-text-on-dark-muted);
+    margin-top: 0.25rem;
+  }
+</style>

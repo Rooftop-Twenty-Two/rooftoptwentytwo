@@ -1,0 +1,14 @@
+{
+  "name": "rooftoptwentytwo-scrape",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "capture": "node scripts/capture.mjs",
+    "extract-styles": "node scripts/extract-styles.mjs"
+  },
+  "devDependencies": {
+    "cheerio": "^1.2.0",
+    "playwright": "^1.60.0"
+  }
+}

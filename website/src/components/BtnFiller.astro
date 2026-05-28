@@ -1,0 +1,16 @@
+---
+type Variant = "on-dark" | "solid-white" | "mint";
+
+interface Props {
+  href: string;
+  variant?: Variant;
+  class?: string;
+}
+
+const { href, variant = "on-dark", class: extra = "" } = Astro.props;
+---
+
+<a href={href} class:list={["btn-filler", `btn-filler--${variant}`, extra]} data-filler>
+  <span aria-hidden="true"></span>
+  <slot />
+</a>

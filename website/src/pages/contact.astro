@@ -1,0 +1,144 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Signature from "../components/Signature.astro";
+import PressToTalkRing from "../components/PressToTalkRing.astro";
+
+// URL pre-fill: ?sector=hotels, ?programme=strategic-marketing-review,
+// ?service=seo. We read these server-side from the request URL and use them
+// to pre-populate the hidden routing field. The client-side script then
+// flips them into a friendly subject + opening message.
+const url = Astro.url;
+const sectorParam = url.searchParams.get("sector") ?? "";
+const programmeParam = url.searchParams.get("programme") ?? "";
+const serviceParam = url.searchParams.get("service") ?? "";
+
+const routingValue = [
+  sectorParam && `sector:${sectorParam}`,
+  programmeParam && `programme:${programmeParam}`,
+  serviceParam && `service:${serviceParam}`,
+]
+  .filter(Boolean)
+  .join("|");
+
+function titleCase(s: string) {
+  return s
+    .split("-")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
+let prefillSubject = "";
+let prefillMessage = "";
+if (programmeParam) {
+  prefillSubject = `Programme: ${titleCase(programmeParam)}`;
+  prefillMessage = `Hi, I'd like to talk about the ${titleCase(programmeParam)} programme${
+    sectorParam ? ` for our ${titleCase(sectorParam)} business` : ""
+  }.\n\n`;
+} else if (sectorParam && serviceParam) {
+  prefillSubject = `${titleCase(serviceParam)} for ${titleCase(sectorParam)}`;
+  prefillMessage = `Hi, we're looking at ${titleCase(serviceParam)} for our ${titleCase(
+    sectorParam
+  )} business and would like to talk.\n\n`;
+} else if (sectorParam) {
+  prefillSubject = `Marketing for ${titleCase(sectorParam)}`;
+  prefillMessage = `Hi, we work in ${titleCase(sectorParam)} and would like to talk about marketing.\n\n`;
+} else if (serviceParam) {
+  prefillSubject = `${titleCase(serviceParam)} enquiry`;
+  prefillMessage = `Hi, we're interested in ${titleCase(serviceParam)}.\n\n`;
+}
+---
+
+<Layout title="Contact | Rooftop Twenty Two" description="Get in touch with Rooftop Twenty Two, an independent branding and digital design studio in Dublin.">
+  <section id="contact" class="mx-auto max-w-[1440px] px-6 md:px-12 pt-10 md:pt-16 pb-24 md:pb-32">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16">
+      <div class="md:col-span-7 max-w-2xl">
+        <Signature text="Get in touch!" tone="coral" rotate={-3} />
+        <h1
+          class="mt-6"
+          style="font-family:var(--font-display);font-size:clamp(2rem, 4vw, 3.5rem);color:var(--color-text-on-dark);line-height:1.1;letter-spacing:-0.01em;"
+        >
+          Rooftop Twenty Two is an independent branding and digital design studio that develops brands, strategies, and experiences for exceptional companies.
+        </h1>
+
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="mailto:hey@rooftoptwentytwo.ie" class="btn-pill btn-pill--mint">hey@rooftoptwentytwo.ie</a>
+          <a href="tel:+35316991422" class="btn-pill btn-pill--mint">01 699 1422</a>
+        </div>
+        <div class="mt-4 flex flex-wrap gap-3">
+          <a href="https://www.instagram.com/" class="btn-pill btn-pill--mint">instagram</a>
+          <a href="https://www.linkedin.com/" class="btn-pill btn-pill--mint">linkedin</a>
+        </div>
+      </div>
+
+      <div class="md:col-span-5 flex items-start justify-end">
+        <div class="text-[var(--color-mint)]">
+          <PressToTalkRing size={140} />
+        </div>
+      </div>
+    </div>
+
+    <form
+      action="/api/contact"
+      method="POST"
+      class="mt-16 md:mt-24 grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-5"
+      novalidate
+      data-contact-form
+    >
+      <input type="hidden" name="routing" value={routingValue} />
+
+      <label class="md:col-span-4 block">
+        <span class="sr-only">Name</span>
+        <input
+          type="text"
+          name="name"
+          required
+          placeholder="Name"
+          class="w-full px-5 py-4"
+          style="background-color:var(--color-navy-700);color:var(--color-text-on-dark);border-radius:var(--radius-input);border:1px solid rgba(255,255,255,0.06);font-family:var(--font-sans);"
+        />
+      </label>
+      <label class="md:col-span-4 block">
+        <span class="sr-only">Email</span>
+        <input
+          type="email"
+          name="email"
+          required
+          placeholder="Email"
+          class="w-full px-5 py-4"
+          style="background-color:var(--color-navy-700);color:var(--color-text-on-dark);border-radius:var(--radius-input);border:1px solid rgba(255,255,255,0.06);font-family:var(--font-sans);"
+        />
+      </label>
+      <label class="md:col-span-4 block">
+        <span class="sr-only">Subject</span>
+        <input
+          type="text"
+          name="subject"
+          placeholder="Subject"
+          value={prefillSubject}
+          class="w-full px-5 py-4"
+          style="background-color:var(--color-navy-700);color:var(--color-text-on-dark);border-radius:var(--radius-input);border:1px solid rgba(255,255,255,0.06);font-family:var(--font-sans);"
+        />
+      </label>
+
+      <label class="md:col-span-8 md:row-span-3 block">
+        <span class="sr-only">Message</span>
+        <textarea
+          name="message"
+          required
+          placeholder="Message"
+          rows="8"
+          class="w-full h-full min-h-[260px] px-5 py-4 resize-none"
+          style="background-color:var(--color-navy-700);color:var(--color-text-on-dark);border-radius:var(--radius-input);border:1px solid rgba(255,255,255,0.06);font-family:var(--font-sans);"
+        >{prefillMessage}</textarea>
+      </label>
+
+      <button
+        type="submit"
+        class="md:col-span-4 md:row-span-3 flex items-center justify-center text-center transition-transform hover:scale-[1.01] active:scale-[0.99]"
+        style={`background-color:var(--color-mint);color:var(--color-navy-900);border-radius:var(--radius-card-lg);font-family:var(--font-sans);font-weight:600;font-size:var(--text-body);min-height:160px;`}
+      >
+        Submit
+      </button>
+    </form>
+  </section>
+</Layout>

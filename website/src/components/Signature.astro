@@ -1,0 +1,28 @@
+---
+type Tone = "coral" | "mint";
+
+interface Props {
+  text: string;
+  tone?: Tone;
+  rotate?: number;
+  as?: keyof HTMLElementTagNameMap;
+  size?: string; // CSS size value e.g. "5rem" or "clamp(2rem, 6vw, 5rem)". Defaults to --text-eyebrow-script.
+}
+
+const {
+  text,
+  tone = "coral",
+  rotate = -2,
+  as = "span",
+  size = "var(--text-eyebrow-script)",
+} = Astro.props;
+const Tag = as;
+const colourVar = tone === "mint" ? "var(--color-mint)" : "var(--color-coral)";
+---
+
+<Tag
+  class="font-script"
+  style={`color:${colourVar};font-size:${size};line-height:1;display:inline-block;transform:rotate(${rotate}deg);`}
+>
+  {text}
+</Tag>

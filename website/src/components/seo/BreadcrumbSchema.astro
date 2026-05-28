@@ -1,0 +1,26 @@
+---
+interface Crumb {
+  name: string;
+  url: string; // absolute or root-relative; will be normalised
+}
+
+interface Props {
+  items: Crumb[];
+}
+
+const site = "https://rooftoptwentytwo.ie";
+const { items } = Astro.props;
+
+const data = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: items.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: c.url.startsWith("http") ? c.url : `${site}${c.url}`,
+  })),
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(data)} />

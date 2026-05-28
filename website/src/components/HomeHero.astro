@@ -1,0 +1,172 @@
+---
+import Signature from "./Signature.astro";
+import TextLineReveal from "./TextLineReveal.astro";
+import BtnFiller from "./BtnFiller.astro";
+
+// Hero layout:
+// - Section is relative, overflow visible, sized by the left text column.
+// - Polaroid columns sit absolutely positioned inside the section but extend
+//   downward past the section bounds, visually overlapping the LogoBar and
+//   Marquee that follow in DOM order. They scroll with the page (because
+//   their absolute reference is the section, not the viewport).
+// - Hidden on mobile (matches source's elementor-hidden-mobile).
+// - Z-index: polaroids 22, hero text 6, hero section 5. Header is z 50 above.
+
+type Tile = { src: string; alt: string };
+
+// Interleaved order: each column mixes a portrait with a brand-work tile so
+// both surface together at any marquee scroll moment, matching the source's
+// visual rhythm where phone-mockups (Irish Landmark Trust app, HOMIM Gourmet
+// Food Parlour) sit alongside polaroid portraits.
+const col1: Tile[] = [
+  { src: "/images/hero/Cathal.png", alt: "Hello! I'm Cathal" },
+  { src: "/images/hero/ILT_Element-4.png", alt: "Irish Landmark Trust, campaign asset" },
+  { src: "/images/hero/1933_Element-18.png", alt: "The 1933 Furniture Company" },
+  { src: "/images/hero/building-min.jpg", alt: "Rooftop studio building" },
+  { src: "/images/hero/team.jpg", alt: "Rooftop team" },
+];
+
+const col2: Tile[] = [
+  { src: "/images/hero/GFP_Element-3.png", alt: "Gourmet Food Parlour" },
+  { src: "/images/hero/Brandon.png", alt: "Hi, Brandon" },
+  { src: "/images/hero/Macy-Gray-1080_Sold-Out.png", alt: "Guinness Cork Jazz, Macy Gray Sold Out" },
+  { src: "/images/hero/Julie-1.png", alt: "Hi, Julie" },
+  { src: "/images/hero/rooftop-location-2.jpg", alt: "Rooftop studio" },
+  { src: "/images/hero/cowo-campus-dublin-01-1280x800-1.jpg", alt: "CoWo Campus Dublin" },
+];
+
+const col3: Tile[] = [
+  { src: "/images/hero/ILT_Element-4-1.png", alt: "Irish Landmark Trust, campaign asset" },
+  { src: "/images/hero/Talia-1-1.png", alt: "Hi, Talia" },
+  { src: "/images/hero/1933_Element-34-1-1.png", alt: "The 1933 Furniture Company" },
+  { src: "/images/hero/Johnny_1-1.png", alt: "Hi, Johnny" },
+  { src: "/images/hero/ILT_Element-8-1.png", alt: "Irish Landmark Trust, campaign asset" },
+  { src: "/images/hero/roisin-2-1-1.png", alt: "Hi, Roisin" },
+];
+
+const COL1_DURATION = "56s";
+const COL2_DURATION = "46s";
+const COL3_DURATION = "110s";
+---
+
+<section class="hero-section">
+  <div class="mx-auto max-w-[1440px] px-6 md:px-12 pt-10 md:pt-16 pb-16 md:pb-24 relative">
+    <div class="flex flex-col gap-6 lg:gap-8 max-w-xl hero-section__copy">
+      <Signature
+        text="Empowering"
+        tone="coral"
+        rotate={-4}
+        size="clamp(3.5rem, 7vw, 6rem)"
+      />
+      <TextLineReveal
+        text={"businesses for\ndigital success"}
+        baseDelay={0.2}
+        lineStagger={0.22}
+        wordStagger={0.05}
+        as="h1"
+        class="-mt-2"
+        style="font-family:var(--font-display);font-size:clamp(2.5rem, 5.5vw, 5rem);color:var(--color-text-on-dark);letter-spacing:-0.015em;line-height:1;"
+      />
+      <p
+        class="max-w-md"
+        style="font-family:var(--font-sans);font-size:1.125rem;color:var(--color-text-on-dark-muted);line-height:1.55;"
+      >
+        Tailored strategies for real results in strategy, branding, websites, and digital marketing.
+      </p>
+      <div class="flex flex-wrap gap-3 mt-2">
+        <BtnFiller href="/work/" variant="solid-white">Our Work</BtnFiller>
+        <BtnFiller href="/contact/" variant="on-dark">Contact Us</BtnFiller>
+      </div>
+    </div>
+
+    <!-- Polaroid pillar: absolute inside the section (relative). Extends
+         downward via height alone; section has overflow visible so they
+         spill into LogoBar + Marquee regions below. -->
+    <div class="hero-photos" aria-hidden="true">
+      <div class="hero-photos__rot">
+        <div class="hero-photos__grid">
+          <div class="vmarquee">
+            <div class="vmarquee-track" style={`--duration:${COL1_DURATION};`}>
+              {[...col1, ...col1].map((t) => (
+                <figure>
+                  <img src={t.src} alt={t.alt} loading="eager" decoding="async" />
+                </figure>
+              ))}
+            </div>
+          </div>
+          <div class="vmarquee">
+            <div class="vmarquee-track vmarquee-track--reverse" style={`--duration:${COL2_DURATION};`}>
+              {[...col2, ...col2].map((t) => (
+                <figure>
+                  <img src={t.src} alt={t.alt} loading="eager" decoding="async" />
+                </figure>
+              ))}
+            </div>
+          </div>
+          <div class="vmarquee">
+            <div class="vmarquee-track" style={`--duration:${COL3_DURATION};`}>
+              {[...col3, ...col3].map((t) => (
+                <figure>
+                  <img src={t.src} alt={t.alt} loading="eager" decoding="async" />
+                </figure>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-section {
+    position: relative;
+    z-index: 5;
+    overflow: visible;
+  }
+  .hero-section__copy {
+    position: relative;
+    z-index: 6;
+  }
+
+  .hero-photos {
+    display: none;
+    position: absolute;
+    /* Negative top pulls the pillar up so its top edge sits at the very top
+     * of the page (under the now-transparent header). Bars (logo + marquee)
+     * have higher z-index so they fully cover the photos where they overlap;
+     * photos peek through only at the top and beside the hero text. */
+    top: -5rem;
+    right: 1.5rem;
+    width: clamp(420px, 50%, 720px);
+    height: clamp(840px, 120vh, 1200px);
+    pointer-events: none;
+    z-index: 4;
+  }
+  @media (min-width: 1024px) {
+    .hero-photos {
+      display: block;
+    }
+  }
+  @media (min-width: 1280px) {
+    .hero-photos {
+      right: -1rem;
+    }
+  }
+  .hero-photos__rot {
+    width: 100%;
+    height: 100%;
+    transform: rotate(3deg);
+    transform-origin: center center;
+  }
+  .hero-photos__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    height: 100%;
+    padding-right: 1rem;
+  }
+  @media (min-width: 1280px) {
+    .hero-photos__grid { gap: 1rem; padding-right: 2rem; }
+  }
+</style>

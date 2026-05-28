@@ -1,0 +1,39 @@
+---
+// Splits a string into lines + words at render time, then animates each word
+// rising into view with a staggered delay. Matches the source's textLineReveal
+// + SplitType behaviour without shipping SplitType client-side.
+interface Props {
+  text: string;            // use \n to mark explicit line breaks
+  baseDelay?: number;      // seconds before first word starts
+  lineStagger?: number;    // seconds between line starts
+  wordStagger?: number;    // seconds between words inside a line
+  class?: string;
+  as?: keyof HTMLElementTagNameMap;
+  style?: string;
+}
+
+const {
+  text,
+  baseDelay = 0.15,
+  lineStagger = 0.18,
+  wordStagger = 0.04,
+  class: extra = "",
+  as = "h1",
+  style = "",
+} = Astro.props;
+
+const Tag = as;
+const lines: string[][] = text
+  .split(/\n/)
+  .map((line: string) => line.split(/(\s+)/).filter((s: string) => s.length));
+---
+
+<Tag class:list={[extra]} style={style}>
+  {lines.map((words: string[], li: number) => (
+    <span class="text-reveal-line">
+      {words.map((w: string, wi: number) => (
+        <span class="text-reveal-word" style={`animation-delay:${(baseDelay + li * lineStagger + wi * wordStagger).toFixed(3)}s;`}>{w}</span>
+      ))}
+    </span>
+  ))}
+</Tag>

@@ -1,0 +1,16 @@
+---
+import { getCollection } from "astro:content";
+import FlatSEOTemplate from "../components/templates/FlatSEOTemplate.astro";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("landing");
+  return entries.map((entry) => ({
+    params: { slug: entry.data.slug },
+    props: { data: entry.data },
+  }));
+}
+
+const { data } = Astro.props;
+---
+
+<FlatSEOTemplate {...data} />

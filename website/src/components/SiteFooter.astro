@@ -1,0 +1,92 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer style="background-color:var(--color-page-bg);color:var(--color-text-on-dark);" class="pt-20 md:pt-32 pb-8">
+  <div class="mx-auto max-w-[1440px] px-6 md:px-12">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+      <h2
+        class="leading-none"
+        style="font-family:var(--font-display);font-size:clamp(4rem, 12vw, 9rem);letter-spacing:-0.01em;"
+      >
+        Let's chat.
+      </h2>
+      <a href="/contact/" class="btn-filler btn-filler--mint self-start md:self-auto" data-filler>
+        <span aria-hidden="true"></span>Start your Project
+      </a>
+    </div>
+
+    <div class="mt-16 md:mt-24 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10">
+      <div>
+        <p class="font-semibold mb-3" style="font-family:var(--font-sans);">Studio</p>
+        <nav aria-label="Footer" class="flex flex-col gap-2" style="font-family:var(--font-sans);font-weight:500;font-size:var(--text-body);">
+          <a href="/work/" class="hover:underline">Our Work</a>
+          <a href="/services/" class="hover:underline">Services</a>
+          <a href="/sectors/" class="hover:underline">Sectors</a>
+          <a href="/programmes/" class="hover:underline">EI Programmes</a>
+          <a href="/latest/" class="hover:underline">Latest</a>
+          <a href="/about/" class="hover:underline">About</a>
+          <a href="/contact/" class="hover:underline">Contact</a>
+        </nav>
+      </div>
+
+      <div>
+        <p class="font-semibold mb-3" style="font-family:var(--font-sans);">Services</p>
+        <nav aria-label="Services" class="flex flex-col gap-2" style="font-family:var(--font-sans);font-weight:500;font-size:var(--text-body);">
+          <a href="/services/performance-marketing/" class="hover:underline">Performance Marketing</a>
+          <a href="/services/google-ads/" class="hover:underline">Google Ads</a>
+          <a href="/services/paid-social/" class="hover:underline">Paid Social</a>
+          <a href="/services/seo/" class="hover:underline">SEO</a>
+          <a href="/services/email-marketing/" class="hover:underline">Email Marketing</a>
+          <a href="/services/creative-and-content/" class="hover:underline">Creative &amp; Content</a>
+          <a href="/services/social-media-management/" class="hover:underline">Social Media Management</a>
+          <a href="/services/design/" class="hover:underline">Design</a>
+          <a href="/services/photo-and-video/" class="hover:underline">Photo &amp; Video</a>
+          <a href="/services/web/" class="hover:underline">Web</a>
+          <a href="/services/website-design-and-build/" class="hover:underline">Website Design &amp; Build</a>
+          <a href="/services/website-care/" class="hover:underline">Website Care</a>
+        </nav>
+      </div>
+
+      <div>
+        <p class="font-semibold mb-3" style="font-family:var(--font-sans);">Head Office</p>
+        <address class="not-italic leading-relaxed" style="font-family:var(--font-sans);">
+          Rooftop Twenty Two,<br />
+          Claremont Avenue,<br />
+          Glasnevin,<br />
+          Dublin 11,<br />
+          D11 YNR2
+        </address>
+        <p class="mt-4" style="font-family:var(--font-sans);">
+          <a href="mailto:hey@rooftoptwentytwo.ie" class="hover:underline">hey@rooftoptwentytwo.ie</a>
+        </p>
+        <p style="font-family:var(--font-sans);">
+          <a href="tel:+35316991422" class="hover:underline">+353 1 699 1422</a>
+        </p>
+      </div>
+
+      <div>
+        <p class="font-semibold mb-3" style="font-family:var(--font-sans);">Connect with us</p>
+        <div class="flex gap-4">
+          <a href="https://ie.linkedin.com/company/rooftop-twenty-two" target="_blank" rel="noopener" aria-label="LinkedIn" class="hover:text-[var(--color-mint)] transition-colors">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.36V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.62 0 4.29 2.38 4.29 5.48v6.26zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zm1.78 13.02H3.55V9h3.57v11.45z" />
+            </svg>
+          </a>
+          <a href="https://www.instagram.com/rooftoptwentytwo/" target="_blank" rel="noopener" aria-label="Instagram" class="hover:text-[var(--color-mint)] transition-colors">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="5" />
+              <circle cx="12" cy="12" r="4" />
+              <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <hr class="mt-16 border-t" style="border-color:rgba(255,255,255,0.08);" />
+    <p class="mt-6 text-xs" style="color:rgba(255,255,255,0.5);">
+      © Rooftop Twenty Two. {year}. All rights reserved.
+    </p>
+  </div>
+</footer>

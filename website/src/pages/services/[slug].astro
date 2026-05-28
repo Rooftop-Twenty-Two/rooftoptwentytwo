@@ -1,0 +1,16 @@
+---
+import { getCollection } from "astro:content";
+import ServicePageTemplate from "../../components/templates/ServicePageTemplate.astro";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("services");
+  return entries.map((entry) => ({
+    params: { slug: entry.data.slug },
+    props: { data: entry.data },
+  }));
+}
+
+const { data } = Astro.props;
+---
+
+<ServicePageTemplate {...data} />

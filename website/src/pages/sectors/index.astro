@@ -1,0 +1,67 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import Signature from "../../components/Signature.astro";
+import BtnFiller from "../../components/BtnFiller.astro";
+import PageCTA from "../../components/PageCTA.astro";
+import BreadcrumbSchema from "../../components/seo/BreadcrumbSchema.astro";
+
+const sectors = (await getCollection("sectors")).sort(
+  (a, b) => (a.data.order ?? 100) - (b.data.order ?? 100)
+);
+---
+
+<Layout
+  title="Sectors | Rooftop Twenty Two"
+  description="Marketing for Irish brands across hotels and hospitality, furniture and interiors, financial and professional services, healthcare, and food and drink."
+>
+  <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "Sectors", url: "/sectors/" }]} />
+
+  <section class="mx-auto max-w-[1440px] px-6 md:px-12 pt-12 md:pt-20 pb-12 md:pb-16">
+    <Signature text="Sectors" tone="coral" rotate={-3} />
+    <h1
+      class="mt-4 max-w-4xl"
+      style="font-family:var(--font-display);font-size:clamp(2.75rem, 7vw, 5.5rem);color:var(--color-text-on-dark);letter-spacing:-0.02em;line-height:1.05;"
+    >
+      Marketing built around your sector.
+    </h1>
+    <p
+      class="mt-6 max-w-2xl"
+      style="font-family:var(--font-sans);font-size:1.25rem;color:var(--color-text-on-dark-muted);line-height:1.55;"
+    >
+      We're focused on a handful of sectors where we've built genuine depth. The buyer journeys are different, the seasonality is different, and the levers that actually move pipeline are different.
+    </p>
+    <div class="mt-8 flex flex-wrap gap-3">
+      <BtnFiller href="/contact/#contact" variant="solid-white">Talk to us about yours</BtnFiller>
+      <BtnFiller href="/work/" variant="on-dark">See selected work</BtnFiller>
+    </div>
+  </section>
+
+  {sectors.length > 0 ? (
+    <section class="mx-auto max-w-[1200px] px-6 md:px-12 pb-24 md:pb-32">
+      <ul class="grid grid-cols-1 md:grid-cols-2 gap-6 list-none p-0 m-0">
+        {sectors.map((s) => (
+          <li>
+            <a
+              href={`/sectors/${s.data.slug}/`}
+              class="block p-8 transition-transform hover:-translate-y-1"
+              style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-card-md);color:var(--color-text-on-dark);text-decoration:none;height:100%;"
+            >
+              <h2 style="font-family:var(--font-display);font-size:clamp(1.5rem, 2.5vw, 2rem);line-height:1.1;letter-spacing:-0.01em;">{s.data.name}</h2>
+              <p class="mt-3" style="font-family:var(--font-sans);font-size:1rem;color:var(--color-text-on-dark-muted);line-height:1.55;">{s.data.summary}</p>
+              <p class="mt-4" style="font-family:var(--font-sans);font-size:0.875rem;color:var(--color-mint);">Explore →</p>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ) : (
+    <section class="mx-auto max-w-[800px] px-6 md:px-12 pb-24 md:pb-32">
+      <p style="font-family:var(--font-sans);font-size:1.0625rem;color:var(--color-text-on-dark-muted);line-height:1.7;">
+        Detailed sector pages are being added. In the meantime, every sector engagement starts the same way, a conversation about your buyer, your numbers, and the right place to apply leverage.
+      </p>
+    </section>
+  )}
+
+  <PageCTA variant="default" />
+</Layout>

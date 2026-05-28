@@ -1,0 +1,72 @@
+---
+// Scroll-driven horizontal marquee. The text band only moves when the user
+// scrolls (matching the source's motion_fx_translateX behaviour, not an
+// autoplay infinite loop). Direction: as you scroll down, the text shifts
+// from left to right.
+interface Props {
+  items?: string[];
+}
+
+const defaultItems = [
+  "Website Design & Development",
+  "Google Ads",
+  "Meta Ads Management",
+  "Campaign Strategy",
+  "Brand Development",
+  "Photography & Videography",
+  "SEO",
+  "Social Media",
+];
+
+const { items = defaultItems } = Astro.props;
+// Repeat 6x so there's enough horizontal content to slide across at any scroll position.
+const track = Array.from({ length: 6 }).flatMap(() => items);
+---
+
+<div class="marquee-band" data-marquee>
+  <div class="marquee-track marquee-track--scroll" data-marquee-track>
+    {track.map((label, i) => (
+      <span class="inline-flex items-center gap-12" style="font-family:var(--font-sans);font-weight:600;font-size:1.125rem;letter-spacing:0.01em;">
+        <span>{label}</span>
+        {i < track.length - 1 && <span aria-hidden="true" class="opacity-60">·</span>}
+      </span>
+    ))}
+  </div>
+</div>
+
+<style>
+  .marquee-track--scroll {
+    /* Disable the autoplay animation; we drive translateX from scroll position via JS. */
+    animation: none !important;
+    transform: translate3d(-30%, 0, 0);
+    will-change: transform;
+  }
+</style>
+
+<script>
+  const band = document.querySelector<HTMLElement>("[data-marquee]");
+  const track = document.querySelector<HTMLElement>("[data-marquee-track]");
+  if (band && track) {
+    let raf = 0;
+    const SCROLL_FACTOR = 0.45; // px-per-scroll-px → tune to taste
+    const BASE_OFFSET = -30;    // start position in % so left edge is full
+
+    function update() {
+      raf = 0;
+      const y = window.scrollY;
+      // Scroll down → translateX positive (text moves left-to-right)
+      const offsetPx = y * SCROLL_FACTOR;
+      track!.style.transform = `translate3d(calc(${BASE_OFFSET}% + ${offsetPx}px), 0, 0)`;
+    }
+
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (raf) return;
+        raf = requestAnimationFrame(update);
+      },
+      { passive: true }
+    );
+    update();
+  }
+</script>

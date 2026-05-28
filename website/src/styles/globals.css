@@ -1,0 +1,447 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Butler";
+  src: url("/fonts/butler-bold.woff2") format("woff2"),
+       url("/fonts/butler-bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Starlit Drive";
+  src: url("/fonts/starlit-drive.woff2") format("woff2"),
+       url("/fonts/starlit-drive.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Mulish";
+  src: url("/fonts/mulish-variable.woff2") format("woff2-variations");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  /* Palette: neutrals */
+  --color-navy-900: #0D2030;
+  --color-navy-700: #143A4F;
+  --color-blue-grey-500: #6A6F97;
+  --color-stone-100: #F9F9F9;
+  --color-warm-100: #ECE8E7;
+  --color-cool-100: #ECEDEE;
+
+  /* Palette: brand */
+  --color-coral: #E15047;
+  --color-mint: #00FFB2;
+  --color-teal-700: #225C5E;
+  --color-teal-200: #C2DDDB;
+  --color-wine-800: #78233C;
+
+  /* Semantic shortcuts */
+  --color-page-bg: #0D2030;
+  --color-text-on-dark: #FFFFFF;
+  --color-text-on-dark-muted: #C2DDDB;
+  --color-text-on-light: #143A4F;
+  --color-text-on-light-muted: #6A6F97;
+
+  /* Type families */
+  --font-display: "Butler", Georgia, "Times New Roman", serif;
+  --font-script: "Starlit Drive", "Brush Script MT", cursive;
+  --font-sans: "Mulish", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Type scale */
+  --text-display-xxl: 9rem;
+  --text-display-xxl--line-height: 1.05;
+  --text-display-xl: 5rem;
+  --text-display-xl--line-height: 1.05;
+  --text-display-lg: 3rem;
+  --text-display-lg--line-height: 1.1;
+  --text-heading-lg: 2rem;
+  --text-heading-lg--line-height: 1.15;
+  --text-heading-md: 1.5rem;
+  --text-heading-md--line-height: 1.2;
+  --text-body-lg: 1.375rem;
+  --text-body-lg--line-height: 1.55;
+  --text-body: 1.125rem;
+  --text-body--line-height: 1.55;
+  --text-body-sm: 1rem;
+  --text-body-sm--line-height: 1.55;
+  --text-eyebrow-script: 4.5rem;
+  --text-eyebrow-script--line-height: 1;
+
+  /* Radii */
+  --radius-pill: 9999px;
+  --radius-card-lg: 32px;
+  --radius-card-md: 20px;
+  --radius-card-sm: 12px;
+  --radius-input: 16px;
+
+  /* Shadows */
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.18);
+  --shadow-elevated: 0 24px 64px rgba(0, 0, 0, 0.32);
+
+  /* Motion */
+  --ease-out-rooftop: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Breakpoints (Tailwind v4 default scale is kept; override if needed) */
+}
+
+html {
+  background-color: var(--color-page-bg);
+  color: var(--color-text-on-dark);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+body {
+  background-color: var(--color-page-bg);
+  color: var(--color-text-on-dark);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  min-height: 100vh;
+  overflow-x: clip;
+}
+
+::selection {
+  background-color: var(--color-mint);
+  color: var(--color-navy-900);
+}
+
+/* Reduce motion respects user pref */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Section reveal utility. Progressive enhancement: hidden only after JS marks
+ * the html element as `.js-ready`. Without JS, content stays visible. */
+.js-ready .reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 400ms var(--ease-out-rooftop),
+    transform 400ms var(--ease-out-rooftop);
+}
+.js-ready .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Pill button atom */
+.btn-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--text-body-sm);
+  line-height: 1;
+  transition:
+    transform 200ms var(--ease-out-rooftop),
+    background-color 200ms var(--ease-out-rooftop),
+    color 200ms var(--ease-out-rooftop);
+  cursor: pointer;
+}
+.btn-pill:hover { transform: scale(1.04); }
+.btn-pill:active { transform: scale(0.98); }
+.btn-pill:focus-visible {
+  outline: 2px solid var(--color-mint);
+  outline-offset: 2px;
+}
+.btn-pill--mint {
+  background-color: var(--color-mint);
+  color: var(--color-navy-900);
+}
+.btn-pill--mint:focus-visible {
+  outline-color: var(--color-coral);
+}
+.btn-pill--coral {
+  background-color: var(--color-coral);
+  color: #ffffff;
+}
+.btn-pill--ghost-mint {
+  background-color: transparent;
+  color: var(--color-mint);
+  box-shadow: inset 0 0 0 1.5px var(--color-mint);
+}
+.btn-pill--white {
+  background-color: #ffffff;
+  color: var(--color-navy-900);
+}
+.btn-pill--ghost-white {
+  background-color: transparent;
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.6);
+}
+.btn-pill--ghost-white:hover {
+  box-shadow: inset 0 0 0 1.5px #ffffff;
+}
+
+/* Coral duotone treatment used on hero team portraits.
+ * Implemented as a 2-layer composite: grayscale base image multiplied by a
+ * coral overlay. Multiply preserves shadow depth, the coral tints mid-tones,
+ * highlights remain warm but bright. Closer to the real Rooftop hero look
+ * than a single sepia+hue-rotate filter chain. */
+.duotone-portrait {
+  position: relative;
+  isolation: isolate;
+}
+.duotone-portrait > img {
+  filter: grayscale(1) contrast(1.08) brightness(1.05);
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.duotone-portrait::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-coral);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  z-index: 1;
+}
+.duotone-portrait > figcaption {
+  z-index: 2;
+}
+
+/* Infinite horizontal marquee */
+@keyframes marquee-scroll {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+
+/* Vertical marquee used by the hero photo collage. The track contains the
+ * gallery twice; the animation translates -50% so the duplicate fills in
+ * seamlessly. Reverse-direction is achieved via `animation-direction: reverse`
+ * on the inner track. */
+@keyframes marquee-vertical {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(0, -50%, 0); }
+}
+.vmarquee {
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+  mask-image: linear-gradient(180deg, transparent 0%, #000 8%, #000 92%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 8%, #000 92%, transparent 100%);
+}
+.vmarquee-track {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  animation: marquee-vertical var(--duration, 60s) linear infinite;
+  will-change: transform;
+}
+.vmarquee-track--reverse {
+  animation-direction: reverse;
+}
+.vmarquee-track > figure {
+  flex-shrink: 0;
+  border-radius: var(--radius-card-md);
+  overflow: hidden;
+  margin: 0;
+  background: var(--color-navy-700);
+}
+.vmarquee-track > figure > img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.marquee-track {
+  display: inline-flex;
+  gap: 3rem;
+  white-space: nowrap;
+  animation: marquee-scroll 40s linear infinite;
+  will-change: transform;
+}
+.marquee-band {
+  background-color: var(--color-mint);
+  color: var(--color-navy-900);
+  overflow: hidden;
+  width: 110vw;
+  margin: -25px -5vw 0;
+  padding: 1.75rem 0;
+  transform: rotate(-3deg);
+  position: relative;
+  z-index: 30;
+}
+
+/* PRESS TO TALK ring rotation */
+@keyframes ring-spin {
+  to { transform: rotate(360deg); }
+}
+.ring-spin {
+  animation: ring-spin 12s linear infinite;
+  transform-origin: 50% 50%;
+}
+
+/* btn-filler: source's radial-fill-on-hover CTA. The inner span starts as a
+ * 0x0 circle positioned at the cursor entry point, then expands to fill on
+ * hover. Replaces the static btn-pill family for all home-page CTAs. */
+.btn-filler {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1.5px solid currentColor;
+  border-radius: 9999px;
+  text-decoration: none;
+  padding: 12px 36px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 220ms ease;
+  z-index: 0;
+}
+.btn-filler > span {
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.42s ease-in-out, height 0.42s ease-in-out;
+  z-index: -1;
+  pointer-events: none;
+}
+.btn-filler:hover > span {
+  width: 260%;
+  height: 360px;
+}
+/* Variants */
+.btn-filler--on-dark {
+  color: #ffffff;
+  background: transparent;
+}
+.btn-filler--on-dark > span { background-color: #ffffff; }
+.btn-filler--on-dark:hover { color: var(--color-navy-900); }
+
+.btn-filler--solid-white {
+  color: var(--color-navy-900);
+  background: #ffffff;
+  border-color: #ffffff;
+}
+.btn-filler--solid-white > span { background-color: var(--color-navy-900); }
+.btn-filler--solid-white:hover { color: #ffffff; }
+
+.btn-filler--mint {
+  color: var(--color-navy-900);
+  background: var(--color-mint);
+  border-color: var(--color-mint);
+}
+.btn-filler--mint > span { background-color: var(--color-navy-900); }
+.btn-filler--mint:hover { color: #ffffff; }
+
+/* textLineReveal: word-by-word vertical reveal on the hero H1. */
+.text-reveal-line {
+  display: block;
+  overflow: hidden;
+  line-height: 1;
+  padding-bottom: 0.08em;
+}
+.text-reveal-word {
+  display: inline-block;
+  transform: translateY(110%);
+  opacity: 0;
+  animation: word-rise 1.1s cubic-bezier(0, 0, 0.24, 1.02) forwards;
+  white-space: pre;
+}
+@keyframes word-rise {
+  0%   { transform: translateY(110%); opacity: 0; }
+  30%  { opacity: 1; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* textRevealOnScroll: gradient-mask scroll-driven reveal on long intro paragraphs.
+ * Each word goes from translucent to white as the section scrolls into view.
+ * Implemented without GSAP, uses scroll-timeline (modern browsers) + a small
+ * IO-based fallback in Layout.astro. */
+.text-reveal-scroll {
+  --reveal-progress: 0;
+  background: linear-gradient(to right,
+    rgb(255, 255, 255) calc(var(--reveal-progress) * 1%),
+    rgba(255, 255, 255, 0.18) calc(var(--reveal-progress) * 1% + 6%)
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  transition: background 200ms linear;
+}
+
+/* Cursor glow: large soft radial blob following the cursor on desktop.
+ * Uses mix-blend-mode: screen so it brightens the navy canvas without
+ * obscuring content. Disabled on touch / reduced-motion / narrow viewports. */
+.cursor-glow {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 520px;
+  height: 520px;
+  margin-left: -260px;
+  margin-top: -260px;
+  background: radial-gradient(circle, rgba(33, 92, 94, 0.65) 0%, rgba(33, 92, 94, 0.32) 30%, rgba(33, 92, 94, 0) 65%);
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: screen;
+  transform: translate3d(-1000px, -1000px, 0);
+  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1), opacity 400ms ease;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.cursor-glow.is-active {
+  opacity: 1;
+}
+@media (hover: none), (prefers-reduced-motion: reduce), (max-width: 767px) {
+  .cursor-glow { display: none; }
+}
+
+/* Theme-switch: when the body has .alternate-theme (driven by IO in Layout),
+ * the header inverts to dark-on-light. Activated by light-background sections
+ * like the Services panel. */
+body.alternate-theme [data-header] {
+  background-color: #ffffff !important;
+  color: var(--color-navy-900) !important;
+  transition: background-color 320ms ease, color 320ms ease;
+}
+body.alternate-theme [data-header] a,
+body.alternate-theme [data-header] button {
+  color: var(--color-navy-900);
+}
+body.alternate-theme [data-header] .btn-filler--solid-coral {
+  /* keep the coral CTA contrasted on light */
+  color: #ffffff;
+}
+body.alternate-theme [data-header] .header-logo--white { display: none !important; }
+body.alternate-theme [data-header] .header-logo--navy { display: block !important; }
+
+/* Curve-asymmetrical shape divider (source uses this between hero and Our Work) */
+.shape-divider {
+  display: block;
+  width: 100%;
+  height: 60px;
+  fill: var(--color-page-bg);
+}
+.shape-divider--invert { fill: #ffffff; }

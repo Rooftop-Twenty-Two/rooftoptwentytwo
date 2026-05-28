@@ -1,0 +1,286 @@
+---
+// Full-screen menu overlay. Replicates the source GSAP behaviour using
+// clip-path transitions + staggered fade-up on links.
+//
+// Triggered by [data-menu-open] (e.g. the header's PressToTalkRing button).
+// Dismissed by [data-menu-close] and by clicking the dimmed backdrop.
+---
+
+<div class="menu" data-menu hidden>
+  <button
+    type="button"
+    class="menu__backdrop"
+    aria-label="Close menu"
+    data-menu-close
+  ></button>
+
+  <div class="menu__panel" role="dialog" aria-modal="true" aria-label="Main menu">
+    <div class="menu__col menu__col--left">
+      <p
+        class="menu__eyebrow"
+        style="font-family:var(--font-sans);font-size:0.875rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.55);"
+        data-menu-stagger
+      >
+        The Studio Jukebox
+      </p>
+      <div class="menu__spotify mt-6" data-menu-stagger>
+        <iframe
+          style="border-radius:12px;border:0;"
+          src="https://open.spotify.com/embed/playlist/1Bt8Zq0uVSRIJgtWJdvcUX?utm_source=generator"
+          width="100%"
+          height="352"
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"
+          title="Studio Jukebox"
+        ></iframe>
+      </div>
+      <p
+        class="menu__eyebrow mt-8"
+        style="font-family:var(--font-sans);font-size:0.95rem;color:var(--color-text-on-dark-muted);"
+        data-menu-stagger
+      >
+        Find us on social →
+      </p>
+    </div>
+
+    <div class="menu__col menu__col--right">
+      <button
+        type="button"
+        class="menu__close"
+        aria-label="Close menu"
+        data-menu-close
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 56 56" fill="none" aria-hidden="true">
+          <rect x="1.3" y="1.33" width="53.4" height="53.4" rx="26.7" stroke="currentColor" stroke-width="1.8" />
+          <path
+            d="M28 29.31L39.93 41.24L41.21 39.97L29.28 28.04L41.21 16.11L39.93 14.83L28 26.76L16.07 14.83L14.8 16.11L26.73 28.04L14.8 39.97L16.07 41.24L28 29.31Z"
+            fill="currentColor"
+          />
+        </svg>
+      </button>
+
+      <nav class="menu__nav" aria-label="Primary">
+        <ul class="list-none p-0 m-0 flex flex-col gap-3">
+          <li data-menu-stagger>
+            <a
+              href="/work/"
+              class="menu__link"
+              style="font-family:var(--font-display);font-size:clamp(2.5rem, 6vw, 4.5rem);letter-spacing:-0.02em;line-height:1;color:#ffffff;text-decoration:none;"
+            >
+              Our Work
+            </a>
+          </li>
+          <li data-menu-stagger>
+            <a
+              href="/services/"
+              class="menu__link"
+              style="font-family:var(--font-display);font-size:clamp(2.5rem, 6vw, 4.5rem);letter-spacing:-0.02em;line-height:1;color:#ffffff;text-decoration:none;"
+            >
+              Services
+            </a>
+          </li>
+          <li data-menu-stagger>
+            <a
+              href="/sectors/"
+              class="menu__link"
+              style="font-family:var(--font-display);font-size:clamp(2.5rem, 6vw, 4.5rem);letter-spacing:-0.02em;line-height:1;color:#ffffff;text-decoration:none;"
+            >
+              Sectors
+            </a>
+          </li>
+          <li data-menu-stagger>
+            <a
+              href="/about/"
+              class="menu__link"
+              style="font-family:var(--font-display);font-size:clamp(2.5rem, 6vw, 4.5rem);letter-spacing:-0.02em;line-height:1;color:#ffffff;text-decoration:none;"
+            >
+              About
+            </a>
+          </li>
+          <li data-menu-stagger>
+            <a
+              href="/contact/"
+              class="menu__link"
+              style="font-family:var(--font-display);font-size:clamp(2.5rem, 6vw, 4.5rem);letter-spacing:-0.02em;line-height:1;color:#ffffff;text-decoration:none;"
+            >
+              Contact
+            </a>
+          </li>
+        </ul>
+
+        <ul class="menu__sub list-none p-0 m-0 flex flex-wrap gap-x-6 gap-y-2 mt-8" data-menu-stagger>
+          <li>
+            <a href="/programmes/" class="menu__sub-link">Enterprise Ireland Programmes</a>
+          </li>
+          <li aria-hidden="true" class="menu__sub-divider">·</li>
+          <li>
+            <a href="/latest/" class="menu__sub-link">Latest</a>
+          </li>
+        </ul>
+      </nav>
+
+      <ul class="menu__social list-none p-0 m-0 flex gap-4 mt-12" data-menu-stagger>
+        <li>
+          <a href="https://ie.linkedin.com/company/rooftop-twenty-two" target="_blank" rel="noopener" class="menu__social-link">LinkedIn</a>
+        </li>
+        <li>
+          <a href="https://www.instagram.com/rooftoptwentytwo/" target="_blank" rel="noopener" class="menu__social-link">Instagram</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<style>
+  .menu {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    pointer-events: none;
+  }
+  .menu[data-menu-open] {
+    pointer-events: auto;
+  }
+  .menu__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    opacity: 0;
+    transition: opacity 600ms ease;
+    border: 0;
+    cursor: pointer;
+  }
+  .menu[data-menu-open] .menu__backdrop {
+    opacity: 1;
+  }
+  .menu__panel {
+    position: absolute;
+    inset: 0;
+    background: var(--color-navy-900);
+    color: #ffffff;
+    clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+    transition: clip-path 850ms cubic-bezier(0.65, 0, 0.35, 1);
+    display: grid;
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+  }
+  .menu[data-menu-open] .menu__panel {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+  @media (min-width: 768px) {
+    .menu__panel {
+      grid-template-columns: minmax(280px, 1fr) 1.6fr;
+    }
+  }
+  .menu__col {
+    padding: 5rem 1.5rem 2.5rem;
+  }
+  @media (min-width: 768px) {
+    .menu__col {
+      padding: 6rem 3rem 3rem;
+    }
+  }
+  .menu__col--left {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  @media (min-width: 768px) {
+    .menu__col--left {
+      border-bottom: 0;
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+    }
+  }
+  .menu__close {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: #ffffff;
+    cursor: pointer;
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    transition: transform 220ms ease;
+  }
+  .menu__close:hover {
+    transform: rotate(90deg);
+  }
+  .menu__link {
+    display: inline-block;
+    transition: color 220ms ease, transform 220ms ease;
+  }
+  .menu__link:hover {
+    color: var(--color-mint);
+    transform: translateX(4px);
+  }
+  .menu__social-link {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: color 200ms ease;
+  }
+  .menu__social-link:hover {
+    color: var(--color-mint);
+  }
+  .menu__sub-link {
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: color 200ms ease;
+  }
+  .menu__sub-link:hover {
+    color: var(--color-mint);
+  }
+  .menu__sub-divider {
+    color: rgba(255, 255, 255, 0.25);
+  }
+  [data-menu-stagger] {
+    opacity: 0;
+    transform: translateY(48px);
+    transition: opacity 600ms ease, transform 600ms ease;
+  }
+  .menu[data-menu-open] [data-menu-stagger] {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .menu[data-menu-open] [data-menu-stagger]:nth-of-type(1) { transition-delay: 0.18s; }
+  .menu[data-menu-open] [data-menu-stagger]:nth-of-type(2) { transition-delay: 0.26s; }
+  .menu[data-menu-open] [data-menu-stagger]:nth-of-type(3) { transition-delay: 0.34s; }
+  .menu[data-menu-open] [data-menu-stagger]:nth-of-type(4) { transition-delay: 0.42s; }
+  .menu[data-menu-open] [data-menu-stagger]:nth-of-type(5) { transition-delay: 0.5s; }
+  .menu[data-menu-open] [data-menu-stagger]:nth-of-type(6) { transition-delay: 0.58s; }
+  .menu[data-menu-open] [data-menu-stagger]:nth-of-type(7) { transition-delay: 0.66s; }
+</style>
+
+<script>
+  const menu = document.querySelector<HTMLElement>("[data-menu]");
+  if (menu) {
+    const open = () => {
+      menu.removeAttribute("hidden");
+      requestAnimationFrame(() => menu.setAttribute("data-menu-open", ""));
+      document.documentElement.style.overflow = "hidden";
+    };
+    const close = () => {
+      menu.removeAttribute("data-menu-open");
+      document.documentElement.style.overflow = "";
+      // hide after the clip-path animation completes so it stays in the a11y tree briefly
+      setTimeout(() => {
+        if (!menu.hasAttribute("data-menu-open")) menu.setAttribute("hidden", "");
+      }, 900);
+    };
+    document.querySelectorAll<HTMLElement>("[data-menu-open-trigger]").forEach((el) => {
+      el.addEventListener("click", (e) => {
+        e.preventDefault();
+        open();
+      });
+    });
+    document.querySelectorAll<HTMLElement>("[data-menu-close]").forEach((el) => {
+      el.addEventListener("click", close);
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && menu.hasAttribute("data-menu-open")) close();
+    });
+  }
+</script>

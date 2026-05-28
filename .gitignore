@@ -1,0 +1,21 @@
+# Build artefacts
+dist/
+.astro/
+node_modules/
+
+# Env + system
+.env
+.env.*
+.DS_Store
+
+# Scrape source bundle (large, regenerable)
+_source/mirror/
+_source/screenshots/
+_source/videos/
+_source/styles/
+_source/wget.log
+_source/assets/
+_rebuild_screenshots/
+
+# Logs / debug
+*.log

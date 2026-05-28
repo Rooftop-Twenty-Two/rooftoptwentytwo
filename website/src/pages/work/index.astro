@@ -1,0 +1,197 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import Signature from "../../components/Signature.astro";
+
+const entries = (await getCollection("portfolio", ({ data }) => !data.needs_review))
+  .sort((a, b) => (a.data.order ?? 100) - (b.data.order ?? 100));
+---
+
+<Layout
+  title="Our Work | Rooftop Twenty Two"
+  description="Selected case studies from Rooftop Twenty Two, an independent branding and digital design studio in Dublin."
+>
+  <section class="mx-auto max-w-[1440px] px-6 md:px-12 pt-12 md:pt-20 pb-12 md:pb-16">
+    <Signature text="Our Work" tone="coral" rotate={-3} />
+    <h1
+      class="mt-4 leading-none max-w-3xl"
+      style="font-family:var(--font-display);font-size:clamp(2.75rem, 7vw, 5.5rem);color:var(--color-text-on-dark);letter-spacing:-0.02em;"
+    >
+      Selected projects.
+    </h1>
+    <p
+      class="mt-6 max-w-xl"
+      style="font-family:var(--font-sans);font-size:1.125rem;color:var(--color-text-on-dark-muted);"
+    >
+      A look at recent work spanning brand identity, web design and development, photography, and digital marketing strategy.
+    </p>
+  </section>
+
+  <section class="mx-auto max-w-[1440px] px-6 md:px-12 pb-24 md:pb-32">
+    <ul class="work-grid list-none p-0 m-0">
+      {entries.map((e) => {
+        const slug = e.id.replace(/\.mdx?$/, "");
+        const services = (e.data.services ?? []).slice(0, 3);
+        const featured = e.data.featured ?? false;
+        return (
+          <li class:list={["work-card", featured ? "work-card--featured" : ""]}>
+            <a href={`/work/${slug}/`} class="work-card__link">
+              <div
+                class="work-card__banner"
+                style={e.data.heroImage
+                  ? `background-image:url('${e.data.heroImage}');`
+                  : `background-color: var(--color-navy-700);`}
+              >
+                {e.data.wordmark && (
+                  <img
+                    class="work-card__wordmark"
+                    src={e.data.wordmark}
+                    alt={`${e.data.name} wordmark`}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                )}
+                <div class="work-card__overlay" aria-hidden="true"></div>
+              </div>
+              <div class="work-card__meta">
+                <div class="work-card__meta-row">
+                  <h2 class="work-card__title">{e.data.name}</h2>
+                  <span class="work-card__cta" aria-hidden="true">View project →</span>
+                </div>
+                {e.data.tagline && (
+                  <p class="work-card__tagline">{e.data.tagline}</p>
+                )}
+                {services.length > 0 && (
+                  <ul class="work-card__pills list-none p-0 m-0">
+                    {services.map((s) => <li>{s}</li>)}
+                  </ul>
+                )}
+              </div>
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+  </section>
+</Layout>
+
+<style>
+  .work-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  @media (min-width: 1024px) {
+    .work-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+    }
+  }
+  .work-card {
+    border-radius: var(--radius-card-lg, 18px);
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transition: transform 280ms ease, border-color 280ms ease;
+  }
+  .work-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(0, 255, 178, 0.25);
+  }
+  .work-card--featured {
+    grid-column: 1 / -1;
+  }
+  .work-card__link {
+    display: block;
+    color: var(--color-text-on-dark);
+    text-decoration: none;
+  }
+  .work-card__banner {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .work-card--featured .work-card__banner {
+    aspect-ratio: 21 / 9;
+  }
+  .work-card__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.0) 50%, rgba(0,0,0,0.22) 100%);
+    pointer-events: none;
+  }
+  .work-card__wordmark {
+    position: relative;
+    z-index: 1;
+    max-width: min(60%, 360px);
+    max-height: 100px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.25));
+    transition: transform 600ms ease;
+  }
+  .work-card:hover .work-card__wordmark {
+    transform: scale(1.02);
+  }
+  .work-card__meta {
+    padding: 1.5rem 1.5rem 1.75rem;
+  }
+  @media (min-width: 768px) {
+    .work-card__meta {
+      padding: 1.75rem 2rem 2rem;
+    }
+  }
+  .work-card__meta-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .work-card__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--color-text-on-dark);
+    margin: 0;
+  }
+  .work-card__cta {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    color: var(--color-mint);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .work-card__tagline {
+    margin-top: 0.625rem;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    color: var(--color-text-on-dark-muted);
+    line-height: 1.5;
+    max-width: 52ch;
+  }
+  .work-card__pills {
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .work-card__pills li {
+    padding: 0.35rem 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 9999px;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    color: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.03);
+  }
+</style>

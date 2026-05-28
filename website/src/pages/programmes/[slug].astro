@@ -1,0 +1,16 @@
+---
+import { getCollection } from "astro:content";
+import ProgrammePageTemplate from "../../components/templates/ProgrammePageTemplate.astro";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("programmes");
+  return entries.map((entry) => ({
+    params: { slug: entry.data.slug },
+    props: { data: entry.data },
+  }));
+}
+
+const { data } = Astro.props;
+---
+
+<ProgrammePageTemplate {...data} />

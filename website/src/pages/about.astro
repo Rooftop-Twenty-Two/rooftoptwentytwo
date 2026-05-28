@@ -1,0 +1,28 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Signature from "../components/Signature.astro";
+import TeamGrid from "../components/TeamGrid.astro";
+---
+
+<Layout title="About | Rooftop Twenty Two" description="An independent branding and digital design studio in Dublin, working with exceptional Irish businesses and not-for-profits.">
+  <section class="mx-auto max-w-[1440px] px-6 md:px-12 pt-12 md:pt-20 pb-16 md:pb-24">
+    <Signature text="About us" tone="coral" rotate={-3} />
+    <h1
+      class="mt-6 max-w-4xl"
+      style="font-family:var(--font-display);font-size:clamp(2rem, 4vw, 3.5rem);color:var(--color-text-on-dark);line-height:1.1;letter-spacing:-0.01em;"
+    >
+      Rooftop Twenty Two is an independent branding and digital design studio that develops brands, strategies, and experiences for exceptional companies.
+    </h1>
+  </section>
+
+  <section class="mx-auto max-w-[1440px] px-6 md:px-12 pb-24 md:pb-32">
+    <Signature text="Team" tone="mint" rotate={-2} />
+    <h2
+      class="mt-4 mb-12 md:mb-16"
+      style="font-family:var(--font-display);font-size:clamp(2.25rem, 5vw, 4rem);color:var(--color-text-on-dark);line-height:1.05;letter-spacing:-0.01em;"
+    >
+      A wide team that looks big to us.
+    </h2>
+    <TeamGrid />
+  </section>
+</Layout>

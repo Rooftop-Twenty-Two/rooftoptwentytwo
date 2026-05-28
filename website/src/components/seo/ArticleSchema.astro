@@ -1,0 +1,40 @@
+---
+interface Props {
+  headline: string;
+  description: string;
+  url: string;
+  image?: string;
+  datePublished: Date;
+  dateModified?: Date;
+  authorName?: string;
+}
+
+const site = "https://rooftoptwentytwo.ie";
+const {
+  headline,
+  description,
+  url,
+  image,
+  datePublished,
+  dateModified,
+  authorName = "Rooftop Twenty Two",
+} = Astro.props;
+const absUrl = url.startsWith("http") ? url : `${site}${url}`;
+
+const data: Record<string, unknown> = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline,
+  description,
+  url: absUrl,
+  author: { "@type": "Person", name: authorName },
+  publisher: { "@id": `${site}/#organization` },
+  datePublished: datePublished.toISOString(),
+  dateModified: (dateModified ?? datePublished).toISOString(),
+};
+if (image) {
+  data.image = image.startsWith("http") ? image : `${site}${image}`;
+}
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(data)} />

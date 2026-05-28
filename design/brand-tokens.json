@@ -1,0 +1,150 @@
+{
+  "schema_version": 1,
+  "project": "rooftoptwentytwo",
+  "extracted_at": "2026-05-28",
+  "mode": "clone",
+  "source_of_truth": "_source/mirror/wp-content/uploads/elementor/css/post-9.css plus _source/styles/*.json",
+
+  "palette": {
+    "neutral": {
+      "navy_900": "#0D2030",
+      "navy_700": "#143A4F",
+      "blue_grey_500": "#6A6F97",
+      "stone_100": "#F9F9F9",
+      "warm_100": "#ECE8E7",
+      "cool_100": "#ECEDEE",
+      "white": "#FFFFFF"
+    },
+    "brand": {
+      "coral": "#E15047",
+      "mint": "#00FFB2",
+      "teal_700": "#225C5E",
+      "teal_200": "#C2DDDB",
+      "wine_800": "#78233C"
+    },
+    "semantic": {
+      "page_background": "#0D2030",
+      "page_text_on_dark": "#FFFFFF",
+      "page_text_on_dark_muted": "#C2DDDB",
+      "page_background_panel": "#F9F9F9",
+      "page_text_on_light": "#143A4F",
+      "page_text_on_light_muted": "#6A6F97",
+      "primary_cta_fill": "#00FFB2",
+      "primary_cta_text": "#0D2030",
+      "header_cta_fill": "#E15047",
+      "header_cta_text": "#FFFFFF",
+      "accent_signature": "#E15047",
+      "accent_signature_alt": "#00FFB2",
+      "form_input_background": "#143A4F",
+      "form_input_text": "#FFFFFF",
+      "form_input_label_active": "#00FFB2",
+      "border_subtle": "rgba(255,255,255,0.08)"
+    }
+  },
+
+  "type": {
+    "families": {
+      "display": {
+        "family": "Butler",
+        "weights": [700],
+        "source": "self-hosted",
+        "files": [
+          "_source/mirror/wp-content/uploads/2023/10/butler_bold-webfont.woff2",
+          "_source/mirror/wp-content/uploads/2023/10/butler_bold-webfont.woff"
+        ],
+        "fallback": "Georgia, 'Times New Roman', serif",
+        "use": "all H1, large numerals, hero headlines, Let's chat block"
+      },
+      "script": {
+        "family": "Starlit Drive",
+        "weights": [400],
+        "source": "self-hosted",
+        "files": [
+          "_source/mirror/wp-content/uploads/2023/10/starlit_drive-webfont.woff2",
+          "_source/mirror/wp-content/uploads/2023/10/starlit_drive-webfont.woff"
+        ],
+        "fallback": "'Brush Script MT', cursive",
+        "use": "section signatures only (Successing, Our Work, Team, Get in touch!, Aidan, etc). Never used for body or button labels."
+      },
+      "body": {
+        "family": "Mulish",
+        "weights": [400, 500, 600, 700],
+        "source": "self-host preferred (download variable WOFF2 from Google Fonts CDN at build time, then vendor)",
+        "fallback": "system-ui, -apple-system, 'Segoe UI', sans-serif",
+        "use": "all body copy, nav, buttons, form fields, footer"
+      }
+    },
+
+    "scale": {
+      "display_xxl_desktop_rem": 9,
+      "display_xxl_mobile_rem": 4,
+      "display_xl_desktop_rem": 5,
+      "display_xl_mobile_rem": 2.75,
+      "display_lg_desktop_rem": 3,
+      "display_lg_mobile_rem": 2,
+      "heading_lg_rem": 2,
+      "heading_md_rem": 1.5,
+      "body_lg_rem": 1.375,
+      "body_rem": 1.125,
+      "body_sm_rem": 1,
+      "eyebrow_script_desktop_rem": 3,
+      "eyebrow_script_mobile_rem": 2,
+      "line_height_display": 1.05,
+      "line_height_heading": 1.15,
+      "line_height_body": 1.55,
+      "letter_spacing_display": "-0.01em",
+      "letter_spacing_body": "0em"
+    }
+  },
+
+  "spacing": {
+    "base_unit_px": 8,
+    "scale_rem": [0.5, 1, 1.5, 2, 3, 4, 6, 8, 12, 16],
+    "section_padding_desktop_rem": 8,
+    "section_padding_mobile_rem": 4,
+    "container_max_rem": 80,
+    "container_gutter_rem": 1.5
+  },
+
+  "radii": {
+    "pill": "9999px",
+    "card_lg": "32px",
+    "card_md": "20px",
+    "card_sm": "12px",
+    "input": "16px"
+  },
+
+  "shadows": {
+    "card": "0 8px 32px rgba(0,0,0,0.18)",
+    "elevated": "0 24px 64px rgba(0,0,0,0.32)"
+  },
+
+  "motion": {
+    "duration_fast_ms": 200,
+    "duration_med_ms": 400,
+    "duration_slow_ms": 600,
+    "easing": "cubic-bezier(0.22, 1, 0.36, 1)",
+    "rules": [
+      "Pill CTA hover: scale 1.04 over 200ms ease-out",
+      "Section reveal on scroll: opacity 0->1, translateY 16px->0, 400ms ease-out, triggered by IntersectionObserver at 0.15 threshold",
+      "Hero collage on load: stagger photo tiles 80ms apart, 600ms each, slide from offset position",
+      "PRESS TO TALK dotted ring: continuous rotation, 12s linear, infinite",
+      "No bounce easing anywhere. No spring physics."
+    ]
+  },
+
+  "breakpoints": {
+    "sm": 480,
+    "md": 768,
+    "lg": 1024,
+    "xl": 1280,
+    "2xl": 1440
+  },
+
+  "logo": {
+    "primary_svg_source": "_source/mirror/wp-content/uploads/**/Rooftop*.svg or first matching logo asset",
+    "stack": "wordmark 'Rooftop' + small label 'TWENTY TWO' to the right, top-aligned",
+    "minimum_height_px": 32,
+    "colour_variants": ["white-on-navy", "navy-on-light"]
+  }
+}

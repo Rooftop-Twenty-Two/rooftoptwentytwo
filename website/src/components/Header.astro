@@ -1,0 +1,82 @@
+---
+import PressToTalkRing from "./PressToTalkRing.astro";
+---
+
+<header
+  class="sticky top-0 w-full"
+  style="background-color:transparent;color:var(--color-text-on-dark);z-index:100;"
+  data-header
+>
+  <div class="mx-auto flex max-w-[1200px] items-center justify-between px-6 md:px-12 py-5 md:py-6">
+    <a href="/" class="header__item flex items-center" data-header-item aria-label="Rooftop Twenty Two, home">
+      <img
+        class="header-logo header-logo--white"
+        src="/images/site/rooftop-logo-white.svg"
+        alt="Rooftop Twenty Two"
+        width="180"
+        height="36"
+        style="height:36px;width:auto;display:block;"
+      />
+      <img
+        class="header-logo header-logo--navy"
+        src="/images/site/rooftop-logo-navy.svg"
+        alt="Rooftop Twenty Two"
+        width="180"
+        height="36"
+        style="height:36px;width:auto;display:none;"
+        aria-hidden="true"
+      />
+    </a>
+
+    <button
+      type="button"
+      class="text-white hover:text-[var(--color-mint)] transition-colors header__item"
+      data-header-item
+      data-menu-open-trigger
+      aria-label="Open menu"
+    >
+      <PressToTalkRing size={56} />
+    </button>
+
+    <a
+      href="/contact/"
+      class="btn-filler btn-filler--solid-coral header__item"
+      data-header-item
+      data-filler
+    >
+      <span aria-hidden="true"></span>Let's Chat
+    </a>
+  </div>
+</header>
+
+<style>
+  .header__item {
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity 600ms ease, transform 600ms ease;
+  }
+  .header__item--ready {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  /* Coral filler variant for the header CTA (kept here so it doesn't pollute globals) */
+  .btn-filler--solid-coral {
+    color: #ffffff;
+    background: var(--color-coral);
+    border-color: var(--color-coral);
+    padding: 10px 26px;
+    font-size: 0.875rem;
+  }
+  .btn-filler--solid-coral > span { background-color: var(--color-navy-900); }
+  .btn-filler--solid-coral:hover { color: #ffffff; }
+</style>
+
+<script>
+  // Stagger-in the header items shortly after load.
+  document.addEventListener("DOMContentLoaded", () => {
+    const items = document.querySelectorAll<HTMLElement>("[data-header-item]");
+    items.forEach((el, i) => {
+      setTimeout(() => el.classList.add("header__item--ready"), 120 + i * 110);
+    });
+  });
+</script>

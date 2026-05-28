@@ -1,0 +1,221 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Signature from "../Signature.astro";
+import BtnFiller from "../BtnFiller.astro";
+import FAQBlock from "../FAQBlock.astro";
+import PageCTA from "../PageCTA.astro";
+import BreadcrumbSchema from "../seo/BreadcrumbSchema.astro";
+import ServiceSchema from "../seo/ServiceSchema.astro";
+
+type ProcessStep = { step: string; label: string; body: string };
+type FAQ = { question: string; answer: string };
+
+interface Props {
+  name: string;
+  slug: string;
+  summary: string;
+  metaDescription: string;
+  heroEyebrow?: string;
+  heroHeading: string;
+  heroBody: string;
+  eiInstrument?: string;
+  engagementValue?: string;
+  typicalDuration?: string;
+  eligibility: string[];
+  whatYouGet: string[];
+  process: ProcessStep[];
+  sectorSlugs: string[];
+  serviceSlugs: string[];
+  faq: FAQ[];
+  isUmbrella: boolean;
+}
+
+const {
+  name,
+  slug,
+  summary,
+  metaDescription,
+  heroEyebrow,
+  heroHeading,
+  heroBody,
+  eiInstrument,
+  engagementValue,
+  typicalDuration,
+  eligibility,
+  whatYouGet,
+  process,
+  sectorSlugs,
+  serviceSlugs,
+  faq,
+} = Astro.props;
+
+const pageUrl = `/programmes/${slug}/`;
+const title = `${name} | Rooftop Twenty Two`;
+const titleCase = (s: string) =>
+  s.replace(/-/g, " ").replace(/\b\w/g, (m) => m.toUpperCase());
+---
+
+<Layout title={title} description={metaDescription}>
+  <BreadcrumbSchema
+    items={[
+      { name: "Home", url: "/" },
+      { name: "Programmes", url: "/programmes/" },
+      { name, url: pageUrl },
+    ]}
+  />
+  <ServiceSchema name={name} description={metaDescription} url={pageUrl} />
+
+  <section class="mx-auto max-w-[1200px] px-6 md:px-12 pt-12 md:pt-20 pb-16 md:pb-24">
+    {heroEyebrow && <Signature text={heroEyebrow} tone="mint" rotate={-3} size="clamp(2rem, 3.5vw, 3rem)" />}
+    <h1
+      class="mt-4 max-w-4xl"
+      style="font-family:var(--font-display);font-size:clamp(2.75rem, 7vw, 5.5rem);color:var(--color-text-on-dark);letter-spacing:-0.02em;line-height:1.05;"
+    >
+      {heroHeading}
+    </h1>
+    <p
+      class="mt-6 max-w-2xl"
+      style="font-family:var(--font-sans);font-size:1.25rem;color:var(--color-text-on-dark-muted);line-height:1.55;"
+    >
+      {heroBody}
+    </p>
+
+    {(eiInstrument || engagementValue || typicalDuration) && (
+      <dl class="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-2xl">
+        {eiInstrument && (
+          <div>
+            <dt style="font-family:var(--font-sans);font-size:0.75rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--color-text-on-dark-muted);">EI instrument</dt>
+            <dd class="mt-1" style="font-family:var(--font-display);font-size:1.25rem;color:var(--color-mint);">{eiInstrument}</dd>
+          </div>
+        )}
+        {engagementValue && (
+          <div>
+            <dt style="font-family:var(--font-sans);font-size:0.75rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--color-text-on-dark-muted);">Engagement value</dt>
+            <dd class="mt-1" style="font-family:var(--font-display);font-size:1.25rem;color:var(--color-text-on-dark);">{engagementValue}</dd>
+          </div>
+        )}
+        {typicalDuration && (
+          <div>
+            <dt style="font-family:var(--font-sans);font-size:0.75rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--color-text-on-dark-muted);">Typical duration</dt>
+            <dd class="mt-1" style="font-family:var(--font-display);font-size:1.25rem;color:var(--color-text-on-dark);">{typicalDuration}</dd>
+          </div>
+        )}
+      </dl>
+    )}
+
+    <div class="mt-8 flex flex-wrap gap-3">
+      <BtnFiller href={`/contact/?programme=${slug}#contact`} variant="solid-white">
+        Talk to us about {name.toLowerCase()}
+      </BtnFiller>
+      <BtnFiller href="/work/" variant="on-dark">See selected work</BtnFiller>
+    </div>
+  </section>
+
+  {eligibility.length > 0 && (
+    <section class="mx-auto max-w-[1100px] px-6 md:px-12 py-12 md:py-16 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16">
+      <div class="md:col-span-4">
+        <p style="font-family:var(--font-sans);font-size:0.85rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--color-text-on-dark-muted);">Eligibility</p>
+        <h2
+          class="mt-2"
+          style="font-family:var(--font-display);font-size:clamp(1.75rem, 3vw, 2.5rem);color:var(--color-text-on-dark);line-height:1.15;letter-spacing:-0.01em;"
+        >
+          Who this is for
+        </h2>
+      </div>
+      <ul class="md:col-span-8 grid grid-cols-1 gap-3 list-none p-0 m-0" style="font-family:var(--font-sans);font-size:1.0625rem;color:var(--color-text-on-dark);">
+        {eligibility.map((e) => (
+          <li class="flex gap-3">
+            <span style="color:var(--color-mint);flex-shrink:0;">✓</span>
+            <span>{e}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {whatYouGet.length > 0 && (
+    <section class="mx-auto max-w-[1100px] px-6 md:px-12 py-12 md:py-16 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16">
+      <div class="md:col-span-4">
+        <p style="font-family:var(--font-sans);font-size:0.85rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--color-text-on-dark-muted);">What you get</p>
+        <h2
+          class="mt-2"
+          style="font-family:var(--font-display);font-size:clamp(1.75rem, 3vw, 2.5rem);color:var(--color-text-on-dark);line-height:1.15;letter-spacing:-0.01em;"
+        >
+          Inside the programme
+        </h2>
+      </div>
+      <ul class="md:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 list-none p-0 m-0" style="font-family:var(--font-sans);font-size:1.0625rem;color:var(--color-text-on-dark);">
+        {whatYouGet.map((w) => (
+          <li class="flex gap-3">
+            <span style="color:var(--color-mint);flex-shrink:0;">→</span>
+            <span>{w}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {process.length > 0 && (
+    <section class="mx-auto max-w-[1100px] px-6 md:px-12 py-12 md:py-16">
+      <p style="font-family:var(--font-sans);font-size:0.85rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--color-text-on-dark-muted);">How it runs</p>
+      <h2
+        class="mt-2 mb-12"
+        style="font-family:var(--font-display);font-size:clamp(1.75rem, 3vw, 2.5rem);color:var(--color-text-on-dark);line-height:1.15;letter-spacing:-0.01em;"
+      >
+        Process
+      </h2>
+      <ol class="grid grid-cols-1 md:grid-cols-2 gap-8 list-none p-0 m-0">
+        {process.map((p) => (
+          <li>
+            <p style="font-family:var(--font-display);font-size:2.5rem;color:var(--color-mint);line-height:1;">{p.step}</p>
+            <h3 class="mt-3" style="font-family:var(--font-display);font-size:1.5rem;color:var(--color-text-on-dark);line-height:1.2;">{p.label}</h3>
+            <p class="mt-2 max-w-md" style="font-family:var(--font-sans);font-size:1rem;color:var(--color-text-on-dark-muted);line-height:1.6;">{p.body}</p>
+          </li>
+        ))}
+      </ol>
+    </section>
+  )}
+
+  {serviceSlugs.length > 0 && (
+    <section class="mx-auto max-w-[1100px] px-6 md:px-12 py-12 md:py-16">
+      <p style="font-family:var(--font-sans);font-size:0.85rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--color-text-on-dark-muted);">Services inside this programme</p>
+      <ul class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 list-none p-0 m-0">
+        {serviceSlugs.map((s) => (
+          <li>
+            <a
+              href={`/services/${s}/`}
+              class="block p-5 transition-transform hover:-translate-y-1"
+              style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-card-md);color:var(--color-text-on-dark);text-decoration:none;"
+            >
+              <p style="font-family:var(--font-display);font-size:1.25rem;line-height:1.2;">{titleCase(s)}</p>
+              <p class="mt-2" style="font-family:var(--font-sans);font-size:0.875rem;color:var(--color-text-on-dark-muted);">Explore →</p>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {sectorSlugs.length > 0 && (
+    <section class="mx-auto max-w-[1100px] px-6 md:px-12 py-12 md:py-16">
+      <p style="font-family:var(--font-sans);font-size:0.85rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--color-text-on-dark-muted);">Sectors we run this for</p>
+      <ul class="mt-6 flex flex-wrap gap-3 list-none p-0 m-0">
+        {sectorSlugs.map((s) => (
+          <li>
+            <a
+              href={`/sectors/${s}/`}
+              class="inline-flex items-center px-5 py-3"
+              style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:9999px;color:var(--color-text-on-dark);font-family:var(--font-sans);font-size:0.95rem;text-decoration:none;"
+            >
+              {titleCase(s)}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {faq.length > 0 && <FAQBlock faqs={faq} heading={`${name} questions`} eyebrow="FAQ" />}
+
+  <PageCTA variant="programme" programme={slug} />
+</Layout>

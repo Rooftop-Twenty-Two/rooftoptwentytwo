@@ -1,0 +1,89 @@
+---
+// Horizontal auto-scrolling client logo carousel. Each logo sits in a
+// fixed-width slot so visual weight stays uniform regardless of the source
+// SVG's natural width (nostra is text, 1933 is decorative, both need the
+// same horizontal real estate).
+//
+// The band is rotated +3deg to pair with the Marquee component's -3deg
+// rotation, producing the source's X-crossing diagonal pattern.
+
+type Logo = { src: string; alt: string };
+
+const logos: Logo[] = [
+  { src: "/images/logos/TC-Matthews_Rev.svg", alt: "TC Matthews" },
+  { src: "/images/logos/Shomera_Rev.svg", alt: "Shomera" },
+  { src: "/images/logos/Nostra_Rev.svg", alt: "Nostra" },
+  { src: "/images/logos/MIG_Rev.svg", alt: "McCarthy Insurance Group" },
+  { src: "/images/logos/GCJ_Rev.png", alt: "Guinness Cork Jazz" },
+  { src: "/images/logos/1934_Rev.svg", alt: "The 1933 Furniture Company" },
+  { src: "/images/logos/GFP_Rev.svg", alt: "Gourmet Food Parlour" },
+  { src: "/images/logos/ILT_Rev.svg", alt: "Irish Landmark Trust" },
+  { src: "/images/logos/Josesph-May_Rev.svg", alt: "Joseph May" },
+];
+const track = [...logos, ...logos];
+---
+
+<section
+  class="logo-bar"
+  aria-label="Selected clients"
+>
+  <div class="logo-bar__band">
+    <div class="marquee-track logo-bar__track">
+      {track.map((l) => (
+        <div class="logo-bar__slot">
+          <img
+            src={l.src}
+            alt={l.alt}
+            class="logo-bar__img"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .logo-bar {
+    position: relative;
+    z-index: 30;
+    margin: 1.5rem 0 0.25rem;
+    padding: 1rem 0;
+  }
+  .logo-bar__band {
+    background-color: var(--color-page-bg);
+    width: 110vw;
+    margin-left: -5vw;
+    padding: 1.75rem 0;
+    overflow: hidden;
+    transform: rotate(3deg);
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  }
+  .logo-bar__track {
+    animation-duration: 55s;
+    gap: 0;
+  }
+  .logo-bar__slot {
+    flex: 0 0 auto;
+    width: 160px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0.75rem;
+  }
+  .logo-bar__img {
+    max-height: 42px;
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    opacity: 0.95;
+  }
+  @media (max-width: 767px) {
+    .logo-bar__slot { width: 130px; padding: 0 0.5rem; }
+    .logo-bar__img { max-height: 32px; }
+  }
+</style>
