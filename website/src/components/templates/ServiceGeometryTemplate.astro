@@ -1,0 +1,516 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import BtnFiller from "../BtnFiller.astro";
+import FAQBlock from "../FAQBlock.astro";
+import PageCTA from "../PageCTA.astro";
+import BreadcrumbSchema from "../seo/BreadcrumbSchema.astro";
+import ServiceSchema from "../seo/ServiceSchema.astro";
+
+type ProcessStep = { step: string; label: string; body: string };
+type FAQ = { question: string; answer: string };
+
+interface Props {
+  name: string;
+  slug: string;
+  cluster: string;
+  isClusterParent: boolean;
+  summary: string;
+  metaDescription: string;
+  heroEyebrow?: string;
+  heroHeading: string;
+  heroBody: string;
+  whatItIs: string;
+  whatsIncluded: string[];
+  process: ProcessStep[];
+  sectorsThatBuy: string[];
+  relatedServices: string[];
+  relatedProgrammes: string[];
+  caseStudySlugs: string[];
+  faq: FAQ[];
+}
+
+const {
+  name,
+  slug,
+  cluster,
+  isClusterParent,
+  summary,
+  metaDescription,
+  heroEyebrow,
+  heroHeading,
+  heroBody,
+  whatItIs,
+  whatsIncluded,
+  process,
+  sectorsThatBuy,
+  relatedServices,
+  caseStudySlugs,
+  faq,
+} = Astro.props;
+
+const pageUrl = `/services/${slug}/`;
+const title = `${name} | Rooftop Twenty Two`;
+
+const portfolio = await getCollection("portfolio");
+const pfBySlug = new Map(portfolio.map((p) => [p.data.slug, p.data]));
+const caseStudies = (caseStudySlugs ?? [])
+  .map((sl) => pfBySlug.get(sl))
+  .filter((p): p is NonNullable<typeof p> => Boolean(p && p.heroImage))
+  .slice(0, 2);
+
+// Split the heading so the final word can carry a coral accent.
+const headingWords = heroHeading.trim().split(/\s+/);
+const headLead = headingWords.slice(0, -1).join(" ");
+const headTail = headingWords[headingWords.length - 1];
+
+// Brand-geometry palette cycle, drawn from the studio mural.
+const shapeColours = [
+  "var(--color-coral)",
+  "var(--color-teal-700)",
+  "var(--color-blue-grey-500)",
+  "var(--color-mint)",
+];
+
+const breadcrumbs = [
+  { name: "Home", url: "/" },
+  { name: "Services", url: "/services/" },
+  { name: cluster.replace(/-/g, " "), url: `/services/${cluster}/` },
+  { name, url: pageUrl },
+];
+---
+
+<Layout title={title} description={metaDescription}>
+  <BreadcrumbSchema items={breadcrumbs} />
+  <ServiceSchema name={name} description={metaDescription} url={pageUrl} />
+
+  <!-- ============ HERO ============ -->
+  <section class="geo-hero">
+    <!-- Decorative brand shapes -->
+    <span class="geo-shape geo-shape--coral-xl" aria-hidden="true"></span>
+    <span class="geo-shape geo-shape--teal-quarter" aria-hidden="true"></span>
+    <span class="geo-shape geo-shape--bluegrey-sm" aria-hidden="true"></span>
+    <span class="geo-shape geo-shape--mint-ring" aria-hidden="true"></span>
+
+    <div class="geo-hero__inner mx-auto max-w-[1320px] px-6 md:px-12">
+      <div class="geo-hero__copy">
+        <p class="geo-eyebrow">{heroEyebrow ?? name}</p>
+        <h1 class="geo-hero__title">
+          {headLead} <span class="geo-hero__accent">{headTail}</span>
+        </h1>
+        <p class="geo-hero__body">{heroBody}</p>
+        <div class="mt-9 flex flex-wrap gap-3">
+          <BtnFiller href={`/contact/?service=${slug}#contact`} variant="solid-white">
+            Talk to us about {name.toLowerCase()}
+          </BtnFiller>
+          <BtnFiller href="/work/" variant="on-dark">See selected work</BtnFiller>
+        </div>
+      </div>
+
+      {caseStudies[0] && (
+        <a class="geo-portrait" href={`/work/${caseStudies[0].slug}/`} aria-label={`Case study: ${caseStudies[0].name}`}>
+          <span class="geo-portrait__ring" aria-hidden="true"></span>
+          <span class="geo-portrait__quarter" aria-hidden="true"></span>
+          <figure class="geo-portrait__img">
+            <img src={caseStudies[0].heroImage} alt={caseStudies[0].name} loading="eager" decoding="async" />
+          </figure>
+          <span class="geo-portrait__tag">{caseStudies[0].name}</span>
+        </a>
+      )}
+    </div>
+  </section>
+
+  <!-- ============ STATEMENT ============ -->
+  <section class="geo-statement">
+    <span class="geo-shape geo-shape--navy-circle" aria-hidden="true"></span>
+    <span class="geo-shape geo-shape--statement-quarter" aria-hidden="true"></span>
+    <div class="mx-auto max-w-[1200px] px-6 md:px-12 relative" style="z-index:2;">
+      <p class="geo-statement__label">Why it matters</p>
+      <p class="geo-statement__text">{summary}</p>
+    </div>
+  </section>
+
+  <!-- ============ WHAT IT IS ============ -->
+  <section class="mx-auto max-w-[1200px] px-6 md:px-12 py-20 md:py-28">
+    <div class="geo-split">
+      <div class="geo-split__head">
+        <span class="geo-dot" aria-hidden="true"></span>
+        <p class="geo-eyebrow geo-eyebrow--coral">What it is</p>
+        <h2 class="geo-h2">How we approach {name.toLowerCase()}</h2>
+      </div>
+      <div class="geo-split__body">
+        <p>{whatItIs}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CAPABILITY LIST ============ -->
+  {whatsIncluded.length > 0 && (
+    <section class="geo-caps-wrap">
+      <div class="mx-auto max-w-[1200px] px-6 md:px-12 py-16 md:py-24">
+        <p class="geo-eyebrow geo-eyebrow--coral">What's included</p>
+        <h2 class="geo-h2 mb-12 md:mb-16">Everything {name.toLowerCase()} should cover</h2>
+        <ul class="geo-caps">
+          {whatsIncluded.map((it, i) => (
+            <li class="geo-cap">
+              <span class={`geo-cap__mark geo-cap__mark--${i % 4}`} aria-hidden="true"></span>
+              <span class="geo-cap__label">{it}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <!-- ============ PROCESS ============ -->
+  {process.length > 0 && (
+    <section class="mx-auto max-w-[1100px] px-6 md:px-12 py-20 md:py-28">
+      <p class="geo-eyebrow geo-eyebrow--coral">How we work</p>
+      <h2 class="geo-h2 mb-14">The process</h2>
+      <ol class="geo-steps">
+        {process.map((p, i) => (
+          <li class="geo-step">
+            <span class="geo-step__badge" style={`background:${shapeColours[i % shapeColours.length]};color:${i % 4 === 3 ? "var(--color-navy-900)" : "#fff"};`}>{p.step}</span>
+            <div class="geo-step__content">
+              <h3 class="geo-step__label">{p.label}</h3>
+              <p class="geo-step__body">{p.body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+  )}
+
+  <!-- ============ RESULTS ============ -->
+  {caseStudies.length > 0 && (
+    <section class="geo-results">
+      <span class="geo-shape geo-shape--results-circle" aria-hidden="true"></span>
+      <div class="mx-auto max-w-[1200px] px-6 md:px-12 py-20 md:py-28 relative" style="z-index:2;">
+        <p class="geo-eyebrow">Proof</p>
+        <h2 class="geo-h2" style="color:#fff;">Results we're proud of</h2>
+        <div class="geo-results__grid">
+          {caseStudies.map((cs, i) => (
+            <a href={`/work/${cs.slug}/`} class={`geo-result geo-result--${i}`}>
+              <figure class="geo-result__img">
+                <img src={cs.heroImage} alt={cs.name} loading="lazy" decoding="async" />
+              </figure>
+              <span class="geo-result__name">{cs.name}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- ============ SECTORS ============ -->
+  {sectorsThatBuy.length > 0 && (
+    <section class="mx-auto max-w-[1100px] px-6 md:px-12 py-16 md:py-20">
+      <p class="geo-eyebrow geo-eyebrow--coral">Where this lands</p>
+      <h2 class="geo-h2 mb-8">Sectors that buy {name.toLowerCase()}</h2>
+      <ul class="flex flex-wrap gap-3 list-none p-0 m-0">
+        {sectorsThatBuy.map((sec) => (
+          <li>
+            <a href={`/sectors/${sec}/`} class="geo-pill">
+              {sec.replace(/-/g, " ").replace(/\b\w/g, (m) => m.toUpperCase())}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  <!-- ============ RELATED ============ -->
+  {relatedServices.length > 0 && (
+    <section class="mx-auto max-w-[1100px] px-6 md:px-12 py-16 md:py-20">
+      <p class="geo-eyebrow geo-eyebrow--coral">Often paired with</p>
+      <h2 class="geo-h2 mb-8">Related services</h2>
+      <ul class="geo-related">
+        {relatedServices.map((rs, i) => (
+          <li>
+            <a href={`/services/${rs}/`} class="geo-related__item">
+              <span class={`geo-cap__mark geo-cap__mark--${i % 4}`} aria-hidden="true"></span>
+              <span>{rs.replace(/-/g, " ").replace(/\b\w/g, (m) => m.toUpperCase())}</span>
+              <span class="geo-related__arrow">→</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  {faq.length > 0 && (
+    <FAQBlock faqs={faq} heading={`${name} questions`} eyebrow="FAQ" />
+  )}
+
+  <PageCTA variant="service" service={slug} />
+</Layout>
+
+<style>
+  /* ---------- Shared type ---------- */
+  .geo-eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-mint);
+    margin-bottom: 1.25rem;
+  }
+  .geo-eyebrow--coral { color: var(--color-coral); }
+  .geo-h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4.5vw, 3.5rem);
+    color: var(--color-text-on-dark);
+    line-height: 1.04;
+    letter-spacing: -0.018em;
+    margin-top: 0.4rem;
+  }
+
+  /* ---------- Brand shapes ---------- */
+  .geo-shape { position: absolute; display: block; pointer-events: none; }
+  .geo-shape--coral-xl {
+    width: clamp(360px, 42vw, 680px); aspect-ratio: 1;
+    background: var(--color-coral); border-radius: 50%;
+    top: -16%; right: -10%; opacity: 0.92;
+  }
+  .geo-shape--teal-quarter {
+    width: clamp(200px, 22vw, 360px); aspect-ratio: 1;
+    background: var(--color-teal-700); border-radius: 0 100% 0 0;
+    bottom: -1px; left: -2%;
+  }
+  .geo-shape--bluegrey-sm {
+    width: clamp(90px, 9vw, 150px); aspect-ratio: 1;
+    background: var(--color-blue-grey-500); border-radius: 50%;
+    top: 22%; left: 46%; opacity: 0.85;
+  }
+  .geo-shape--mint-ring {
+    width: clamp(120px, 12vw, 200px); aspect-ratio: 1;
+    border: 3px solid var(--color-mint); border-radius: 50%;
+    bottom: 14%; right: 38%; opacity: 0.7;
+  }
+
+  /* ---------- Hero ---------- */
+  .geo-hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-navy-900);
+    padding: clamp(4rem, 12vh, 9rem) 0 clamp(3rem, 9vh, 7rem);
+  }
+  .geo-hero__inner {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+  @media (min-width: 1000px) {
+    .geo-hero__inner { grid-template-columns: 1.15fr 0.85fr; gap: 4rem; }
+  }
+  .geo-hero__title {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 8vw, 7rem);
+    line-height: 0.94;
+    letter-spacing: -0.03em;
+    color: #fff;
+    max-width: 14ch;
+  }
+  .geo-hero__accent { color: var(--color-coral); font-style: italic; }
+  .geo-hero__body {
+    font-family: var(--font-sans);
+    font-size: 1.25rem;
+    color: var(--color-text-on-dark-muted);
+    line-height: 1.55;
+    max-width: 40rem;
+    margin-top: 1.75rem;
+  }
+
+  /* Image clipped into a circle, with offset coral ring + quarter accent */
+  .geo-portrait {
+    position: relative;
+    display: block;
+    width: min(100%, 460px);
+    aspect-ratio: 1;
+    margin-inline: auto;
+    text-decoration: none;
+  }
+  .geo-portrait__ring {
+    position: absolute; inset: -18px -18px auto auto;
+    width: 78%; aspect-ratio: 1; border-radius: 50%;
+    border: 2px solid var(--color-coral);
+    top: -22px; right: -22px;
+  }
+  .geo-portrait__quarter {
+    position: absolute; left: -26px; bottom: 18px;
+    width: 110px; aspect-ratio: 1;
+    background: var(--color-mint); border-radius: 0 100% 0 0;
+    z-index: 0;
+  }
+  .geo-portrait__img {
+    position: relative; z-index: 1;
+    margin: 0; width: 100%; aspect-ratio: 1;
+    border-radius: 50%; overflow: hidden;
+  }
+  .geo-portrait__img img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 0.6s ease;
+  }
+  .geo-portrait:hover .geo-portrait__img img { transform: scale(1.06); }
+  .geo-portrait__tag {
+    position: absolute; z-index: 2;
+    left: 50%; bottom: -14px; transform: translateX(-50%);
+    background: var(--color-navy-900);
+    color: #fff; font-family: var(--font-sans); font-size: 0.8rem; font-weight: 600;
+    letter-spacing: 0.04em; padding: 0.55rem 1.1rem; border-radius: 9999px;
+    border: 1px solid rgba(255,255,255,0.12); white-space: nowrap;
+  }
+
+  /* ---------- Statement ---------- */
+  .geo-statement {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-coral);
+    color: #fff;
+    padding: clamp(4rem, 10vh, 7rem) 0;
+  }
+  .geo-shape--navy-circle {
+    width: clamp(280px, 30vw, 520px); aspect-ratio: 1;
+    background: var(--color-navy-900); border-radius: 50%;
+    top: -30%; right: -6%; opacity: 0.28;
+  }
+  .geo-shape--statement-quarter {
+    width: clamp(160px, 18vw, 280px); aspect-ratio: 1;
+    background: rgba(255,255,255,0.12); border-radius: 100% 0 0 0;
+    bottom: 0; left: 0;
+  }
+  .geo-statement__label {
+    font-family: var(--font-sans); font-size: 0.8rem; font-weight: 700;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--color-navy-900); margin-bottom: 1.5rem;
+  }
+  .geo-statement__text {
+    font-family: var(--font-display);
+    font-size: clamp(1.9rem, 4.6vw, 3.6rem);
+    line-height: 1.06; letter-spacing: -0.02em;
+    max-width: 20ch;
+  }
+
+  /* ---------- Split (what it is) ---------- */
+  .geo-split { display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
+  @media (min-width: 900px) {
+    .geo-split { grid-template-columns: 0.9fr 1.1fr; gap: 5rem; }
+  }
+  .geo-split__head { position: relative; }
+  .geo-dot {
+    display: block; width: 56px; aspect-ratio: 1;
+    background: var(--color-coral); border-radius: 50%;
+    margin-bottom: 1.5rem;
+  }
+  .geo-split__body p {
+    font-family: var(--font-sans); font-size: 1.2rem;
+    color: var(--color-text-on-dark-muted); line-height: 1.75;
+  }
+
+  /* ---------- Capability list ---------- */
+  .geo-caps-wrap {
+    background: var(--color-navy-700);
+  }
+  .geo-caps { list-style: none; padding: 0; margin: 0;
+    display: grid; grid-template-columns: 1fr; gap: 0;
+    border-top: 1px solid rgba(255,255,255,0.12);
+  }
+  @media (min-width: 760px) {
+    .geo-caps { grid-template-columns: 1fr 1fr; column-gap: 4rem; }
+  }
+  .geo-cap {
+    display: flex; align-items: center; gap: 1.25rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+  }
+  .geo-cap__label {
+    font-family: var(--font-display); font-size: 1.3rem; line-height: 1.25;
+    color: #fff;
+  }
+  .geo-cap__mark { flex: 0 0 auto; width: 30px; height: 30px; display: block; }
+  .geo-cap__mark--0 { background: var(--color-coral); border-radius: 50%; }
+  .geo-cap__mark--1 { background: var(--color-mint); border-radius: 0 100% 0 0; }
+  .geo-cap__mark--2 { background: var(--color-teal-700); border-radius: 50%; }
+  .geo-cap__mark--3 { background: var(--color-blue-grey-500); border-radius: 100% 0 0 0; }
+
+  /* ---------- Process ---------- */
+  .geo-steps { list-style: none; padding: 0; margin: 0; position: relative; }
+  .geo-step { display: flex; gap: 1.75rem; padding-bottom: 2.75rem; position: relative; }
+  .geo-step:not(:last-child)::before {
+    content: ""; position: absolute; left: 33px; top: 72px; bottom: 0;
+    width: 2px; background: rgba(255,255,255,0.12);
+  }
+  .geo-step__badge {
+    flex: 0 0 auto; width: 68px; height: 68px; border-radius: 50%;
+    display: grid; place-items: center;
+    font-family: var(--font-display); font-size: 1.6rem; line-height: 1;
+    position: relative; z-index: 1;
+  }
+  .geo-step__label {
+    font-family: var(--font-display); font-size: 1.6rem; color: #fff; line-height: 1.15;
+    margin-top: 0.55rem;
+  }
+  .geo-step__body {
+    font-family: var(--font-sans); font-size: 1.05rem; color: var(--color-text-on-dark-muted);
+    line-height: 1.65; max-width: 46rem; margin-top: 0.5rem;
+  }
+
+  /* ---------- Results ---------- */
+  .geo-results { position: relative; overflow: hidden; background: var(--color-teal-700); }
+  .geo-shape--results-circle {
+    width: clamp(300px, 34vw, 560px); aspect-ratio: 1;
+    background: rgba(255,255,255,0.06); border-radius: 50%;
+    bottom: -24%; left: -8%;
+  }
+  .geo-results__grid {
+    margin-top: 3rem;
+    display: grid; grid-template-columns: 1fr; gap: 3rem;
+    align-items: center;
+  }
+  @media (min-width: 820px) {
+    .geo-results__grid { grid-template-columns: 1fr 1fr; gap: 4rem; }
+    .geo-result--0 { transform: translateY(-1.5rem); }
+    .geo-result--1 { transform: translateY(2rem); }
+  }
+  .geo-result { display: block; text-decoration: none; }
+  .geo-result__img {
+    margin: 0; aspect-ratio: 1; border-radius: 50%; overflow: hidden;
+    border: 3px solid rgba(255,255,255,0.18);
+  }
+  .geo-result__img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+  .geo-result:hover .geo-result__img img { transform: scale(1.06); }
+  .geo-result__name {
+    display: block; margin-top: 1.25rem; text-align: center;
+    font-family: var(--font-display); font-size: 1.5rem; color: #fff;
+  }
+
+  /* ---------- Pills / related ---------- */
+  .geo-pill {
+    display: inline-flex; align-items: center; padding: 0.75rem 1.25rem;
+    border: 1px solid rgba(255,255,255,0.16); border-radius: 9999px;
+    color: #fff; font-family: var(--font-sans); font-size: 0.95rem; text-decoration: none;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+  .geo-pill:hover { border-color: var(--color-coral); background: rgba(225,80,71,0.12); }
+
+  .geo-related { list-style: none; padding: 0; margin: 0;
+    border-top: 1px solid rgba(255,255,255,0.12); }
+  .geo-related__item {
+    display: flex; align-items: center; gap: 1.25rem;
+    padding: 1.35rem 0; border-bottom: 1px solid rgba(255,255,255,0.12);
+    font-family: var(--font-display); font-size: 1.4rem; color: #fff; text-decoration: none;
+    transition: padding-left 0.25s ease;
+  }
+  .geo-related__item:hover { padding-left: 0.75rem; }
+  .geo-related__arrow { margin-left: auto; color: var(--color-coral); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .geo-portrait:hover .geo-portrait__img img,
+    .geo-result:hover .geo-result__img img { transform: none; }
+    .geo-result--0, .geo-result--1 { transform: none; }
+  }
+</style>
