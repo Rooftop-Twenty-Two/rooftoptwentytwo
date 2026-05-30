@@ -1,9 +1,12 @@
 ---
-// S9 — Single large testimonial. White section. Reuses the Nostra quote.
+// S9 — Single large testimonial. White section between the off-white stats and
+// the dark pre-footer CTA. Two-column editorial layout (oversized quote + a
+// framed portrait) so it earns its height instead of floating in white.
 interface Props {
   quote?: string;
   name?: string;
   company?: string;
+  role?: string;
   portrait?: string;
   logo?: string;
 }
@@ -11,38 +14,62 @@ const {
   quote = "Rooftop Twenty Two act as my Digital Marketing function in Nostra. They integrated seamlessly, bringing a wealth of experience and guidance. We achieved far more than expected in a relatively short period, and I would highly recommend Rooftop to any company seeking large-agency experience with a personal touch.",
   name = "Conor O'Brien",
   company = "Nostra",
+  role = "",
   portrait = "/images/site/conor-obrien.jpg",
   logo = "/images/logos/Nostra.svg",
 } = Astro.props;
 ---
 
 <section class="ts">
-  <div class="ts__inner reveal">
-    <p class="kicker">What clients say</p>
-    <blockquote class="ts__quote">&ldquo;{quote}&rdquo;</blockquote>
-    <div class="ts__by">
-      <img class="ts__portrait" src={portrait} alt={name} loading="lazy" decoding="async" />
-      <div class="ts__who">
-        <span class="ts__name">{name}</span>
-        <span class="ts__co">{company}</span>
+  <div class="ts__inner">
+    <div class="ts__main reveal">
+      <p class="kicker">What clients say</p>
+      <span class="ts__mark" aria-hidden="true">&ldquo;</span>
+      <blockquote class="ts__quote">{quote}</blockquote>
+      <div class="ts__by">
+        <div class="ts__who">
+          <span class="ts__name">{name}</span>
+          <span class="ts__co">{role ? `${role} · ${company}` : company}</span>
+        </div>
+        {logo && <img class="ts__logo" src={logo} alt={company} loading="lazy" decoding="async" />}
       </div>
-      {logo && <img class="ts__logo" src={logo} alt={company} loading="lazy" decoding="async" />}
+      <a href="/work/" class="ts__more r22-link r22-arrow">More client stories <span class="r22-arrow__i" aria-hidden="true">&rarr;</span></a>
     </div>
+    <figure class="ts__portrait reveal">
+      <img src={portrait} alt={`${name}, ${company}`} loading="lazy" decoding="async" width="708" height="1024" />
+    </figure>
   </div>
 </section>
 
 <style>
   .ts { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
-  .ts__inner { max-width: 1000px; margin: 0 auto; padding-inline: var(--w-gutter); text-align: center; }
+  .ts__inner {
+    max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter);
+    display: grid; grid-template-columns: 1fr; gap: 2.5rem; align-items: center;
+  }
+  @media (min-width: 900px) { .ts__inner { grid-template-columns: 1.5fr 0.85fr; gap: 4.5rem; } }
+  .ts__mark {
+    display: block; font-family: var(--w-font-display); font-weight: 700;
+    font-size: 5rem; line-height: 0.6; color: var(--c-accent); margin-top: 1rem;
+  }
   .ts__quote {
     font-family: var(--w-font-display); font-weight: 500;
-    font-size: clamp(1.5rem, 2.2vw + 1rem, 2.75rem);
-    line-height: 1.18; letter-spacing: -0.01em; margin: 1.5rem auto 0; max-width: 24ch; color: var(--c-ink);
+    font-size: clamp(1.5rem, 1.9vw + 1rem, 2.6rem);
+    line-height: 1.18; letter-spacing: var(--tracking-display); margin: 1rem 0 0; color: var(--c-ink);
   }
-  .ts__by { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 2.5rem; }
-  .ts__portrait { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; }
-  .ts__who { display: flex; flex-direction: column; text-align: left; }
-  .ts__name { font-family: var(--w-font-body); font-weight: 700; }
+  .ts__by { display: flex; align-items: center; gap: 1.25rem; margin-top: 2.25rem; flex-wrap: wrap; }
+  .ts__who { display: flex; flex-direction: column; }
+  .ts__name { font-family: var(--w-font-body); font-weight: 700; font-size: 1.05rem; }
   .ts__co { font-family: var(--w-font-body); color: var(--c-ink-soft); font-size: var(--fs-small); }
-  .ts__logo { height: 26px; width: auto; margin-left: 0.5rem; opacity: 0.8; }
+  .ts__logo { height: 30px; width: auto; opacity: 0.85; }
+  .ts__more {
+    display: inline-flex; align-items: center; gap: 0.4rem; margin-top: 1.75rem;
+    font-family: var(--w-font-body); font-weight: 600; color: var(--c-accent);
+  }
+  .ts__portrait {
+    margin: 0; border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 3 / 4;
+    border: 1px solid var(--c-line); box-shadow: var(--w-shadow-soft); background: var(--c-bg-alt);
+  }
+  .ts__portrait img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  @media (max-width: 899px) { .ts__portrait { max-width: 360px; } }
 </style>

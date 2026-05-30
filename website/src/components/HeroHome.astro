@@ -3,7 +3,8 @@
 // Near-black canvas, slow-pan (Ken Burns) office photo, kicker, big display
 // H1 with a rotating discipline word, dual pill CTAs. No video asset yet —
 // structured so a <video> can drop in behind .whero__media later.
-const rotating = ["Paid Social", "SEO", "Video", "Web", "Email", "Content"];
+// Default resting word is "growth" (the homepage promise); the rest rotate.
+const rotating = ["growth", "performance", "SEO", "social", "web", "content"];
 const poster = "/images/office/office-collab-01.jpg";
 ---
 
@@ -90,7 +91,7 @@ const poster = "/images/office/office-collab-01.jpg";
     position: absolute;
     left: 0;
     top: 0;
-    color: var(--c-accent-2);
+    color: var(--c-accent-2-bright);
     opacity: 0;
     transform: translateY(0.45em);
     transition: opacity 0.55s var(--w-ease), transform 0.55s var(--w-ease);

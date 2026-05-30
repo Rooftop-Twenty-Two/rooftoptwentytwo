@@ -463,9 +463,10 @@ body.alternate-theme [data-header] .header-logo--navy { display: block !importan
   --c-dark-2: #143A4F;        /* secondary navy — layered dark / inputs */
   --c-on-dark: #FFFFFF;
   --c-on-dark-soft: #C2DDDB;  /* brand teal_200 — muted text on dark */
-  --c-accent: #E15047;        /* Rooftop coral — actions / accents on light */
+  --c-accent: #E15047;        /* Rooftop coral — THE primary accent (actions, emphasis, numbers) */
   --c-accent-ink: #FFFFFF;    /* text on coral */
-  --c-accent-2: #00FFB2;      /* Rooftop mint — accents on dark / hovers */
+  --c-accent-2: #2F7E78;      /* muted teal — secondary accent on light (replaces harsh mint) */
+  --c-accent-2-bright: #6FC2B8; /* lighter teal — legible secondary on navy/photo darks */
   --c-line: #E6E2D9;          /* hairline on warm off-white */
   --c-line-dark: rgba(255,255,255,0.12); /* hairline on navy */
 
@@ -476,16 +477,16 @@ body.alternate-theme [data-header] .header-logo--navy { display: block !importan
   --w-font-script: "Starlit Drive", "Brush Script MT", cursive;
 
   /* Fluid type scale */
-  --fs-display: clamp(2.75rem, 6vw + 1rem, 6.5rem);
-  --fs-h2: clamp(2rem, 3vw + 1rem, 3.5rem);
-  --fs-h3: clamp(1.375rem, 1.2vw + 1rem, 1.875rem);
+  --fs-display: clamp(3rem, 6.8vw + 1rem, 7.75rem);
+  --fs-h2: clamp(2.25rem, 3.4vw + 1rem, 4rem);
+  --fs-h3: clamp(1.5rem, 1.3vw + 1rem, 2rem);
   --fs-kicker: 0.8125rem;
   --fs-body: clamp(1rem, 0.3vw + 0.95rem, 1.1875rem);
   --fs-small: 0.85rem;
-  --lh-display: 1.0;
-  --lh-heading: 1.08;
+  --lh-display: 0.95;            /* tighter, more confident display leading */
+  --lh-heading: 1.04;
   --lh-body: 1.6;
-  --tracking-display: -0.01em;  /* relaxed for the Butler serif */
+  --tracking-display: -0.022em;  /* big, tight Butler display */
   --tracking-kicker: 0.14em;
 
   /* Layout / motion */
@@ -510,7 +511,7 @@ body.alternate-theme [data-header] .header-logo--navy { display: block !importan
   text-transform: uppercase;
   color: var(--c-ink-soft);
 }
-.kicker--on-dark { color: var(--c-accent-2); }
+.kicker--on-dark { color: var(--c-accent-2-bright); font-weight: 700; }
 
 /* Pill buttons (re-skin design system — distinct from legacy .btn-pill) */
 .wbtn {

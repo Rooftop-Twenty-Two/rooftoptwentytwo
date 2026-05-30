@@ -127,25 +127,30 @@ const extraImages = gallery.slice(sections.length);
   .cs-prose :global(h2), .cs-prose :global(h3) { font-family: var(--w-font-display); color: var(--c-ink); line-height: 1.15; margin: 2rem 0 0.75rem; }
   .cs-prose :global(a) { color: var(--c-ink); text-decoration: underline; }
 
-  /* Interleaved image breakers (replace the old standalone gallery). Alternate
-   * full-bleed and inset; each carries a short editorial caption. */
+  /* Interleaved image breakers (replace the old standalone gallery). Every image
+   * is framed consistently (border + radius + shadow, fixed 16:9) so busy client
+   * UI screenshots read as presented work, not raw bleed. "Feature" breakers sit
+   * on a calm navy mat band for brand contrast and pacing; the rest on the page. */
   .cs-breaker { margin: 0; }
-  .cs-breaker__media { border-radius: 0; }
-  .cs-breaker__media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .cs-breaker__media {
+    width: min(1100px, calc(100% - 2 * var(--w-gutter)));
+    margin-inline: auto;
+    border-radius: var(--w-radius); border: 1px solid var(--c-line);
+    box-shadow: var(--w-shadow-soft); background: var(--c-bg-alt);
+  }
+  .cs-breaker__media img { display: block; width: 100%; height: 100%; object-fit: cover; aspect-ratio: 16 / 9; }
   .cs-breaker__cap {
-    max-width: 1100px; margin: 0.9rem auto 0; padding-inline: var(--w-gutter);
+    width: min(1100px, calc(100% - 2 * var(--w-gutter)));
+    margin: 0.9rem auto 0;
     font-family: var(--w-font-body); font-size: var(--fs-small); letter-spacing: 0.04em;
     text-transform: uppercase; color: var(--c-ink-soft);
   }
   .cs-breaker__cap span { color: var(--c-accent); padding: 0 0.2rem; }
 
-  .cs-breaker--bleed .cs-breaker__media { width: 100%; }
-  .cs-breaker--bleed .cs-breaker__media img { height: clamp(340px, 60vh, 720px); }
-
-  .cs-breaker--inset { max-width: 1100px; width: 100%; margin: 0 auto; padding-inline: var(--w-gutter); }
-  .cs-breaker--inset .cs-breaker__media { border-radius: var(--w-radius); }
-  .cs-breaker--inset .cs-breaker__media img { aspect-ratio: 16 / 9; }
-  .cs-breaker--inset .cs-breaker__cap { padding-inline: 0; }
+  /* Feature breaker — framed on a navy band. */
+  .cs-breaker--bleed { background: var(--c-dark); padding-block: clamp(2.5rem, 5vw, 4.5rem); }
+  .cs-breaker--bleed .cs-breaker__media { border-color: var(--c-line-dark); background: var(--c-dark-2); }
+  .cs-breaker--bleed .cs-breaker__cap { color: var(--c-on-dark-soft); }
 
   .cs-more { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
   .cs-more__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
@@ -154,7 +159,7 @@ const extraImages = gallery.slice(sections.length);
   .cs-more__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 2rem; }
   @media (min-width: 760px) { .cs-more__grid { grid-template-columns: repeat(3, 1fr); } }
   .cs-more__grid a { text-decoration: none; color: inherit; display: block; }
-  .cs-more__img { margin: 0; border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 4 / 3; background: var(--c-bg-alt); box-shadow: var(--w-shadow-soft); }
+  .cs-more__img { margin: 0; border: 1px solid var(--c-line); border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 4 / 3; background: var(--c-bg-alt); box-shadow: var(--w-shadow-soft); }
   .cs-more__img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform var(--w-dur) var(--w-ease); }
   .cs-more__grid a:hover .cs-more__img img { transform: scale(1.04); }
   .cs-more__name { font-family: var(--w-font-display); font-weight: 600; font-size: 1.25rem; margin: 1rem 0 0; }

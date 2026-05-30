@@ -31,6 +31,10 @@ const caseStudies = (caseStudySlugs ?? [])
   .map((sl) => pfBySlug.get(sl))
   .filter((p): p is NonNullable<typeof p> => Boolean(p && p.heroImage))
   .slice(0, 3);
+// Add a "view all work" tile when there are fewer than 3 cases so the row
+// fills its height instead of leaving a bare empty half.
+const showWorkCta = caseStudies.length > 0 && caseStudies.length < 3;
+const workCols = Math.min(caseStudies.length + (showWorkCta ? 1 : 0), 3);
 
 // Emphasise the final word of the heading.
 const hw = heroHeading.trim().split(/\s+/);
@@ -52,7 +56,7 @@ const breadcrumbs = isClusterParent
     title={heroTitle}
     intro={heroBody}
     bg={caseStudies[0]?.heroImage}
-    primary={{ label: `Talk to us about ${name.toLowerCase()}`, href: `/contact/?service=${slug}#contact` }}
+    primary={{ label: `Talk to us about ${name}`, href: `/contact/?service=${slug}#contact` }}
     secondary={{ label: "See selected work", href: "/work/" }}
   />
 
@@ -61,7 +65,7 @@ const breadcrumbs = isClusterParent
     <div class="ws-split__inner">
       <div class="reveal">
         <p class="kicker">What it is</p>
-        <h2 class="ws-h2">How we approach {name.toLowerCase()}</h2>
+        <h2 class="ws-h2">How we approach {name}</h2>
       </div>
       <p class="ws-lead reveal">{whatItIs}</p>
     </div>
@@ -71,7 +75,7 @@ const breadcrumbs = isClusterParent
     <section class="ws-inc">
       <div class="ws-inc__inner">
         <p class="kicker">What&rsquo;s included</p>
-        <h2 class="ws-h2 ws-mb">Everything {name.toLowerCase()} should cover</h2>
+        <h2 class="ws-h2 ws-mb">Everything {name} should cover</h2>
         <ul class="ws-cap">
           {whatsIncluded.map((it, i) => (
             <li class="reveal">
@@ -108,16 +112,26 @@ const breadcrumbs = isClusterParent
     <section class="ws-work">
       <div class="ws-work__inner">
         <p class="kicker">Proof</p>
-        <h2 class="ws-h2 ws-mb">Results we&rsquo;re <em>proud of</em>.</h2>
-        <ul class="ws-work__grid">
+        <h2 class="ws-h2 ws-mb">Work we&rsquo;d <em>put our name to</em>.</h2>
+        <ul class="ws-work__grid" style={`--ws-cols:${workCols}`}>
           {caseStudies.map((cs) => (
             <li class="reveal">
-              <a href={`/work/${cs.slug}/`}>
-                <figure class="ws-work__img"><img src={cs.heroImage} alt={cs.name} loading="lazy" decoding="async" /></figure>
+              <a class="r22-card" href={`/work/${cs.slug}/`}>
+                <figure class="ws-work__img r22-media"><img src={cs.heroImage} alt={cs.name} loading="lazy" decoding="async" /></figure>
                 <span class="ws-work__name">{cs.name}</span>
+                {cs.tagline && <span class="ws-work__tag">{cs.tagline}</span>}
               </a>
             </li>
           ))}
+          {showWorkCta && (
+            <li class="reveal">
+              <a class="ws-work__cta" href="/work/">
+                <span class="ws-work__cta-k">More results</span>
+                <span class="ws-work__cta-h">See the full portfolio</span>
+                <span class="r22-arrow ws-work__cta-a">Browse all work <span class="r22-arrow__i" aria-hidden="true">&rarr;</span></span>
+              </a>
+            </li>
+          )}
         </ul>
       </div>
     </section>
@@ -129,7 +143,7 @@ const breadcrumbs = isClusterParent
         {sectorsThatBuy.length > 0 && (
           <div>
             <p class="kicker">Where this lands</p>
-            <h2 class="ws-h3 ws-mb-s">Sectors that buy {name.toLowerCase()}</h2>
+            <h2 class="ws-h3 ws-mb-s">Sectors that buy {name}</h2>
             <ul class="ws-pills">
               {sectorsThatBuy.map((s) => (
                 <li><a href={`/sectors/${s}/`}>{s.replace(/-/g, " ").replace(/\b\w/g, (m) => m.toUpperCase())}</a></li>
@@ -155,16 +169,26 @@ const breadcrumbs = isClusterParent
   {faq.length > 0 && (
     <section class="ws-faq">
       <div class="ws-faq__inner">
-        <p class="kicker">FAQ</p>
-        <h2 class="ws-h2 ws-mb">{name} questions</h2>
-        <ul class="ws-faq__list">
-          {faq.map((f) => (
-            <li class="reveal">
-              <h3 class="ws-faq__q">{f.question}</h3>
-              <p class="ws-faq__a">{f.answer}</p>
-            </li>
-          ))}
-        </ul>
+        <div class="ws-faq__main">
+          <p class="kicker">FAQ</p>
+          <h2 class="ws-h2 ws-mb">{name} questions</h2>
+          <ul class="ws-faq__list">
+            {faq.map((f) => (
+              <li class="reveal">
+                <h3 class="ws-faq__q">{f.question}</h3>
+                <p class="ws-faq__a">{f.answer}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <aside class="ws-faq__aside reveal">
+          <div class="ws-faq__card">
+            <p class="kicker kicker--on-dark">Still have questions?</p>
+            <p class="ws-faq__card-h">Talk to the team that does the work.</p>
+            <p class="ws-faq__card-b">No account managers passing notes — you speak to the people running your {name}.</p>
+            <a href={`/contact/?service=${slug}#contact`} class="wbtn wbtn--accent">Talk to us about {name}</a>
+          </div>
+        </aside>
       </div>
     </section>
   )}
@@ -174,7 +198,7 @@ const breadcrumbs = isClusterParent
 
 <style>
   .ws-h2 { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); line-height: var(--lh-heading); letter-spacing: var(--tracking-display); color: var(--c-ink); margin: 0.5rem 0 0; }
-  .ws-h2 :global(em) { font-style: italic; }
+  .ws-h2 :global(em) { font-style: italic; color: var(--c-accent); }
   .ws-h3 { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); line-height: 1.1; color: var(--c-ink); margin: 0.5rem 0 0; }
   .ws-mb { margin-bottom: 2.5rem; }
   .ws-mb-s { margin-bottom: 1.25rem; }
@@ -197,19 +221,28 @@ const breadcrumbs = isClusterParent
   .ws-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
   @media (min-width: 760px) { .ws-steps { grid-template-columns: 1fr 1fr; gap: 3rem; } }
   .ws-steps li { display: flex; gap: 1.25rem; }
-  .ws-steps__n { font-family: var(--w-font-display); font-weight: 700; font-size: 2.5rem; line-height: 1; color: var(--c-accent-2); flex: 0 0 auto; }
+  .ws-steps__n { font-family: var(--w-font-display); font-weight: 700; font-size: 2.5rem; line-height: 1; color: var(--c-accent-2-bright); flex: 0 0 auto; }
   .ws-steps__label { font-family: var(--w-font-display); font-weight: 600; font-size: 1.5rem; color: var(--c-on-dark); margin: 0; line-height: 1.15; }
   .ws-steps__body { font-family: var(--w-font-body); font-size: 1rem; color: var(--c-on-dark-soft); line-height: 1.6; margin: 0.5rem 0 0; }
 
   .ws-work { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
   .ws-work__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
   .ws-work__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 2rem; }
-  @media (min-width: 720px) { .ws-work__grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 720px) { .ws-work__grid { grid-template-columns: repeat(var(--ws-cols, 3), 1fr); } }
   .ws-work__grid a { text-decoration: none; color: inherit; display: block; }
-  .ws-work__img { margin: 0; border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 4 / 3; box-shadow: var(--w-shadow-soft); }
-  .ws-work__img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform var(--w-dur) var(--w-ease); }
-  .ws-work__grid a:hover .ws-work__img img { transform: scale(1.04); }
+  .ws-work__img { margin: 0; border: 1px solid var(--c-line); border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 4 / 3; box-shadow: var(--w-shadow-soft); }
+  .ws-work__img img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .ws-work__name { display: block; font-family: var(--w-font-display); font-weight: 600; font-size: 1.25rem; margin-top: 1rem; }
+  .ws-work__tag { display: block; font-family: var(--w-font-body); font-size: 0.95rem; color: var(--c-ink-soft); margin-top: 0.3rem; line-height: 1.4; }
+  /* Fill tile when a service has < 3 cases — keeps the row from going bare. */
+  .ws-work__cta {
+    display: flex; flex-direction: column; justify-content: center; gap: 0.5rem;
+    height: 100%; min-height: 0; aspect-ratio: 4 / 3; padding: 1.75rem;
+    background: var(--c-dark); color: var(--c-on-dark); border-radius: var(--w-radius);
+  }
+  .ws-work__cta-k { font-family: var(--w-font-body); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--c-accent-2-bright); }
+  .ws-work__cta-h { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); line-height: 1.1; }
+  .ws-work__cta-a { font-family: var(--w-font-body); font-weight: 600; color: var(--c-accent-2-bright); margin-top: 0.5rem; }
 
   .ws-rel { background: var(--c-bg-alt); color: var(--c-ink); padding-block: var(--w-section-y); }
   .ws-rel__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); display: grid; grid-template-columns: 1fr; gap: 3rem; }
@@ -223,7 +256,13 @@ const breadcrumbs = isClusterParent
   .ws-pills a:hover { border-color: var(--c-ink); }
 
   .ws-faq { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
-  .ws-faq__inner { max-width: 900px; margin: 0 auto; padding-inline: var(--w-gutter); }
+  .ws-faq__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); display: grid; grid-template-columns: 1fr; gap: 3rem; }
+  @media (min-width: 940px) { .ws-faq__inner { grid-template-columns: 1.5fr 1fr; gap: 4rem; align-items: start; } }
+  .ws-faq__aside { }
+  @media (min-width: 940px) { .ws-faq__aside { position: sticky; top: 6rem; } }
+  .ws-faq__card { background: var(--c-dark); color: var(--c-on-dark); border-radius: var(--w-radius); padding: clamp(1.75rem, 3vw, 2.5rem); }
+  .ws-faq__card-h { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); line-height: 1.1; margin: 0.75rem 0 0; color: var(--c-on-dark); }
+  .ws-faq__card-b { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.6; color: var(--c-on-dark-soft); margin: 1rem 0 1.75rem; }
   .ws-faq__list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--c-line); }
   .ws-faq__list li { padding: 1.75rem 0; border-bottom: 1px solid var(--c-line); }
   .ws-faq__q { font-family: var(--w-font-display); font-weight: 600; font-size: 1.3rem; color: var(--c-ink); margin: 0; }

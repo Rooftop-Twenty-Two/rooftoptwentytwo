@@ -18,7 +18,7 @@ const total = String(cards.length).padStart(2, "0");
   <div class="sw__head">
     <div class="sw__intro reveal">
       <p class="kicker">Selected work</p>
-      <h2 class="sw__title">Results we&rsquo;re <em>proud of</em>.</h2>
+      <h2 class="sw__title">Work we&rsquo;d <em>put our name to</em>.</h2>
     </div>
     <div class="sw__controls">
       <p class="sw__progress" aria-hidden="true"><span data-sw-current>01</span> / {total}</p>
@@ -96,7 +96,7 @@ const total = String(cards.length).padStart(2, "0");
   .sw__card { scroll-snap-align: start; }
   .sw__card a { text-decoration: none; color: inherit; display: block; }
   .sw__img {
-    margin: 0; border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 4 / 3;
+    margin: 0; border: 1px solid var(--c-line); border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 4 / 3;
     background: #fff; box-shadow: var(--w-shadow-soft);
   }
   .sw__img img { width: 100%; height: 100%; object-fit: cover; display: block; }
