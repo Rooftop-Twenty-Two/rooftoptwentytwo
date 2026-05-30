@@ -522,9 +522,10 @@ body.alternate-theme [data-header] .header-logo--navy { display: block !importan
   font-weight: 400;
   text-transform: none;
   letter-spacing: 0.01em;
-  font-size: clamp(1.6rem, 1vw + 1.4rem, 2.25rem);
-  line-height: 0.9;
+  font-size: clamp(2.25rem, 2.2vw + 1.6rem, 3.5rem);
+  line-height: 0.95;
   color: var(--c-accent);
+  margin-bottom: 0.35rem;
   transform: rotate(-2deg);
   transform-origin: left center;
 }
