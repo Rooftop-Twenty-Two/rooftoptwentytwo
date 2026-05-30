@@ -50,6 +50,13 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://rooftoptwen
     <link rel="preload" href="/fonts/mulish-variable.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/starlit-drive.woff2" as="font" type="font/woff2" crossorigin />
     <OrganizationSchema />
+    <noscript>
+      <style>
+        .reveal, .reveal--left, .reveal--right, .reveal--scale, .reveal--stagger > * {
+          opacity: 1 !important; transform: none !important;
+        }
+      </style>
+    </noscript>
   </head>
   <body class:list={[theme === "light" ? "theme-light" : "theme-dark"]}>
     <div class="cursor-glow" aria-hidden="true" data-cursor-glow></div>
@@ -65,7 +72,10 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://rooftoptwen
       document.documentElement.classList.add("js-ready");
 
       // ---------- .reveal IntersectionObserver ----------
-      const targets = document.querySelectorAll<HTMLElement>(".reveal");
+      // Catches the base .reveal plus directional/scale/stagger variants.
+      const targets = document.querySelectorAll<HTMLElement>(
+        ".reveal, .reveal--left, .reveal--right, .reveal--scale, .reveal--stagger"
+      );
       if (targets.length) {
         if (!("IntersectionObserver" in window)) {
           targets.forEach((el) => el.classList.add("is-visible"));

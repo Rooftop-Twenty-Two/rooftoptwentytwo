@@ -142,6 +142,32 @@ body {
   transform: none;
 }
 
+/* Reveal variants: directional + scale, for subtle variety between sections. */
+.js-ready .reveal--left { opacity: 0; transform: translateX(-26px); transition: opacity 600ms var(--ease-out-rooftop), transform 600ms var(--ease-out-rooftop); }
+.js-ready .reveal--right { opacity: 0; transform: translateX(26px); transition: opacity 600ms var(--ease-out-rooftop), transform 600ms var(--ease-out-rooftop); }
+.js-ready .reveal--scale { opacity: 0; transform: scale(.965); transition: opacity 600ms var(--ease-out-rooftop), transform 600ms var(--ease-out-rooftop); }
+.js-ready .reveal--left.is-visible,
+.js-ready .reveal--right.is-visible,
+.js-ready .reveal--scale.is-visible { opacity: 1; transform: none; }
+
+/* Per-item delays (use on individual .reveal elements). */
+.reveal--delay-1.is-visible { transition-delay: .08s; }
+.reveal--delay-2.is-visible { transition-delay: .16s; }
+.reveal--delay-3.is-visible { transition-delay: .24s; }
+.reveal--delay-4.is-visible { transition-delay: .32s; }
+
+/* Container stagger: children fade/rise in sequence when the parent enters view.
+ * Add .reveal--stagger to a grid/list wrapper, no per-child classes needed. */
+.js-ready .reveal--stagger > * { opacity: 0; transform: translateY(16px); transition: opacity 550ms var(--ease-out-rooftop), transform 550ms var(--ease-out-rooftop); }
+.js-ready .reveal--stagger.is-visible > * { opacity: 1; transform: none; }
+.js-ready .reveal--stagger.is-visible > *:nth-child(1) { transition-delay: .04s; }
+.js-ready .reveal--stagger.is-visible > *:nth-child(2) { transition-delay: .10s; }
+.js-ready .reveal--stagger.is-visible > *:nth-child(3) { transition-delay: .16s; }
+.js-ready .reveal--stagger.is-visible > *:nth-child(4) { transition-delay: .22s; }
+.js-ready .reveal--stagger.is-visible > *:nth-child(5) { transition-delay: .28s; }
+.js-ready .reveal--stagger.is-visible > *:nth-child(6) { transition-delay: .34s; }
+.js-ready .reveal--stagger.is-visible > *:nth-child(n+7) { transition-delay: .40s; }
+
 /* Pill button atom */
 .btn-pill {
   display: inline-flex;

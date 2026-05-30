@@ -23,9 +23,9 @@ const dateFmt = new Intl.DateTimeFormat("en-IE", { day: "numeric", month: "short
         <a href="/latest/" class="wbtn wbtn--primary li__all">View all insights</a>
       </div>
 
-      <ul class="li__grid">
+      <ul class="li__grid reveal--stagger">
         {posts.map((p) => (
-          <li class="reveal">
+          <li>
             <a class="li__card r22-card" href={`/latest/${p.data.slug}/`}>
               <figure class="li__media r22-media">
                 {p.data.heroImage

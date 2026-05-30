@@ -21,9 +21,9 @@ const team = (await getCollection("team"))
       <p class="tm__lead">A senior, in-house team that treats your growth like our own, the people who strategise are the people who ship.</p>
     </div>
 
-    <ul class="tm__grid">
+    <ul class="tm__grid reveal--stagger">
       {team.map((m) => (
-        <li class:list={["tm__member reveal", m.data.name === "Justin" && "tm__member--static"]}>
+        <li class:list={["tm__member", m.data.name === "Justin" && "tm__member--static"]}>
           <div class="tm__img"><Picture src={m.data.portrait} alt={m.data.name} loading="lazy" decoding="async" /></div>
           <p class="tm__name">{m.data.name}</p>
           <p class="tm__role">{m.data.role}</p>

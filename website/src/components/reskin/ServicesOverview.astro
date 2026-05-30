@@ -27,9 +27,9 @@ const services = [
       <p class="kicker kicker--script">Our expertise</p>
       <h2 class="so__title">Everything you need <em>to grow</em>. One team.</h2>
     </div>
-    <ul class="so__list">
+    <ul class="so__list reveal--stagger">
       {services.map((s, i) => (
-        <li class="so__row reveal">
+        <li class="so__row">
           <span class="so__num">{String(i + 1).padStart(2, "0")}</span>
           <a class="so__name" href={s.href}>{s.name}</a>
           <p class="so__body">{s.body}</p>
