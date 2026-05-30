@@ -1,94 +1,152 @@
 ---
+import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
-import Signature from "../components/Signature.astro";
-import TeamGrid from "../components/TeamGrid.astro";
+import PageHero from "../components/reskin/PageHero.astro";
+import WTestimonial from "../components/reskin/WTestimonial.astro";
+import WCtaBand from "../components/reskin/WCtaBand.astro";
+
+const team = (await getCollection("team")).sort(
+  (a, b) => (a.data.order ?? 100) - (b.data.order ?? 100)
+);
+
+const gallery = [
+  { src: "/images/office/office-collab-01.jpg", alt: "Two Rooftop team members reviewing work on screen", span: true },
+  { src: "/images/office/office-work-01.jpg", alt: "A social campaign for TC Matthews in progress" },
+  { src: "/images/office/office-portrait-01.jpg", alt: "A Rooftop team member at work in the studio" },
+  { src: "/images/office/office-collab-02.jpg", alt: "Two Rooftop team members collaborating on a laptop" },
+  { src: "/images/office/office-work-02.jpg", alt: "Irish Landmark Trust content alongside campaign analytics" },
+];
+
+const values = [
+  { title: "Owners, not vendors", body: "We work like we're part of your team — invested in your growth, not just billing for hours." },
+  { title: "Everything in-house", body: "Strategy, brand, web, paid, and content under one roof. One joined-up team, no hand-offs." },
+  { title: "Accountable to outcomes", body: "We measure success the way you do: pipeline, revenue, and results that compound over time." },
+];
 ---
 
 <Layout title="About | Rooftop Twenty Two" description="An independent branding and digital design studio in Dublin, working with exceptional Irish businesses and not-for-profits.">
-  <section class="mx-auto max-w-[1440px] px-6 md:px-12 pt-12 md:pt-20 pb-16 md:pb-24">
-    <Signature text="About us" tone="coral" rotate={-3} />
-    <h1
-      class="mt-6 max-w-4xl"
-      style="font-family:var(--font-display);font-size:clamp(2rem, 4vw, 3.5rem);color:var(--color-text-on-dark);line-height:1.1;letter-spacing:-0.01em;"
-    >
-      Rooftop Twenty Two is an independent branding and digital design studio that develops brands, strategies, and experiences for exceptional companies.
-    </h1>
-  </section>
+  <PageHero
+    kicker="About us"
+    title="We&rsquo;re your <em>outsourced growth team</em>."
+    intro="Rooftop Twenty Two is an independent studio that develops brands, strategies, and experiences for exceptional companies — plugging into your business like an in-house team."
+    bg="/images/office/office-studio-01.jpg"
+  />
 
-  <section class="mx-auto max-w-[1440px] px-6 md:px-12 pb-24 md:pb-32">
-    <Signature text="Life at the studio" tone="mint" rotate={-2} />
-    <h2
-      class="mt-4 mb-10 md:mb-14 max-w-3xl"
-      style="font-family:var(--font-display);font-size:clamp(2.25rem, 5vw, 4rem);color:var(--color-text-on-dark);line-height:1.05;letter-spacing:-0.01em;"
-    >
-      Heads down, ideas up — a few moments from the Rooftop studio.
-    </h2>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5">
-      <figure class="col-span-2 md:row-span-2 overflow-hidden" style="border-radius:var(--radius-card-lg);">
-        <img
-          src="/images/office/office-collab-01.jpg"
-          alt="Two Rooftop team members reviewing work together on screen"
-          loading="lazy"
-          decoding="async"
-          class="w-full h-full object-cover"
-        />
-      </figure>
-      <figure class="overflow-hidden" style="border-radius:var(--radius-card-lg);">
-        <img
-          src="/images/office/office-work-01.jpg"
-          alt="A social campaign for TC Matthews in progress"
-          loading="lazy"
-          decoding="async"
-          class="w-full h-full object-cover"
-        />
-      </figure>
-      <figure class="overflow-hidden" style="border-radius:var(--radius-card-lg);">
-        <img
-          src="/images/office/office-portrait-01.jpg"
-          alt="A Rooftop team member at work in the studio"
-          loading="lazy"
-          decoding="async"
-          class="w-full h-full object-cover"
-        />
-      </figure>
-      <figure class="overflow-hidden" style="border-radius:var(--radius-card-lg);">
-        <img
-          src="/images/office/office-collab-02.jpg"
-          alt="Two Rooftop team members collaborating on a laptop"
-          loading="lazy"
-          decoding="async"
-          class="w-full h-full object-cover"
-        />
-      </figure>
-      <figure class="overflow-hidden" style="border-radius:var(--radius-card-lg);">
-        <img
-          src="/images/office/office-work-02.jpg"
-          alt="Irish Landmark Trust social content alongside campaign analytics"
-          loading="lazy"
-          decoding="async"
-          class="w-full h-full object-cover"
-        />
-      </figure>
-      <figure class="col-span-2 overflow-hidden" style="border-radius:var(--radius-card-lg);">
-        <img
-          src="/images/office/office-studio-01.jpg"
-          alt="The Rooftop Twenty Two breakout lounge with the studio's branded mural"
-          loading="lazy"
-          decoding="async"
-          class="w-full h-full object-cover"
-        />
-      </figure>
+  <!-- Story -->
+  <section class="ab-story">
+    <div class="ab-story__inner">
+      <div class="reveal">
+        <p class="kicker">Our story</p>
+        <h2 class="ab-h2">Big-agency thinking, <em>without the big agency</em>.</h2>
+      </div>
+      <div class="ab-story__body reveal">
+        <p>
+          We&rsquo;re an independent branding and digital design studio in Dublin,
+          working with ambitious Irish businesses and not-for-profits. The team
+          that strategises is the team that produces and ships — so the work stays
+          joined-up across every surface of your brand.
+        </p>
+        <p>
+          No silos, no offshore hand-offs, no jargon. Just a senior, in-house team
+          that treats your growth like our own.
+        </p>
+      </div>
     </div>
   </section>
 
-  <section class="mx-auto max-w-[1440px] px-6 md:px-12 pb-24 md:pb-32">
-    <Signature text="Team" tone="mint" rotate={-2} />
-    <h2
-      class="mt-4 mb-12 md:mb-16"
-      style="font-family:var(--font-display);font-size:clamp(2.25rem, 5vw, 4rem);color:var(--color-text-on-dark);line-height:1.05;letter-spacing:-0.01em;"
-    >
-      A wide team that looks big to us.
-    </h2>
-    <TeamGrid />
+  <!-- Values -->
+  <section class="ab-vals">
+    <div class="ab-vals__inner">
+      <p class="kicker kicker--on-dark">What we&rsquo;re about</p>
+      <h2 class="ab-h2 ab-vals__title">Performance, people, purpose.</h2>
+      <div class="ab-vals__grid">
+        {values.map((v, i) => (
+          <div class="ab-val reveal">
+            <span class="ab-val__n">{String(i + 1).padStart(2, "0")}</span>
+            <h3 class="ab-val__title">{v.title}</h3>
+            <p class="ab-val__body">{v.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
   </section>
+
+  <!-- Life at the studio -->
+  <section class="ab-life">
+    <div class="ab-life__inner">
+      <p class="kicker">Life at the studio</p>
+      <h2 class="ab-h2 ab-mb">Heads down, ideas up.</h2>
+      <div class="ab-life__grid">
+        {gallery.map((g) => (
+          <figure class:list={["ab-shot", g.span ? "ab-shot--wide" : ""]}>
+            <img src={g.src} alt={g.alt} loading="lazy" decoding="async" />
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Team -->
+  <section class="ab-team">
+    <div class="ab-team__inner">
+      <p class="kicker">Meet the team</p>
+      <h2 class="ab-h2 ab-mb">A wide team that looks big to us.</h2>
+      <ul class="ab-team__grid">
+        {team.map((m) => (
+          <li class="reveal">
+            <figure class="ab-member">
+              <div class="ab-member__img"><img src={m.data.portrait} alt={m.data.name} loading="lazy" decoding="async" /></div>
+              <figcaption>
+                <p class="ab-member__name">{m.data.name}</p>
+                <p class="ab-member__role">{m.data.role}</p>
+              </figcaption>
+            </figure>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <WTestimonial />
+  <WCtaBand />
 </Layout>
+
+<style>
+  .ab-h2 { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); line-height: var(--lh-heading); letter-spacing: var(--tracking-display); margin: 0.5rem 0 0; }
+  .ab-h2 em { font-style: italic; }
+  .ab-mb { margin-bottom: 2.5rem; }
+
+  .ab-story { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .ab-story__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); display: grid; grid-template-columns: 1fr; gap: 2rem; }
+  @media (min-width: 900px) { .ab-story__inner { grid-template-columns: 0.85fr 1.15fr; gap: 4rem; } }
+  .ab-story__body p { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.75; color: var(--c-ink-soft); margin: 0 0 1.25rem; }
+
+  .ab-vals { background: var(--c-dark); color: var(--c-on-dark); padding-block: var(--w-section-y); }
+  .ab-vals__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .ab-vals__title { color: var(--c-on-dark); }
+  .ab-vals__grid { margin-top: 3rem; display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
+  @media (min-width: 760px) { .ab-vals__grid { grid-template-columns: repeat(3, 1fr); gap: 3rem; } }
+  .ab-val__n { font-family: var(--w-font-display); font-weight: 700; font-size: 2rem; color: var(--c-accent); }
+  .ab-val__title { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); color: var(--c-on-dark); margin: 0.75rem 0 0; }
+  .ab-val__body { font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-on-dark-soft); line-height: 1.6; margin: 0.75rem 0 0; }
+
+  .ab-life { background: var(--c-bg-alt); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .ab-life__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .ab-life__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+  @media (min-width: 760px) { .ab-life__grid { grid-template-columns: repeat(4, 1fr); gap: 1.25rem; } }
+  .ab-shot { margin: 0; border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 1; }
+  .ab-shot--wide { grid-column: span 2; aspect-ratio: 2 / 1; }
+  .ab-shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .ab-team { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .ab-team__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .ab-team__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem 1.25rem; }
+  @media (min-width: 640px) { .ab-team__grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 1000px) { .ab-team__grid { grid-template-columns: repeat(4, 1fr); gap: 2rem; } }
+  .ab-member { margin: 0; }
+  .ab-member__img { border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 5 / 6; background: var(--c-bg-alt); }
+  .ab-member__img img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); transition: filter var(--w-dur) var(--w-ease), transform var(--w-dur) var(--w-ease); }
+  .ab-member:hover .ab-member__img img { filter: grayscale(0); transform: scale(1.03); }
+  .ab-member__name { font-family: var(--w-font-display); font-weight: 600; font-size: 1.1rem; color: var(--c-ink); margin: 0.85rem 0 0; }
+  .ab-member__role { font-family: var(--w-font-body); font-size: var(--fs-small); color: var(--c-ink-soft); margin: 0.2rem 0 0; }
+</style>
