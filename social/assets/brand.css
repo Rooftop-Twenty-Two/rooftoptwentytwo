@@ -79,7 +79,8 @@
 /* Full-bleed photo background */
 .photo { position: absolute; inset: 0; z-index: 0; background-size: cover; background-position: center; }
 .photo__scrim { position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgb(13 32 48 / 0.30) 0%, rgb(13 32 48 / 0.45) 45%, rgb(13 32 48 / 0.92) 100%); }
-.has-photo .post__body { justify-content: flex-end; }
+.has-photo .post__body { justify-content: flex-end; padding-bottom: calc(var(--pad) + 70px); }
+.post.li-land.has-photo .post__body { padding-bottom: calc(var(--pad) + 50px); }
 
 /* Split: image panel beside content */
 .post.has-split { flex-direction: row; }
