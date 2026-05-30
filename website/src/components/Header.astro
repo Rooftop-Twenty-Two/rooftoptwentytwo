@@ -205,13 +205,15 @@ const isActive = (base: string) => path === base || path.startsWith(base);
   @media (min-width: 1024px) { .hd__menu { display: none; } }
 
   /* Mega panel */
+  /* Centered on screen (fixed, below the 80px header bar) rather than anchored
+   * under each nav item. Panel stays a child of the <li> so hover-intent holds. */
   .mega {
-    position: absolute; top: 100%; left: 0; padding-top: 0.6rem;
-    visibility: hidden; opacity: 0; transform: translateY(-8px);
+    position: fixed; top: 80px; left: 50%; padding-top: 0.6rem;
+    visibility: hidden; opacity: 0; transform: translate(-50%, -8px);
     transition: opacity var(--w-dur) var(--w-ease), transform var(--w-dur) var(--w-ease), visibility var(--w-dur);
     z-index: 120;
   }
-  .hd__item[data-open="true"] .mega { visibility: visible; opacity: 1; transform: translateY(0); }
+  .hd__item[data-open="true"] .mega { visibility: visible; opacity: 1; transform: translate(-50%, 0); }
   .mega__grid {
     display: grid; gap: 2rem; padding: clamp(1.5rem, 3vw, 2.5rem);
     background: var(--c-bg); color: var(--c-ink);
@@ -252,7 +254,7 @@ const isActive = (base: string) => path === base || path.startsWith(base);
   .mega__tile:hover img { transform: scale(1.05); }
 
   @media (prefers-reduced-motion: reduce) {
-    .mega { transition: opacity var(--w-dur-fast) linear; transform: none !important; }
+    .mega { transition: opacity var(--w-dur-fast) linear; transform: translate(-50%, 0) !important; }
   }
 </style>
 

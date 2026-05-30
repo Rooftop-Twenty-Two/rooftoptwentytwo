@@ -402,10 +402,11 @@ body {
   height: 520px;
   margin-left: -260px;
   margin-top: -260px;
-  background: radial-gradient(circle, rgba(33, 92, 94, 0.65) 0%, rgba(33, 92, 94, 0.32) 30%, rgba(33, 92, 94, 0) 65%);
+  /* Mint halo, normal compositing so it reads on light sections too (screen-blend
+   * only lightened the dark header/footer, which is why it looked header/footer-only). */
+  background: radial-gradient(circle, rgba(1, 255, 178, 0.16) 0%, rgba(1, 255, 178, 0.07) 38%, rgba(1, 255, 178, 0) 68%);
   pointer-events: none;
   z-index: 1;
-  mix-blend-mode: screen;
   transform: translate3d(-1000px, -1000px, 0);
   transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1), opacity 400ms ease;
   opacity: 0;
@@ -465,8 +466,8 @@ body.alternate-theme [data-header] .header-logo--navy { display: block !importan
   --c-on-dark-soft: #C2DDDB;  /* brand teal_200 — muted text on dark */
   --c-accent: #E15047;        /* Rooftop coral — THE primary accent (actions, emphasis, numbers) */
   --c-accent-ink: #FFFFFF;    /* text on coral */
-  --c-accent-2: #2F7E78;      /* muted teal — secondary accent on light (replaces harsh mint) */
-  --c-accent-2-bright: #6FC2B8; /* lighter teal — legible secondary on navy/photo darks */
+  --c-accent-2: #01FFB2;      /* Rooftop mint — secondary accent (client-preferred) */
+  --c-accent-2-bright: #01FFB2; /* same mint on navy/photo darks */
   --c-line: #E6E2D9;          /* hairline on warm off-white */
   --c-line-dark: rgba(255,255,255,0.12); /* hairline on navy */
 

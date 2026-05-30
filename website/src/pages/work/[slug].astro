@@ -2,7 +2,7 @@
 import { getCollection, render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import PageHero from "../../components/reskin/PageHero.astro";
-import WCtaBand from "../../components/reskin/WCtaBand.astro";
+import WContactForm from "../../components/reskin/WContactForm.astro";
 import Picture from "../../components/Picture.astro";
 
 export async function getStaticPaths() {
@@ -83,6 +83,12 @@ const extraImages = gallery.slice(sections.length);
     <div class="cs-wrap"><article class="cs-prose"><Content /></article></div>
   </section>
 
+  <WContactForm
+    heading={`Want results like ${name}'s? <em>Let's talk</em>.`}
+    routing={`project:${Astro.params.slug}`}
+    prefillSubject={`Project enquiry — inspired by ${name}`}
+  />
+
   <section class="cs-more">
     <div class="cs-more__inner">
       <div class="cs-more__head">
@@ -109,7 +115,6 @@ const extraImages = gallery.slice(sections.length);
     </div>
   </section>
 
-  <WCtaBand />
 </Layout>
 
 <style>
