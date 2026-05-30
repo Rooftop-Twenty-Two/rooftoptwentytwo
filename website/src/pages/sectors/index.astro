@@ -1,9 +1,8 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
-import Signature from "../../components/Signature.astro";
-import BtnFiller from "../../components/BtnFiller.astro";
-import PageCTA from "../../components/PageCTA.astro";
+import PageHero from "../../components/reskin/PageHero.astro";
+import WCtaBand from "../../components/reskin/WCtaBand.astro";
 import BreadcrumbSchema from "../../components/seo/BreadcrumbSchema.astro";
 
 const sectors = (await getCollection("sectors")).sort(
@@ -17,51 +16,52 @@ const sectors = (await getCollection("sectors")).sort(
 >
   <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "Sectors", url: "/sectors/" }]} />
 
-  <section class="mx-auto max-w-[1440px] px-6 md:px-12 pt-12 md:pt-20 pb-12 md:pb-16">
-    <Signature text="Sectors" tone="coral" rotate={-3} />
-    <h1
-      class="mt-4 max-w-4xl"
-      style="font-family:var(--font-display);font-size:clamp(2.75rem, 7vw, 5.5rem);color:var(--color-text-on-dark);letter-spacing:-0.02em;line-height:1.05;"
-    >
-      Marketing built around your sector.
-    </h1>
-    <p
-      class="mt-6 max-w-2xl"
-      style="font-family:var(--font-sans);font-size:1.25rem;color:var(--color-text-on-dark-muted);line-height:1.55;"
-    >
-      We're focused on a handful of sectors where we've built genuine depth. The buyer journeys are different, the seasonality is different, and the levers that actually move pipeline are different.
-    </p>
-    <div class="mt-8 flex flex-wrap gap-3">
-      <BtnFiller href="/contact/#contact" variant="solid-white">Talk to us about yours</BtnFiller>
-      <BtnFiller href="/work/" variant="on-dark">See selected work</BtnFiller>
+  <PageHero
+    kicker="Sectors"
+    title="Marketing built around your <em>sector</em>."
+    intro="We work closely with a handful of sectors where we've built real depth. The buyer journeys are different, the seasons are different, and the things that actually move pipeline are different. We know yours."
+    primary={{ label: "Talk to us about yours", href: "/contact/#contact" }}
+    secondary={{ label: "See our work", href: "/work/" }}
+  />
+
+  <section class="sec">
+    <div class="sec__inner">
+      {sectors.length > 0 ? (
+        <ul class="sec__grid">
+          {sectors.map((s, i) => (
+            <li class="reveal">
+              <a class="sec-card" href={`/sectors/${s.data.slug}/`}>
+                <span class="sec-card__n">{String(i + 1).padStart(2, "0")}</span>
+                <h2 class="sec-card__title">{s.data.name}</h2>
+                <p class="sec-card__sum">{s.data.summary}</p>
+                <span class="sec-card__cta r22-arrow">Explore <span class="r22-arrow__i" aria-hidden="true">&rarr;</span></span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="sec__empty">Sector pages are on the way. In the meantime, every sector starts the same way: a conversation about your buyer, your numbers, and where to focus first.</p>
+      )}
     </div>
   </section>
 
-  {sectors.length > 0 ? (
-    <section class="mx-auto max-w-[1200px] px-6 md:px-12 pb-24 md:pb-32">
-      <ul class="grid grid-cols-1 md:grid-cols-2 gap-6 list-none p-0 m-0">
-        {sectors.map((s) => (
-          <li>
-            <a
-              href={`/sectors/${s.data.slug}/`}
-              class="block p-8 transition-transform hover:-translate-y-1"
-              style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-card-md);color:var(--color-text-on-dark);text-decoration:none;height:100%;"
-            >
-              <h2 style="font-family:var(--font-display);font-size:clamp(1.5rem, 2.5vw, 2rem);line-height:1.1;letter-spacing:-0.01em;">{s.data.name}</h2>
-              <p class="mt-3" style="font-family:var(--font-sans);font-size:1rem;color:var(--color-text-on-dark-muted);line-height:1.55;">{s.data.summary}</p>
-              <p class="mt-4" style="font-family:var(--font-sans);font-size:0.875rem;color:var(--color-mint);">Explore →</p>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </section>
-  ) : (
-    <section class="mx-auto max-w-[800px] px-6 md:px-12 pb-24 md:pb-32">
-      <p style="font-family:var(--font-sans);font-size:1.0625rem;color:var(--color-text-on-dark-muted);line-height:1.7;">
-        Detailed sector pages are being added. In the meantime, every sector engagement starts the same way, a conversation about your buyer, your numbers, and the right place to focus.
-      </p>
-    </section>
-  )}
-
-  <PageCTA variant="default" />
+  <WCtaBand />
 </Layout>
+
+<style>
+  .sec { background: var(--c-bg-alt); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .sec__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .sec__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+  @media (min-width: 760px) { .sec__grid { grid-template-columns: 1fr 1fr; gap: 1.75rem; } }
+  .sec-card {
+    display: block; height: 100%; background: var(--c-bg); border: 1px solid var(--c-line);
+    border-radius: var(--w-radius); padding: clamp(1.75rem, 3vw, 2.5rem); text-decoration: none; color: inherit;
+    transition: transform var(--w-dur) var(--w-ease), box-shadow var(--w-dur) var(--w-ease);
+  }
+  .sec-card:hover { transform: translateY(-3px); box-shadow: var(--w-shadow-soft); }
+  .sec-card__n { font-family: var(--w-font-display); font-weight: 700; font-size: 1.1rem; color: var(--c-accent); }
+  .sec-card__title { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); line-height: 1.1; color: var(--c-ink); margin: 0.6rem 0 0; }
+  .sec-card__sum { font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-ink-soft); line-height: 1.55; margin: 0.6rem 0 0; }
+  .sec-card__cta { display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--w-font-body); font-weight: 600; color: var(--c-accent); margin-top: 1.25rem; }
+  .sec__empty { font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-ink-soft); max-width: 60ch; }
+</style>

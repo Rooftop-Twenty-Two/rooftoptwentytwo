@@ -1,10 +1,9 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
-import Signature from "../Signature.astro";
-import BtnFiller from "../BtnFiller.astro";
-import FAQBlock from "../FAQBlock.astro";
-import PageCTA from "../PageCTA.astro";
+import PageHero from "../reskin/PageHero.astro";
+import WCtaBand from "../reskin/WCtaBand.astro";
+import Picture from "../Picture.astro";
 import BreadcrumbSchema from "../seo/BreadcrumbSchema.astro";
 
 type FAQ = { question: string; answer: string };
@@ -27,237 +26,236 @@ interface Props {
 }
 
 const {
-  name,
-  slug,
-  summary,
-  metaDescription,
-  heroEyebrow,
-  heroHeading,
-  heroBody,
-  challenges,
-  pointOfView,
-  serviceSlugs,
-  programmeSlugs,
-  caseStudySlugs,
-  aggregateMetrics,
-  faq,
+  name, slug, metaDescription, heroEyebrow, heroHeading, heroBody,
+  challenges, pointOfView, serviceSlugs, programmeSlugs, caseStudySlugs,
+  aggregateMetrics, faq,
 } = Astro.props;
 
 const pageUrl = `/sectors/${slug}/`;
 const title = `${name} | Rooftop Twenty Two`;
-const titleCase = (s: string) =>
-  s.replace(/-/g, " ").replace(/\b\w/g, (m) => m.toUpperCase());
+const lower = name.toLowerCase();
+const titleCase = (s: string) => s.replace(/-/g, " ").replace(/\b\w/g, (m) => m.toUpperCase());
 
-// Load + filter the case studies referenced by this sector. Preserves the
-// order declared in caseStudySlugs so the page author controls priority.
 const portfolio = await getCollection("portfolio", ({ data }) => !data.needs_review);
 const caseStudies = caseStudySlugs
   .map((s) => portfolio.find((e) => e.id.replace(/\.mdx?$/, "") === s))
-  .filter((e): e is NonNullable<typeof e> => Boolean(e));
+  .filter((e): e is NonNullable<typeof e> => Boolean(e && e.data.heroImage))
+  .slice(0, 6);
 ---
 
 <Layout title={title} description={metaDescription}>
-  <BreadcrumbSchema
-    items={[
-      { name: "Home", url: "/" },
-      { name: "Sectors", url: "/sectors/" },
-      { name, url: pageUrl },
-    ]}
+  <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "Sectors", url: "/sectors/" }, { name, url: pageUrl }]} />
+
+  <PageHero
+    kicker={heroEyebrow ?? "Sectors"}
+    title={heroHeading}
+    intro={heroBody}
+    primary={{ label: `Talk to us about ${lower}`, href: `/contact/?sector=${slug}#contact` }}
+    secondary={{ label: "See selected work", href: "/work/" }}
   />
 
-  <section class="mx-auto max-w-[1200px] px-6 md:px-12 pt-12 md:pt-20 pb-16 md:pb-24">
-    {heroEyebrow && <Signature text={heroEyebrow} tone="coral" rotate={-3} size="clamp(2rem, 3.5vw, 3rem)" />}
-    <h1
-      class="mt-4 max-w-4xl"
-      style="font-family:var(--font-display);font-size:clamp(2.75rem, 7vw, 5.5rem);color:var(--color-text-on-dark);letter-spacing:-0.02em;line-height:1.05;"
-    >
-      {heroHeading}
-    </h1>
-    <p
-      class="mt-6 max-w-2xl"
-      style="font-family:var(--font-sans);font-size:1.25rem;color:var(--color-text-on-dark-muted);line-height:1.55;"
-    >
-      {heroBody}
-    </p>
-    <div class="mt-8 flex flex-wrap gap-3">
-      <BtnFiller href={`/contact/?sector=${slug}#contact`} variant="solid-white">
-        Talk to us about {name.toLowerCase()}
-      </BtnFiller>
-      <BtnFiller href="/work/" variant="on-dark">See selected work</BtnFiller>
-    </div>
-  </section>
-
   {aggregateMetrics.length > 0 && (
-    <section class="mx-auto max-w-[1200px] px-6 md:px-12 py-8">
-      <ul class="grid grid-cols-2 md:grid-cols-4 gap-6 list-none p-0 m-0">
-        {aggregateMetrics.map((m) => (
-          <li>
-            <p style="font-family:var(--font-display);font-size:clamp(2rem, 3.5vw, 3rem);color:var(--color-mint);line-height:1;">{m.value}</p>
-            <p class="mt-2" style="font-family:var(--font-sans);font-size:0.875rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-text-on-dark-muted);">{m.label}</p>
-          </li>
-        ))}
-      </ul>
+    <section class="se-stats">
+      <div class="se-stats__inner">
+        <ul class="se-stats__grid">
+          {aggregateMetrics.map((m) => (
+            <li>
+              <span class="se-stats__v">{m.value}</span>
+              <span class="se-stats__l">{m.label}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
     </section>
   )}
 
   {challenges.length > 0 && (
-    <section class="mx-auto max-w-[1100px] px-6 md:px-12 py-12 md:py-16 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16">
-      <div class="md:col-span-4">
-        <p style="font-family:var(--font-sans);font-size:0.85rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--color-text-on-dark-muted);">Common challenges</p>
-        <h2
-          class="mt-2"
-          style="font-family:var(--font-display);font-size:clamp(1.75rem, 3vw, 2.5rem);color:var(--color-text-on-dark);line-height:1.15;letter-spacing:-0.01em;"
-        >
-          What we see in {name.toLowerCase()}
-        </h2>
+    <section class="se-block">
+      <div class="se-block__inner">
+        <div class="se-block__head reveal">
+          <p class="kicker kicker--script">Common challenges</p>
+          <h2 class="se-h2">What we see in {lower}.</h2>
+        </div>
+        <ul class="se-chal">
+          {challenges.map((c) => <li class="reveal">{c}</li>)}
+        </ul>
       </div>
-      <ul class="md:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 list-none p-0 m-0" style="font-family:var(--font-sans);font-size:1.0625rem;color:var(--color-text-on-dark);">
-        {challenges.map((c) => (
-          <li class="flex gap-3">
-            <span style="color:var(--color-coral);flex-shrink:0;">→</span>
-            <span>{c}</span>
-          </li>
-        ))}
-      </ul>
     </section>
   )}
 
   {pointOfView && (
-    <section class="mx-auto max-w-[1100px] px-6 md:px-12 py-12 md:py-16 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16">
-      <div class="md:col-span-4">
-        <p style="font-family:var(--font-sans);font-size:0.85rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--color-text-on-dark-muted);">Our point of view</p>
-        <h2
-          class="mt-2"
-          style="font-family:var(--font-display);font-size:clamp(1.75rem, 3vw, 2.5rem);color:var(--color-text-on-dark);line-height:1.15;letter-spacing:-0.01em;"
-        >
-          How we approach {name.toLowerCase()}
-        </h2>
+    <section class="se-block se-block--alt">
+      <div class="se-block__inner">
+        <div class="se-block__head reveal">
+          <p class="kicker kicker--script">Our point of view</p>
+          <h2 class="se-h2">How we approach {lower}.</h2>
+        </div>
+        <p class="se-pov reveal">{pointOfView}</p>
       </div>
-      <p class="md:col-span-8 max-w-2xl" style="font-family:var(--font-sans);font-size:1.125rem;color:var(--color-text-on-dark-muted);line-height:1.7;">{pointOfView}</p>
     </section>
   )}
 
   {serviceSlugs.length > 0 && (
-    <section class="mx-auto max-w-[1100px] px-6 md:px-12 py-12 md:py-16">
-      <p style="font-family:var(--font-sans);font-size:0.85rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--color-text-on-dark-muted);">Services that fit</p>
-      <h2
-        class="mt-2 mb-8"
-        style="font-family:var(--font-display);font-size:clamp(1.75rem, 3vw, 2.5rem);color:var(--color-text-on-dark);line-height:1.15;letter-spacing:-0.01em;"
-      >
-        How we typically engage with {name.toLowerCase()}
-      </h2>
-      <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 list-none p-0 m-0">
-        {serviceSlugs.map((s) => (
-          <li>
-            <a
-              href={`/services/${s}/`}
-              class="block p-5 transition-transform hover:-translate-y-1"
-              style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-card-md);color:var(--color-text-on-dark);text-decoration:none;"
-            >
-              <p style="font-family:var(--font-display);font-size:1.25rem;line-height:1.2;">{titleCase(s)}</p>
-              <p class="mt-2" style="font-family:var(--font-sans);font-size:0.875rem;color:var(--color-text-on-dark-muted);">Explore →</p>
-            </a>
-          </li>
-        ))}
-      </ul>
+    <section class="se-svc">
+      <div class="se-svc__inner">
+        <p class="kicker kicker--script">Services that fit</p>
+        <h2 class="se-h2 se-mb">How we typically work with {lower}.</h2>
+        <ul class="se-svc__grid">
+          {serviceSlugs.map((s) => (
+            <li class="reveal">
+              <a class="se-svc__card" href={`/services/${s}/`}>
+                <span class="se-svc__name">{titleCase(s)}</span>
+                <span class="se-svc__cta r22-arrow">Explore <span class="r22-arrow__i" aria-hidden="true">&rarr;</span></span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
     </section>
   )}
 
   {caseStudies.length > 0 && (
-    <section class="mx-auto max-w-[1280px] px-6 md:px-12 py-12 md:py-16">
-      <div class="flex flex-wrap items-end justify-between gap-4 mb-10">
-        <div>
-          <p style="font-family:var(--font-sans);font-size:0.85rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--color-text-on-dark-muted);">Selected work</p>
-          <h2
-            class="mt-2"
-            style="font-family:var(--font-display);font-size:clamp(1.75rem, 3vw, 2.5rem);color:var(--color-text-on-dark);line-height:1.15;letter-spacing:-0.01em;"
-          >
-            What we've shipped in {name.toLowerCase()}
-          </h2>
+    <section class="se-work">
+      <div class="se-work__inner">
+        <div class="se-work__top">
+          <div>
+            <p class="kicker kicker--script">Selected work</p>
+            <h2 class="se-h2">What we&rsquo;ve shipped in {lower}.</h2>
+          </div>
+          <a href="/work/" class="wbtn wbtn--primary se-work__all">View all projects</a>
         </div>
-        <a
-          href="/work/"
-          style="font-family:var(--font-sans);font-size:0.95rem;color:var(--color-mint);font-weight:600;text-decoration:none;"
-        >
-          View all projects →
-        </a>
+        <ul class="se-work__grid">
+          {caseStudies.map((e) => {
+            const cslug = e.id.replace(/\.mdx?$/, "");
+            const svcs = (e.data.services ?? []).slice(0, 2);
+            return (
+              <li class="reveal">
+                <a href={`/work/${cslug}/`}>
+                  <figure class="se-work__img r22-media"><Picture src={e.data.heroImage!} alt={e.data.name} loading="lazy" decoding="async" /></figure>
+                  <span class="se-work__name">{e.data.name}</span>
+                  {e.data.tagline && <span class="se-work__tag">{e.data.tagline}</span>}
+                  {svcs.length > 0 && <span class="se-work__svcs">{svcs.join(" · ")}</span>}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
       </div>
-      <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 list-none p-0 m-0">
-        {caseStudies.slice(0, 6).map((e) => {
-          const cslug = e.id.replace(/\.mdx?$/, "");
-          const svcs = (e.data.services ?? []).slice(0, 2);
-          return (
-            <li>
-              <a
-                href={`/work/${cslug}/`}
-                class="block group"
-                style="text-decoration:none;color:var(--color-text-on-dark);"
-              >
-                <div
-                  class="relative overflow-hidden"
-                  style={`border-radius:var(--radius-card-md);aspect-ratio:4/3;background-color:var(--color-navy-700);${
-                    e.data.heroImage ? `background-image:url('${e.data.heroImage}');background-size:cover;background-position:center;` : ""
-                  }`}
-                >
-                  {e.data.wordmark && (
-                    <div class="absolute inset-0 flex items-center justify-center">
-                      <img
-                        src={e.data.wordmark}
-                        alt={`${e.data.name} wordmark`}
-                        loading="lazy"
-                        decoding="async"
-                        style="max-width:55%;max-height:60px;width:auto;height:auto;object-fit:contain;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.25));"
-                      />
-                    </div>
-                  )}
-                  <div
-                    class="absolute inset-0"
-                    style="background:linear-gradient(180deg, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.0) 50%, rgba(0,0,0,0.2) 100%);pointer-events:none;"
-                  ></div>
-                </div>
-                <div class="mt-4">
-                  <p style="font-family:var(--font-display);font-size:1.25rem;line-height:1.15;letter-spacing:-0.01em;">{e.data.name}</p>
-                  {e.data.tagline && (
-                    <p class="mt-1" style="font-family:var(--font-sans);font-size:0.9rem;color:var(--color-text-on-dark-muted);line-height:1.45;">{e.data.tagline}</p>
-                  )}
-                  {svcs.length > 0 && (
-                    <p class="mt-2" style="font-family:var(--font-sans);font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-text-on-dark-muted);">{svcs.join(" · ")}</p>
-                  )}
-                </div>
-              </a>
-            </li>
-          );
-        })}
-      </ul>
     </section>
   )}
 
   {programmeSlugs.length > 0 && (
-    <section class="mx-auto max-w-[1100px] px-6 md:px-12 py-12 md:py-16">
-      <p style="font-family:var(--font-sans);font-size:0.85rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--color-mint);">Enterprise Ireland funded</p>
-      <h2
-        class="mt-2"
-        style="font-family:var(--font-display);font-size:clamp(1.75rem, 3vw, 2.5rem);color:var(--color-text-on-dark);line-height:1.15;letter-spacing:-0.01em;"
-      >
-        Funded programmes for {name.toLowerCase()}
-      </h2>
-      <ul class="mt-6 flex flex-wrap gap-3 list-none p-0 m-0">
-        {programmeSlugs.map((p) => (
-          <li>
-            <a
-              href={`/programmes/${p}/`}
-              class="inline-flex items-center px-5 py-3"
-              style="background:var(--color-mint);color:var(--color-navy-900);border-radius:9999px;font-family:var(--font-sans);font-weight:600;font-size:0.95rem;text-decoration:none;"
-            >
-              {titleCase(p)}
-            </a>
-          </li>
-        ))}
-      </ul>
+    <section class="se-prog">
+      <div class="se-prog__inner">
+        <p class="kicker kicker--on-dark kicker--script">Enterprise Ireland funded</p>
+        <h2 class="se-h2 se-prog__h">Funded programmes for {lower}.</h2>
+        <ul class="se-prog__pills">
+          {programmeSlugs.map((p) => (
+            <li><a href={`/programmes/${p}/`}>{titleCase(p)}</a></li>
+          ))}
+        </ul>
+      </div>
     </section>
   )}
 
-  {faq.length > 0 && <FAQBlock faqs={faq} heading={`${name} questions`} eyebrow="FAQ" />}
+  {faq.length > 0 && (
+    <section class="se-faq">
+      <div class="se-faq__inner">
+        <div class="se-faq__main">
+          <p class="kicker kicker--script">FAQ</p>
+          <h2 class="se-h2 se-mb">{name} questions.</h2>
+          <ul class="se-faq__list">
+            {faq.map((f) => (
+              <li class="reveal">
+                <h3 class="se-faq__q">{f.question}</h3>
+                <p class="se-faq__a">{f.answer}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <aside class="se-faq__aside reveal">
+          <div class="se-faq__card">
+            <p class="kicker kicker--on-dark">Still have questions?</p>
+            <p class="se-faq__card-h">Talk to the team that does the work.</p>
+            <p class="se-faq__card-b">No notes passed between account managers. You speak to the people running your {lower} marketing.</p>
+            <a href={`/contact/?sector=${slug}#contact`} class="wbtn wbtn--accent">Talk to us about {lower}</a>
+          </div>
+        </aside>
+      </div>
+    </section>
+  )}
 
-  <PageCTA variant="sector" sector={slug} />
+  <WCtaBand />
 </Layout>
+
+<style>
+  .se-h2 { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); line-height: var(--lh-heading); letter-spacing: var(--tracking-display); color: var(--c-ink); margin: 0.4rem 0 0; }
+  .se-h2 em { font-style: italic; color: var(--c-accent); }
+  .se-mb { margin-bottom: 2.5rem; }
+
+  /* Stats band */
+  .se-stats { background: var(--c-dark); color: var(--c-on-dark); padding-block: clamp(2.5rem, 5vw, 4rem); }
+  .se-stats__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .se-stats__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+  @media (min-width: 760px) { .se-stats__grid { grid-template-columns: repeat(4, 1fr); } }
+  .se-stats__v { display: block; font-family: var(--w-font-display); font-weight: 700; font-size: clamp(2.2rem, 4vw, 3.25rem); line-height: 1; color: var(--c-accent-2-bright); }
+  .se-stats__l { display: block; font-family: var(--w-font-body); font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--c-on-dark-soft); margin-top: 0.6rem; }
+
+  /* Text blocks (challenges / POV) */
+  .se-block { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .se-block--alt { background: var(--c-bg-alt); }
+  .se-block__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); display: grid; grid-template-columns: 1fr; gap: 2rem; }
+  @media (min-width: 900px) { .se-block__inner { grid-template-columns: 0.8fr 1.2fr; gap: 4rem; } }
+  .se-chal { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 1rem; }
+  @media (min-width: 600px) { .se-chal { grid-template-columns: 1fr 1fr; gap: 1rem 2.5rem; } }
+  .se-chal li { position: relative; padding-left: 1.6rem; font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-ink-soft); line-height: 1.5; }
+  .se-chal li::before { content: ""; position: absolute; left: 0; top: 0.5em; width: 0.6rem; height: 0.6rem; border-radius: 0 100% 0 0; background: var(--c-accent); }
+  .se-pov { font-family: var(--w-font-body); font-size: 1.15rem; line-height: 1.7; color: var(--c-ink-soft); margin: 0; max-width: 60ch; }
+
+  /* Services that fit */
+  .se-svc { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .se-svc__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .se-svc__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 1rem; }
+  @media (min-width: 600px) { .se-svc__grid { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 920px) { .se-svc__grid { grid-template-columns: repeat(3, 1fr); } }
+  .se-svc__card { display: flex; flex-direction: column; gap: 0.75rem; height: 100%; background: var(--c-bg-alt); border: 1px solid var(--c-line); border-radius: var(--w-radius); padding: 1.5rem; text-decoration: none; transition: transform var(--w-dur) var(--w-ease); }
+  .se-svc__card:hover { transform: translateY(-3px); }
+  .se-svc__name { font-family: var(--w-font-display); font-weight: 600; font-size: 1.2rem; color: var(--c-ink); }
+  .se-svc__cta { display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--w-font-body); font-weight: 600; font-size: 0.9rem; color: var(--c-accent); margin-top: auto; }
+
+  /* Case studies */
+  .se-work { background: var(--c-bg-alt); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .se-work__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .se-work__top { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1.25rem; margin-bottom: 2.5rem; }
+  .se-work__all { white-space: nowrap; }
+  .se-work__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 2.5rem 1.75rem; }
+  @media (min-width: 640px) { .se-work__grid { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 960px) { .se-work__grid { grid-template-columns: repeat(3, 1fr); } }
+  .se-work__grid a { text-decoration: none; color: inherit; display: block; }
+  .se-work__img { margin: 0; border: 1px solid var(--c-line); border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 4 / 3; box-shadow: var(--w-shadow-soft); }
+  .se-work__img :global(img) { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .se-work__name { display: block; font-family: var(--w-font-display); font-weight: 600; font-size: 1.25rem; margin-top: 1rem; }
+  .se-work__tag { display: block; font-family: var(--w-font-body); font-size: 0.95rem; color: var(--c-ink-soft); margin-top: 0.3rem; line-height: 1.4; }
+  .se-work__svcs { display: block; font-family: var(--w-font-body); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--c-ink-soft); margin-top: 0.5rem; }
+
+  /* Programmes */
+  .se-prog { background: var(--c-dark); color: var(--c-on-dark); padding-block: var(--w-section-y); }
+  .se-prog__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .se-prog__h { color: var(--c-on-dark); }
+  .se-prog__pills { list-style: none; margin: 1.75rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.75rem; }
+  .se-prog__pills a { display: inline-flex; align-items: center; padding: 0.6rem 1.25rem; border-radius: var(--radius-pill); background: var(--c-accent-2); color: var(--c-ink); font-family: var(--w-font-body); font-weight: 600; font-size: 0.95rem; text-decoration: none; transition: transform var(--w-dur-fast) var(--w-ease); }
+  .se-prog__pills a:hover { transform: translateY(-2px); }
+
+  /* FAQ */
+  .se-faq { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .se-faq__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); display: grid; grid-template-columns: 1fr; gap: 3rem; }
+  @media (min-width: 940px) { .se-faq__inner { grid-template-columns: 1.5fr 1fr; gap: 4rem; align-items: start; } }
+  .se-faq__list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--c-line); }
+  .se-faq__list li { padding: 1.5rem 0; border-bottom: 1px solid var(--c-line); }
+  .se-faq__q { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); color: var(--c-ink); margin: 0; }
+  .se-faq__a { font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-ink-soft); line-height: 1.65; margin: 0.6rem 0 0; }
+  @media (min-width: 940px) { .se-faq__aside { position: sticky; top: 6rem; } }
+  .se-faq__card { background: var(--c-dark); color: var(--c-on-dark); border-radius: var(--w-radius); padding: clamp(1.75rem, 3vw, 2.5rem); }
+  .se-faq__card-h { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); color: var(--c-on-dark); margin: 0.75rem 0 0; }
+  .se-faq__card-b { font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-on-dark-soft); line-height: 1.6; margin: 0.75rem 0 1.5rem; }
+</style>
