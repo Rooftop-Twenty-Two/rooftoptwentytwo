@@ -3,7 +3,6 @@ import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import PageHero from "../../components/reskin/PageHero.astro";
 import LogoWall from "../../components/reskin/LogoWall.astro";
-import BrandingSpectrum from "../../components/reskin/BrandingSpectrum.astro";
 import WCtaBand from "../../components/reskin/WCtaBand.astro";
 import BreadcrumbSchema from "../../components/seo/BreadcrumbSchema.astro";
 
@@ -19,7 +18,7 @@ const clusterMeta: Record<Cluster, { name: string; body: string }> = {
   },
   "creative-and-content": {
     name: "Creative & Content",
-    body: "Brand, social, photo, and video, produced in-house at the cadence the channels actually need.",
+    body: "Branding, brand identity, social, photo, and video, produced in-house at the cadence the channels actually need.",
   },
   web: {
     name: "Web",
@@ -43,7 +42,7 @@ const grouped = clusters.map((cluster) => ({
   <PageHero
     kicker="Our expertise"
     title="Full-funnel marketing, <em>under one roof</em>."
-    intro="Four disciplines, performance marketing, creative & content, web, and branding. The same in-house team strategises, produces, and ships across all of them, so the work stays joined-up across every surface of your brand."
+    intro="Three clusters, performance marketing, creative & content, and web. The same in-house team strategises, produces, and ships across all three, so the work stays joined-up across every surface of your brand."
     primary={{ label: "Start a conversation", href: "/contact/#contact" }}
     secondary={{ label: "See selected work", href: "/work/" }}
   />
@@ -71,19 +70,6 @@ const grouped = clusters.map((cluster) => ({
     </section>
   ))}
 
-  <section class="sv sv--alt">
-    <div class="sv__inner">
-      <div class="sv__head reveal">
-        <span class="sv__num">04</span>
-        <div>
-          <h2 class="sv__title"><a href="#branding">Branding</a></h2>
-          <p class="sv__body">One of our four disciplines, brand identity from a first logo to a full system, all crafted in-house. <a href="#branding">See the spectrum &rarr;</a></p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <BrandingSpectrum />
   <LogoWall />
   <WCtaBand />
 </Layout>
