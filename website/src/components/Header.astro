@@ -216,7 +216,7 @@ const isActive = (base: string) => path === base || path.startsWith(base);
   .hd__link:hover, .hd__item[data-open="true"] .hd__link { color: var(--c-accent); }
   .hd[data-state="default"] .hd__link:hover,
   .hd[data-state="default"] .hd__item[data-open="true"] .hd__link { color: var(--c-accent-2); }
-  .hd__item.is-active > .hd__link { box-shadow: inset 0 -2px 0 var(--c-accent); }
+  .hd__item.is-active > .hd__link { color: var(--c-accent); }
   .hd__link:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
 
   .hd__right { display: flex; align-items: center; gap: 0.75rem; }
