@@ -51,9 +51,9 @@ const isActive = (base: string) => path === base || path.startsWith(base);
               <div class="mega__a">
                 <p class="mega__eyebrow">Selected work</p>
                 <ul class="mega__links">
-                  {work.slice(0, 3).map((w) => <li><a href={w.href}>{w.name}</a></li>)}
+                  {work.slice(0, 3).map((w) => <li><a class="r22-link" href={w.href}>{w.name}</a></li>)}
                 </ul>
-                <a class="mega__viewall" href="/work/">View all work &rarr;</a>
+                <a class="mega__viewall r22-link" href="/work/">View all work &rarr;</a>
               </div>
               {work[0] && (
                 <a class="mega__featured" href={work[0].href}>
@@ -79,9 +79,9 @@ const isActive = (base: string) => path === base || path.startsWith(base);
               <div class="mega__a">
                 <p class="mega__eyebrow">Our expertise</p>
                 <ul class="mega__links">
-                  {svcLinks.map((s) => <li><a href={s.href}>{s.name}</a></li>)}
+                  {svcLinks.map((s) => <li><a class="r22-link" href={s.href}>{s.name}</a></li>)}
                 </ul>
-                <a class="mega__viewall" href="/services/">View all services &rarr;</a>
+                <a class="mega__viewall r22-link" href="/services/">View all services &rarr;</a>
               </div>
               <a class="mega__featured mega__featured--cta" href="/contact/">
                 <span class="mega__ftitle">Not sure where to start?</span>
@@ -104,11 +104,11 @@ const isActive = (base: string) => path === base || path.startsWith(base);
               <div class="mega__a">
                 <p class="mega__eyebrow">About R22</p>
                 <ul class="mega__links">
-                  <li><a href="/about/#story">Our story</a></li>
-                  <li><a href="/about/#team">Our team</a></li>
-                  <li><a href="/about/#how-we-work">How we work</a></li>
+                  <li><a class="r22-link" href="/about/#story">Our story</a></li>
+                  <li><a class="r22-link" href="/about/#team">Our team</a></li>
+                  <li><a class="r22-link" href="/about/#how-we-work">How we work</a></li>
                 </ul>
-                <a class="mega__viewall" href="/about/">About R22 &rarr;</a>
+                <a class="mega__viewall r22-link" href="/about/">About R22 &rarr;</a>
               </div>
               <div class="mega__featured mega__featured--quote">
                 <span class="mega__quote">&ldquo;We work like we&rsquo;re part of your team — invested in your growth, not just billing hours.&rdquo;</span>
@@ -130,9 +130,9 @@ const isActive = (base: string) => path === base || path.startsWith(base);
               <div class="mega__a">
                 <p class="mega__eyebrow">Latest</p>
                 <ul class="mega__links">
-                  {articles.slice(0, 3).map((a) => <li><a href={a.href}>{a.title}</a></li>)}
+                  {articles.slice(0, 3).map((a) => <li><a class="r22-link" href={a.href}>{a.title}</a></li>)}
                 </ul>
-                <a class="mega__viewall" href="/latest/">View all insights &rarr;</a>
+                <a class="mega__viewall r22-link" href="/latest/">View all insights &rarr;</a>
               </div>
               {articles[0] && (
                 <a class="mega__featured" href={articles[0].href}>
@@ -226,9 +226,8 @@ const isActive = (base: string) => path === base || path.startsWith(base);
     color: var(--c-ink); text-decoration: none; padding: 0.5rem 0; border-radius: 8px;
     transition: color var(--w-dur-fast) var(--w-ease), transform var(--w-dur-fast) var(--w-ease);
   }
-  .mega__links a:hover { color: var(--c-accent); transform: translateX(4px); }
+  .mega__links a:hover { color: var(--c-accent); }
   .mega__viewall { font-family: var(--w-font-body); font-weight: 600; font-size: 0.9rem; color: var(--c-accent); text-decoration: none; }
-  .mega__viewall:hover { text-decoration: underline; }
 
   .mega__featured {
     display: flex; flex-direction: column; gap: 0.5rem; text-decoration: none;
@@ -254,7 +253,6 @@ const isActive = (base: string) => path === base || path.startsWith(base);
 
   @media (prefers-reduced-motion: reduce) {
     .mega { transition: opacity var(--w-dur-fast) linear; transform: none !important; }
-    .mega__links a:hover { transform: none; }
   }
 </style>
 
