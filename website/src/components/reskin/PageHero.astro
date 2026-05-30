@@ -6,8 +6,8 @@ interface Props {
   title: string;
   intro?: string;
   bg?: string;
-  primary?: { label: string; href: string };
-  secondary?: { label: string; href: string };
+  primary?: { label: string; href: string; external?: boolean };
+  secondary?: { label: string; href: string; external?: boolean };
 }
 import { existsSync } from "node:fs";
 import path from "node:path";
@@ -30,8 +30,16 @@ if (bg) {
     {intro && <p class="ph__intro">{intro}</p>}
     {(primary || secondary) && (
       <div class="ph__cta">
-        {primary && <a href={primary.href} class="wbtn wbtn--accent">{primary.label}</a>}
-        {secondary && <a href={secondary.href} class="wbtn wbtn--ghost ph__ghost">{secondary.label}</a>}
+        {primary && (
+          <a href={primary.href} class="wbtn wbtn--accent" {...(primary.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
+            {primary.label}{primary.external && <span class="ph__ext" aria-hidden="true">&#8599;</span>}
+          </a>
+        )}
+        {secondary && (
+          <a href={secondary.href} class="wbtn wbtn--ghost ph__ghost" {...(secondary.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
+            {secondary.label}{secondary.external && <span class="ph__ext" aria-hidden="true">&#8599;</span>}
+          </a>
+        )}
       </div>
     )}
   </div>
@@ -62,4 +70,5 @@ if (bg) {
   }
   .ph__cta { display: flex; flex-wrap: wrap; gap: 0.85rem; margin-top: 2.25rem; }
   .ph__ghost { color: var(--c-on-dark); }
+  .ph__ext { margin-left: 0.45rem; font-weight: 700; }
 </style>

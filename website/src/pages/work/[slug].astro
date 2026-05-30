@@ -15,7 +15,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
-const { name, tagline, summary, heroImage, sections, services, gallery } = entry.data;
+const { name, tagline, summary, heroImage, sections, services, gallery, websiteUrl } = entry.data;
 
 const allSorted = (await getCollection("portfolio", ({ data }) => !data.needs_review))
   .sort((a, b) => (a.data.order ?? 100) - (b.data.order ?? 100));
@@ -37,8 +37,12 @@ const extraImages = gallery.slice(sections.length);
     title={name}
     intro={tagline ?? summary}
     bg={heroImage}
-    primary={{ label: "Start a similar project", href: "/contact/" }}
-    secondary={{ label: "All work", href: "/work/" }}
+    primary={websiteUrl
+      ? { label: "Visit the website", href: websiteUrl, external: true }
+      : { label: "Start a similar project", href: "/contact/" }}
+    secondary={websiteUrl
+      ? { label: "Start a similar project", href: "/contact/" }
+      : { label: "All work", href: "/work/" }}
   />
 
   <section class="cs-body">
