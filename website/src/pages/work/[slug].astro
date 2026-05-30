@@ -15,7 +15,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
-const { name, tagline, summary, heroImage, sections, services, gallery, websiteUrl, videos } = entry.data;
+const { name, tagline, summary, metaDescription, heroImage, sections, services, gallery, websiteUrl, videos } = entry.data;
 
 const allSorted = (await getCollection("portfolio", ({ data }) => !data.needs_review))
   .sort((a, b) => (a.data.order ?? 100) - (b.data.order ?? 100));
@@ -31,7 +31,7 @@ const sectionImages = sections.map((_, i) => gallery[i] ?? null);
 const extraImages = gallery.slice(sections.length);
 ---
 
-<Layout title={`${name} | Rooftop Twenty Two`} description={summary ?? tagline ?? name}>
+<Layout title={`${name} Case Study | Rooftop Twenty Two`} description={metaDescription ?? summary ?? tagline ?? name}>
   <PageHero
     kicker={(services ?? []).slice(0, 3).join(" · ") || "Case study"}
     title={name}

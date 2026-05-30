@@ -14,6 +14,9 @@ const portfolio = defineCollection({
     slug: z.string().optional(),
     tagline: z.string().optional(),
     summary: z.string().optional(),
+    // Concise (≤160 char) meta description for search/social. Falls back to
+    // summary/tagline/name when absent. Kept separate from the long on-page summary.
+    metaDescription: z.string().optional(),
     heroImage: z.string().optional(),
     heroCollage: z.array(z.string()).optional(),
     wordmark: z.string().optional(),
