@@ -182,6 +182,63 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://rooftoptwen
         f.addEventListener("mouseleave", place);
       }
 
+      // ---------- Form submit enhancement (contact + newsletter) ----------
+      // Progressive enhancement: forms have a real action/method so they work
+      // without JS, but here we POST via fetch to the JSON API and show inline
+      // status instead of navigating away. The events form has its own handler.
+      const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const enhance = (form: HTMLFormElement, endpoint: string, okMsg: string) => {
+        let status = form.querySelector<HTMLElement>("[data-form-status]");
+        if (!status) {
+          status = document.createElement("p");
+          status.setAttribute("data-form-status", "");
+          status.setAttribute("role", "status");
+          status.setAttribute("aria-live", "polite");
+          status.style.cssText = "margin:0.85rem 0 0;font-family:var(--w-font-body);font-size:0.9rem;";
+          form.appendChild(status);
+        }
+        form.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const data = Object.fromEntries(new FormData(form).entries());
+          if ((data._gotcha as string)?.trim()) { form.reset(); return; }
+          const email = String(data.email || "").trim();
+          if (data.email !== undefined && !emailRx.test(email)) {
+            status!.textContent = "Please add a valid email address.";
+            status!.style.color = "#ffb3ad";
+            return;
+          }
+          const btn = form.querySelector<HTMLButtonElement>('[type="submit"]');
+          const label = btn?.textContent;
+          if (btn) { btn.disabled = true; btn.textContent = "Sending..."; }
+          status!.textContent = "";
+          try {
+            const res = await fetch(endpoint, {
+              method: "POST",
+              headers: { "Content-Type": "application/json", Accept: "application/json" },
+              body: JSON.stringify(data),
+            });
+            const out = await res.json().catch(() => ({}));
+            if (res.ok && out.ok) {
+              form.reset();
+              status!.textContent = okMsg;
+              status!.style.color = "var(--c-accent-2, #01ffb2)";
+            } else {
+              status!.textContent = out.error || "Something went wrong. Please email hey@rooftoptwentytwo.ie.";
+              status!.style.color = "#ffb3ad";
+            }
+          } catch {
+            status!.textContent = "Something went wrong. Please email hey@rooftoptwentytwo.ie.";
+            status!.style.color = "#ffb3ad";
+          } finally {
+            if (btn) { btn.disabled = false; btn.textContent = label || "Send"; }
+          }
+        });
+      };
+      document.querySelectorAll<HTMLFormElement>("[data-contact-form]")
+        .forEach((f) => enhance(f, "/api/contact", "Thanks. We'll come back to you shortly."));
+      document.querySelectorAll<HTMLFormElement>(".footer-news__form")
+        .forEach((f) => enhance(f, "/api/subscribe", "You're in. Thanks for subscribing."));
+
       // ---------- Theme-switch observer ----------
       // When a [data-theme-switch] section enters the viewport, add
       // body.alternate-theme so the header (and other dark-on-dark elements)

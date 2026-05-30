@@ -140,7 +140,7 @@ const ev = events[0];
         <p class="eb-reg__lead">We can only fit so many people in the room, so this isn&rsquo;t a ticket just yet. Put your name down and we&rsquo;ll be in touch with the date and a seat as soon as it&rsquo;s locked in. First come, first served. We&rsquo;ll let you know either way.</p>
       </div>
 
-      <form class="eb-form reveal" data-event-form data-endpoint="" novalidate>
+      <form class="eb-form reveal" data-event-form data-endpoint="/api/event-register" novalidate>
         <input type="hidden" name="event" value={ev.id} />
         <div class="eb-form__field">
           <label class="eb-form__label" for="ev-name">Name</label>

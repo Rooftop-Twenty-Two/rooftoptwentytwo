@@ -21,6 +21,7 @@
     "@astrojs/vercel": "^10.0.8",
     "astro": "^6.3.8",
     "cheerio": "^1.2.0",
+    "postgres": "^3.4.9",
     "zod": "^4.4.3"
   },
   "devDependencies": {
