@@ -1,9 +1,8 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
-import Signature from "../../components/Signature.astro";
-import BtnFiller from "../../components/BtnFiller.astro";
-import PageCTA from "../../components/PageCTA.astro";
+import PageHero from "../../components/reskin/PageHero.astro";
+import WCtaBand from "../../components/reskin/WCtaBand.astro";
 import BreadcrumbSchema from "../../components/seo/BreadcrumbSchema.astro";
 
 const programmes = (await getCollection("programmes")).sort(
@@ -17,54 +16,69 @@ const programmes = (await getCollection("programmes")).sort(
 >
   <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "Programmes", url: "/programmes/" }]} />
 
-  <section class="mx-auto max-w-[1440px] px-6 md:px-12 pt-12 md:pt-20 pb-12 md:pb-16">
-    <Signature text="Programmes" tone="mint" rotate={-3} />
-    <h1
-      class="mt-4 max-w-4xl"
-      style="font-family:var(--font-display);font-size:clamp(2.75rem, 7vw, 5.5rem);color:var(--color-text-on-dark);letter-spacing:-0.02em;line-height:1.05;"
-    >
-      Enterprise Ireland funded engagements.
-    </h1>
-    <p
-      class="mt-6 max-w-2xl"
-      style="font-family:var(--font-sans);font-size:1.25rem;color:var(--color-text-on-dark-muted);line-height:1.55;"
-    >
-      We deliver marketing engagements funded by Enterprise Ireland under their innovation and capability instruments. Up to 50% of eligible costs covered, no extra paperwork on your side.
-    </p>
-    <div class="mt-8 flex flex-wrap gap-3">
-      <BtnFiller href="/contact/#contact" variant="solid-white">Talk to us about funding</BtnFiller>
-      <BtnFiller href="/work/" variant="on-dark">See selected work</BtnFiller>
+  <PageHero
+    kicker="Enterprise Ireland"
+    title="Funded engagements, <em>fully handled</em>."
+    intro="We deliver marketing engagements funded by Enterprise Ireland under their innovation and capability instruments — up to 50% of eligible costs covered, with no extra paperwork on your side."
+    primary={{ label: "Talk to us about funding", href: "/contact/#contact" }}
+    secondary={{ label: "See selected work", href: "/work/" }}
+  />
+
+  <section class="pr">
+    <div class="pr__inner">
+      {programmes.length > 0 ? (
+        <ul class="pr__grid">
+          {programmes.map((p) => (
+            <li class="reveal">
+              <a class="pr-card" href={`/programmes/${p.data.slug}/`}>
+                {p.data.eiInstrument && <span class="pr-card__chip">{p.data.eiInstrument}</span>}
+                <h2 class="pr-card__title">{p.data.name}</h2>
+                <p class="pr-card__sum">{p.data.summary}</p>
+                <span class="pr-card__cta r22-arrow">Explore <span class="r22-arrow__i" aria-hidden="true">&rarr;</span></span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div class="pr__intro">
+          <p class="kicker kicker--script">How it works</p>
+          <h2 class="pr__h2">Half the cost, none of the paperwork.</h2>
+          <p class="pr__lead">
+            If you&rsquo;re scoping an Enterprise Ireland funded engagement, get in touch and we&rsquo;ll
+            walk you through which instrument fits, what&rsquo;s eligible, and what the next step looks
+            like. We handle the application detail so you can focus on the work.
+          </p>
+          <ul class="pr__points">
+            <li><b>Up to 50%</b> of eligible costs covered.</li>
+            <li><b>Innovation &amp; capability</b> instruments we work across.</li>
+            <li><b>No extra admin</b> — we manage the paperwork with you.</li>
+          </ul>
+          <a href="/contact/#contact" class="wbtn wbtn--accent">Talk to us about funding</a>
+        </div>
+      )}
     </div>
   </section>
 
-  {programmes.length > 0 ? (
-    <section class="mx-auto max-w-[1200px] px-6 md:px-12 pb-24 md:pb-32">
-      <ul class="grid grid-cols-1 md:grid-cols-2 gap-6 list-none p-0 m-0">
-        {programmes.map((p) => (
-          <li>
-            <a
-              href={`/programmes/${p.data.slug}/`}
-              class="block p-8 transition-transform hover:-translate-y-1"
-              style="background:rgba(255,255,255,0.04);border:1px solid rgba(0,255,178,0.18);border-radius:var(--radius-card-md);color:var(--color-text-on-dark);text-decoration:none;height:100%;"
-            >
-              {p.data.eiInstrument && (
-                <p style="font-family:var(--font-sans);font-size:0.75rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--color-mint);">{p.data.eiInstrument}</p>
-              )}
-              <h2 class="mt-2" style="font-family:var(--font-display);font-size:clamp(1.5rem, 2.5vw, 2rem);line-height:1.1;letter-spacing:-0.01em;">{p.data.name}</h2>
-              <p class="mt-3" style="font-family:var(--font-sans);font-size:1rem;color:var(--color-text-on-dark-muted);line-height:1.55;">{p.data.summary}</p>
-              <p class="mt-4" style="font-family:var(--font-sans);font-size:0.875rem;color:var(--color-mint);">Explore →</p>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </section>
-  ) : (
-    <section class="mx-auto max-w-[800px] px-6 md:px-12 pb-24 md:pb-32">
-      <p style="font-family:var(--font-sans);font-size:1.0625rem;color:var(--color-text-on-dark-muted);line-height:1.7;">
-        Programme pages are being added. If you're scoping an Enterprise Ireland funded engagement, get in touch, we'll walk you through which instrument fits and what the next step looks like.
-      </p>
-    </section>
-  )}
-
-  <PageCTA variant="programme" />
+  <WCtaBand heading="Thinking about funded growth?" body="Tell us what you're planning and we'll point you to the right Enterprise Ireland instrument — and handle the detail." />
 </Layout>
+
+<style>
+  .pr { background: var(--c-bg-alt); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .pr__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+
+  .pr__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+  @media (min-width: 760px) { .pr__grid { grid-template-columns: 1fr 1fr; gap: 1.75rem; } }
+  .pr-card { display: block; height: 100%; background: var(--c-bg); border: 1px solid var(--c-line); border-radius: var(--w-radius); padding: 2rem; text-decoration: none; color: inherit; transition: transform var(--w-dur) var(--w-ease), box-shadow var(--w-dur) var(--w-ease); }
+  .pr-card:hover { transform: translateY(-3px); box-shadow: var(--w-shadow-soft); }
+  .pr-card__chip { display: inline-block; font-family: var(--w-font-body); font-weight: 700; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--c-accent); }
+  .pr-card__title { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); line-height: 1.15; color: var(--c-ink); margin: 0.5rem 0 0; }
+  .pr-card__sum { font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-ink-soft); line-height: 1.55; margin: 0.6rem 0 0; }
+  .pr-card__cta { display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--w-font-body); font-weight: 600; color: var(--c-accent); margin-top: 1rem; }
+
+  .pr__intro { max-width: 60ch; }
+  .pr__h2 { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); line-height: var(--lh-heading); letter-spacing: var(--tracking-display); color: var(--c-ink); margin: 0.4rem 0 0; }
+  .pr__lead { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: var(--lh-body); color: var(--c-ink-soft); margin: 1.25rem 0 0; }
+  .pr__points { list-style: none; margin: 1.75rem 0 2.25rem; padding: 0; }
+  .pr__points li { position: relative; padding-left: 1.6rem; margin-bottom: 0.85rem; font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-ink); }
+  .pr__points li::before { content: ""; position: absolute; left: 0; top: 0.55em; width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--c-accent); }
+</style>

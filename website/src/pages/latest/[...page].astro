@@ -3,176 +3,110 @@ import type { GetStaticPaths, Page } from "astro";
 import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
-import Signature from "../../components/Signature.astro";
-import PageCTA from "../../components/PageCTA.astro";
+import PageHero from "../../components/reskin/PageHero.astro";
+import WCtaBand from "../../components/reskin/WCtaBand.astro";
+import Picture from "../../components/Picture.astro";
 import BreadcrumbSchema from "../../components/seo/BreadcrumbSchema.astro";
-import Breadcrumbs from "../../components/Breadcrumbs.astro";
 
 export const getStaticPaths = (async ({ paginate }) => {
   const articles = (await getCollection("articles", ({ data }) => !data.draft)).sort(
     (a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime()
   );
-  return paginate(articles, { pageSize: 6 });
+  return paginate(articles, { pageSize: 9 });
 }) satisfies GetStaticPaths;
 
 const { page } = Astro.props as { page: Page<CollectionEntry<"articles">> };
 
-const dateFmt = new Intl.DateTimeFormat("en-IE", {
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-});
+const dateFmt = new Intl.DateTimeFormat("en-IE", { day: "numeric", month: "short", year: "numeric" });
 
-// Page 1 lives at /latest/, subsequent pages at /latest/<n>/.
 const pageHref = (n: number) => (n === 1 ? "/latest/" : `/latest/${n}/`);
 const pageNumbers = Array.from({ length: page.lastPage }, (_, i) => i + 1);
-const canonicalPath = pageHref(page.currentPage);
 ---
 
 <Layout
-  title={page.currentPage > 1
-    ? `Latest (page ${page.currentPage}) | Rooftop Twenty Two`
-    : "Latest | Rooftop Twenty Two"}
+  title={page.currentPage > 1 ? `Insights (page ${page.currentPage}) | Rooftop Twenty Two` : "Insights | Rooftop Twenty Two"}
   description="Notes from the studio: thinking on brand, performance marketing, and the work we make for Irish businesses."
 >
-  <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "Latest", url: "/latest/" }]} />
+  <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "Insights", url: "/latest/" }]} />
 
-  <section class="mx-auto max-w-[1440px] px-6 md:px-12 pt-12 md:pt-20 pb-12 md:pb-16">
-    <Breadcrumbs items={[{ name: "Home", url: "/" }, { name: "Latest", url: "/latest/" }]} />
-    <div class="mt-6"><Signature text="Latest" tone="coral" rotate={-3} /></div>
-    <h1
-      class="mt-4 max-w-3xl"
-      style="font-family:var(--font-display);font-size:clamp(2.75rem, 7vw, 5.5rem);color:var(--color-text-on-dark);letter-spacing:-0.02em;line-height:1.05;"
-    >
-      Notes from the studio.
-    </h1>
-    <p
-      class="mt-6 max-w-2xl"
-      style="font-family:var(--font-sans);font-size:1.25rem;color:var(--color-text-on-dark-muted);line-height:1.55;"
-    >
-      Thinking on brand, performance marketing, and the work we make for Irish businesses.
-    </p>
-  </section>
+  <PageHero
+    kicker="Insights"
+    title="Notes from the <em>studio</em>."
+    intro="Thinking on brand, performance marketing, and the work we make for ambitious Irish businesses."
+  />
 
   {page.data.length > 0 ? (
-    <section class="mx-auto max-w-[1100px] px-6 md:px-12 pb-16 md:pb-20">
-      <ul class="grid grid-cols-1 md:grid-cols-2 gap-8 list-none p-0 m-0">
-        {page.data.map((a) => (
-          <li>
-            <a
-              href={`/latest/${a.data.slug}/`}
-              class="block group"
-              style="color:var(--color-text-on-dark);text-decoration:none;"
-            >
-              {a.data.heroImage && (
-                <div class="overflow-hidden mb-4" style="border-radius:var(--radius-card-md);aspect-ratio:16/10;background-color:var(--color-navy-700);">
-                  <img src={a.data.heroImage} alt={a.data.title} loading="lazy" decoding="async" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
-                </div>
-              )}
-              <p style="font-family:var(--font-sans);font-size:0.75rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-text-on-dark-muted);">
-                {dateFmt.format(a.data.publishedAt)}
-              </p>
-              <h2 class="mt-2" style="font-family:var(--font-display);font-size:clamp(1.5rem, 2.5vw, 2rem);line-height:1.15;letter-spacing:-0.01em;">{a.data.title}</h2>
-              <p class="mt-3" style="font-family:var(--font-sans);font-size:1rem;color:var(--color-text-on-dark-muted);line-height:1.55;">{a.data.excerpt}</p>
-            </a>
-          </li>
-        ))}
-      </ul>
+    <section class="in">
+      <div class="in__inner">
+        <ul class="in__grid">
+          {page.data.map((a) => (
+            <li class="reveal">
+              <a class="in-card" href={`/latest/${a.data.slug}/`}>
+                <figure class="in-card__img">
+                  {a.data.heroImage
+                    ? <Picture src={a.data.heroImage} alt={a.data.title} loading="lazy" decoding="async" />
+                    : <span class="in-card__ph"></span>}
+                  {a.data.tags[0] && <span class="in-card__chip">{a.data.tags[0]}</span>}
+                </figure>
+                <span class="in-card__date">{dateFmt.format(a.data.publishedAt)}</span>
+                <h2 class="in-card__title">{a.data.title}</h2>
+                <p class="in-card__excerpt">{a.data.excerpt}</p>
+                <span class="in-card__cta r22-arrow">Read article <span class="r22-arrow__i" aria-hidden="true">&rarr;</span></span>
+              </a>
+            </li>
+          ))}
+        </ul>
 
-      {page.lastPage > 1 && (
-        <nav class="pagination" aria-label="Pagination">
-          <a
-            class:list={["pagination__step", { "pagination__step--disabled": !page.url.prev }]}
-            href={page.url.prev ?? undefined}
-            aria-disabled={page.url.prev ? undefined : "true"}
-          >
-            ← Prev
-          </a>
-
-          <ol class="pagination__pages">
-            {pageNumbers.map((n) => (
-              <li>
-                <a
-                  href={pageHref(n)}
-                  class:list={["pagination__page", { "pagination__page--active": n === page.currentPage }]}
-                  aria-current={n === page.currentPage ? "page" : undefined}
-                >
-                  {n}
-                </a>
-              </li>
-            ))}
-          </ol>
-
-          <a
-            class:list={["pagination__step", { "pagination__step--disabled": !page.url.next }]}
-            href={page.url.next ?? undefined}
-            aria-disabled={page.url.next ? undefined : "true"}
-          >
-            Next →
-          </a>
-        </nav>
-      )}
+        {page.lastPage > 1 && (
+          <nav class="pagination" aria-label="Pagination">
+            <a class:list={["pagination__step", { "pagination__step--disabled": !page.url.prev }]} href={page.url.prev ?? undefined} aria-disabled={page.url.prev ? undefined : "true"}>&larr; Prev</a>
+            <ol class="pagination__pages">
+              {pageNumbers.map((n) => (
+                <li>
+                  <a href={pageHref(n)} class:list={["pagination__page", { "pagination__page--active": n === page.currentPage }]} aria-current={n === page.currentPage ? "page" : undefined}>{n}</a>
+                </li>
+              ))}
+            </ol>
+            <a class:list={["pagination__step", { "pagination__step--disabled": !page.url.next }]} href={page.url.next ?? undefined} aria-disabled={page.url.next ? undefined : "true"}>Next &rarr;</a>
+          </nav>
+        )}
+      </div>
     </section>
   ) : (
-    <section class="mx-auto max-w-[800px] px-6 md:px-12 pb-24 md:pb-32">
-      <p style="font-family:var(--font-sans);font-size:1.0625rem;color:var(--color-text-on-dark-muted);line-height:1.7;">
-        New thinking is on the way. In the meantime, the work itself is the best read on how we approach client problems.
-      </p>
-    </section>
+    <section class="in"><div class="in__inner"><p class="in__empty">New thinking is on the way. In the meantime, the work itself is the best read on how we approach client problems.</p></div></section>
   )}
 
-  <PageCTA variant="default" />
+  <WCtaBand />
 </Layout>
 
 <style>
-  .pagination {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-top: clamp(2.5rem, 5vw, 4rem);
-    font-family: var(--font-sans);
+  .in { background: var(--c-bg-alt); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .in__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .in__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 2.5rem 2rem; }
+  @media (min-width: 640px) { .in__grid { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 980px) { .in__grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .in-card { display: block; text-decoration: none; color: inherit; }
+  .in-card__img { position: relative; margin: 0; border: 1px solid var(--c-line); border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 16 / 10; background: var(--c-dark); }
+  .in-card__img :global(img) { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform var(--w-dur) var(--w-ease); }
+  .in-card:hover .in-card__img :global(img) { transform: scale(1.04); }
+  .in-card__chip { position: absolute; top: 0.85rem; left: 0.85rem; font-family: var(--w-font-body); font-weight: 700; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--c-ink); background: rgba(255,255,255,0.92); padding: 0.3rem 0.65rem; border-radius: var(--radius-pill); }
+  .in-card__date { display: block; font-family: var(--w-font-body); font-size: 0.78rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--c-ink-soft); margin-top: 1.1rem; }
+  .in-card__title { font-family: var(--w-font-display); font-weight: 600; font-size: 1.4rem; line-height: 1.2; color: var(--c-ink); margin: 0.4rem 0 0; transition: color var(--w-dur-fast) var(--w-ease); }
+  .in-card:hover .in-card__title { color: var(--c-accent); }
+  .in-card__excerpt { font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-ink-soft); line-height: 1.55; margin: 0.6rem 0 0; }
+  .in-card__cta { display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--w-font-body); font-weight: 600; font-size: 0.9rem; color: var(--c-accent); margin-top: 0.9rem; }
+  .in__empty { font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-ink-soft); line-height: 1.7; }
+
+  .pagination { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem; margin-top: clamp(2.5rem, 5vw, 4rem); font-family: var(--w-font-body); }
+  .pagination__pages { display: flex; align-items: center; gap: 0.5rem; list-style: none; margin: 0; padding: 0; }
+  .pagination__page, .pagination__step {
+    display: inline-flex; align-items: center; justify-content: center; min-width: 2.5rem; height: 2.5rem; padding: 0 0.85rem;
+    border-radius: 9999px; font-size: 0.9rem; font-weight: 600; color: var(--c-ink); text-decoration: none;
+    border: 1px solid var(--c-line); transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease;
   }
-  .pagination__pages {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-  .pagination__page,
-  .pagination__step {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 2.5rem;
-    height: 2.5rem;
-    padding: 0 0.85rem;
-    border-radius: 9999px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--color-text-on-dark);
-    text-decoration: none;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease;
-  }
-  .pagination__page:hover,
-  .pagination__step:hover {
-    border-color: var(--color-coral);
-    color: var(--color-coral);
-  }
-  .pagination__page--active {
-    background-color: var(--color-coral);
-    border-color: var(--color-coral);
-    color: var(--color-navy-900);
-  }
-  .pagination__page--active:hover {
-    color: var(--color-navy-900);
-  }
-  .pagination__step--disabled {
-    opacity: 0.35;
-    pointer-events: none;
-  }
+  .pagination__page:hover, .pagination__step:hover { border-color: var(--c-accent); color: var(--c-accent); }
+  .pagination__page--active { background: var(--c-accent); border-color: var(--c-accent); color: var(--c-accent-ink); }
+  .pagination__page--active:hover { color: var(--c-accent-ink); }
+  .pagination__step--disabled { opacity: 0.35; pointer-events: none; }
 </style>
