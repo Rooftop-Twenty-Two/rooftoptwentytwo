@@ -188,12 +188,15 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://rooftoptwen
             const m = bg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
             if (m && (m[4] === undefined || parseFloat(m[4]) > 0.5)) {
               const lum = (0.2126 * +m[1] + 0.7152 * +m[2] + 0.0722 * +m[3]) / 255;
-              glow.style.setProperty("--glow-rgb", lum < 0.5 ? MINT : CORAL);
+              const dark = lum < 0.5;
+              glow.style.setProperty("--glow-rgb", dark ? MINT : CORAL);
+              glow.style.setProperty("--glow-a", dark ? "0.22" : "0.34"); // coral needs more on light
               return;
             }
             node = node.parentElement;
           }
-          glow.style.setProperty("--glow-rgb", MINT); // default canvas is dark
+          glow.style.setProperty("--glow-rgb", MINT);
+          glow.style.setProperty("--glow-a", "0.22"); // default canvas is dark
         };
         window.addEventListener(
           "mousemove",
