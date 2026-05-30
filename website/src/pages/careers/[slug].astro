@@ -86,7 +86,8 @@ const benefits = [
   .jb__list li::before { content: ""; position: absolute; left: 0; top: 0.6em; width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--c-accent); }
   .jb__apply { margin-top: 3rem; }
   .jb__apply-note { font-family: var(--w-font-body); font-size: var(--fs-small); color: var(--c-ink-soft); margin: 1rem 0 0; }
-  .jb__apply-note a, .jb__card a { color: var(--c-accent); text-decoration: none; font-weight: 600; }
+  /* Plain text links only, never the .wbtn CTA (which has its own colours). */
+  .jb__apply-note a:not(.wbtn), .jb__card a:not(.wbtn) { color: var(--c-accent); text-decoration: none; font-weight: 600; }
 
   .jb__aside { }
   @media (min-width: 940px) { .jb__aside { position: sticky; top: 6rem; } }
