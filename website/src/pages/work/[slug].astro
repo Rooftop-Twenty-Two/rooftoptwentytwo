@@ -22,9 +22,12 @@ const currentSlug = entry.id.replace(/\.mdx?$/, "");
 const currentIndex = allSorted.findIndex((e) => e.id.replace(/\.mdx?$/, "") === currentSlug);
 const moreWork = Array.from({ length: 3 }).map((_, i) => allSorted[(currentIndex + 1 + i) % allSorted.length]);
 
-// One gallery image interleaved after the first section; the rest in the grid.
-const leadVisual = gallery[0];
-const restGallery = gallery.slice(1);
+// Case-study photography is interleaved between the narrative sections as large
+// image breakers (no standalone gallery). One image follows each section; any
+// remaining images become additional breakers before the prose. Breakers
+// alternate full-bleed / inset to open up the gaps and pace the page.
+const sectionImages = sections.map((_, i) => gallery[i] ?? null);
+const extraImages = gallery.slice(sections.length);
 ---
 
 <Layout title={`${name} | Rooftop Twenty Two`} description={summary ?? tagline ?? name}>
@@ -38,9 +41,9 @@ const restGallery = gallery.slice(1);
   />
 
   <section class="cs-body">
-    <div class="cs-body__inner">
-      {sections.map((sec, i) => (
-        <>
+    {sections.map((sec, i) => (
+      <>
+        <div class="cs-wrap">
           <div class="cs-sec reveal">
             <div class="cs-sec__head">
               <span class="cs-sec__n">{sec.number}</span>
@@ -55,28 +58,29 @@ const restGallery = gallery.slice(1);
               )}
             </div>
           </div>
-          {i === 0 && leadVisual && (
-            <figure class="cs-visual reveal"><img src={leadVisual} alt={`${name} project visual`} loading="lazy" decoding="async" /></figure>
-          )}
-        </>
-      ))}
+        </div>
+        {sectionImages[i] && (
+          <figure class:list={["cs-breaker reveal", i % 2 === 0 ? "cs-breaker--bleed" : "cs-breaker--inset"]}>
+            <div class="cs-breaker__media r22-media">
+              <img src={sectionImages[i]} alt={`${name} — ${sec.heading}`} loading="lazy" decoding="async" />
+            </div>
+            <figcaption class="cs-breaker__cap">{name} <span aria-hidden="true">·</span> {sec.heading}</figcaption>
+          </figure>
+        )}
+      </>
+    ))}
 
-      <article class="cs-prose"><Content /></article>
-    </div>
+    {extraImages.map((src, j) => (
+      <figure class:list={["cs-breaker reveal", (sections.length + j) % 2 === 0 ? "cs-breaker--bleed" : "cs-breaker--inset"]}>
+        <div class="cs-breaker__media r22-media">
+          <img src={src} alt={`${name} project visual`} loading="lazy" decoding="async" />
+        </div>
+        <figcaption class="cs-breaker__cap">{name} <span aria-hidden="true">·</span> Selected work</figcaption>
+      </figure>
+    ))}
+
+    <div class="cs-wrap"><article class="cs-prose"><Content /></article></div>
   </section>
-
-  {restGallery.length > 0 && (
-    <section class="cs-gallery">
-      <div class="cs-gallery__head"><p class="kicker">Selected visuals</p></div>
-      <ul class="cs-gallery__grid">
-        {restGallery.map((src, i) => (
-          <li class:list={[i % 5 === 0 ? "cs-gallery__item--wide" : ""]}>
-            <img src={src} alt={`${name} project visual ${i + 2}`} loading="lazy" decoding="async" />
-          </li>
-        ))}
-      </ul>
-    </section>
-  )}
 
   <section class="cs-more">
     <div class="cs-more__inner">
@@ -108,10 +112,9 @@ const restGallery = gallery.slice(1);
 </Layout>
 
 <style>
-  .cs-body { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
-  .cs-body__inner { max-width: 1100px; margin: 0 auto; padding-inline: var(--w-gutter); }
-  .cs-sec { display: grid; grid-template-columns: 1fr; gap: 1rem 3rem; padding: 2.5rem 0; border-top: 1px solid var(--c-line); }
-  .cs-sec:first-child { border-top: 0; padding-top: 0; }
+  .cs-body { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); display: flex; flex-direction: column; gap: clamp(2.5rem, 5vw, 4.5rem); }
+  .cs-wrap { max-width: 1100px; width: 100%; margin: 0 auto; padding-inline: var(--w-gutter); }
+  .cs-sec { display: grid; grid-template-columns: 1fr; gap: 1rem 3rem; }
   @media (min-width: 860px) { .cs-sec { grid-template-columns: 0.8fr 1.2fr; } }
   .cs-sec__head { display: flex; gap: 1rem; align-items: baseline; }
   .cs-sec__n { font-family: var(--w-font-display); font-weight: 700; font-size: 1.5rem; color: var(--c-accent); }
@@ -120,19 +123,29 @@ const restGallery = gallery.slice(1);
   .cs-sec__bullets { margin: 1.25rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.6rem; }
   .cs-sec__bullets li { font-family: var(--w-font-body); color: var(--c-ink-soft); line-height: 1.5; padding-left: 1.5rem; position: relative; }
   .cs-sec__bullets li::before { content: ""; position: absolute; left: 0; top: 0.5em; width: 12px; height: 12px; background: var(--c-accent); border-radius: 0 100% 0 0; }
-  .cs-visual { margin: 1rem 0; border-radius: var(--w-radius); overflow: hidden; }
-  .cs-visual img { width: 100%; height: auto; display: block; }
-  .cs-prose { max-width: 65ch; margin-top: 2rem; font-family: var(--w-font-body); font-size: 1.05rem; line-height: 1.75; color: var(--c-ink-soft); }
+  .cs-prose { max-width: 65ch; font-family: var(--w-font-body); font-size: 1.05rem; line-height: 1.75; color: var(--c-ink-soft); }
   .cs-prose :global(h2), .cs-prose :global(h3) { font-family: var(--w-font-display); color: var(--c-ink); line-height: 1.15; margin: 2rem 0 0.75rem; }
   .cs-prose :global(a) { color: var(--c-ink); text-decoration: underline; }
 
-  .cs-gallery { background: var(--c-bg-alt); color: var(--c-ink); padding-block: var(--w-section-y); }
-  .cs-gallery__head { max-width: var(--w-container); margin: 0 auto 1.5rem; padding-inline: var(--w-gutter); }
-  .cs-gallery__grid { list-style: none; margin: 0; padding: 0 var(--w-gutter); display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
-  @media (min-width: 900px) { .cs-gallery__grid { grid-template-columns: repeat(3, 1fr); gap: 1.25rem; } }
-  .cs-gallery__grid li { border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 4 / 3; background: #fff; }
-  .cs-gallery__item--wide { grid-column: span 2; aspect-ratio: auto; }
-  .cs-gallery__grid img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  /* Interleaved image breakers (replace the old standalone gallery). Alternate
+   * full-bleed and inset; each carries a short editorial caption. */
+  .cs-breaker { margin: 0; }
+  .cs-breaker__media { border-radius: 0; }
+  .cs-breaker__media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .cs-breaker__cap {
+    max-width: 1100px; margin: 0.9rem auto 0; padding-inline: var(--w-gutter);
+    font-family: var(--w-font-body); font-size: var(--fs-small); letter-spacing: 0.04em;
+    text-transform: uppercase; color: var(--c-ink-soft);
+  }
+  .cs-breaker__cap span { color: var(--c-accent); padding: 0 0.2rem; }
+
+  .cs-breaker--bleed .cs-breaker__media { width: 100%; }
+  .cs-breaker--bleed .cs-breaker__media img { height: clamp(340px, 60vh, 720px); }
+
+  .cs-breaker--inset { max-width: 1100px; width: 100%; margin: 0 auto; padding-inline: var(--w-gutter); }
+  .cs-breaker--inset .cs-breaker__media { border-radius: var(--w-radius); }
+  .cs-breaker--inset .cs-breaker__media img { aspect-ratio: 16 / 9; }
+  .cs-breaker--inset .cs-breaker__cap { padding-inline: 0; }
 
   .cs-more { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
   .cs-more__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }

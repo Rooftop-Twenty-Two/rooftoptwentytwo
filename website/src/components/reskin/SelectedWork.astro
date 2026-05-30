@@ -1,7 +1,9 @@
 ---
-// S5 — Selected work. Horizontally-scrollable case-study cards pulled from the
-// portfolio collection. Off-white section. No fabricated metrics — cards show
-// real client, tagline and imagery, linking to the case study.
+// S5 — Selected work carousel. Horizontally-scrollable case-study cards pulled
+// from the portfolio collection. Off-white section. No fabricated metrics —
+// cards show real client, tagline and imagery, linking to the case study.
+// Enriched (brief §E): peeking deck, richer cards, progress counter + paddle
+// arrows, and the signature card hover.
 import { getCollection } from "astro:content";
 
 const all = (await getCollection("portfolio")).sort(
@@ -9,25 +11,40 @@ const all = (await getCollection("portfolio")).sort(
 );
 const featured = all.filter((p) => p.data.featured && p.data.heroImage);
 const cards = (featured.length >= 4 ? featured : all.filter((p) => p.data.heroImage)).slice(0, 8);
+const total = String(cards.length).padStart(2, "0");
 ---
 
 <section class="sw">
   <div class="sw__head">
-    <p class="kicker">Selected work</p>
-    <h2 class="sw__title">Results we&rsquo;re <em>proud of</em>.</h2>
-    <a href="/work/" class="wbtn wbtn--primary sw__all">View all work</a>
+    <div class="sw__intro reveal">
+      <p class="kicker">Selected work</p>
+      <h2 class="sw__title">Results we&rsquo;re <em>proud of</em>.</h2>
+    </div>
+    <div class="sw__controls">
+      <p class="sw__progress" aria-hidden="true"><span data-sw-current>01</span> / {total}</p>
+      <div class="sw__paddles">
+        <button type="button" class="sw__paddle" data-sw-prev aria-label="Previous projects" disabled>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button type="button" class="sw__paddle" data-sw-next aria-label="Next projects">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <a href="/work/" class="wbtn wbtn--primary sw__all">View all work</a>
+    </div>
   </div>
 
-  <ul class="sw__rail">
+  <ul class="sw__rail" data-sw-rail>
     {cards.map((c) => (
-      <li class="sw__card reveal">
-        <a href={`/work/${c.data.slug}/`}>
-          <figure class="sw__img">
+      <li class="sw__card reveal" data-sw-card>
+        <a class="r22-card" href={`/work/${c.data.slug}/`}>
+          <figure class="sw__img r22-media">
             <img src={c.data.heroImage} alt={c.data.name} loading="lazy" decoding="async" />
           </figure>
           <div class="sw__meta">
             <span class="sw__client">{c.data.name}</span>
             <span class="sw__tag">{c.data.tagline}</span>
+            <span class="sw__cta r22-arrow">View case study <span class="r22-arrow__i" aria-hidden="true">&rarr;</span></span>
           </div>
         </a>
       </li>
@@ -39,34 +56,95 @@ const cards = (featured.length >= 4 ? featured : all.filter((p) => p.data.heroIm
   .sw { background: var(--c-bg-alt); color: var(--c-ink); padding-block: var(--w-section-y); overflow: hidden; }
   .sw__head {
     max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter);
-    display: grid; gap: 0.75rem; align-items: end;
+    display: grid; gap: 1.25rem; align-items: end;
   }
   @media (min-width: 820px) {
     .sw__head { grid-template-columns: 1fr auto; }
-    .sw__all { justify-self: end; }
   }
   .sw__title {
     font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2);
     line-height: var(--lh-heading); letter-spacing: var(--tracking-display); margin: 0.25rem 0 0;
   }
-  .sw__title em { font-style: italic; color: var(--c-ink); }
-  .sw__all { margin-top: 0.5rem; }
+  .sw__title em { font-style: italic; color: var(--c-accent); }
+
+  .sw__controls { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .sw__progress {
+    font-family: var(--w-font-display); font-weight: 600; font-size: 1.05rem;
+    color: var(--c-ink-soft); margin: 0; min-width: 4.5rem;
+  }
+  .sw__progress span { color: var(--c-ink); }
+  .sw__paddles { display: flex; gap: 0.5rem; }
+  .sw__paddle {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px; border-radius: var(--radius-pill);
+    border: 1.5px solid var(--c-ink); background: transparent; color: var(--c-ink);
+    cursor: pointer; transition: background-color var(--w-dur-fast) var(--w-ease), color var(--w-dur-fast) var(--w-ease), opacity var(--w-dur-fast) var(--w-ease);
+  }
+  .sw__paddle:hover { background: var(--c-ink); color: #fff; }
+  .sw__paddle:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
+  .sw__paddle:disabled { opacity: 0.3; cursor: default; }
+  .sw__paddle:disabled:hover { background: transparent; color: var(--c-ink); }
+  @media (max-width: 819px) { .sw__paddles { display: none; } }
 
   .sw__rail {
     list-style: none; margin: 2.5rem 0 0; padding: 0 var(--w-gutter) 1rem;
     display: grid; grid-auto-flow: column; grid-auto-columns: min(80vw, 420px);
     gap: 1.5rem; overflow-x: auto; scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch; scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
   }
+  .sw__rail::-webkit-scrollbar { display: none; }
   .sw__card { scroll-snap-align: start; }
   .sw__card a { text-decoration: none; color: inherit; display: block; }
   .sw__img {
     margin: 0; border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 4 / 3;
     background: #fff; box-shadow: var(--w-shadow-soft);
   }
-  .sw__img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform var(--w-dur) var(--w-ease); }
-  .sw__card a:hover .sw__img img { transform: scale(1.04); }
-  .sw__meta { display: flex; flex-direction: column; gap: 0.2rem; margin-top: 1.1rem; }
+  .sw__img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .sw__meta { display: flex; flex-direction: column; gap: 0.3rem; margin-top: 1.1rem; }
   .sw__client { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); line-height: 1.1; }
   .sw__tag { font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-ink-soft); }
+  .sw__cta {
+    font-family: var(--w-font-body); font-weight: 600; font-size: 0.9rem; color: var(--c-accent);
+    margin-top: 0.35rem;
+  }
 </style>
+
+<script>
+  // Paddle navigation + progress counter for the selected-work deck. Scrolls by
+  // one card-step, keeps the "NN / NN" counter in sync, and toggles the paddle
+  // disabled states at the rail extremities.
+  const rail = document.querySelector<HTMLElement>("[data-sw-rail]");
+  if (rail) {
+    const cards = Array.from(rail.querySelectorAll<HTMLElement>("[data-sw-card]"));
+    const prev = document.querySelector<HTMLButtonElement>("[data-sw-prev]");
+    const next = document.querySelector<HTMLButtonElement>("[data-sw-next]");
+    const current = document.querySelector<HTMLElement>("[data-sw-current]");
+    const total = cards.length;
+
+    const step = () => {
+      if (cards.length < 2) return rail.clientWidth;
+      return cards[1].offsetLeft - cards[0].offsetLeft;
+    };
+
+    const sync = () => {
+      const i = Math.round(rail.scrollLeft / step());
+      const idx = Math.min(Math.max(i, 0), total - 1);
+      if (current) current.textContent = String(idx + 1).padStart(2, "0");
+      const atStart = rail.scrollLeft <= 4;
+      const atEnd = rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - 4;
+      if (prev) prev.disabled = atStart;
+      if (next) next.disabled = atEnd;
+    };
+
+    prev?.addEventListener("click", () => rail.scrollBy({ left: -step(), behavior: "smooth" }));
+    next?.addEventListener("click", () => rail.scrollBy({ left: step(), behavior: "smooth" }));
+
+    let raf = 0;
+    rail.addEventListener("scroll", () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => { raf = 0; sync(); });
+    }, { passive: true });
+    window.addEventListener("resize", sync, { passive: true });
+    sync();
+  }
+</script>
