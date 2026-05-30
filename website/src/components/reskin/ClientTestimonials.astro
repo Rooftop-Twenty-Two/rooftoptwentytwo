@@ -1,0 +1,88 @@
+---
+// Client testimonials — 3-up cards from real client reviews (no dates).
+// "Don't just take our word for it." Centred head + Get in touch CTA.
+const testimonials = [
+  {
+    quote: "A huge thank you to all the team at Rooftop Twenty Two for their superb service and assistance in all our digital media and marketing activity. Their knowledge, advice and attention to detail is second to none. We wouldn't be able to showcase what we do at Best4Travel without their skills and expertise.",
+    name: "Ciara Foley",
+    company: "Best4Travel",
+  },
+  {
+    quote: "I've been using Rooftop Twenty Two for over two years. Their creativity, reliability, and attention to detail are first-class, and they match excellent design with a commercial lens that many agencies overlook. I wouldn't hesitate to recommend them.",
+    name: "Joe Wilde",
+    company: "",
+  },
+  {
+    quote: "Irish Landmark Trust have been working with Rooftop Twenty Two for a number of years now and we have loved the experience. A fantastic team of energetic, creative people.",
+    name: "Grace Healy",
+    company: "Irish Landmark Trust",
+  },
+];
+
+const initials = (n: string) =>
+  n.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
+---
+
+<section class="tg">
+  <div class="tg__inner">
+    <div class="tg__head reveal">
+      <p class="kicker kicker--script">What clients say</p>
+      <h2 class="tg__title">Don&rsquo;t just take <em>our word</em> for it.</h2>
+    </div>
+
+    <ul class="tg__grid">
+      {testimonials.map((t) => (
+        <li class="tg__card reveal">
+          <span class="tg__mark" aria-hidden="true">&ldquo;</span>
+          <blockquote class="tg__quote">{t.quote}</blockquote>
+          <div class="tg__by">
+            <span class="tg__avatar" aria-hidden="true">{initials(t.name)}</span>
+            <span class="tg__who">
+              <span class="tg__name">{t.name}</span>
+              {t.company && <span class="tg__co">{t.company}</span>}
+            </span>
+          </div>
+        </li>
+      ))}
+    </ul>
+
+    <div class="tg__cta reveal">
+      <a href="/contact/#contact" class="wbtn wbtn--accent">Get in touch</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .tg { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .tg__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .tg__head { text-align: center; margin-bottom: 3rem; }
+  .tg__head .kicker--script { display: inline-block; }
+  .tg__title {
+    font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2);
+    line-height: var(--lh-heading); letter-spacing: var(--tracking-display); margin: 0.4rem 0 0;
+  }
+  .tg__title em { font-style: italic; color: var(--c-accent); }
+
+  .tg__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+  @media (min-width: 800px) { .tg__grid { grid-template-columns: repeat(3, 1fr); gap: 1.75rem; } }
+  .tg__card {
+    display: flex; flex-direction: column; background: var(--c-bg-alt);
+    border: 1px solid var(--c-line); border-radius: var(--w-radius); padding: 2rem;
+  }
+  .tg__mark { font-family: var(--w-font-display); font-weight: 700; font-size: 3rem; line-height: 0.6; color: var(--c-accent); }
+  .tg__quote {
+    font-family: var(--w-font-body); font-size: 1.05rem; line-height: 1.6; color: var(--c-ink);
+    margin: 1rem 0 0; flex: 1 1 auto;
+  }
+  .tg__by { display: flex; align-items: center; gap: 0.85rem; margin-top: 1.75rem; padding-top: 1.5rem; border-top: 1px solid var(--c-line); }
+  .tg__avatar {
+    flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px; border-radius: 50%; background: var(--c-accent); color: var(--c-accent-ink);
+    font-family: var(--w-font-body); font-weight: 700; font-size: 0.95rem;
+  }
+  .tg__who { display: flex; flex-direction: column; }
+  .tg__name { font-family: var(--w-font-body); font-weight: 700; font-size: 1rem; color: var(--c-ink); }
+  .tg__co { font-family: var(--w-font-body); font-size: var(--fs-small); color: var(--c-ink-soft); }
+
+  .tg__cta { text-align: center; margin-top: 3rem; }
+</style>
