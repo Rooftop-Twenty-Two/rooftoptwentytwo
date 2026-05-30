@@ -139,9 +139,21 @@ const breadcrumbs = isClusterParent
             <p class="kicker">Proof</p>
             <h2 class="ws-h2">Work we&rsquo;d <em>put our name to</em>.</h2>
           </div>
-          <a href="/work/" class="wbtn wbtn--primary ws-work__all">View all projects</a>
+          <div class="ws-work__controls">
+            <a href="/work/" class="wbtn wbtn--primary ws-work__all">View all projects</a>
+            {caseStudies.length > 1 && (
+              <div class="ws-work__arrows" data-work-arrows hidden>
+                <button type="button" class="ws-arrow" data-work-prev aria-label="Previous case studies">
+                  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 5l-7 7 7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <button type="button" class="ws-arrow" data-work-next aria-label="Next case studies">
+                  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
-        <ul class="ws-work__row">
+        <ul class="ws-work__row" data-work-row>
           {caseStudies.map((cs) => (
             <li>
               <a class="r22-card" href={`/work/${cs.slug}/`}>
@@ -215,6 +227,32 @@ const breadcrumbs = isClusterParent
   <WCtaBand />
 </Layout>
 
+<script>
+  // Prev/next toggles for the case-study scroll row.
+  const row = document.querySelector<HTMLElement>("[data-work-row]");
+  const arrows = document.querySelector<HTMLElement>("[data-work-arrows]");
+  if (row && arrows) {
+    const prev = arrows.querySelector<HTMLButtonElement>("[data-work-prev]");
+    const next = arrows.querySelector<HTMLButtonElement>("[data-work-next]");
+    const step = () => {
+      const card = row.querySelector<HTMLElement>("li");
+      const gap = parseFloat(getComputedStyle(row).columnGap || "28") || 28;
+      return card ? card.offsetWidth + gap : row.clientWidth * 0.85;
+    };
+    const overflows = () => row.scrollWidth - row.clientWidth > 4;
+    const sync = () => {
+      arrows.hidden = !overflows();
+      if (prev) prev.disabled = row.scrollLeft <= 2;
+      if (next) next.disabled = row.scrollLeft >= row.scrollWidth - row.clientWidth - 2;
+    };
+    prev?.addEventListener("click", () => row.scrollBy({ left: -step(), behavior: "smooth" }));
+    next?.addEventListener("click", () => row.scrollBy({ left: step(), behavior: "smooth" }));
+    row.addEventListener("scroll", sync, { passive: true });
+    window.addEventListener("resize", sync, { passive: true });
+    sync();
+  }
+</script>
+
 <style>
   .ws-h2 { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); line-height: var(--lh-heading); letter-spacing: var(--tracking-display); color: var(--c-ink); margin: 0.5rem 0 0; }
   .ws-h2 :global(em) { font-style: italic; color: var(--c-accent); }
@@ -247,7 +285,18 @@ const breadcrumbs = isClusterParent
   .ws-work { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
   .ws-work__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
   .ws-work__top { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1.25rem; margin-bottom: 2.5rem; }
+  .ws-work__controls { display: flex; align-items: center; gap: 1rem; }
   .ws-work__all { white-space: nowrap; }
+  .ws-work__arrows { display: flex; gap: 0.6rem; }
+  .ws-arrow {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 48px; height: 48px; border-radius: 50%; background: transparent;
+    border: 1.5px solid var(--c-ink); color: var(--c-ink); cursor: pointer;
+    transition: background var(--w-dur-fast) var(--w-ease), color var(--w-dur-fast) var(--w-ease), opacity var(--w-dur-fast) var(--w-ease);
+  }
+  .ws-arrow:hover { background: var(--c-ink); color: var(--c-bg); }
+  .ws-arrow:disabled { opacity: 0.3; cursor: default; }
+  .ws-arrow:disabled:hover { background: transparent; color: var(--c-ink); }
   /* Horizontal scroll row: cards of fixed width, swipe/scroll to see more. */
   .ws-work__row {
     list-style: none; margin: 0; padding: 0 0 1rem; display: flex; gap: 1.75rem;
