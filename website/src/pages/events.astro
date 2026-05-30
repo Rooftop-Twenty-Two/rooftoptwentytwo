@@ -1,7 +1,14 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import PageHero from "../components/reskin/PageHero.astro";
+import Picture from "../components/Picture.astro";
 import BreadcrumbSchema from "../components/seo/BreadcrumbSchema.astro";
+import { existsSync } from "node:fs";
+import path from "node:path";
+
+// Speaker headshot + partner logo render only once the files exist in the repo,
+// so nothing shows broken before they're uploaded.
+const hasFile = (p: string) => existsSync(path.join(process.cwd(), "public", p));
 
 // Events are kept as data so the featured layout is reusable: add a second
 // object here (in-person or online) and it can drive its own card without a
@@ -13,6 +20,9 @@ const events = [
     title: "From nothing to a brand the whole country knows.",
     speaker: "Diarmuid McSweeney",
     speakerRole: "Founder, Gym+Coffee",
+    headshot: "/images/events/diarmuid-mcsweeney.jpg",
+    partnerLogo: "/images/events/gym-coffee-logo.png",
+    partnerName: "Gym+Coffee",
     where: "Our Dublin studio",
     date: null, // null renders a styled "to be confirmed" state
     format: "In person. Limited seats.",
@@ -53,9 +63,14 @@ const featured = events[0];
         {featured.body.map((p) => <p class="ev-feat__body" set:html={p} />)}
 
         <div class="ev-speaker">
-          <p class="ev-speaker__label">Your speaker</p>
-          <p class="ev-speaker__name">{featured.speaker}<span class="ev-speaker__role">{featured.speakerRole}</span></p>
-          <p class="ev-speaker__bio" set:html={featured.bio} />
+          {featured.headshot && hasFile(featured.headshot) && (
+            <div class="ev-speaker__photo"><Picture src={featured.headshot} alt={`${featured.speaker}, ${featured.speakerRole}`} loading="lazy" decoding="async" /></div>
+          )}
+          <div class="ev-speaker__txt">
+            <p class="ev-speaker__label">Your speaker</p>
+            <p class="ev-speaker__name">{featured.speaker}<span class="ev-speaker__role">{featured.speakerRole}</span></p>
+            <p class="ev-speaker__bio" set:html={featured.bio} />
+          </div>
         </div>
 
         <a href="#register" class="wbtn wbtn--accent ev-feat__cta">Put my name down</a>
@@ -63,6 +78,11 @@ const featured = events[0];
 
       <aside class="ev-feat__aside reveal">
         <div class="ev-card">
+          {featured.partnerLogo && hasFile(featured.partnerLogo) && (
+            <div class="ev-card__partner">
+              <img src={featured.partnerLogo} alt={featured.partnerName} loading="lazy" decoding="async" />
+            </div>
+          )}
           <p class="ev-card__eyebrow">The details</p>
           <dl class="ev-card__list">
             <div class="ev-card__row">
@@ -178,7 +198,10 @@ const featured = events[0];
   .ev-feat__body { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.7; color: var(--c-ink-soft); margin: 0 0 1.1rem; max-width: 60ch; }
   .ev-feat__cta { margin-top: 1.5rem; }
 
-  .ev-speaker { margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--c-line); }
+  .ev-speaker { margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--c-line); display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+  @media (min-width: 560px) { .ev-speaker { grid-template-columns: 140px 1fr; gap: 1.75rem; align-items: start; } }
+  .ev-speaker__photo { border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 1; background: var(--c-bg-alt); max-width: 140px; }
+  .ev-speaker__photo :global(img) { width: 100%; height: 100%; object-fit: cover; display: block; }
   .ev-speaker__label { font-family: var(--w-font-body); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c-accent); margin: 0; }
   .ev-speaker__name { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); color: var(--c-ink); margin: 0.6rem 0 0; }
   .ev-speaker__role { display: block; font-family: var(--w-font-body); font-weight: 400; font-size: 0.95rem; color: var(--c-ink-soft); margin-top: 0.2rem; }
@@ -188,6 +211,8 @@ const featured = events[0];
   .ev-feat__aside { position: relative; }
   @media (min-width: 940px) { .ev-feat__aside { position: sticky; top: 6rem; } }
   .ev-card { background: var(--c-dark); color: var(--c-on-dark); border-radius: var(--w-radius); padding: clamp(1.75rem, 3vw, 2.5rem); }
+  .ev-card__partner { margin: 0 0 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.12); }
+  .ev-card__partner img { height: 46px; width: auto; max-width: 160px; object-fit: contain; filter: brightness(0) invert(1); }
   .ev-card__eyebrow { font-family: var(--w-font-body); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c-accent-2); margin: 0 0 1.25rem; }
   .ev-card__list { margin: 0; padding: 0; }
   .ev-card__row { display: grid; grid-template-columns: 1fr; gap: 0.15rem; padding: 0.9rem 0; border-top: 1px solid rgba(255,255,255,0.12); }
