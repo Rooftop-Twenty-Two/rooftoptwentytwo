@@ -14,36 +14,61 @@
     "formats": ["ig-square", "ig-portrait", "li-square", "li-land", "story"]
   },
   {
-    "id": "awards-spider-photo",
+    "id": "awards-team-photo",
     "pillar": "awards",
     "type": "headline",
     "theme": "navy",
-    "photo": "https://placehold.co/1200x1200/0D2030/0D2030.png",
+    "photo": "./assets/img/awards-team.jpg",
     "eyebrow": "Spider Awards 2026",
     "headline": "We won [[Gold]].",
     "copy": "Some of the team picking up the award for our Breast Cancer Ireland work.",
-    "formats": ["ig-square", "story"]
+    "formats": ["ig-square", "ig-portrait", "story"]
   },
   {
     "id": "case-best4travel",
     "pillar": "case-study",
     "type": "stat",
     "theme": "cream",
+    "photoSplit": "right",
+    "photo": "./assets/img/best4travel.webp",
     "eyebrow": "Client results · Best4Travel",
     "stat": "30+",
     "label": "good enquiries a day, from Google Ads, paid social and a site built to convert.",
-    "client": "Best4Travel",
     "formats": ["ig-square", "ig-portrait", "li-square", "li-land"]
   },
   {
     "id": "case-idf",
     "pillar": "case-study",
     "type": "headline",
-    "theme": "coral",
+    "theme": "navy",
+    "photo": "./assets/img/idf.webp",
     "eyebrow": "Case study · Irish Defence Forces",
     "headline": "One campaign. [[Every touchpoint.]]",
     "copy": "We led the creative for the Defence Forces recruitment campaign, from strategy to paid social to film.",
-    "formats": ["ig-square", "li-land", "ig-portrait"]
+    "formats": ["ig-square", "ig-portrait", "li-square", "li-land"]
+  },
+  {
+    "id": "case-midlands",
+    "pillar": "case-study",
+    "type": "headline",
+    "theme": "cream",
+    "photoSplit": "left",
+    "photo": "./assets/img/midlands.png",
+    "eyebrow": "Case study · Midlands Park Hotel",
+    "headline": "A social engine that [[fills rooms]].",
+    "copy": "Paid and organic social built to drive direct bookings, not just likes.",
+    "formats": ["ig-square", "li-square", "ig-portrait"]
+  },
+  {
+    "id": "case-gourmet",
+    "pillar": "case-study",
+    "type": "headline",
+    "theme": "navy",
+    "photo": "./assets/img/gourmet.png",
+    "eyebrow": "Case study · Gourmet Food Parlour",
+    "headline": "Content that [[stops the scroll]].",
+    "copy": "Social, photography, video and Google Ads for one of Ireland's best-loved food brands.",
+    "formats": ["ig-square", "ig-portrait", "li-land"]
   },
   {
     "id": "case-testimonial",
@@ -62,7 +87,7 @@
     "type": "hiring",
     "theme": "mint",
     "headline": "Senior Paid Media Specialist.",
-    "copy": "Dublin · Hybrid (WFH Wed & Fri) · Pension, health insurance, charity days. Apply at rooftoptwentytwo.ie/careers",
+    "copy": "Dublin · Hybrid (WFH Wed & Fri). Pension, health insurance, charity days. rooftoptwentytwo.ie/careers",
     "cta": "We're hiring →",
     "formats": ["ig-square", "ig-portrait", "li-square", "story"]
   },
@@ -70,11 +95,12 @@
     "id": "hiring-culture",
     "pillar": "hiring",
     "type": "headline",
-    "theme": "cream",
+    "theme": "navy",
+    "photo": "./assets/img/office-collab.jpg",
     "kicker": "Life on the rooftop",
     "headline": "One team. [[The whole job.]]",
     "copy": "Strategy, brand, web and performance, all in-house. No silos, no hand-offs.",
-    "formats": ["ig-square", "li-land"]
+    "formats": ["ig-square", "li-land", "ig-portrait"]
   },
   {
     "id": "tip-web-speed",
