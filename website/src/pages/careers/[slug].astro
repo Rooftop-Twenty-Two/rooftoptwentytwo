@@ -12,7 +12,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const j = entry.data;
-const mailto = `mailto:hey@rooftoptwentytwo.ie?subject=${encodeURIComponent(`Application — ${j.title}`)}`;
+const mailto = `mailto:hey@rooftoptwentytwo.ie?subject=${encodeURIComponent(`Application for ${j.title}`)}`;
 
 const blocks = [
   { label: "What you'll do", items: j.responsibilities },
