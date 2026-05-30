@@ -33,78 +33,92 @@ if (programmeParam) {
   prefillSubject = `${titleCase(serviceParam)} enquiry`;
   prefillMessage = `Hi, we're interested in ${titleCase(serviceParam)}.\n\n`;
 }
+
+const mapsQuery = "Rooftop Twenty Two, Claremont Avenue, Glasnevin, Dublin 11";
+const mapEmbed = `https://www.google.com/maps?q=${encodeURIComponent(mapsQuery)}&output=embed`;
+const directions = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(mapsQuery)}`;
 ---
 
 <Layout title="Contact | Rooftop Twenty Two" description="Get in touch with Rooftop Twenty Two, an independent branding and digital design studio in Dublin." hideStickyMobileCTA={true}>
   <section id="contact" class="ct">
     <div class="ct__inner">
-      <!-- Left: copy + details -->
-      <div class="ct__aside">
-        <p class="kicker kicker--on-dark kicker--script">Get in touch</p>
-        <h1 class="ct__title">Let&rsquo;s talk about your <em>growth</em>.</h1>
-        <p class="ct__lead">
-          Tell us what you&rsquo;re scaling, launching, or rebuilding. We&rsquo;ll come
-          back with a thoughtful reply and a time to talk it through.
-        </p>
 
-        <div class="ct__details">
-          <a href="mailto:hey@rooftoptwentytwo.ie">hey@rooftoptwentytwo.ie</a>
-          <a href="tel:+35316991422">+353 1 699 1422</a>
-          <address>
-            Rooftop Twenty Two, Claremont Avenue,<br />
-            Glasnevin, Dublin 11, D11 YNR2
-          </address>
+      <!-- Row 1: intro (photo) + form -->
+      <div class="ct__top">
+        <div class="ct__intro" style="--ct-photo:url('/images/office/office-collab-01.jpg')">
+          <div class="ct__intro-inner">
+            <div>
+              <p class="kicker kicker--on-dark kicker--script">Get in touch</p>
+              <h1 class="ct__title">Let&rsquo;s build your <em>growth</em>.</h1>
+              <p class="ct__lead">Tell us what you&rsquo;re scaling, launching, or rebuilding. You&rsquo;ll get a thoughtful reply from a senior, in-house team, and a time to talk it through.</p>
+            </div>
+            <div class="ct__social">
+              <p class="ct__social-label">We&rsquo;re very social</p>
+              <div class="ct__social-links">
+                <a href="https://ie.linkedin.com/company/rooftop-twenty-two" target="_blank" rel="noopener" aria-label="LinkedIn">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.36V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.62 0 4.29 2.38 4.29 5.48v6.26zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zm1.78 13.02H3.55V9h3.57v11.45z" /></svg>
+                </a>
+                <a href="https://www.instagram.com/rooftoptwentytwo/" target="_blank" rel="noopener" aria-label="Instagram">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none" /></svg>
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <figure class="ct__photo">
-          <img src="/images/office/office-studio-01.jpg" alt="The Rooftop Twenty Two studio" loading="lazy" decoding="async" />
-        </figure>
+        <form class="ct__form" action="/api/contact" method="POST" novalidate data-contact-form>
+          <input type="hidden" name="routing" value={routingValue} />
+          <label class="ct__field"><span>First name</span><input type="text" name="name" required placeholder="Your name" /></label>
+          <label class="ct__field"><span>Email</span><input type="email" name="email" required placeholder="you@company.com" /></label>
+          <label class="ct__field"><span>Phone</span><input type="tel" name="phone" placeholder="Optional" /></label>
+          <label class="ct__field"><span>Company</span><input type="text" name="company" placeholder="Optional" /></label>
+          <label class="ct__field ct__field--full"><span>Subject</span><input type="text" name="subject" placeholder="What's this about?" value={prefillSubject} /></label>
+          <label class="ct__field ct__field--full"><span>Message</span><textarea name="message" required rows="5" placeholder="Tell us a little about your project">{prefillMessage}</textarea></label>
+          <button type="submit" class="wbtn wbtn--accent ct__submit">Send message</button>
+        </form>
       </div>
 
-      <!-- Right: form -->
-      <form class="ct__form" action="/api/contact" method="POST" novalidate data-contact-form>
-        <input type="hidden" name="routing" value={routingValue} />
-        <label class="ct__field">
-          <span>Name</span>
-          <input type="text" name="name" required placeholder="Your name" />
-        </label>
-        <label class="ct__field">
-          <span>Email</span>
-          <input type="email" name="email" required placeholder="you@company.com" />
-        </label>
-        <label class="ct__field">
-          <span>Company</span>
-          <input type="text" name="company" placeholder="Company (optional)" />
-        </label>
-        <label class="ct__field">
-          <span>Subject</span>
-          <input type="text" name="subject" placeholder="What's this about?" value={prefillSubject} />
-        </label>
-        <label class="ct__field ct__field--full">
-          <span>Message</span>
-          <textarea name="message" required rows="6" placeholder="Tell us a little about your project">{prefillMessage}</textarea>
-        </label>
-        <button type="submit" class="wbtn wbtn--accent ct__submit">Send message</button>
-      </form>
+      <!-- Row 2: details + map -->
+      <div class="ct__bottom">
+        <div class="ct__details">
+          <figure class="ct__details-photo"><img src="/images/office/office-studio-01.jpg" alt="The Rooftop Twenty Two studio" loading="lazy" decoding="async" /></figure>
+          <div class="ct__details-info">
+            <a class="ct__line" href="tel:+35316991422"><span class="ct__line-ic" aria-hidden="true">&#9742;</span> +353 1 699 1422</a>
+            <a class="ct__line" href="mailto:hey@rooftoptwentytwo.ie"><span class="ct__line-ic" aria-hidden="true">&#9993;</span> hey@rooftoptwentytwo.ie</a>
+            <address class="ct__addr">Rooftop Twenty Two, Claremont Avenue,<br />Glasnevin, Dublin 11, D11 YNR2</address>
+            <a class="ct__directions" href={directions} target="_blank" rel="noopener">Get directions &rarr;</a>
+          </div>
+        </div>
+
+        <div class="ct__map">
+          <iframe src={mapEmbed} title="Map to Rooftop Twenty Two" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+      </div>
+
     </div>
   </section>
 </Layout>
 
 <style>
-  .ct { background: var(--c-dark); color: var(--c-on-dark); padding-block: clamp(7rem, 13vw, 11rem) var(--w-section-y); }
-  .ct__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); display: grid; grid-template-columns: 1fr; gap: 3rem; }
-  @media (min-width: 920px) { .ct__inner { grid-template-columns: 1fr 1.05fr; gap: 5rem; align-items: start; } }
-  .ct__title { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-display); line-height: var(--lh-display); letter-spacing: var(--tracking-display); margin: 1rem 0 0; }
-  .ct__title em { font-style: normal; color: var(--c-accent-2); }
-  .ct__lead { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: var(--lh-body); color: var(--c-on-dark-soft); margin: 1.5rem 0 0; max-width: 42ch; }
-  .ct__details { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 2rem; font-family: var(--w-font-body); }
-  .ct__details a { color: var(--c-on-dark); text-decoration: none; font-weight: 600; }
-  .ct__details a:hover { color: var(--c-accent); }
-  .ct__details address { color: var(--c-on-dark-soft); font-style: normal; line-height: 1.6; margin-top: 0.5rem; }
-  .ct__photo { margin: 2.5rem 0 0; border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 16 / 10; }
-  .ct__photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .ct { background: var(--c-bg); color: var(--c-ink); padding-block: clamp(6rem, 12vw, 9rem) var(--w-section-y); }
+  .ct__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); display: flex; flex-direction: column; gap: 1.5rem; }
 
-  .ct__form { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  /* Row 1 */
+  .ct__top { display: grid; grid-template-columns: 1fr; gap: 1.5rem; align-items: stretch; }
+  @media (min-width: 940px) { .ct__top { grid-template-columns: 1fr 1.1fr; } }
+
+  .ct__intro { position: relative; overflow: hidden; border-radius: var(--w-radius); background: var(--c-dark); min-height: 420px; }
+  .ct__intro::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(13,32,48,0.72), rgba(13,32,48,0.92)), var(--ct-photo); background-size: cover; background-position: center; }
+  .ct__intro-inner { position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; justify-content: space-between; gap: 2.5rem; padding: clamp(1.75rem, 3vw, 2.75rem); color: var(--c-on-dark); }
+  .ct__title { font-family: var(--w-font-display); font-weight: 600; font-size: clamp(2.25rem, 3.5vw, 3.25rem); line-height: 1.04; letter-spacing: var(--tracking-display); margin: 1rem 0 0; color: var(--c-on-dark); }
+  .ct__title em { font-style: normal; color: var(--c-accent-2); }
+  .ct__lead { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.6; color: var(--c-on-dark-soft); margin: 1.25rem 0 0; max-width: 40ch; }
+  .ct__social-label { font-family: var(--w-font-body); font-weight: 700; font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c-on-dark-soft); margin: 0 0 0.85rem; }
+  .ct__social-links { display: flex; gap: 0.6rem; }
+  .ct__social-links a { display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.25); color: #fff; transition: background-color var(--w-dur-fast) var(--w-ease), border-color var(--w-dur-fast) var(--w-ease); }
+  .ct__social-links a:hover { background: var(--c-accent); border-color: var(--c-accent); }
+
+  .ct__form { background: var(--c-dark); color: var(--c-on-dark); border-radius: var(--w-radius); padding: clamp(1.75rem, 3vw, 2.75rem); display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 1.25rem; align-content: start; }
   .ct__field { display: flex; flex-direction: column; gap: 0.4rem; }
   .ct__field--full { grid-column: 1 / -1; }
   .ct__field span { font-family: var(--w-font-body); font-size: var(--fs-small); color: var(--c-on-dark-soft); }
@@ -115,5 +129,22 @@ if (programmeParam) {
   }
   .ct__field input::placeholder, .ct__field textarea::placeholder { color: rgba(255,255,255,0.4); }
   .ct__field input:focus-visible, .ct__field textarea:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; border-color: transparent; }
-  .ct__submit { grid-column: 1 / -1; justify-self: start; margin-top: 0.5rem; }
+  .ct__submit { grid-column: 1 / -1; justify-self: start; margin-top: 0.25rem; }
+
+  /* Row 2 */
+  .ct__bottom { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+  @media (min-width: 940px) { .ct__bottom { grid-template-columns: 0.85fr 1.15fr; } }
+  .ct__details { background: var(--c-dark); color: var(--c-on-dark); border-radius: var(--w-radius); overflow: hidden; display: flex; flex-direction: column; }
+  .ct__details-photo { margin: 0; aspect-ratio: 16 / 10; }
+  .ct__details-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .ct__details-info { padding: clamp(1.5rem, 3vw, 2rem); display: flex; flex-direction: column; gap: 0.75rem; }
+  .ct__line { display: inline-flex; align-items: center; gap: 0.6rem; font-family: var(--w-font-body); font-weight: 600; color: var(--c-on-dark); text-decoration: none; }
+  .ct__line:hover { color: var(--c-accent-2); }
+  .ct__line-ic { color: var(--c-accent-2); }
+  .ct__addr { font-style: normal; font-family: var(--w-font-body); color: var(--c-on-dark-soft); line-height: 1.6; margin-top: 0.25rem; }
+  .ct__directions { font-family: var(--w-font-body); font-weight: 600; color: var(--c-accent); text-decoration: none; margin-top: 0.25rem; }
+  .ct__directions:hover { text-decoration: underline; }
+
+  .ct__map { border-radius: var(--w-radius); overflow: hidden; border: 1px solid var(--c-line); min-height: 320px; background: var(--c-bg-alt); }
+  .ct__map iframe { width: 100%; height: 100%; min-height: 320px; border: 0; display: block; filter: grayscale(0.2); }
 </style>

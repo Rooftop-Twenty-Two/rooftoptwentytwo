@@ -45,6 +45,30 @@ const extraImages = gallery.slice(sections.length);
       : { label: "All work", href: "/work/" }}
   />
 
+  {videos.length > 0 && (
+    <section class="cs-videos">
+      <div class="cs-videos__inner">
+        <p class="kicker kicker--script">In motion</p>
+        <h2 class="cs-videos__h">The campaign, <em>in motion</em>.</h2>
+        <ul class="cs-videos__grid">
+          {videos.map((id) => (
+            <li class="cs-videos__item">
+              <div class="cs-videos__frame">
+                <iframe
+                  src={`https://player.mux.com/${id}`}
+                  title={`${name} campaign video`}
+                  loading="lazy"
+                  allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+                  allowfullscreen
+                ></iframe>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
   <section class="cs-body">
     {sections.map((sec, i) => (
       <>
@@ -88,30 +112,6 @@ const extraImages = gallery.slice(sections.length);
       <div class="cs-wrap"><article class="cs-prose"><Content /></article></div>
     )}
   </section>
-
-  {videos.length > 0 && (
-    <section class="cs-videos">
-      <div class="cs-videos__inner">
-        <p class="kicker kicker--script">In motion</p>
-        <h2 class="cs-videos__h">The campaign, <em>in motion</em>.</h2>
-        <ul class="cs-videos__grid">
-          {videos.map((id) => (
-            <li class="cs-videos__item">
-              <div class="cs-videos__frame">
-                <iframe
-                  src={`https://player.mux.com/${id}`}
-                  title={`${name} campaign video`}
-                  loading="lazy"
-                  allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
-                  allowfullscreen
-                ></iframe>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </section>
-  )}
 
   <WContactForm
     heading={`Want results like ${name}'s? <em>Let's talk</em>.`}
