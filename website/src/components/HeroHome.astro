@@ -1,11 +1,23 @@
 ---
-// S1 — Home hero (re-skin / Wolfgang direction).
+// S1, Home hero (re-skin / Wolfgang direction).
 // Near-black canvas, slow-pan (Ken Burns) office photo, kicker, big display
-// H1 with a rotating discipline word, dual pill CTAs. No video asset yet —
+// H1 with a rotating discipline word, dual pill CTAs. No video asset yet, 
 // structured so a <video> can drop in behind .whero__media later.
 // Default resting word is "growth" (the homepage promise); the rest rotate.
 const rotating = ["growth", "performance", "SEO", "social", "web", "content"];
 const poster = "/images/office/office-collab-01.jpg";
+
+// Recent awards, shown bottom-right of the hero in white. Logos render
+// automatically once the white SVGs are dropped at these paths; until then the
+// text reference shows on its own.
+import { existsSync } from "node:fs";
+import path from "node:path";
+const awardDefs = [
+  { logo: "/images/awards/spider-awards.svg", result: "Gold", name: "Spider Awards", href: "/latest/spider-awards-2026-gold/" },
+  { logo: "/images/awards/digital-media-awards.svg", result: "Finalist", name: "Digital Media Awards", href: "/latest/digital-media-awards-seo-finalist/" },
+  { logo: "/images/awards/european-search-awards.svg", result: "Nominated", name: "European Search Awards", href: "/latest/european-search-awards-two-nominations/" },
+];
+const awards = awardDefs.map((a) => ({ ...a, hasLogo: existsSync(path.join(process.cwd(), "public", a.logo)) }));
 ---
 
 <section class="whero">
@@ -15,7 +27,7 @@ const poster = "/images/office/office-collab-01.jpg";
   </div>
 
   <div class="whero__inner">
-    <p class="kicker kicker--on-dark whero__kicker">Your outsourced growth team</p>
+    <p class="kicker kicker--on-dark kicker--script whero__kicker">Your outsourced growth team</p>
     <h1 class="whero__title">
       <span class="whero__lead">We&rsquo;re your partners in</span>
       <span class="whero__rotator" data-rotator aria-live="polite">
@@ -25,7 +37,7 @@ const poster = "/images/office/office-collab-01.jpg";
       </span>
     </h1>
     <p class="whero__sub">
-      Strategy, creative, and performance under one roof — the growth team that
+      Strategy, creative, and performance under one roof, the growth team that
       works like it&rsquo;s part of yours.
     </p>
     <div class="whero__cta">
@@ -33,6 +45,17 @@ const poster = "/images/office/office-collab-01.jpg";
       <a href="/contact/" class="wbtn wbtn--ghost">Get in touch</a>
     </div>
   </div>
+
+  <ul class="whero__awards" aria-label="Recent awards">
+    {awards.map((a) => (
+      <li class="whero__award">
+        <a href={a.href}>
+          {a.hasLogo && <img class="whero__award-logo" src={a.logo} alt={a.name} loading="lazy" decoding="async" />}
+          <span class="whero__award-txt"><b>{a.result}</b> <span aria-hidden="true">·</span> {a.name}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
 </section>
 
 <style>
@@ -109,6 +132,27 @@ const poster = "/images/office/office-collab-01.jpg";
     margin: 1.75rem 0 0;
   }
   .whero__cta { display: flex; flex-wrap: wrap; gap: 0.85rem; margin-top: 2.25rem; }
+
+  /* Awards cluster — bottom-right of the hero, in white. */
+  .whero__awards {
+    position: absolute; z-index: 1;
+    right: var(--w-gutter); bottom: clamp(3rem, 8vh, 6rem);
+    list-style: none; margin: 0; padding: 0;
+    display: flex; flex-direction: column; align-items: flex-end; gap: 0.7rem;
+    text-align: right;
+  }
+  .whero__award a {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    text-decoration: none; color: var(--c-on-dark);
+    opacity: 0.82; transition: opacity var(--w-dur-fast) var(--w-ease);
+  }
+  .whero__award a:hover { opacity: 1; }
+  .whero__award-logo { height: 30px; width: auto; filter: brightness(0) invert(1); }
+  .whero__award-txt { font-family: var(--w-font-body); font-size: 0.8rem; letter-spacing: 0.02em; color: #fff; white-space: nowrap; }
+  .whero__award-txt b { font-weight: 700; }
+  .whero__award-txt span { color: var(--c-on-dark-soft); padding: 0 0.15rem; }
+  /* On smaller screens the bottom-left content needs the room — hide to avoid overlap. */
+  @media (max-width: 880px) { .whero__awards { display: none; } }
 
   @media (prefers-reduced-motion: reduce) {
     .whero__media img { animation: none; transform: scale(1.02); }

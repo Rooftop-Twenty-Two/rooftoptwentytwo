@@ -1,5 +1,5 @@
 ---
-// S2 — Compact page hero (re-skin). Kicker + big H1 + intro + optional CTAs,
+// S2, Compact page hero (re-skin). Kicker + big H1 + intro + optional CTAs,
 // on a near-black band with an optional faded background image.
 interface Props {
   kicker?: string;
@@ -25,7 +25,7 @@ if (bg) {
 
 <section class="ph" style={bgUrl ? `--ph-bg:${bgUrl}` : undefined} data-has-bg={bg ? "true" : undefined}>
   <div class="ph__inner">
-    {kicker && <p class="kicker kicker--on-dark">{kicker}</p>}
+    {kicker && <p class="kicker kicker--on-dark kicker--script">{kicker}</p>}
     <h1 class="ph__title" set:html={title} />
     {intro && <p class="ph__intro">{intro}</p>}
     {(primary || secondary) && (

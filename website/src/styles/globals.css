@@ -448,30 +448,30 @@ body.alternate-theme [data-header] .header-logo--navy { display: block !importan
 .shape-divider--invert { fill: #ffffff; }
 
 /* ============================================================
-   RE-SKIN — Wolfgang-style design language (Phase 1, additive).
+   RE-SKIN, Wolfgang-style design language (Phase 1, additive).
    New components reference these tokens/utilities; existing pages
    keep --color-* / Butler until migrated. See design brief §2/§4.
    ============================================================ */
 :root {
-  /* Colour — Rooftop Twenty Two brand palette (see design/brand-tokens.json).
+  /* Colour, Rooftop Twenty Two brand palette (see design/brand-tokens.json).
    * Happy medium: airy light surfaces (white + warm off-white) with brand
    * navy reintroduced as the dark accent band tone. */
   --c-bg: #FFFFFF;            /* primary light surface */
-  --c-bg-alt: #F4F1EC;        /* warm off-white — the third tone (kills bareness) */
-  --c-ink: #0D2030;           /* brand navy — headings / primary text on light */
-  --c-ink-soft: #4A5468;      /* navy-grey — body copy on light (AA on white) */
-  --c-dark: #0D2030;          /* brand navy — dark feature bands */
-  --c-dark-2: #143A4F;        /* secondary navy — layered dark / inputs */
+  --c-bg-alt: #F4F1EC;        /* warm off-white, the third tone (kills bareness) */
+  --c-ink: #0D2030;           /* brand navy, headings / primary text on light */
+  --c-ink-soft: #4A5468;      /* navy-grey, body copy on light (AA on white) */
+  --c-dark: #0D2030;          /* brand navy, dark feature bands */
+  --c-dark-2: #143A4F;        /* secondary navy, layered dark / inputs */
   --c-on-dark: #FFFFFF;
-  --c-on-dark-soft: #C2DDDB;  /* brand teal_200 — muted text on dark */
-  --c-accent: #E15047;        /* Rooftop coral — THE primary accent (actions, emphasis, numbers) */
+  --c-on-dark-soft: #C2DDDB;  /* brand teal_200, muted text on dark */
+  --c-accent: #E15047;        /* Rooftop coral, THE primary accent (actions, emphasis, numbers) */
   --c-accent-ink: #FFFFFF;    /* text on coral */
-  --c-accent-2: #01FFB2;      /* Rooftop mint — secondary accent (client-preferred) */
+  --c-accent-2: #01FFB2;      /* Rooftop mint, secondary accent (client-preferred) */
   --c-accent-2-bright: #01FFB2; /* same mint on navy/photo darks */
   --c-line: #E6E2D9;          /* hairline on warm off-white */
   --c-line-dark: rgba(255,255,255,0.12); /* hairline on navy */
 
-  /* Type families — genuine R22 brand faces (self-hosted, see brand-tokens.json).
+  /* Type families, genuine R22 brand faces (self-hosted, see brand-tokens.json).
    * Butler (display serif) · Mulish (body) · Starlit Drive (script signatures). */
   --w-font-display: "Butler", Georgia, "Times New Roman", serif;
   --w-font-body: "Mulish", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -514,10 +514,27 @@ body.alternate-theme [data-header] .header-logo--navy { display: block !importan
 }
 .kicker--on-dark { color: var(--c-accent-2-bright); font-weight: 700; }
 
+/* Handwritten section-intro accent (Starlit Drive script, coral), the original
+ * brand signature voice, used subtly to introduce sections. Overrides the
+ * uppercase label treatment when combined with .kicker. */
+.kicker--script {
+  font-family: var(--w-font-script);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  font-size: clamp(1.6rem, 1vw + 1.4rem, 2.25rem);
+  line-height: 0.9;
+  color: var(--c-accent);
+  transform: rotate(-2deg);
+  transform-origin: left center;
+}
+/* Script reads in coral on dark surfaces too; keep coral rather than the on-dark mint. */
+.kicker--on-dark.kicker--script { color: var(--c-accent); }
+
 /* <Picture> wrapper is layout-transparent so existing `.x img` styles still apply. */
 picture { display: contents; }
 
-/* Pill buttons (re-skin design system — distinct from legacy .btn-pill) */
+/* Pill buttons (re-skin design system, distinct from legacy .btn-pill) */
 .wbtn {
   display: inline-flex;
   align-items: center;
@@ -547,7 +564,7 @@ picture { display: contents; }
 .wbtn--ghost:hover { background: var(--c-on-dark); color: var(--c-ink); }
 
 /* ============================================================
-   R22 SIGNATURE INTERACTION — single, site-wide hover.
+   R22 SIGNATURE INTERACTION, single, site-wide hover.
    Extracted from the footer link treatment and enriched into an
    animated underline-wipe (left→right reveal). Applied to nav,
    mega-menu links, in-text links, "view all" links and footer
@@ -571,7 +588,7 @@ picture { display: contents; }
 .r22-link--on-dark:hover,
 .r22-link--on-dark:focus-visible { color: var(--c-accent-2); }
 
-/* Arrow-reveal variant — same idea for "view all / explore" affordances:
+/* Arrow-reveal variant, same idea for "view all / explore" affordances:
  * the trailing arrow nudges forward on hover. Pair with .r22-link. */
 .r22-arrow { display: inline-flex; align-items: center; gap: 0.4rem; }
 .r22-arrow > .r22-arrow__i {
@@ -598,7 +615,7 @@ a:hover > .r22-media img { transform: scale(1.04); }
   .r22-arrow:hover > .r22-arrow__i { transform: none; }
 }
 
-/* Editorial script signature (Starlit Drive) — sparing brand flourish for
+/* Editorial script signature (Starlit Drive), sparing brand flourish for
  * section signatures, used alongside kickers. §4 density toolkit. */
 .r22-signature {
   font-family: var(--w-font-script);

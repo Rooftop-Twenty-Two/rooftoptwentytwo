@@ -1,7 +1,7 @@
 ---
 // Source-style detail hero: full-width brand-coloured banner driven by the
 // case study's hero image. Pills + tagline sit BELOW the banner on the
-// stone body background — many case study hero images already contain
+// stone body background, many case study hero images already contain
 // brand text or strong typographic elements, so overlaying our pills
 // on the image creates clash.
 
@@ -45,7 +45,7 @@ const { name, tagline, heroImage, services = [] } = Astro.props;
   .detail-hero {
     position: relative;
     /* Pull the brand banner up under the transparent sticky header. The
-       header's content is the PressToTalkRing (56px) + py-5/6 padding —
+       header's content is the PressToTalkRing (56px) + py-5/6 padding, 
        104px total on desktop, 96px on mobile. We overshoot by ~16px so
        there's never a gap above the banner. */
     margin-top: -112px;

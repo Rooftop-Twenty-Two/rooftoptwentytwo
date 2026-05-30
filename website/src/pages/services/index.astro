@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import PageHero from "../../components/reskin/PageHero.astro";
 import LogoWall from "../../components/reskin/LogoWall.astro";
+import BrandingSpectrum from "../../components/reskin/BrandingSpectrum.astro";
 import WCtaBand from "../../components/reskin/WCtaBand.astro";
 import BreadcrumbSchema from "../../components/seo/BreadcrumbSchema.astro";
 
@@ -14,7 +15,7 @@ type Cluster = "performance-marketing" | "creative-and-content" | "web";
 const clusterMeta: Record<Cluster, { name: string; body: string }> = {
   "performance-marketing": {
     name: "Performance Marketing",
-    body: "Google Ads, paid social, SEO, and email — built around the conversions that actually move your business.",
+    body: "Google Ads, paid social, SEO, and email, built around the conversions that actually move your business.",
   },
   "creative-and-content": {
     name: "Creative & Content",
@@ -22,7 +23,7 @@ const clusterMeta: Record<Cluster, { name: string; body: string }> = {
   },
   web: {
     name: "Web",
-    body: "Strategy, design, build, and care — modern sites chosen against your buyer journey, not our preference.",
+    body: "Strategy, design, build, and care, modern sites chosen against your buyer journey, not our preference.",
   },
 };
 const clusters: Cluster[] = ["performance-marketing", "creative-and-content", "web"];
@@ -42,7 +43,7 @@ const grouped = clusters.map((cluster) => ({
   <PageHero
     kicker="Our expertise"
     title="Full-funnel marketing, <em>under one roof</em>."
-    intro="Three clusters — performance marketing, creative & content, and web. The same in-house team strategises, produces, and ships across all three, so the work stays joined-up across every surface of your brand."
+    intro="Three clusters, performance marketing, creative & content, and web. The same in-house team strategises, produces, and ships across all three, so the work stays joined-up across every surface of your brand."
     primary={{ label: "Start a conversation", href: "/contact/#contact" }}
     secondary={{ label: "See selected work", href: "/work/" }}
   />
@@ -70,6 +71,7 @@ const grouped = clusters.map((cluster) => ({
     </section>
   ))}
 
+  <BrandingSpectrum variant="alt" />
   <LogoWall />
   <WCtaBand />
 </Layout>

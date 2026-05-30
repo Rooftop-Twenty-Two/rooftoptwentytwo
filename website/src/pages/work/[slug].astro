@@ -63,7 +63,7 @@ const extraImages = gallery.slice(sections.length);
         {sectionImages[i] && (
           <figure class:list={["cs-breaker reveal", i % 2 === 0 ? "cs-breaker--bleed" : "cs-breaker--inset"]}>
             <div class="cs-breaker__media r22-media">
-              <Picture src={sectionImages[i]} alt={`${name} — ${sec.heading}`} loading="lazy" decoding="async" />
+              <Picture src={sectionImages[i]} alt={`${name}, ${sec.heading}`} loading="lazy" decoding="async" />
             </div>
             <figcaption class="cs-breaker__cap">{name} <span aria-hidden="true">·</span> {sec.heading}</figcaption>
           </figure>
@@ -86,7 +86,7 @@ const extraImages = gallery.slice(sections.length);
   <WContactForm
     heading={`Want results like ${name}'s? <em>Let's talk</em>.`}
     routing={`project:${Astro.params.slug}`}
-    prefillSubject={`Project enquiry — inspired by ${name}`}
+    prefillSubject={`Project enquiry, inspired by ${name}`}
   />
 
   <section class="cs-more">
@@ -153,7 +153,7 @@ const extraImages = gallery.slice(sections.length);
   }
   .cs-breaker__cap span { color: var(--c-accent); padding: 0 0.2rem; }
 
-  /* Feature breaker — framed on a navy band. */
+  /* Feature breaker, framed on a navy band. */
   .cs-breaker--bleed { background: var(--c-dark); padding-block: clamp(2.5rem, 5vw, 4.5rem); }
   .cs-breaker--bleed .cs-breaker__media { border-color: var(--c-line-dark); background: var(--c-dark-2); }
   .cs-breaker--bleed .cs-breaker__cap { color: var(--c-on-dark-soft); }
