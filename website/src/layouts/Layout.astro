@@ -174,11 +174,10 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://rooftoptwen
       // ---------- Cursor glow (radial blob, transform-only for smoothness) ----------
       const glow = document.querySelector<HTMLElement>("[data-cursor-glow]");
       if (glow && window.matchMedia("(hover: hover)").matches && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        const MINT = "1 255 178";
-        const CORAL = "225 80 71";
         let cx = 0, cy = 0, raf = 0;
-        // Adapt the glow colour to the surface under the cursor so it reads on
-        // light *and* dark sections (not just the dark header/footer).
+        // Always a teal/mint halo. We only adapt the *opacity* to the surface
+        // under the cursor (a touch stronger on light sections) so the same
+        // brand colour reads on dark *and* light backgrounds.
         const adapt = () => {
           raf = 0;
           const el = document.elementFromPoint(cx, cy); // glow is pointer-events:none
@@ -188,15 +187,12 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://rooftoptwen
             const m = bg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
             if (m && (m[4] === undefined || parseFloat(m[4]) > 0.5)) {
               const lum = (0.2126 * +m[1] + 0.7152 * +m[2] + 0.0722 * +m[3]) / 255;
-              const dark = lum < 0.5;
-              glow.style.setProperty("--glow-rgb", dark ? MINT : CORAL);
-              glow.style.setProperty("--glow-a", dark ? "0.22" : "0.34"); // coral needs more on light
+              glow.style.setProperty("--glow-a", lum < 0.5 ? "0.22" : "0.3");
               return;
             }
             node = node.parentElement;
           }
-          glow.style.setProperty("--glow-rgb", MINT);
-          glow.style.setProperty("--glow-a", "0.22"); // default canvas is dark
+          glow.style.setProperty("--glow-a", "0.22");
         };
         window.addEventListener(
           "mousemove",
