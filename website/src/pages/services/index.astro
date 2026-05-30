@@ -1,130 +1,36 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
-import Signature from "../../components/Signature.astro";
-import BtnFiller from "../../components/BtnFiller.astro";
-import PageCTA from "../../components/PageCTA.astro";
+import PageHero from "../../components/reskin/PageHero.astro";
+import LogoWall from "../../components/reskin/LogoWall.astro";
+import WCtaBand from "../../components/reskin/WCtaBand.astro";
 import BreadcrumbSchema from "../../components/seo/BreadcrumbSchema.astro";
 
 const all = (await getCollection("services")).sort(
   (a, b) => (a.data.order ?? 100) - (b.data.order ?? 100)
 );
 
-// Portfolio lookup so each cluster band can surface real case-study imagery.
-const portfolio = await getCollection("portfolio");
-const pfBySlug = new Map(portfolio.map((p) => [p.data.slug, p.data]));
-
 type Cluster = "performance-marketing" | "creative-and-content" | "web";
-
-const clusterMeta: Record<
-  Cluster,
-  { name: string; eyebrow: string; body: string; index: string }
-> = {
+const clusterMeta: Record<Cluster, { name: string; body: string }> = {
   "performance-marketing": {
-    index: "01",
     name: "Performance Marketing",
-    eyebrow: "Demand capture and demand creation",
-    body: "Google Ads, paid social, SEO, and email, built around the conversions that actually move your business.",
+    body: "Google Ads, paid social, SEO, and email — built around the conversions that actually move your business.",
   },
   "creative-and-content": {
-    index: "02",
     name: "Creative & Content",
-    eyebrow: "The creative engine behind every channel",
     body: "Brand, social, photo, and video, produced in-house at the cadence the channels actually need.",
   },
   web: {
-    index: "03",
     name: "Web",
-    eyebrow: "Sites that earn their keep",
-    body: "Strategy, design, build, and care. Modern stacks chosen against your buyer journey, not our preference.",
+    body: "Strategy, design, build, and care — modern sites chosen against your buyer journey, not our preference.",
   },
 };
-
-// Per-cluster colour treatment. Alternating bright bands give the page the
-// "mixed up with colour" feel — coral, a warm light break, then deep teal.
-const bandStyle: Record<
-  Cluster,
-  {
-    bg: string;
-    text: string;
-    muted: string;
-    accent: string;
-    card: string;
-    cardBorder: string;
-    cardText: string;
-    cardMuted: string;
-    eyebrow: string;
-  }
-> = {
-  "performance-marketing": {
-    bg: "var(--color-coral)",
-    text: "#FFFFFF",
-    muted: "rgba(255,255,255,0.88)",
-    accent: "var(--color-navy-900)",
-    card: "rgba(255,255,255,0.14)",
-    cardBorder: "rgba(255,255,255,0.22)",
-    cardText: "#FFFFFF",
-    cardMuted: "rgba(255,255,255,0.82)",
-    eyebrow: "rgba(255,255,255,0.85)",
-  },
-  "creative-and-content": {
-    bg: "var(--color-warm-100)",
-    text: "var(--color-navy-900)",
-    muted: "var(--color-text-on-light-muted)",
-    accent: "var(--color-coral)",
-    card: "#FFFFFF",
-    cardBorder: "rgba(13,32,48,0.10)",
-    cardText: "var(--color-navy-900)",
-    cardMuted: "var(--color-text-on-light-muted)",
-    eyebrow: "var(--color-coral)",
-  },
-  web: {
-    bg: "var(--color-teal-700)",
-    text: "#FFFFFF",
-    muted: "var(--color-teal-200)",
-    accent: "var(--color-mint)",
-    card: "rgba(255,255,255,0.10)",
-    cardBorder: "rgba(255,255,255,0.18)",
-    cardText: "#FFFFFF",
-    cardMuted: "var(--color-teal-200)",
-    eyebrow: "var(--color-mint)",
-  },
-};
-
 const clusters: Cluster[] = ["performance-marketing", "creative-and-content", "web"];
-
-const grouped = clusters.map((cluster) => {
-  const parent = all.find((s) => s.data.cluster === cluster && s.data.isClusterParent);
-  const leaves = all.filter((s) => s.data.cluster === cluster && !s.data.isClusterParent);
-  // Collect distinct case studies referenced anywhere in the cluster.
-  const csSlugs = [
-    ...new Set(
-      all
-        .filter((s) => s.data.cluster === cluster)
-        .flatMap((s) => s.data.caseStudySlugs ?? [])
-    ),
-  ];
-  const caseStudies = csSlugs
-    .map((sl) => pfBySlug.get(sl))
-    .filter((p): p is NonNullable<typeof p> => Boolean(p && p.heroImage))
-    .slice(0, 3);
-  return { cluster, meta: clusterMeta[cluster], parent, leaves, caseStudies };
-});
-
-// Keyword ticker for the hero — borrowed from the bold agency-site playbook.
-const marqueeWords = [
-  "Google Ads",
-  "Paid Social",
-  "SEO",
-  "Email",
-  "Brand",
-  "Social",
-  "Photo",
-  "Video",
-  "Web Design",
-  "Web Build",
-  "Website Care",
-];
+const grouped = clusters.map((cluster) => ({
+  cluster,
+  meta: clusterMeta[cluster],
+  leaves: all.filter((s) => s.data.cluster === cluster && !s.data.isClusterParent),
+}));
 ---
 
 <Layout
@@ -133,217 +39,61 @@ const marqueeWords = [
 >
   <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "Services", url: "/services/" }]} />
 
-  <!-- Hero -->
-  <section class="mx-auto max-w-[1440px] px-6 md:px-12 pt-12 md:pt-20 pb-8 md:pb-12">
-    <Signature text="Services" tone="coral" rotate={-3} />
-    <h1
-      class="mt-4 max-w-5xl"
-      style="font-family:var(--font-display);font-size:clamp(2.75rem, 8vw, 6.5rem);color:var(--color-text-on-dark);letter-spacing:-0.025em;line-height:0.98;"
-    >
-      Full-funnel marketing,
-      <span style="color:var(--color-mint);">under one roof.</span>
-    </h1>
-    <p
-      class="mt-6 max-w-2xl"
-      style="font-family:var(--font-sans);font-size:1.25rem;color:var(--color-text-on-dark-muted);line-height:1.55;"
-    >
-      We run three clusters: performance marketing, creative & content, and web. The same in-house team strategises, produces, and ships across all three, so the work stays joined-up across every surface of your brand.
-    </p>
-    <div class="mt-8 flex flex-wrap gap-3">
-      <BtnFiller href="/contact/#contact" variant="solid-white">Start a conversation</BtnFiller>
-      <BtnFiller href="/work/" variant="on-dark">See selected work</BtnFiller>
-    </div>
-  </section>
+  <PageHero
+    kicker="Our expertise"
+    title="Full-funnel marketing, <em>under one roof</em>."
+    intro="Three clusters — performance marketing, creative & content, and web. The same in-house team strategises, produces, and ships across all three, so the work stays joined-up across every surface of your brand."
+    primary={{ label: "Start a conversation", href: "/contact/#contact" }}
+    secondary={{ label: "See selected work", href: "/work/" }}
+  />
 
-  <!-- Keyword ticker -->
-  <div class="svc-marquee" aria-hidden="true">
-    <div class="svc-marquee__track">
-      {[...marqueeWords, ...marqueeWords].map((w) => (
-        <span class="svc-marquee__item">{w}<span class="svc-marquee__dot">●</span></span>
-      ))}
-    </div>
-  </div>
-
-  <!-- Cluster bands -->
-  {grouped.map(({ cluster, meta, parent, leaves, caseStudies }) => {
-    const s = bandStyle[cluster];
-    return (
-      <section class="svc-band" style={`background:${s.bg};color:${s.text};`}>
-        <div class="mx-auto max-w-[1280px] px-6 md:px-12 py-16 md:py-28">
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
-            {/* Left: heading + intro */}
-            <div class="lg:col-span-6">
-              <div class="flex items-baseline gap-4">
-                <span style={`font-family:var(--font-display);font-size:clamp(2.5rem,6vw,4.5rem);line-height:1;color:${s.accent};opacity:0.9;`}>{meta.index}</span>
-                <p style={`font-family:var(--font-sans);font-size:0.85rem;letter-spacing:0.18em;text-transform:uppercase;color:${s.eyebrow};`}>{meta.eyebrow}</p>
-              </div>
-              <h2
-                class="mt-5"
-                style={`font-family:var(--font-display);font-size:clamp(2.5rem,6vw,4.5rem);line-height:0.98;letter-spacing:-0.02em;color:${s.text};`}
-              >
-                <a href={`/services/${cluster}/`} style="color:inherit;text-decoration:none;">{meta.name}</a>
-              </h2>
-              <p
-                class="mt-6 max-w-xl"
-                style={`font-family:var(--font-sans);font-size:1.2rem;line-height:1.6;color:${s.muted};`}
-              >
-                {meta.body}
-              </p>
-              {parent && (
-                <a
-                  href={`/services/${parent.data.slug}/`}
-                  class="svc-overview mt-7 inline-flex items-center gap-2"
-                  style={`font-family:var(--font-sans);font-weight:600;font-size:1rem;color:${s.text};text-decoration:none;border-bottom:2px solid ${s.accent};padding-bottom:2px;`}
-                >
-                  {parent.data.name} overview
-                  <span style={`color:${s.accent};`}>→</span>
-                </a>
-              )}
-            </div>
-
-            {/* Right: case-study / office imagery */}
-            <div class="lg:col-span-6">
-              {caseStudies.length > 0 ? (
-                <div class="grid grid-cols-2 gap-3 md:gap-4">
-                  {caseStudies.map((cs, idx) => (
-                    <a
-                      href={`/work/${cs.slug}/`}
-                      class={`svc-shot block overflow-hidden ${idx === 0 ? "col-span-2" : ""}`}
-                      style="border-radius:var(--radius-card-lg);text-decoration:none;"
-                    >
-                      <figure class="svc-shot__fig" style={`aspect-ratio:${idx === 0 ? "16/10" : "1/1"};`}>
-                        <img src={cs.heroImage} alt={cs.name} loading="lazy" decoding="async" />
-                        <figcaption class="svc-shot__cap">
-                          <span style="font-family:var(--font-sans);font-size:0.75rem;letter-spacing:0.12em;text-transform:uppercase;opacity:0.85;">Case study</span>
-                          <span style="font-family:var(--font-display);font-size:1.1rem;line-height:1.15;">{cs.name}</span>
-                        </figcaption>
-                      </figure>
-                    </a>
-                  ))}
-                </div>
-              ) : (
-                <figure class="svc-shot block overflow-hidden" style="border-radius:var(--radius-card-lg);">
-                  <div class="svc-shot__fig" style="aspect-ratio:16/10;">
-                    <img
-                      src={cluster === "creative-and-content" ? "/images/office/office-work-01.jpg" : "/images/office/office-collab-01.jpg"}
-                      alt="The Rooftop team at work in the studio"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                </figure>
-              )}
-            </div>
+  {grouped.map(({ cluster, meta, leaves }, i) => (
+    <section class:list={["sv", i % 2 === 1 ? "sv--alt" : ""]}>
+      <div class="sv__inner">
+        <div class="sv__head reveal">
+          <span class="sv__num">{String(i + 1).padStart(2, "0")}</span>
+          <div>
+            <h2 class="sv__title"><a href={`/services/${cluster}/`}>{meta.name}</a></h2>
+            <p class="sv__body">{meta.body}</p>
           </div>
-
-          {/* Service leaf cards */}
-          <ul class="mt-12 md:mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 list-none p-0 m-0">
-            {leaves.map((leaf) => (
-              <li>
-                <a
-                  href={`/services/${leaf.data.slug}/`}
-                  class="svc-card block p-6 h-full"
-                  style={`background:${s.card};border:1px solid ${s.cardBorder};border-radius:var(--radius-card-md);color:${s.cardText};text-decoration:none;`}
-                >
-                  <p style="font-family:var(--font-display);font-size:1.5rem;line-height:1.15;letter-spacing:-0.01em;">{leaf.data.name}</p>
-                  <p class="mt-2" style={`font-family:var(--font-sans);font-size:0.95rem;color:${s.cardMuted};line-height:1.5;`}>{leaf.data.summary}</p>
-                  <p class="svc-card__cta mt-4" style={`font-family:var(--font-sans);font-size:0.875rem;font-weight:600;color:${s.accent};`}>Explore →</p>
-                </a>
-              </li>
-            ))}
-          </ul>
         </div>
-      </section>
-    );
-  })}
+        <ul class="sv__list">
+          {leaves.map((s) => (
+            <li class="sv__row reveal">
+              <a class="sv__name" href={`/services/${s.data.slug}/`}>{s.data.name}</a>
+              <p class="sv__sum">{s.data.summary}</p>
+              <span class="sv__arrow">Explore &rarr;</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  ))}
 
-  <PageCTA variant="default" />
+  <LogoWall />
+  <WCtaBand />
 </Layout>
 
 <style>
-  .svc-band {
-    position: relative;
+  .sv { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .sv--alt { background: var(--c-bg-alt); }
+  .sv__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .sv__head { display: flex; gap: 1.5rem; align-items: baseline; }
+  .sv__num { font-family: var(--w-font-display); font-weight: 600; color: var(--c-accent); font-size: 1.5rem; }
+  .sv__title { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); line-height: var(--lh-heading); letter-spacing: var(--tracking-display); margin: 0; }
+  .sv__title a { color: inherit; text-decoration: none; }
+  .sv__title a:hover { color: var(--c-ink-soft); }
+  .sv__body { font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-ink-soft); line-height: 1.55; margin: 0.75rem 0 0; max-width: 50ch; }
+  .sv__list { list-style: none; margin: 2.5rem 0 0; padding: 0; border-top: 1px solid var(--c-line); }
+  .sv__row {
+    display: grid; grid-template-columns: 1fr; gap: 0.25rem; padding: 1.5rem 0;
+    border-bottom: 1px solid var(--c-line);
   }
-
-  /* Keyword ticker */
-  .svc-marquee {
-    overflow: hidden;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 1rem 0;
-  }
-  .svc-marquee__track {
-    display: inline-flex;
-    white-space: nowrap;
-    will-change: transform;
-    animation: svc-scroll 38s linear infinite;
-  }
-  .svc-marquee__item {
-    font-family: var(--font-display);
-    font-size: clamp(1.25rem, 2.4vw, 2rem);
-    color: var(--color-text-on-dark);
-    display: inline-flex;
-    align-items: center;
-  }
-  .svc-marquee__dot {
-    color: var(--color-mint);
-    font-size: 0.6em;
-    margin: 0 1.25rem;
-  }
-  @keyframes svc-scroll {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
-  }
-
-  /* Imagery */
-  .svc-shot__fig {
-    position: relative;
-    margin: 0;
-    width: 100%;
-  }
-  .svc-shot__fig img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.5s ease;
-  }
-  .svc-shot:hover .svc-shot__fig img {
-    transform: scale(1.04);
-  }
-  .svc-shot__cap {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-    padding: 1rem 1.1rem;
-    color: #fff;
-    background: linear-gradient(to top, rgba(13, 32, 48, 0.85), rgba(13, 32, 48, 0));
-  }
-
-  /* Cards */
-  .svc-card {
-    transition: transform 0.25s ease, background 0.25s ease;
-  }
-  .svc-card:hover {
-    transform: translateY(-6px);
-  }
-  .svc-card__cta {
-    transition: transform 0.25s ease;
-  }
-  .svc-card:hover .svc-card__cta {
-    transform: translateX(4px);
-  }
-  .svc-overview:hover {
-    opacity: 0.85;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .svc-marquee__track { animation: none; }
-    .svc-shot:hover .svc-shot__fig img { transform: none; }
-    .svc-card:hover { transform: none; }
-  }
+  @media (min-width: 860px) { .sv__row { grid-template-columns: 1fr 1.6fr auto; gap: 1.5rem; align-items: center; } }
+  .sv__name { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); line-height: 1.1; color: var(--c-ink); text-decoration: none; }
+  .sv__name:hover { color: var(--c-ink-soft); }
+  .sv__sum { font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-ink-soft); line-height: 1.5; margin: 0; }
+  .sv__arrow { font-family: var(--w-font-body); font-weight: 600; font-size: 0.9rem; color: var(--c-ink-soft); white-space: nowrap; }
+  @media (min-width: 860px) { .sv__arrow { justify-self: end; } }
+  .sv__row:hover .sv__arrow { color: var(--c-ink); }
 </style>

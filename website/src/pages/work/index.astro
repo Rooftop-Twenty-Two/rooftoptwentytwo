@@ -1,7 +1,8 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
-import Signature from "../../components/Signature.astro";
+import PageHero from "../../components/reskin/PageHero.astro";
+import WCtaBand from "../../components/reskin/WCtaBand.astro";
 
 const entries = (await getCollection("portfolio", ({ data }) => !data.needs_review))
   .sort((a, b) => (a.data.order ?? 100) - (b.data.order ?? 100));
@@ -11,58 +12,34 @@ const entries = (await getCollection("portfolio", ({ data }) => !data.needs_revi
   title="Our Work | Rooftop Twenty Two"
   description="Selected case studies from Rooftop Twenty Two, an independent branding and digital design studio in Dublin."
 >
-  <section class="mx-auto max-w-[1440px] px-6 md:px-12 pt-12 md:pt-20 pb-12 md:pb-16">
-    <Signature text="Our Work" tone="coral" rotate={-3} />
-    <h1
-      class="mt-4 leading-none max-w-3xl"
-      style="font-family:var(--font-display);font-size:clamp(2.75rem, 7vw, 5.5rem);color:var(--color-text-on-dark);letter-spacing:-0.02em;"
-    >
-      Selected projects.
-    </h1>
-    <p
-      class="mt-6 max-w-xl"
-      style="font-family:var(--font-sans);font-size:1.125rem;color:var(--color-text-on-dark-muted);"
-    >
-      A look at recent work spanning brand identity, web design and development, photography, and digital marketing strategy.
-    </p>
-  </section>
+  <PageHero
+    kicker="Selected work"
+    title="Results we&rsquo;re <em>proud of</em>."
+    intro="Recent work spanning brand, web design and development, photography, and digital marketing — for ambitious Irish businesses and not-for-profits."
+  />
 
-  <section class="mx-auto max-w-[1440px] px-6 md:px-12 pb-24 md:pb-32">
-    <ul class="work-grid list-none p-0 m-0">
+  <section class="wk">
+    <ul class="wk__grid">
       {entries.map((e) => {
         const slug = e.id.replace(/\.mdx?$/, "");
         const services = (e.data.services ?? []).slice(0, 3);
         const featured = e.data.featured ?? false;
         return (
-          <li class:list={["work-card", featured ? "work-card--featured" : ""]}>
-            <a href={`/work/${slug}/`} class="work-card__link">
-              <div
-                class="work-card__banner"
-                style={e.data.heroImage
-                  ? `background-image:url('${e.data.heroImage}');`
-                  : `background-color: var(--color-navy-700);`}
-              >
-                {e.data.wordmark && (
-                  <img
-                    class="work-card__wordmark"
-                    src={e.data.wordmark}
-                    alt={`${e.data.name} wordmark`}
-                    loading="lazy"
-                    decoding="async"
-                  />
+          <li class:list={["wk__card reveal", featured ? "wk__card--featured" : ""]}>
+            <a href={`/work/${slug}/`}>
+              <figure class="wk__img" style={e.data.heroImage ? undefined : "background:var(--c-line);"}>
+                {e.data.heroImage && (
+                  <img src={e.data.heroImage} alt={e.data.name} loading="lazy" decoding="async" />
                 )}
-                <div class="work-card__overlay" aria-hidden="true"></div>
-              </div>
-              <div class="work-card__meta">
-                <div class="work-card__meta-row">
-                  <h2 class="work-card__title">{e.data.name}</h2>
-                  <span class="work-card__cta" aria-hidden="true">View project →</span>
+              </figure>
+              <div class="wk__meta">
+                <div class="wk__row">
+                  <h2 class="wk__title">{e.data.name}</h2>
+                  <span class="wk__cta">View project &rarr;</span>
                 </div>
-                {e.data.tagline && (
-                  <p class="work-card__tagline">{e.data.tagline}</p>
-                )}
+                {e.data.tagline && <p class="wk__tag">{e.data.tagline}</p>}
                 {services.length > 0 && (
-                  <ul class="work-card__pills list-none p-0 m-0">
+                  <ul class="wk__pills">
                     {services.map((s) => <li>{s}</li>)}
                   </ul>
                 )}
@@ -73,125 +50,35 @@ const entries = (await getCollection("portfolio", ({ data }) => !data.needs_revi
       })}
     </ul>
   </section>
+
+  <WCtaBand />
 </Layout>
 
 <style>
-  .work-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
+  .wk { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .wk__grid {
+    list-style: none; margin: 0 auto; padding-inline: var(--w-gutter); max-width: var(--w-container);
+    display: grid; grid-template-columns: 1fr; gap: 2.5rem;
   }
-  @media (min-width: 1024px) {
-    .work-grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 2rem;
-    }
+  @media (min-width: 900px) { .wk__grid { grid-template-columns: repeat(2, 1fr); gap: 2.5rem 2rem; } }
+  .wk__card--featured { grid-column: 1 / -1; }
+  .wk__card a { display: block; text-decoration: none; color: inherit; }
+  .wk__img {
+    margin: 0; border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 4 / 3;
+    background: var(--c-bg-alt); box-shadow: var(--w-shadow-soft);
   }
-  .work-card {
-    border-radius: var(--radius-card-lg, 18px);
-    overflow: hidden;
-    background-color: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    transition: transform 280ms ease, border-color 280ms ease;
-  }
-  .work-card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(0, 255, 178, 0.25);
-  }
-  .work-card--featured {
-    grid-column: 1 / -1;
-  }
-  .work-card__link {
-    display: block;
-    color: var(--color-text-on-dark);
-    text-decoration: none;
-  }
-  .work-card__banner {
-    position: relative;
-    aspect-ratio: 16 / 9;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-  }
-  .work-card--featured .work-card__banner {
-    aspect-ratio: 21 / 9;
-  }
-  .work-card__overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.0) 50%, rgba(0,0,0,0.22) 100%);
-    pointer-events: none;
-  }
-  .work-card__wordmark {
-    position: relative;
-    z-index: 1;
-    max-width: min(60%, 360px);
-    max-height: 100px;
-    width: auto;
-    height: auto;
-    object-fit: contain;
-    filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.25));
-    transition: transform 600ms ease;
-  }
-  .work-card:hover .work-card__wordmark {
-    transform: scale(1.02);
-  }
-  .work-card__meta {
-    padding: 1.5rem 1.5rem 1.75rem;
-  }
-  @media (min-width: 768px) {
-    .work-card__meta {
-      padding: 1.75rem 2rem 2rem;
-    }
-  }
-  .work-card__meta-row {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-  .work-card__title {
-    font-family: var(--font-display);
-    font-size: clamp(1.5rem, 2.5vw, 2rem);
-    line-height: 1.05;
-    letter-spacing: -0.01em;
-    color: var(--color-text-on-dark);
-    margin: 0;
-  }
-  .work-card__cta {
-    font-family: var(--font-sans);
-    font-size: 0.875rem;
-    color: var(--color-mint);
-    font-weight: 600;
-    white-space: nowrap;
-  }
-  .work-card__tagline {
-    margin-top: 0.625rem;
-    font-family: var(--font-sans);
-    font-size: 0.95rem;
-    color: var(--color-text-on-dark-muted);
-    line-height: 1.5;
-    max-width: 52ch;
-  }
-  .work-card__pills {
-    margin-top: 1rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-  .work-card__pills li {
-    padding: 0.35rem 0.75rem;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 9999px;
-    font-family: var(--font-sans);
-    font-size: 0.75rem;
-    letter-spacing: 0.04em;
-    color: rgba(255, 255, 255, 0.7);
-    background: rgba(255, 255, 255, 0.03);
+  .wk__card--featured .wk__img { aspect-ratio: 21 / 9; }
+  .wk__img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform var(--w-dur) var(--w-ease); }
+  .wk__card a:hover .wk__img img { transform: scale(1.03); }
+  .wk__meta { padding-top: 1.25rem; }
+  .wk__row { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+  .wk__title { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); line-height: 1.05; margin: 0; }
+  .wk__cta { font-family: var(--w-font-body); font-weight: 600; font-size: 0.9rem; color: var(--c-ink-soft); white-space: nowrap; }
+  .wk__card a:hover .wk__cta { color: var(--c-ink); }
+  .wk__tag { font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-ink-soft); line-height: 1.5; margin: 0.6rem 0 0; max-width: 52ch; }
+  .wk__pills { list-style: none; margin: 1rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .wk__pills li {
+    padding: 0.35rem 0.8rem; border: 1px solid var(--c-line); border-radius: var(--radius-pill);
+    font-family: var(--w-font-body); font-size: 0.75rem; letter-spacing: 0.03em; color: var(--c-ink-soft);
   }
 </style>

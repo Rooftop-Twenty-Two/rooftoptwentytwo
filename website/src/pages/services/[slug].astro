@@ -1,7 +1,6 @@
 ---
 import { getCollection } from "astro:content";
-import ServicePageTemplate from "../../components/templates/ServicePageTemplate.astro";
-import ServiceGeometryTemplate from "../../components/templates/ServiceGeometryTemplate.astro";
+import WServiceTemplate from "../../components/templates/WServiceTemplate.astro";
 
 export async function getStaticPaths() {
   const entries = await getCollection("services");
@@ -12,10 +11,6 @@ export async function getStaticPaths() {
 }
 
 const { data } = Astro.props;
-
-// Brand-geometry showcase: proving the new direction on a single page first.
-const geometrySlugs = ["seo"];
-const useGeometry = geometrySlugs.includes(data.slug);
 ---
 
-{useGeometry ? <ServiceGeometryTemplate {...data} /> : <ServicePageTemplate {...data} />}
+<WServiceTemplate {...data} />
