@@ -235,9 +235,9 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://rooftoptwen
         });
       };
       document.querySelectorAll<HTMLFormElement>("[data-contact-form]")
-        .forEach((f) => enhance(f, "/api/contact", "Thanks. We'll come back to you shortly."));
+        .forEach((f) => enhance(f, "/api/contact/", "Thanks. We'll come back to you shortly."));
       document.querySelectorAll<HTMLFormElement>(".footer-news__form")
-        .forEach((f) => enhance(f, "/api/subscribe", "You're in. Thanks for subscribing."));
+        .forEach((f) => enhance(f, "/api/subscribe/", "You're in. Thanks for subscribing."));
 
       // ---------- Theme-switch observer ----------
       // When a [data-theme-switch] section enters the viewport, add
