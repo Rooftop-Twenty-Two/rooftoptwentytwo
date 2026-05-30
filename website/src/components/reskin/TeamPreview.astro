@@ -3,10 +3,14 @@
 // Padraic first via their order), shows portraits + roles, links to the About page.
 import { getCollection } from "astro:content";
 import Picture from "../Picture.astro";
+import { existsSync } from "node:fs";
+import path from "node:path";
 
-const team = (await getCollection("team")).sort(
-  (a, b) => (a.data.order ?? 100) - (b.data.order ?? 100)
-);
+// Only show members whose portrait is in the repo, so a newly-added member
+// without an uploaded photo doesn't leave a broken tile.
+const team = (await getCollection("team"))
+  .filter((m) => existsSync(path.join(process.cwd(), "public", m.data.portrait)))
+  .sort((a, b) => (a.data.order ?? 100) - (b.data.order ?? 100));
 ---
 
 <section class="tm">

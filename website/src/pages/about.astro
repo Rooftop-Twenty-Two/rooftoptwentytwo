@@ -6,10 +6,12 @@ import ClientTestimonials from "../components/reskin/ClientTestimonials.astro";
 import AwardsBand from "../components/reskin/AwardsBand.astro";
 import WCtaBand from "../components/reskin/WCtaBand.astro";
 import Picture from "../components/Picture.astro";
+import { existsSync } from "node:fs";
+import path from "node:path";
 
-const team = (await getCollection("team")).sort(
-  (a, b) => (a.data.order ?? 100) - (b.data.order ?? 100)
-);
+const team = (await getCollection("team"))
+  .filter((m) => existsSync(path.join(process.cwd(), "public", m.data.portrait)))
+  .sort((a, b) => (a.data.order ?? 100) - (b.data.order ?? 100));
 
 const gallery = [
   { src: "/images/office/office-collab-01.jpg", alt: "Two Rooftop team members reviewing work on screen", span: true },
