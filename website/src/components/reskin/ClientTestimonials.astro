@@ -72,7 +72,7 @@ const track = [...testimonials, ...testimonials];
     <h2 class="tg__title">Don&rsquo;t just take <em>our word</em> for it.</h2>
   </div>
 
-  <div class="tg__viewport">
+  <div class="tg__viewport" data-marquee="150">
     <ul class="tg__track" role="list">
       {track.map((t, i) => (
         <li class="tg__card" aria-hidden={i >= testimonials.length ? "true" : "false"}>
@@ -107,22 +107,15 @@ const track = [...testimonials, ...testimonials];
   }
   .tg__title em { font-style: italic; color: var(--c-accent); }
 
-  /* Continuous marquee — left to right, pauses on hover/focus. */
+  /* Continuous marquee — native-scroll driven (see Layout), pauses on hover. */
   .tg__viewport { overflow: hidden; }
   .tg__track {
     list-style: none; margin: 0; padding: 0.5rem 0;
     display: flex; align-items: stretch; width: max-content;
-    will-change: transform; animation: tg-scroll 120s linear infinite;
-  }
-  .tg__track:focus-within { animation-play-state: paused; }
-  @media (hover: hover) { .tg:hover .tg__track { animation-play-state: paused; } }
-  @keyframes tg-scroll {
-    from { transform: translateX(-50%); }
-    to   { transform: translateX(0); }
   }
 
   .tg__card {
-    flex: 0 0 min(85vw, 380px); margin-right: 1.5rem; transform: translateZ(0);
+    flex: 0 0 min(85vw, 380px); margin-right: 1.5rem;
     display: flex; flex-direction: column; background: var(--c-bg-alt);
     border: 1px solid var(--c-line); border-radius: var(--w-radius); padding: 2rem;
   }
@@ -143,6 +136,5 @@ const track = [...testimonials, ...testimonials];
   @media (prefers-reduced-motion: reduce) {
     .tg__viewport { overflow-x: auto; scrollbar-width: none; }
     .tg__viewport::-webkit-scrollbar { display: none; }
-    .tg__track { animation: none; transform: none; }
   }
 </style>

@@ -23,7 +23,7 @@ const track = [...cards, ...cards];
     <a href="/work/" class="wbtn wbtn--primary sw__all">View all work</a>
   </div>
 
-  <div class="sw__viewport">
+  <div class="sw__viewport" data-marquee="55">
     <ul class="sw__rail" role="list">
       {track.map((c, i) => (
         <li class="sw__card" aria-hidden={i >= cards.length ? "true" : "false"}>
@@ -56,22 +56,13 @@ const track = [...cards, ...cards];
   }
   .sw__title em { font-style: italic; color: var(--c-accent); }
 
-  /* Continuous marquee, left to right, pauses on hover/focus. */
+  /* Continuous marquee — native-scroll driven (see Layout), pauses on hover. */
   .sw__viewport { margin-top: 2.5rem; overflow: hidden; }
   .sw__rail {
     list-style: none; margin: 0; padding: 0.5rem 0 1rem;
     display: flex; width: max-content;
-    will-change: transform; animation: sw-scroll 70s linear infinite;
   }
-  .sw__rail:focus-within { animation-play-state: paused; }
-  @media (hover: hover) { .sw:hover .sw__rail { animation-play-state: paused; } }
-  @keyframes sw-scroll {
-    from { transform: translateX(-50%); }
-    to   { transform: translateX(0); }
-  }
-  /* translateZ promotes the card to its own layer — fixes Safari blanking of
-   * rounded/overflow-hidden content inside the animated (transformed) track. */
-  .sw__card { flex: 0 0 min(80vw, 400px); margin-right: 1.5rem; transform: translateZ(0); }
+  .sw__card { flex: 0 0 min(80vw, 400px); margin-right: 1.5rem; }
   .sw__card a { text-decoration: none; color: inherit; display: block; }
   .sw__img {
     margin: 0; border: 1px solid var(--c-line); border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 4 / 3;
@@ -87,6 +78,5 @@ const track = [...cards, ...cards];
   @media (prefers-reduced-motion: reduce) {
     .sw__viewport { overflow-x: auto; scrollbar-width: none; }
     .sw__viewport::-webkit-scrollbar { display: none; }
-    .sw__rail { animation: none; transform: none; }
   }
 </style>

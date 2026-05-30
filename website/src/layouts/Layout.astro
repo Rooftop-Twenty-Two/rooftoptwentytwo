@@ -85,6 +85,40 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://rooftoptwen
         }
       }
 
+      // ---------- Marquees (native-scroll driven, no CSS transform) ----------
+      // Auto-scrolls a [data-marquee] container left→right by writing scrollLeft
+      // each frame. Avoids transform/mask (which blank-render on iOS Safari).
+      // The track holds two identical halves so resetting at the boundary is seamless.
+      const marquees = document.querySelectorAll<HTMLElement>("[data-marquee]");
+      const reduceMo = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const canHover = window.matchMedia("(hover: hover)").matches;
+      marquees.forEach((vp) => {
+        const track = vp.firstElementChild as HTMLElement | null;
+        if (!track) return;
+        const durSec = parseFloat(vp.dataset.marquee || "60") || 60;
+        let half = track.scrollWidth / 2;
+        let paused = false;
+        let last = 0;
+        const start = () => { half = track.scrollWidth / 2; vp.scrollLeft = half; };
+        start();
+        window.addEventListener("resize", () => { half = track.scrollWidth / 2; }, { passive: true });
+        if (canHover) {
+          vp.addEventListener("mouseenter", () => { paused = true; });
+          vp.addEventListener("mouseleave", () => { paused = false; });
+        }
+        if (reduceMo) return; // leave static
+        const tick = (ts: number) => {
+          if (!last) last = ts;
+          const dt = ts - last; last = ts;
+          if (!paused && half > 0) {
+            vp.scrollLeft -= (half / (durSec * 1000)) * dt;
+            if (vp.scrollLeft <= 0) vp.scrollLeft += half;
+          }
+          requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      });
+
       // ---------- textRevealOnScroll: drives --reveal-progress 0..100 ----------
       const revealNodes = document.querySelectorAll<HTMLElement>("[data-reveal-scroll]");
       if (revealNodes.length) {

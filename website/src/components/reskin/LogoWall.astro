@@ -21,7 +21,7 @@ const track = [...half, ...half];
   <div class="lw__inner">
     <p class="kicker kicker--on-dark">Trusted by ambitious Irish brands</p>
   </div>
-  <div class="lw__marquee" aria-hidden="false">
+  <div class="lw__marquee" data-marquee="38" aria-hidden="false">
     <ul class="lw__track" role="list">
       {track.map((l, i) => (
         <li aria-hidden={i >= half.length ? "true" : "false"}>
@@ -39,7 +39,6 @@ const track = [...half, ...half];
   .lw__track {
     list-style: none; margin: 0; padding: 0;
     display: flex; align-items: center; width: max-content;
-    will-change: transform; animation: lw-scroll 45s linear infinite;
   }
   /* Spacing as per-item margin (not flex gap) so the two halves are exactly equal
    * width and the -50% loop is seamless (no jump at the wrap). */
@@ -52,15 +51,9 @@ const track = [...half, ...half];
    * (Avoids applying a CSS filter to the SVGs, which can blank them on iOS Safari.) */
   .lw__track img[src$=".png"] { filter: brightness(0) invert(1); }
   .lw__track li:hover img { opacity: 1; }
-  /* Only pause on pointer devices — :hover sticks after a tap on touchscreens. */
-  @media (hover: hover) { .lw:hover .lw__track { animation-play-state: paused; } }
-
-  /* Two identical halves → translate left-to-right by one half and loop seamlessly. */
-  @keyframes lw-scroll {
-    from { transform: translateX(-50%); }
-    to   { transform: translateX(0); }
-  }
+  /* Reduced motion: the JS leaves the strip static — allow manual swipe instead. */
   @media (prefers-reduced-motion: reduce) {
-    .lw__track { animation: none; transform: none; justify-content: center; flex-wrap: wrap; gap: 2.5rem 3rem; }
+    .lw__marquee { overflow-x: auto; scrollbar-width: none; }
+    .lw__marquee::-webkit-scrollbar { display: none; }
   }
 </style>
