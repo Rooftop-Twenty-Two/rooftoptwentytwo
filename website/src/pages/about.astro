@@ -4,6 +4,7 @@ import Layout from "../layouts/Layout.astro";
 import PageHero from "../components/reskin/PageHero.astro";
 import WTestimonial from "../components/reskin/WTestimonial.astro";
 import WCtaBand from "../components/reskin/WCtaBand.astro";
+import Picture from "../components/Picture.astro";
 
 const team = (await getCollection("team")).sort(
   (a, b) => (a.data.order ?? 100) - (b.data.order ?? 100)
@@ -79,7 +80,7 @@ const values = [
       <div class="ab-life__grid">
         {gallery.map((g) => (
           <figure class:list={["ab-shot", g.span ? "ab-shot--wide" : ""]}>
-            <img src={g.src} alt={g.alt} loading="lazy" decoding="async" />
+            <Picture src={g.src} alt={g.alt} loading="lazy" decoding="async" />
           </figure>
         ))}
       </div>
@@ -95,7 +96,7 @@ const values = [
         {team.map((m) => (
           <li class="reveal">
             <figure class="ab-member">
-              <div class="ab-member__img"><img src={m.data.portrait} alt={m.data.name} loading="lazy" decoding="async" /></div>
+              <div class="ab-member__img"><Picture src={m.data.portrait} alt={m.data.name} loading="lazy" decoding="async" /></div>
               <figcaption>
                 <p class="ab-member__name">{m.data.name}</p>
                 <p class="ab-member__role">{m.data.role}</p>

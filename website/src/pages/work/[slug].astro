@@ -3,6 +3,7 @@ import { getCollection, render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import PageHero from "../../components/reskin/PageHero.astro";
 import WCtaBand from "../../components/reskin/WCtaBand.astro";
+import Picture from "../../components/Picture.astro";
 
 export async function getStaticPaths() {
   const entries = await getCollection("portfolio", ({ data }) => !data.needs_review);
@@ -62,7 +63,7 @@ const extraImages = gallery.slice(sections.length);
         {sectionImages[i] && (
           <figure class:list={["cs-breaker reveal", i % 2 === 0 ? "cs-breaker--bleed" : "cs-breaker--inset"]}>
             <div class="cs-breaker__media r22-media">
-              <img src={sectionImages[i]} alt={`${name} — ${sec.heading}`} loading="lazy" decoding="async" />
+              <Picture src={sectionImages[i]} alt={`${name} — ${sec.heading}`} loading="lazy" decoding="async" />
             </div>
             <figcaption class="cs-breaker__cap">{name} <span aria-hidden="true">·</span> {sec.heading}</figcaption>
           </figure>
@@ -73,7 +74,7 @@ const extraImages = gallery.slice(sections.length);
     {extraImages.map((src, j) => (
       <figure class:list={["cs-breaker reveal", (sections.length + j) % 2 === 0 ? "cs-breaker--bleed" : "cs-breaker--inset"]}>
         <div class="cs-breaker__media r22-media">
-          <img src={src} alt={`${name} project visual`} loading="lazy" decoding="async" />
+          <Picture src={src} alt={`${name} project visual`} loading="lazy" decoding="async" />
         </div>
         <figcaption class="cs-breaker__cap">{name} <span aria-hidden="true">·</span> Selected work</figcaption>
       </figure>
@@ -96,7 +97,7 @@ const extraImages = gallery.slice(sections.length);
             <li>
               <a href={`/work/${slug}/`}>
                 <figure class="cs-more__img" style={e.data.heroImage ? undefined : "background:var(--c-line);"}>
-                  {e.data.heroImage && <img src={e.data.heroImage} alt={e.data.name} loading="lazy" decoding="async" />}
+                  {e.data.heroImage && <Picture src={e.data.heroImage} alt={e.data.name} loading="lazy" decoding="async" />}
                 </figure>
                 <h3 class="cs-more__name">{e.data.name}</h3>
                 {svcs.length > 0 && <p class="cs-more__svcs">{svcs.join(" · ")}</p>}

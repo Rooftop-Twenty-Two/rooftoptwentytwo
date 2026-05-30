@@ -9,10 +9,21 @@ interface Props {
   primary?: { label: string; href: string };
   secondary?: { label: string; href: string };
 }
+import { existsSync } from "node:fs";
+import path from "node:path";
 const { kicker, title, intro, bg, primary, secondary } = Astro.props;
+
+// Prefer a generated WebP for the (heavy) hero background; fall back to original.
+let bgUrl: string | undefined;
+if (bg) {
+  const ext = path.extname(bg).toLowerCase();
+  const webp = [".png", ".jpg", ".jpeg"].includes(ext) ? bg.slice(0, -ext.length) + ".webp" : null;
+  const hasWebp = webp && existsSync(path.join(process.cwd(), "public", webp));
+  bgUrl = `url('${hasWebp ? webp : bg}')`;
+}
 ---
 
-<section class="ph" style={bg ? `--ph-bg:url('${bg}')` : undefined} data-has-bg={bg ? "true" : undefined}>
+<section class="ph" style={bgUrl ? `--ph-bg:${bgUrl}` : undefined} data-has-bg={bg ? "true" : undefined}>
   <div class="ph__inner">
     {kicker && <p class="kicker kicker--on-dark">{kicker}</p>}
     <h1 class="ph__title" set:html={title} />

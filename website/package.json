@@ -7,6 +7,8 @@
   },
   "scripts": {
     "dev": "astro dev",
+    "images:webp": "node scripts/gen-webp.mjs",
+    "prebuild": "node scripts/gen-webp.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "start": "node ./dist/server/entry.mjs",

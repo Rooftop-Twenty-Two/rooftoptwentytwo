@@ -6,6 +6,7 @@ import PageHero from "../reskin/PageHero.astro";
 import WCtaBand from "../reskin/WCtaBand.astro";
 import BreadcrumbSchema from "../seo/BreadcrumbSchema.astro";
 import ServiceSchema from "../seo/ServiceSchema.astro";
+import Picture from "../Picture.astro";
 
 type ProcessStep = { step: string; label: string; body: string };
 type FAQ = { question: string; answer: string };
@@ -117,7 +118,7 @@ const breadcrumbs = isClusterParent
           {caseStudies.map((cs) => (
             <li class="reveal">
               <a class="r22-card" href={`/work/${cs.slug}/`}>
-                <figure class="ws-work__img r22-media"><img src={cs.heroImage} alt={cs.name} loading="lazy" decoding="async" /></figure>
+                <figure class="ws-work__img r22-media"><Picture src={cs.heroImage} alt={cs.name} loading="lazy" decoding="async" /></figure>
                 <span class="ws-work__name">{cs.name}</span>
                 {cs.tagline && <span class="ws-work__tag">{cs.tagline}</span>}
               </a>

@@ -2,6 +2,7 @@
 // S9 — Single large testimonial. White section between the off-white stats and
 // the dark pre-footer CTA. Two-column editorial layout (oversized quote + a
 // framed portrait) so it earns its height instead of floating in white.
+import Picture from "../Picture.astro";
 interface Props {
   quote?: string;
   name?: string;
@@ -36,7 +37,7 @@ const {
       <a href="/work/" class="ts__more r22-link r22-arrow">More client stories <span class="r22-arrow__i" aria-hidden="true">&rarr;</span></a>
     </div>
     <figure class="ts__portrait reveal">
-      <img src={portrait} alt={`${name}, ${company}`} loading="lazy" decoding="async" width="708" height="1024" />
+      <Picture src={portrait} alt={`${name}, ${company}`} loading="lazy" decoding="async" width="708" height="1024" />
     </figure>
   </div>
 </section>

@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import PageHero from "../../components/reskin/PageHero.astro";
 import WCtaBand from "../../components/reskin/WCtaBand.astro";
+import Picture from "../../components/Picture.astro";
 
 const entries = (await getCollection("portfolio", ({ data }) => !data.needs_review))
   .sort((a, b) => (a.data.order ?? 100) - (b.data.order ?? 100));
@@ -14,7 +15,7 @@ const entries = (await getCollection("portfolio", ({ data }) => !data.needs_revi
 >
   <PageHero
     kicker="Selected work"
-    title="Results we&rsquo;re <em>proud of</em>."
+    title="Work we&rsquo;d <em>put our name to</em>."
     intro="Recent work spanning brand, web design and development, photography, and digital marketing — for ambitious Irish businesses and not-for-profits."
   />
 
@@ -29,7 +30,7 @@ const entries = (await getCollection("portfolio", ({ data }) => !data.needs_revi
             <a href={`/work/${slug}/`}>
               <figure class="wk__img" style={e.data.heroImage ? undefined : "background:var(--c-line);"}>
                 {e.data.heroImage && (
-                  <img src={e.data.heroImage} alt={e.data.name} loading="lazy" decoding="async" />
+                  <Picture src={e.data.heroImage} alt={e.data.name} loading="lazy" decoding="async" />
                 )}
               </figure>
               <div class="wk__meta">

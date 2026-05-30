@@ -513,6 +513,9 @@ body.alternate-theme [data-header] .header-logo--navy { display: block !importan
 }
 .kicker--on-dark { color: var(--c-accent-2-bright); font-weight: 700; }
 
+/* <Picture> wrapper is layout-transparent so existing `.x img` styles still apply. */
+picture { display: contents; }
+
 /* Pill buttons (re-skin design system — distinct from legacy .btn-pill) */
 .wbtn {
   display: inline-flex;

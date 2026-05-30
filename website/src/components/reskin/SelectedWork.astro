@@ -5,6 +5,7 @@
 // Enriched (brief §E): peeking deck, richer cards, progress counter + paddle
 // arrows, and the signature card hover.
 import { getCollection } from "astro:content";
+import Picture from "../Picture.astro";
 
 const all = (await getCollection("portfolio")).sort(
   (a, b) => (a.data.order ?? 100) - (b.data.order ?? 100)
@@ -39,7 +40,7 @@ const total = String(cards.length).padStart(2, "0");
       <li class="sw__card reveal" data-sw-card>
         <a class="r22-card" href={`/work/${c.data.slug}/`}>
           <figure class="sw__img r22-media">
-            <img src={c.data.heroImage} alt={c.data.name} loading="lazy" decoding="async" />
+            <Picture src={c.data.heroImage} alt={c.data.name} loading="lazy" decoding="async" />
           </figure>
           <div class="sw__meta">
             <span class="sw__client">{c.data.name}</span>
