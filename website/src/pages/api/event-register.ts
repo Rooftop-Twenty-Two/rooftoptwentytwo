@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { db } from "../../lib/db";
+import { sendNotification, canEmail } from "../../lib/email";
 import { json, readBody, clean, meta, rateLimited, EMAIL_RE } from "../../lib/forms";
 
 export const prerender = false;
@@ -14,28 +15,42 @@ export const POST: APIRoute = async (ctx) => {
   const name = clean(b.name, 200);
   const email = clean(b.email, 320);
   const event = clean(b.event, 120) || "unknown";
-
   if (!name || !EMAIL_RE.test(email)) {
     return json({ ok: false, error: "Please add your name and a valid email." }, 400);
   }
 
+  const company = clean(b.company, 200);
+  const question = clean(b.question, 2000);
+
+  const emailed = await sendNotification({
+    subject: `Event interest: ${event} — ${name}`,
+    title: "New event registration",
+    replyTo: email,
+    fields: [
+      { label: "Event", value: event },
+      { label: "Name", value: name },
+      { label: "Email", value: email },
+      { label: "Company", value: company },
+      { label: "For the speaker", value: question },
+      { label: "From page", value: m.sourceUrl },
+    ],
+  });
+
   const sql = db();
-  if (!sql) {
-    console.error("[event-register] DATABASE_URL not set; not stored:", { event, name, email });
-    return json({ ok: false, error: "We couldn't add you just now. Please email hey@rooftoptwentytwo.ie." }, 503);
+  if (sql) {
+    try {
+      await sql`
+        insert into event_registrations (event, name, email, company, question, source_url, user_agent)
+        values (${event}, ${name}, ${email}, ${company || null}, ${question || null},
+                ${m.sourceUrl || null}, ${m.userAgent || null})`;
+    } catch (err) {
+      console.error("[event-register] db insert failed:", err);
+    }
   }
 
-  try {
-    await sql`
-      insert into event_registrations (event, name, email, company, question, source_url, user_agent)
-      values (${event}, ${name}, ${email}, ${clean(b.company, 200) || null},
-              ${clean(b.question, 2000) || null}, ${m.sourceUrl || null}, ${m.userAgent || null})
-    `;
-    return json({ ok: true });
-  } catch (err) {
-    console.error("[event-register] insert failed:", err);
-    return json({ ok: false, error: "Something went wrong. Please email hey@rooftoptwentytwo.ie." }, 500);
-  }
+  if (emailed.ok || sql) return json({ ok: true });
+  console.error("[event-register] no delivery configured.");
+  return json({ ok: false, error: "We couldn't add you just now. Please email hey@rooftoptwentytwo.ie." }, 503);
 };
 
-export const GET: APIRoute = () => json({ ok: true, endpoint: "event-register" });
+export const GET: APIRoute = () => json({ ok: true, endpoint: "event-register", email: canEmail });
