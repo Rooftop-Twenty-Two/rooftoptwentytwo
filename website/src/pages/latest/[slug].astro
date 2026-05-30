@@ -1,33 +1,25 @@
 ---
 import { getCollection, render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
-import PageCTA from "../../components/PageCTA.astro";
+import WCtaBand from "../../components/reskin/WCtaBand.astro";
 import BreadcrumbSchema from "../../components/seo/BreadcrumbSchema.astro";
-import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import ArticleSchema from "../../components/seo/ArticleSchema.astro";
 
 export async function getStaticPaths() {
   const entries = await getCollection("articles", ({ data }) => !data.draft);
-  return entries.map((entry) => ({
-    params: { slug: entry.data.slug },
-    props: { entry },
-  }));
+  return entries.map((entry) => ({ params: { slug: entry.data.slug }, props: { entry } }));
 }
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
-const { title, slug, excerpt, metaDescription, author, publishedAt, updatedAt, heroImage } = entry.data;
+const { title, slug, excerpt, metaDescription, author, publishedAt, updatedAt, heroImage, tags } = entry.data;
 
 const pageUrl = `/latest/${slug}/`;
-const dateFmt = new Intl.DateTimeFormat("en-IE", {
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-});
+const dateFmt = new Intl.DateTimeFormat("en-IE", { day: "numeric", month: "long", year: "numeric" });
 ---
 
 <Layout title={`${title} | Rooftop Twenty Two`} description={metaDescription}>
-  <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "Latest", url: "/latest/" }, { name: title, url: pageUrl }]} />
+  <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "Insights", url: "/latest/" }, { name: title, url: pageUrl }]} />
   <ArticleSchema
     headline={title}
     description={metaDescription}
@@ -38,122 +30,65 @@ const dateFmt = new Intl.DateTimeFormat("en-IE", {
     authorName={author}
   />
 
-  <article class="mx-auto max-w-[820px] px-6 md:px-12 pt-12 md:pt-20 pb-20 md:pb-28">
-    <div class="mb-6">
-      <Breadcrumbs items={[{ name: "Home", url: "/" }, { name: "Latest", url: "/latest/" }, { name: title, url: pageUrl }]} />
-    </div>
-    <p style="font-family:var(--font-sans);font-size:0.75rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--color-text-on-dark-muted);">
-      {dateFmt.format(publishedAt)} · {author}
-    </p>
-    <h1
-      class="mt-3"
-      style="font-family:var(--font-display);font-size:clamp(2.5rem, 6vw, 4.5rem);color:var(--color-text-on-dark);line-height:1.05;letter-spacing:-0.02em;"
-    >
-      {title}
-    </h1>
-    <p
-      class="mt-6 max-w-2xl"
-      style="font-family:var(--font-sans);font-size:1.25rem;color:var(--color-text-on-dark-muted);line-height:1.55;"
-    >
-      {excerpt}
-    </p>
+  <article class="art">
+    <header class="art__head">
+      <a href="/latest/" class="art__back r22-arrow"><span class="r22-arrow__i" aria-hidden="true">&larr;</span> All insights</a>
+      <div class="art__meta">
+        {tags[0] && <span class="art__chip">{tags[0]}</span>}
+        <span class="art__date">{dateFmt.format(publishedAt)} · {author}</span>
+      </div>
+      <h1 class="art__title">{title}</h1>
+      <p class="art__lead">{excerpt}</p>
+    </header>
 
     {heroImage && (
-      <div class="my-10 overflow-hidden" style="border-radius:var(--radius-card-md);">
-        <img src={heroImage} alt={title} class="w-full h-auto" />
-      </div>
+      <figure class="art__hero">
+        <img src={heroImage} alt={title} loading="eager" decoding="async" />
+      </figure>
     )}
 
-    <div class="article-body mt-10">
+    <div class="article-body">
       <Content />
     </div>
   </article>
 
-  <PageCTA variant="default" />
+  <WCtaBand />
 </Layout>
 
 <style>
-  /* Article body styling. The site does not use the Tailwind Typography
-     plugin, so content rendered by <Content /> is styled explicitly here,
-     mirroring the approach used on the case-study pages. */
+  .art { background: var(--c-bg); color: var(--c-ink); padding-block: clamp(3rem, 7vw, 6rem) var(--w-section-y); }
+  .art__head { max-width: 760px; margin: 0 auto; padding-inline: var(--w-gutter); }
+  .art__back { display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--w-font-body); font-weight: 600; font-size: 0.9rem; color: var(--c-accent); text-decoration: none; }
+  .art__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.85rem; margin-top: 1.75rem; }
+  .art__chip { font-family: var(--w-font-body); font-weight: 700; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--c-accent-ink); background: var(--c-accent); padding: 0.3rem 0.7rem; border-radius: var(--radius-pill); }
+  .art__date { font-family: var(--w-font-body); font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--c-ink-soft); }
+  .art__title { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-display); line-height: var(--lh-display); letter-spacing: var(--tracking-display); color: var(--c-ink); margin: 1rem 0 0; }
+  .art__lead { font-family: var(--w-font-body); font-size: clamp(1.2rem, 0.6vw + 1.1rem, 1.45rem); line-height: 1.5; color: var(--c-ink-soft); margin: 1.5rem 0 0; }
+
+  .art__hero { max-width: 1000px; margin: clamp(2.5rem, 5vw, 4rem) auto 0; padding-inline: var(--w-gutter); }
+  .art__hero img { width: 100%; height: auto; display: block; border: 1px solid var(--c-line); border-radius: var(--w-radius); }
+
   .article-body {
-    font-family: var(--font-sans);
-    font-size: 1.0625rem;
-    line-height: 1.75;
-    color: var(--color-text-on-dark-muted);
-    max-width: 68ch;
+    max-width: 760px; margin: clamp(2.5rem, 5vw, 3.5rem) auto 0; padding-inline: var(--w-gutter);
+    font-family: var(--w-font-body); font-size: 1.15rem; line-height: 1.8; color: var(--c-ink-soft);
   }
-  .article-body :global(p) {
-    margin: 0 0 1.25rem;
-  }
-  .article-body :global(h2) {
-    font-family: var(--font-display);
-    color: var(--color-text-on-dark);
-    font-size: clamp(1.6rem, 3.2vw, 2.25rem);
-    line-height: 1.15;
-    letter-spacing: -0.01em;
-    margin: 2.75rem 0 0.85rem;
-  }
-  .article-body :global(h3) {
-    font-family: var(--font-display);
-    color: var(--color-text-on-dark);
-    font-size: clamp(1.3rem, 2.2vw, 1.6rem);
-    line-height: 1.2;
-    letter-spacing: -0.01em;
-    margin: 2rem 0 0.6rem;
-  }
-  .article-body :global(ul),
-  .article-body :global(ol) {
-    margin: 0 0 1.25rem;
-    padding-left: 1.35rem;
-  }
-  .article-body :global(ul) {
-    list-style: disc;
-  }
-  .article-body :global(ol) {
-    list-style: decimal;
-  }
-  .article-body :global(li) {
-    margin-bottom: 0.5rem;
-  }
-  .article-body :global(li::marker) {
-    color: var(--color-coral);
-  }
-  .article-body :global(strong) {
-    color: var(--color-text-on-dark);
-    font-weight: 600;
-  }
-  .article-body :global(a) {
-    color: var(--color-coral);
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
-  .article-body :global(img) {
-    display: block;
-    width: 100%;
-    height: auto;
-    border-radius: var(--radius-card-md);
-    margin: 2rem 0;
-  }
+  .article-body :global(p) { margin: 0 0 1.4rem; }
+  .article-body :global(h2) { font-family: var(--w-font-display); font-weight: 600; color: var(--c-ink); font-size: clamp(1.7rem, 3vw, 2.25rem); line-height: 1.15; letter-spacing: var(--tracking-display); margin: 2.75rem 0 0.85rem; }
+  .article-body :global(h3) { font-family: var(--w-font-display); font-weight: 600; color: var(--c-ink); font-size: clamp(1.35rem, 2.2vw, 1.6rem); line-height: 1.2; margin: 2.25rem 0 0.6rem; }
+  .article-body :global(strong) { color: var(--c-ink); font-weight: 700; }
+  .article-body :global(a) { color: var(--c-accent); text-decoration: underline; text-underline-offset: 2px; }
+  .article-body :global(ul), .article-body :global(ol) { margin: 0 0 1.4rem; padding-left: 1.4rem; }
+  .article-body :global(ul) { list-style: disc; }
+  .article-body :global(ol) { list-style: decimal; }
+  .article-body :global(li) { margin-bottom: 0.5rem; }
+  .article-body :global(li::marker) { color: var(--c-accent); }
+  .article-body :global(blockquote) { margin: 2rem 0; padding-left: 1.5rem; border-left: 3px solid var(--c-accent); font-family: var(--w-font-display); font-style: italic; font-size: 1.4rem; line-height: 1.4; color: var(--c-ink); }
+
+  .article-body :global(img) { display: block; width: 100%; height: auto; border: 1px solid var(--c-line); border-radius: var(--w-radius); margin: 2rem 0; }
   .article-body :global(.article-video) { margin: 2.5rem 0; }
-  .article-body :global(.article-video video) {
-    display: block; width: 100%; max-height: 72vh; margin: 0 auto;
-    border-radius: var(--radius-card-md); background: #000;
-  }
+  .article-body :global(.article-video video) { display: block; width: 100%; max-height: 72vh; margin: 0 auto; border-radius: var(--w-radius); background: #000; }
   .article-body :global(.article-gallery) { display: grid; grid-template-columns: 1fr; gap: 1rem; margin: 2rem 0; }
   @media (min-width: 640px) { .article-body :global(.article-gallery) { grid-template-columns: 1fr 1fr; } }
   .article-body :global(.article-gallery p) { margin: 0; }
   .article-body :global(.article-gallery img) { margin: 0; height: 100%; object-fit: cover; }
-  .article-body :global(blockquote) {
-    margin: 2rem 0;
-    padding-left: 1.25rem;
-    border-left: 3px solid var(--color-coral);
-    color: var(--color-text-on-dark);
-    font-style: italic;
-  }
-  .article-body :global(h2:first-child),
-  .article-body :global(h3:first-child),
-  .article-body :global(p:first-child) {
-    margin-top: 0;
-  }
 </style>
