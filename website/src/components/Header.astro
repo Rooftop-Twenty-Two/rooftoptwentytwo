@@ -40,11 +40,10 @@ import PressToTalkRing from "./PressToTalkRing.astro";
 
     <a
       href="/contact/"
-      class="btn-filler btn-filler--solid-coral header__item"
+      class="wbtn wbtn--accent header__item"
       data-header-item
-      data-filler
     >
-      <span aria-hidden="true"></span>Let's Chat
+      Get in Touch
     </a>
   </div>
 </header>
@@ -58,6 +57,17 @@ import PressToTalkRing from "./PressToTalkRing.astro";
   .header__item--ready {
     opacity: 1;
     transform: translateY(0);
+  }
+  /* Sticky: transparent over hero, solid near-black once scrolled.
+     (alternate-theme's white treatment still wins on light sections via !important.) */
+  [data-header] {
+    transition: background-color 320ms ease, backdrop-filter 320ms ease, box-shadow 320ms ease;
+  }
+  [data-header].is-scrolled {
+    background-color: rgba(11, 11, 12, 0.85);
+    backdrop-filter: saturate(140%) blur(10px);
+    -webkit-backdrop-filter: saturate(140%) blur(10px);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08);
   }
   /* Coral filler variant for the header CTA (kept here so it doesn't pollute globals) */
   .btn-filler--solid-coral {
@@ -79,4 +89,12 @@ import PressToTalkRing from "./PressToTalkRing.astro";
       setTimeout(() => el.classList.add("header__item--ready"), 120 + i * 110);
     });
   });
+
+  // Solid header background once scrolled past the hero top.
+  const headerEl = document.querySelector<HTMLElement>("[data-header]");
+  if (headerEl) {
+    const onScroll = () => headerEl.classList.toggle("is-scrolled", window.scrollY > 80);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+  }
 </script>

@@ -445,3 +445,90 @@ body.alternate-theme [data-header] .header-logo--navy { display: block !importan
   fill: var(--color-page-bg);
 }
 .shape-divider--invert { fill: #ffffff; }
+
+/* ============================================================
+   RE-SKIN — Wolfgang-style design language (Phase 1, additive).
+   New components reference these tokens/utilities; existing pages
+   keep --color-* / Butler until migrated. See design brief §2/§4.
+   ============================================================ */
+:root {
+  /* Colour */
+  --c-bg: #FFFFFF;
+  --c-bg-alt: #F5F4F0;
+  --c-ink: #0A0A0A;
+  --c-ink-soft: #4A4A4A;
+  --c-dark: #0B0B0C;
+  --c-on-dark: #FFFFFF;
+  --c-on-dark-soft: #B9B9B9;
+  --c-accent: #C8F000;        /* ⚠️ sample exact lime from live site */
+  --c-accent-ink: #0A0A0A;
+  --c-line: #E7E5DF;
+
+  /* Type families (⚠️ confirm licensed display face later) */
+  --w-font-display: "Inter Tight", "Inter", system-ui, sans-serif;
+  --w-font-body: "Inter", system-ui, -apple-system, sans-serif;
+
+  /* Fluid type scale */
+  --fs-display: clamp(2.75rem, 6vw + 1rem, 6.5rem);
+  --fs-h2: clamp(2rem, 3vw + 1rem, 3.5rem);
+  --fs-h3: clamp(1.375rem, 1.2vw + 1rem, 1.875rem);
+  --fs-kicker: 0.8125rem;
+  --fs-body: clamp(1rem, 0.3vw + 0.95rem, 1.1875rem);
+  --lh-display: 0.98;
+  --lh-heading: 1.05;
+  --lh-body: 1.6;
+  --tracking-display: -0.02em;
+  --tracking-kicker: 0.14em;
+
+  /* Layout / motion */
+  --w-container: 1320px;
+  --w-gutter: clamp(1.25rem, 4vw, 4rem);
+  --w-section-y: clamp(4.5rem, 9vw, 9rem);
+  --w-radius: 18px;
+  --w-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --w-dur-fast: 240ms;
+  --w-dur: 600ms;
+  --w-dur-slow: 1100ms;
+  --w-shadow-soft: 0 18px 50px -24px rgba(0, 0, 0, 0.28);
+}
+
+/* Kicker label */
+.kicker {
+  display: inline-block;
+  font-family: var(--w-font-body);
+  font-size: var(--fs-kicker);
+  font-weight: 600;
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  color: var(--c-ink-soft);
+}
+.kicker--on-dark { color: var(--c-accent); }
+
+/* Pill buttons (re-skin design system — distinct from legacy .btn-pill) */
+.wbtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.9rem 1.7rem;
+  border-radius: var(--radius-pill);
+  font-family: var(--w-font-body);
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1;
+  text-decoration: none;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  transition: transform var(--w-dur-fast) var(--w-ease),
+    background-color var(--w-dur-fast) var(--w-ease),
+    color var(--w-dur-fast) var(--w-ease),
+    border-color var(--w-dur-fast) var(--w-ease);
+}
+.wbtn:hover { transform: scale(1.02); }
+.wbtn:active { transform: scale(0.99); }
+.wbtn:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 3px; }
+.wbtn--primary { background: var(--c-ink); color: #fff; }
+.wbtn--primary:hover { background: var(--c-accent); color: var(--c-accent-ink); }
+.wbtn--accent { background: var(--c-accent); color: var(--c-accent-ink); }
+.wbtn--accent:hover { background: #fff; color: var(--c-ink); }
+.wbtn--ghost { background: transparent; color: currentColor; border-color: currentColor; }
+.wbtn--ghost:hover { background: var(--c-on-dark); color: var(--c-ink); }

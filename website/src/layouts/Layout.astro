@@ -47,6 +47,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://rooftoptwen
     <link rel="preload" href="/fonts/butler-bold.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/mulish-variable.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/starlit-drive.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- Re-skin (Wolfgang direction): Inter + Inter Tight. Free near-matches for
+         Neue Haas Grotesk pending a licensed font. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&display=swap" />
     <OrganizationSchema />
   </head>
   <body class:list={[theme === "light" ? "theme-light" : "theme-dark"]}>
