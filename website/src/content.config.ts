@@ -18,6 +18,7 @@ const portfolio = defineCollection({
     heroCollage: z.array(z.string()).optional(),
     wordmark: z.string().optional(),
     websiteUrl: z.string().optional(),
+    videos: z.array(z.string()).default([]),
     gallery: z.array(z.string()).default([]),
     order: z.number().default(100),
     featured: z.boolean().default(false),

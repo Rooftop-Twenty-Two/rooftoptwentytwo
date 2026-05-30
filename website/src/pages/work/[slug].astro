@@ -15,7 +15,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
-const { name, tagline, summary, heroImage, sections, services, gallery, websiteUrl } = entry.data;
+const { name, tagline, summary, heroImage, sections, services, gallery, websiteUrl, videos } = entry.data;
 
 const allSorted = (await getCollection("portfolio", ({ data }) => !data.needs_review))
   .sort((a, b) => (a.data.order ?? 100) - (b.data.order ?? 100));
@@ -88,6 +88,30 @@ const extraImages = gallery.slice(sections.length);
       <div class="cs-wrap"><article class="cs-prose"><Content /></article></div>
     )}
   </section>
+
+  {videos.length > 0 && (
+    <section class="cs-videos">
+      <div class="cs-videos__inner">
+        <p class="kicker kicker--script">In motion</p>
+        <h2 class="cs-videos__h">The campaign, <em>in motion</em>.</h2>
+        <ul class="cs-videos__grid">
+          {videos.map((id) => (
+            <li class="cs-videos__item">
+              <div class="cs-videos__frame">
+                <iframe
+                  src={`https://player.mux.com/${id}`}
+                  title={`${name} campaign video`}
+                  loading="lazy"
+                  allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+                  allowfullscreen
+                ></iframe>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
 
   <WContactForm
     heading={`Want results like ${name}'s? <em>Let's talk</em>.`}
@@ -166,6 +190,17 @@ const extraImages = gallery.slice(sections.length);
   .cs-breaker--bleed { background: var(--c-dark); padding-block: clamp(2.5rem, 5vw, 4.5rem); }
   .cs-breaker--bleed .cs-breaker__media { border-color: var(--c-line-dark); background: var(--c-dark-2); }
   .cs-breaker--bleed .cs-breaker__cap { color: var(--c-on-dark-soft); }
+
+  /* Vertical campaign videos (Mux), shown as a reels grid on a dark band. */
+  .cs-videos { background: var(--c-dark); color: var(--c-on-dark); padding-block: var(--w-section-y); }
+  .cs-videos__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .cs-videos__h { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); line-height: var(--lh-heading); letter-spacing: var(--tracking-display); color: var(--c-on-dark); margin: 0.3rem 0 2.5rem; }
+  .cs-videos__h em { font-style: italic; color: var(--c-accent-2); }
+  .cs-videos__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+  @media (min-width: 640px) { .cs-videos__grid { grid-template-columns: repeat(3, 1fr); gap: 1.25rem; } }
+  @media (min-width: 980px) { .cs-videos__grid { grid-template-columns: repeat(4, 1fr); } }
+  .cs-videos__frame { position: relative; aspect-ratio: 607 / 1080; border-radius: var(--w-radius); overflow: hidden; background: #000; border: 1px solid var(--c-line-dark); }
+  .cs-videos__frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 
   .cs-more { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
   .cs-more__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
