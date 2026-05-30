@@ -2,102 +2,159 @@
 import { getCollection } from "astro:content";
 import PressToTalkRing from "./PressToTalkRing.astro";
 
-// --- Mega-menu data ---------------------------------------------------------
+// --- Data for the mega-panels ----------------------------------------------
 const services = (await getCollection("services")).sort(
   (a, b) => (a.data.order ?? 100) - (b.data.order ?? 100)
 );
-type Cluster = "performance-marketing" | "creative-and-content" | "web";
-const clusterNames: Record<Cluster, string> = {
-  "performance-marketing": "Performance Marketing",
-  "creative-and-content": "Creative & Content",
-  web: "Web",
-};
-const clusters: Cluster[] = ["performance-marketing", "creative-and-content", "web"];
-const serviceCols = clusters.map((c) => ({
-  cluster: c,
-  name: clusterNames[c],
-  leaves: services.filter((s) => s.data.cluster === c && !s.data.isClusterParent).slice(0, 5),
-}));
+const svcLinks = [
+  "paid-social", "seo", "photo-and-video",
+  "website-design-and-build", "email-marketing", "social-media-management",
+]
+  .map((slug) => services.find((s) => s.data.slug === slug))
+  .filter(Boolean)
+  .map((s) => ({ name: s!.data.name, href: `/services/${s!.data.slug}/` }));
 
 const portfolio = (await getCollection("portfolio", ({ data }) => !data.needs_review))
   .sort((a, b) => (a.data.order ?? 100) - (b.data.order ?? 100));
-const featuredWork = (portfolio.filter((p) => p.data.featured && p.data.heroImage).length >= 3
+const work = (portfolio.filter((p) => p.data.featured && p.data.heroImage).length >= 3
   ? portfolio.filter((p) => p.data.featured && p.data.heroImage)
-  : portfolio.filter((p) => p.data.heroImage)
-).slice(0, 3);
+  : portfolio.filter((p) => p.data.heroImage))
+  .map((p) => ({ name: p.data.name, tagline: p.data.tagline, img: p.data.heroImage!, href: `/work/${p.id.replace(/\.mdx?$/, "")}/` }))
+  .slice(0, 4);
 
-const serviceThumbs = [
-  { src: "/images/office/office-work-01.jpg", label: "Social & content" },
-  { src: "/images/office/office-collab-01.jpg", label: "In-house team" },
-];
+const articlesAll = (await getCollection("articles")).sort(
+  (a, b) => +new Date(b.data.publishedAt as any) - +new Date(a.data.publishedAt as any)
+);
+const articles = articlesAll.map((a) => ({
+  title: a.data.title, excerpt: a.data.excerpt, img: a.data.heroImage,
+  href: `/latest/${a.data.slug}/`,
+})).slice(0, 4);
+
+const path = Astro.url.pathname;
+const isActive = (base: string) => path === base || path.startsWith(base);
 ---
 
-<header class="sticky top-0 w-full" style="color:var(--color-text-on-dark);z-index:100;" data-header>
-  <div class="mx-auto flex max-w-[1320px] items-center justify-between px-6 md:px-12 py-5 md:py-6">
-    <a href="/" class="header__item flex items-center" data-header-item aria-label="Rooftop Twenty Two, home">
-      <img class="header-logo header-logo--white" src="/images/site/rooftop-logo-white.svg" alt="Rooftop Twenty Two" width="180" height="36" style="height:34px;width:auto;display:block;" />
-      <img class="header-logo header-logo--navy" src="/images/site/rooftop-logo-navy.svg" alt="Rooftop Twenty Two" width="180" height="36" style="height:34px;width:auto;display:none;" aria-hidden="true" />
+<header class="hd" data-header data-state="default">
+  <div class="hd__bar mx-auto max-w-[1320px] px-6 md:px-12">
+    <a href="/" class="hd__logo header__item" data-header-item aria-label="Rooftop Twenty Two, home">
+      <img class="header-logo header-logo--white" src="/images/site/rooftop-logo-white.svg" alt="Rooftop Twenty Two" width="180" height="34" />
+      <img class="header-logo header-logo--navy" src="/images/site/rooftop-logo-navy.svg" alt="Rooftop Twenty Two" width="180" height="34" aria-hidden="true" />
     </a>
 
-    <!-- Desktop nav with mega-menus -->
-    <nav class="mainnav header__item" data-header-item aria-label="Primary">
-      <ul class="mainnav__list">
-        <li class="mainnav__item has-mega" data-mega>
-          <button type="button" class="mainnav__link" aria-expanded="false" aria-haspopup="true">Work</button>
-          <div class="mega" role="region" aria-label="Work">
-            <div class="mega__inner mega__inner--work">
-              <div class="mega__col">
+    <nav class="hd__nav header__item" data-header-item aria-label="Primary">
+      <ul class="hd__list">
+        <!-- WORK -->
+        <li class:list={["hd__item has-mega", isActive("/work") && "is-active"]} data-mega>
+          <button type="button" class="hd__link" id="t-work" aria-haspopup="true" aria-expanded="false" aria-controls="mp-work">Work</button>
+          <div class="mega" id="mp-work" role="region" aria-labelledby="t-work">
+            <div class="mega__grid mega__grid--work">
+              <div class="mega__a">
                 <p class="mega__eyebrow">Selected work</p>
-                <a class="mega__all" href="/work/">View all projects &rarr;</a>
+                <ul class="mega__links">
+                  {work.slice(0, 3).map((w) => <li><a href={w.href}>{w.name}</a></li>)}
+                </ul>
+                <a class="mega__viewall" href="/work/">View all work &rarr;</a>
               </div>
-              <ul class="mega__cards">
-                {featuredWork.map((w) => (
-                  <li>
-                    <a href={`/work/${w.id.replace(/\.mdx?$/, "")}/`}>
-                      <span class="mega__thumb"><img src={w.data.heroImage} alt={w.data.name} loading="lazy" /></span>
-                      <span class="mega__cardname">{w.data.name}</span>
-                    </a>
-                  </li>
+              {work[0] && (
+                <a class="mega__featured" href={work[0].href}>
+                  <span class="mega__fimg"><img src={work[0].img} alt={work[0].name} loading="lazy" /></span>
+                  <span class="mega__flabel">Featured case study</span>
+                  <span class="mega__ftitle">{work[0].name}</span>
+                </a>
+              )}
+              <div class="mega__media">
+                {work.slice(1, 3).map((w) => (
+                  <a class="mega__tile" href={w.href}><img src={w.img} alt={w.name} loading="lazy" /></a>
                 ))}
-              </ul>
-            </div>
-          </div>
-        </li>
-
-        <li class="mainnav__item has-mega" data-mega>
-          <button type="button" class="mainnav__link" aria-expanded="false" aria-haspopup="true">Services</button>
-          <div class="mega" role="region" aria-label="Services">
-            <div class="mega__inner mega__inner--svc">
-              {serviceCols.map((col) => (
-                <div class="mega__col">
-                  <a class="mega__coltitle" href={`/services/${col.cluster}/`}>{col.name}</a>
-                  <ul class="mega__links">
-                    {col.leaves.map((s) => (
-                      <li><a href={`/services/${s.data.slug}/`}>{s.data.name}</a></li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-              <div class="mega__col mega__col--media">
-                <a class="mega__all" href="/services/">All services &rarr;</a>
-                <div class="mega__thumbs">
-                  {serviceThumbs.map((t) => (
-                    <span class="mega__thumb mega__thumb--sm"><img src={t.src} alt={t.label} loading="lazy" /></span>
-                  ))}
-                </div>
               </div>
             </div>
           </div>
         </li>
 
-        <li class="mainnav__item"><a class="mainnav__link" href="/about/">About</a></li>
-        <li class="mainnav__item"><a class="mainnav__link" href="/latest/">Latest</a></li>
+        <!-- SERVICES -->
+        <li class:list={["hd__item has-mega", isActive("/services") && "is-active"]} data-mega>
+          <button type="button" class="hd__link" id="t-services" aria-haspopup="true" aria-expanded="false" aria-controls="mp-services">Services</button>
+          <div class="mega" id="mp-services" role="region" aria-labelledby="t-services">
+            <div class="mega__grid">
+              <div class="mega__a">
+                <p class="mega__eyebrow">Our expertise</p>
+                <ul class="mega__links">
+                  {svcLinks.map((s) => <li><a href={s.href}>{s.name}</a></li>)}
+                </ul>
+                <a class="mega__viewall" href="/services/">View all services &rarr;</a>
+              </div>
+              <a class="mega__featured mega__featured--cta" href="/contact/">
+                <span class="mega__ftitle">Not sure where to start?</span>
+                <span class="mega__fsub">Tell us what you&rsquo;re scaling and we&rsquo;ll point you the right way.</span>
+                <span class="mega__cta-row"><img class="mega__avatar" src="/images/hero/Cathal.png" alt="" loading="lazy" /> Get in touch &rarr;</span>
+              </a>
+              <div class="mega__media">
+                <a class="mega__tile" href="/work/"><img src="/images/office/office-work-01.jpg" alt="Social campaign work in progress" loading="lazy" /></a>
+                <a class="mega__tile" href="/about/"><img src="/images/office/office-collab-01.jpg" alt="The in-house team at work" loading="lazy" /></a>
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <!-- ABOUT -->
+        <li class:list={["hd__item has-mega", path === "/about/" && "is-active"]} data-mega>
+          <button type="button" class="hd__link" id="t-about" aria-haspopup="true" aria-expanded="false" aria-controls="mp-about">About</button>
+          <div class="mega" id="mp-about" role="region" aria-labelledby="t-about">
+            <div class="mega__grid">
+              <div class="mega__a">
+                <p class="mega__eyebrow">About R22</p>
+                <ul class="mega__links">
+                  <li><a href="/about/#story">Our story</a></li>
+                  <li><a href="/about/#team">Our team</a></li>
+                  <li><a href="/about/#how-we-work">How we work</a></li>
+                </ul>
+                <a class="mega__viewall" href="/about/">About R22 &rarr;</a>
+              </div>
+              <div class="mega__featured mega__featured--quote">
+                <span class="mega__quote">&ldquo;We work like we&rsquo;re part of your team — invested in your growth, not just billing hours.&rdquo;</span>
+                <span class="mega__cite"><img class="mega__avatar" src="/images/hero/Cathal.png" alt="" loading="lazy" /> Cathal O&rsquo;Reilly, Founder</span>
+              </div>
+              <div class="mega__media">
+                <a class="mega__tile" href="/about/#team"><img src="/images/office/office-collab-02.jpg" alt="Team collaborating" loading="lazy" /></a>
+                <a class="mega__tile" href="/about/"><img src="/images/office/office-studio-01.jpg" alt="The Rooftop studio" loading="lazy" /></a>
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <!-- INSIGHTS -->
+        <li class:list={["hd__item has-mega", isActive("/latest") && "is-active"]} data-mega>
+          <button type="button" class="hd__link" id="t-insights" aria-haspopup="true" aria-expanded="false" aria-controls="mp-insights">Insights</button>
+          <div class="mega" id="mp-insights" role="region" aria-labelledby="t-insights">
+            <div class="mega__grid">
+              <div class="mega__a">
+                <p class="mega__eyebrow">Latest</p>
+                <ul class="mega__links">
+                  {articles.slice(0, 3).map((a) => <li><a href={a.href}>{a.title}</a></li>)}
+                </ul>
+                <a class="mega__viewall" href="/latest/">View all insights &rarr;</a>
+              </div>
+              {articles[0] && (
+                <a class="mega__featured" href={articles[0].href}>
+                  {articles[0].img && <span class="mega__fimg"><img src={articles[0].img} alt={articles[0].title} loading="lazy" /></span>}
+                  <span class="mega__flabel">Latest article</span>
+                  <span class="mega__ftitle">{articles[0].title}</span>
+                </a>
+              )}
+              <div class="mega__media">
+                {articles.slice(1, 3).map((a) => (
+                  a.img ? <a class="mega__tile" href={a.href}><img src={a.img} alt={a.title} loading="lazy" /></a> : null
+                ))}
+              </div>
+            </div>
+          </div>
+        </li>
       </ul>
     </nav>
 
-    <div class="header__right header__item" data-header-item>
-      <a href="/contact/" class="wbtn wbtn--accent header__cta">Get in Touch</a>
-      <button type="button" class="header__menu" data-menu-open-trigger aria-label="Open menu">
+    <div class="hd__right header__item" data-header-item>
+      <a href="/contact/" class="wbtn wbtn--accent hd__cta">Get in Touch</a>
+      <button type="button" class="hd__menu" data-menu-open-trigger aria-label="Menu" aria-expanded="false">
         <PressToTalkRing size={52} />
       </button>
     </div>
@@ -108,69 +165,97 @@ const serviceThumbs = [
   .header__item { opacity: 0; transform: translateY(-8px); transition: opacity 600ms ease, transform 600ms ease; }
   .header__item--ready { opacity: 1; transform: translateY(0); }
 
-  [data-header] { transition: background-color 320ms ease, backdrop-filter 320ms ease, box-shadow 320ms ease; }
-  [data-header].is-scrolled {
-    background-color: rgba(11, 11, 12, 0.85);
-    backdrop-filter: saturate(140%) blur(10px);
-    -webkit-backdrop-filter: saturate(140%) blur(10px);
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08);
+  .hd { position: sticky; top: 0; width: 100%; z-index: 100; color: #fff;
+    transition: background-color var(--w-dur-fast) var(--w-ease), color var(--w-dur-fast) var(--w-ease), box-shadow var(--w-dur-fast) var(--w-ease); }
+  .hd__bar { display: flex; align-items: center; justify-content: space-between; height: 80px; }
+
+  /* Solid white once scrolled, or while a panel is open */
+  .hd[data-state="scrolled"], .hd[data-state="menu-open"] {
+    background: var(--c-bg); color: var(--c-ink);
+    box-shadow: 0 1px 0 var(--c-line), var(--w-shadow-soft);
   }
+  .hd__logo { display: inline-flex; align-items: center; }
+  .header-logo { height: 32px; width: auto; display: block; }
+  .header-logo--navy { display: none; }
+  .hd[data-state="scrolled"] .header-logo--white,
+  .hd[data-state="menu-open"] .header-logo--white { display: none; }
+  .hd[data-state="scrolled"] .header-logo--navy,
+  .hd[data-state="menu-open"] .header-logo--navy { display: block; }
 
-  .header__right { display: flex; align-items: center; gap: 0.75rem; }
-
-  /* Desktop nav */
-  .mainnav { display: none; }
-  @media (min-width: 1024px) { .mainnav { display: block; } }
-  .mainnav__list { display: flex; align-items: center; gap: 0.5rem; list-style: none; margin: 0; padding: 0; }
-  .mainnav__item { position: relative; }
-  .mainnav__link {
+  /* Nav */
+  .hd__nav { display: none; }
+  @media (min-width: 1024px) { .hd__nav { display: block; } }
+  .hd__list { display: flex; align-items: center; gap: 0.25rem; list-style: none; margin: 0; padding: 0; }
+  .hd__item { position: relative; }
+  .hd__link {
     font-family: var(--w-font-body); font-weight: 600; font-size: 0.98rem; color: inherit;
     background: none; border: 0; cursor: pointer; text-decoration: none;
-    padding: 0.5rem 0.9rem; border-radius: var(--radius-pill); display: inline-block;
-    transition: color var(--w-dur-fast) var(--w-ease), background var(--w-dur-fast) var(--w-ease);
+    padding: 0.55rem 0.95rem; border-radius: var(--radius-pill);
+    transition: color var(--w-dur-fast) var(--w-ease);
   }
-  .mainnav__link:hover, .has-mega:hover .mainnav__link, .has-mega:focus-within .mainnav__link { color: var(--c-accent-2); }
+  .hd__link:hover, .hd__item[data-open="true"] .hd__link { color: var(--c-accent); }
+  .hd[data-state="default"] .hd__link:hover,
+  .hd[data-state="default"] .hd__item[data-open="true"] .hd__link { color: var(--c-accent-2); }
+  .hd__item.is-active > .hd__link { box-shadow: inset 0 -2px 0 var(--c-accent); }
+  .hd__link:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
+
+  .hd__right { display: flex; align-items: center; gap: 0.75rem; }
+  @media (max-width: 1023px) { .hd__cta { display: none; } }
+  .hd__menu { color: inherit; }
+  @media (min-width: 1024px) { .hd__menu { display: none; } }
 
   /* Mega panel */
   .mega {
-    position: absolute; top: calc(100% + 0.5rem); left: 0;
-    opacity: 0; visibility: hidden; transform: translateY(8px);
-    transition: opacity var(--w-dur-fast) var(--w-ease), transform var(--w-dur-fast) var(--w-ease), visibility var(--w-dur-fast);
+    position: absolute; top: 100%; left: 0; padding-top: 0.6rem;
+    visibility: hidden; opacity: 0; transform: translateY(-8px);
+    transition: opacity var(--w-dur) var(--w-ease), transform var(--w-dur) var(--w-ease), visibility var(--w-dur);
     z-index: 120;
   }
-  .has-mega:hover .mega, .has-mega:focus-within .mega, .has-mega[data-open="true"] .mega {
-    opacity: 1; visibility: visible; transform: translateY(0);
+  .hd__item[data-open="true"] .mega { visibility: visible; opacity: 1; transform: translateY(0); }
+  .mega__grid {
+    display: grid; gap: 2rem; padding: clamp(1.5rem, 3vw, 2.5rem);
+    background: var(--c-bg); color: var(--c-ink);
+    border: 1px solid var(--c-line); border-radius: var(--w-radius); box-shadow: var(--w-shadow-soft);
+    grid-template-columns: 220px 240px 200px; width: max-content; max-width: 88vw;
   }
-  .mega__inner {
-    background: #fff; color: var(--c-ink); border-radius: var(--w-radius);
-    box-shadow: var(--w-shadow-soft); border: 1px solid var(--c-line);
-    padding: 1.75rem; display: grid; gap: 2rem;
+  .mega__grid--work { grid-template-columns: 200px 240px 200px; }
+  .mega__eyebrow { font-family: var(--w-font-body); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--c-ink-soft); margin: 0 0 1rem; }
+  .mega__links { list-style: none; margin: 0 0 1rem; padding: 0; display: grid; gap: 0.15rem; }
+  .mega__links a {
+    display: block; font-family: var(--w-font-display); font-weight: 600; font-size: 1.05rem;
+    color: var(--c-ink); text-decoration: none; padding: 0.5rem 0; border-radius: 8px;
+    transition: color var(--w-dur-fast) var(--w-ease), transform var(--w-dur-fast) var(--w-ease);
   }
-  .mega__inner--svc { grid-template-columns: repeat(3, minmax(150px, 1fr)) 200px; width: min(86vw, 880px); }
-  .mega__inner--work { grid-template-columns: 160px 1fr; width: min(86vw, 620px); align-items: start; }
-  .mega__eyebrow, .mega__coltitle {
-    font-family: var(--w-font-body); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--c-ink); text-decoration: none; display: block; margin-bottom: 0.9rem;
-  }
-  .mega__coltitle:hover { color: var(--c-accent); }
-  .mega__links { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.55rem; }
-  .mega__links a { font-family: var(--w-font-body); font-size: 0.95rem; color: var(--c-ink-soft); text-decoration: none; }
-  .mega__links a:hover { color: var(--c-accent); }
-  .mega__all { font-family: var(--w-font-body); font-weight: 600; font-size: 0.9rem; color: var(--c-accent); text-decoration: none; }
-  .mega__all:hover { text-decoration: underline; }
-  .mega__col--media { display: flex; flex-direction: column; gap: 0.9rem; }
-  .mega__thumbs { display: grid; gap: 0.6rem; }
-  .mega__thumb { display: block; border-radius: 12px; overflow: hidden; aspect-ratio: 16/10; background: var(--c-bg-alt); }
-  .mega__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .mega__cards { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-  .mega__cards a { text-decoration: none; color: var(--c-ink); display: block; }
-  .mega__cardname { font-family: var(--w-font-body); font-weight: 600; font-size: 0.85rem; display: block; margin-top: 0.5rem; }
-  .mega__cards .mega__thumb { aspect-ratio: 4/3; }
+  .mega__links a:hover { color: var(--c-accent); transform: translateX(4px); }
+  .mega__viewall { font-family: var(--w-font-body); font-weight: 600; font-size: 0.9rem; color: var(--c-accent); text-decoration: none; }
+  .mega__viewall:hover { text-decoration: underline; }
 
-  /* Mobile menu trigger only on small screens */
-  .header__menu { color: inherit; }
-  @media (min-width: 1024px) { .header__menu { display: none; } }
-  @media (max-width: 1023px) { .header__cta { display: none; } }
+  .mega__featured {
+    display: flex; flex-direction: column; gap: 0.5rem; text-decoration: none;
+    background: var(--c-bg-alt); border-radius: 14px; padding: 1.1rem; color: var(--c-ink);
+  }
+  .mega__featured--cta { background: var(--c-ink); color: #fff; justify-content: center; }
+  .mega__featured--quote { background: var(--c-bg-alt); justify-content: center; }
+  .mega__fimg { display: block; border-radius: 10px; overflow: hidden; aspect-ratio: 16/10; margin-bottom: 0.4rem; }
+  .mega__fimg img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .mega__flabel { font-family: var(--w-font-body); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--c-ink-soft); }
+  .mega__ftitle { font-family: var(--w-font-display); font-weight: 600; font-size: 1.15rem; line-height: 1.15; }
+  .mega__featured--cta .mega__ftitle { color: #fff; }
+  .mega__fsub { font-family: var(--w-font-body); font-size: 0.85rem; color: var(--c-on-dark-soft); line-height: 1.45; }
+  .mega__cta-row { display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--w-font-body); font-weight: 600; color: var(--c-accent-2); margin-top: 0.3rem; }
+  .mega__avatar { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; }
+  .mega__quote { font-family: var(--w-font-display); font-weight: 500; font-size: 1.05rem; line-height: 1.3; color: var(--c-ink); }
+  .mega__cite { display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--w-font-body); font-size: 0.8rem; color: var(--c-ink-soft); margin-top: 0.75rem; }
+
+  .mega__media { display: grid; gap: 0.6rem; }
+  .mega__tile { display: block; border-radius: 12px; overflow: hidden; aspect-ratio: 16/10; background: var(--c-bg-alt); }
+  .mega__tile img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform var(--w-dur) var(--w-ease); }
+  .mega__tile:hover img { transform: scale(1.05); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mega { transition: opacity var(--w-dur-fast) linear; transform: none !important; }
+    .mega__links a:hover { transform: none; }
+  }
 </style>
 
 <script>
@@ -179,36 +264,66 @@ const serviceThumbs = [
     items.forEach((el, i) => setTimeout(() => el.classList.add("header__item--ready"), 120 + i * 110));
   });
 
-  const headerEl = document.querySelector<HTMLElement>("[data-header]");
-  if (headerEl) {
-    const onScroll = () => headerEl.classList.toggle("is-scrolled", window.scrollY > 80);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
+  const header = document.querySelector<HTMLElement>("[data-header]");
+  const megas = Array.from(document.querySelectorAll<HTMLElement>("[data-mega]"));
+  let anyOpen = false;
+
+  function syncHeaderState() {
+    if (!header) return;
+    if (anyOpen) { header.dataset.state = "menu-open"; return; }
+    header.dataset.state = window.scrollY > 80 ? "scrolled" : "default";
+  }
+  window.addEventListener("scroll", syncHeaderState, { passive: true });
+  syncHeaderState();
+
+  function closeAll(except?: HTMLElement) {
+    for (const li of megas) {
+      if (li === except) continue;
+      li.dataset.open = "false";
+      li.querySelector(".hd__link")?.setAttribute("aria-expanded", "false");
+    }
+  }
+  function setOpen(li: HTMLElement, open: boolean) {
+    li.dataset.open = String(open);
+    li.querySelector(".hd__link")?.setAttribute("aria-expanded", String(open));
+    if (open) closeAll(li);
+    anyOpen = megas.some((m) => m.dataset.open === "true");
+    syncHeaderState();
   }
 
-  // Mega-menu: click-toggle (touch/keyboard) + aria + Escape + outside click.
-  const megas = document.querySelectorAll<HTMLElement>("[data-mega]");
+  // Hover-intent: open after 80ms, close after 200ms; trigger + panel share the <li>.
+  let openTimer = 0, closeTimer = 0;
   megas.forEach((li) => {
-    const btn = li.querySelector<HTMLButtonElement>(".mainnav__link");
-    if (!btn) return;
-    const setOpen = (open: boolean) => {
-      li.dataset.open = String(open);
-      btn.setAttribute("aria-expanded", String(open));
-    };
-    btn.addEventListener("click", (e) => {
-      e.preventDefault();
-      const isOpen = li.dataset.open === "true";
-      megas.forEach((o) => { o.dataset.open = "false"; o.querySelector(".mainnav__link")?.setAttribute("aria-expanded", "false"); });
-      setOpen(!isOpen);
+    const btn = li.querySelector<HTMLButtonElement>(".hd__link");
+    li.addEventListener("mouseenter", () => {
+      window.clearTimeout(closeTimer);
+      openTimer = window.setTimeout(() => setOpen(li, true), 80);
     });
-    li.addEventListener("mouseleave", () => setOpen(false));
+    li.addEventListener("mouseleave", () => {
+      window.clearTimeout(openTimer);
+      closeTimer = window.setTimeout(() => setOpen(li, false), 220);
+    });
+    li.addEventListener("focusin", () => setOpen(li, true));
+    li.addEventListener("focusout", (e) => {
+      if (!li.contains(e.relatedTarget as Node)) setOpen(li, false);
+    });
+    btn?.addEventListener("click", (e) => {
+      e.preventDefault();
+      setOpen(li, li.dataset.open !== "true");
+    });
   });
+
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") megas.forEach((o) => { o.dataset.open = "false"; o.querySelector(".mainnav__link")?.setAttribute("aria-expanded", "false"); });
-  });
-  document.addEventListener("click", (e) => {
-    if (!(e.target as HTMLElement).closest("[data-mega]")) {
-      megas.forEach((o) => { o.dataset.open = "false"; o.querySelector(".mainnav__link")?.setAttribute("aria-expanded", "false"); });
+    if (e.key === "Escape" && anyOpen) {
+      const open = megas.find((m) => m.dataset.open === "true");
+      closeAll(); anyOpen = false; syncHeaderState();
+      open?.querySelector<HTMLButtonElement>(".hd__link")?.focus();
     }
   });
+  document.addEventListener("click", (e) => {
+    if (!(e.target as HTMLElement).closest("[data-mega]")) { closeAll(); anyOpen = false; syncHeaderState(); }
+  });
+  window.addEventListener("scroll", () => {
+    if (anyOpen && window.scrollY > 80) { closeAll(); anyOpen = false; syncHeaderState(); }
+  }, { passive: true });
 </script>
