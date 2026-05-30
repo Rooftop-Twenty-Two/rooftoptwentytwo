@@ -10,7 +10,6 @@ const jobs = (await getCollection("jobs", ({ data }) => !data.draft))
 
 const benefits = [
   { title: "Hybrid by default", body: "Work from home Wednesdays and Fridays, together in the studio the rest of the week." },
-  { title: "Flexi-time", body: "Start and finish around your life. We care about the work, not the clock." },
   { title: "Pension contribution", body: "We contribute to your pension, helping you build for the long term." },
   { title: "Health insurance, paid", body: "Private health insurance, fully covered by us." },
   { title: "One in-house team", body: "Strategy, brand, web and performance under one roof — no silos, no hand-offs." },
@@ -18,7 +17,7 @@ const benefits = [
 ];
 ---
 
-<Layout title="Careers | Rooftop Twenty Two" description="Join Rooftop Twenty Two, an independent branding and digital studio in Dublin. Hybrid working, flexi-time, pension and health insurance. See our open roles.">
+<Layout title="Careers | Rooftop Twenty Two" description="Join Rooftop Twenty Two, an independent branding and digital studio in Dublin. Hybrid working, pension and health insurance. See our open roles.">
   <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "Careers", url: "/careers/" }]} />
 
   <PageHero
