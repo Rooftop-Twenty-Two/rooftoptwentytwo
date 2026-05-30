@@ -104,6 +104,9 @@ const isActive = (base: string) => path === base || path.startsWith(base);
                 <span class="mega__fsub">Tell us what you&rsquo;re scaling and we&rsquo;ll point you the right way.</span>
                 <span class="mega__cta-row"><img class="mega__avatar" src="/images/hero/Cathal.png" alt="" loading="lazy" /> Get in touch &rarr;</span>
               </a>
+              <a class="mega__svc-img" href="/work/">
+                <img src="/images/office/office-work-01.jpg" alt="Rooftop Twenty Two work in progress" loading="lazy" />
+              </a>
             </div>
           </div>
         </li>
@@ -239,7 +242,10 @@ const isActive = (base: string) => path === base || path.startsWith(base);
   }
   .mega__grid--work { grid-template-columns: 200px 240px 200px; }
   /* Services panel: three homepage clusters as columns, plus the CTA. */
-  .mega__grid--services { grid-template-columns: auto 240px; align-items: stretch; }
+  .mega__grid--services { grid-template-columns: auto 230px 210px; align-items: stretch; }
+  .mega__svc-img { display: block; border-radius: var(--w-radius); overflow: hidden; min-height: 100%; }
+  .mega__svc-img img { width: 100%; height: 100%; min-height: 220px; object-fit: cover; display: block; transition: transform var(--w-dur) var(--w-ease); }
+  .mega__svc-img:hover img { transform: scale(1.04); }
   .mega__cats { display: grid; grid-template-columns: repeat(3, minmax(150px, 1fr)); gap: 2rem; }
   .mega__cat-h {
     display: block; font-family: var(--w-font-display); font-weight: 700; font-size: 1.05rem;
