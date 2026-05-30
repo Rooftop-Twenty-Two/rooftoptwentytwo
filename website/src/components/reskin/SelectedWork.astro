@@ -57,11 +57,7 @@ const track = [...cards, ...cards];
   .sw__title em { font-style: italic; color: var(--c-accent); }
 
   /* Continuous marquee, left to right, pauses on hover/focus. */
-  .sw__viewport {
-    margin-top: 2.5rem; overflow: hidden; transform: translateZ(0);
-    -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
-            mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
-  }
+  .sw__viewport { margin-top: 2.5rem; overflow: hidden; }
   .sw__rail {
     list-style: none; margin: 0; padding: 0.5rem var(--w-gutter) 1rem;
     display: flex; gap: 1.5rem; width: max-content;
