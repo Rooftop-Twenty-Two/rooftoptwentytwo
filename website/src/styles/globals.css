@@ -460,8 +460,9 @@ body.alternate-theme [data-header] .header-logo--navy { display: block !importan
   --c-dark: #0B0B0C;
   --c-on-dark: #FFFFFF;
   --c-on-dark-soft: #B9B9B9;
-  --c-accent: #C8F000;        /* ⚠️ sample exact lime from live site */
-  --c-accent-ink: #0A0A0A;
+  --c-accent: #E15047;        /* Rooftop coral — actions / accents on light */
+  --c-accent-ink: #FFFFFF;    /* text on coral */
+  --c-accent-2: #01FFB2;      /* Rooftop mint — accents on dark / hovers */
   --c-line: #E7E5DF;
 
   /* Type families (⚠️ confirm licensed display face later) */
@@ -502,7 +503,7 @@ body.alternate-theme [data-header] .header-logo--navy { display: block !importan
   text-transform: uppercase;
   color: var(--c-ink-soft);
 }
-.kicker--on-dark { color: var(--c-accent); }
+.kicker--on-dark { color: var(--c-accent-2); }
 
 /* Pill buttons (re-skin design system — distinct from legacy .btn-pill) */
 .wbtn {
@@ -529,6 +530,6 @@ body.alternate-theme [data-header] .header-logo--navy { display: block !importan
 .wbtn--primary { background: var(--c-ink); color: #fff; }
 .wbtn--primary:hover { background: var(--c-accent); color: var(--c-accent-ink); }
 .wbtn--accent { background: var(--c-accent); color: var(--c-accent-ink); }
-.wbtn--accent:hover { background: #fff; color: var(--c-ink); }
+.wbtn--accent:hover { background: var(--c-accent-2); color: var(--c-ink); }
 .wbtn--ghost { background: transparent; color: currentColor; border-color: currentColor; }
 .wbtn--ghost:hover { background: var(--c-on-dark); color: var(--c-ink); }

@@ -1,100 +1,214 @@
 ---
+import { getCollection } from "astro:content";
 import PressToTalkRing from "./PressToTalkRing.astro";
+
+// --- Mega-menu data ---------------------------------------------------------
+const services = (await getCollection("services")).sort(
+  (a, b) => (a.data.order ?? 100) - (b.data.order ?? 100)
+);
+type Cluster = "performance-marketing" | "creative-and-content" | "web";
+const clusterNames: Record<Cluster, string> = {
+  "performance-marketing": "Performance Marketing",
+  "creative-and-content": "Creative & Content",
+  web: "Web",
+};
+const clusters: Cluster[] = ["performance-marketing", "creative-and-content", "web"];
+const serviceCols = clusters.map((c) => ({
+  cluster: c,
+  name: clusterNames[c],
+  leaves: services.filter((s) => s.data.cluster === c && !s.data.isClusterParent).slice(0, 5),
+}));
+
+const portfolio = (await getCollection("portfolio", ({ data }) => !data.needs_review))
+  .sort((a, b) => (a.data.order ?? 100) - (b.data.order ?? 100));
+const featuredWork = (portfolio.filter((p) => p.data.featured && p.data.heroImage).length >= 3
+  ? portfolio.filter((p) => p.data.featured && p.data.heroImage)
+  : portfolio.filter((p) => p.data.heroImage)
+).slice(0, 3);
+
+const serviceThumbs = [
+  { src: "/images/office/office-work-01.jpg", label: "Social & content" },
+  { src: "/images/office/office-collab-01.jpg", label: "In-house team" },
+];
 ---
 
-<header
-  class="sticky top-0 w-full"
-  style="background-color:transparent;color:var(--color-text-on-dark);z-index:100;"
-  data-header
->
-  <div class="mx-auto flex max-w-[1200px] items-center justify-between px-6 md:px-12 py-5 md:py-6">
+<header class="sticky top-0 w-full" style="color:var(--color-text-on-dark);z-index:100;" data-header>
+  <div class="mx-auto flex max-w-[1320px] items-center justify-between px-6 md:px-12 py-5 md:py-6">
     <a href="/" class="header__item flex items-center" data-header-item aria-label="Rooftop Twenty Two, home">
-      <img
-        class="header-logo header-logo--white"
-        src="/images/site/rooftop-logo-white.svg"
-        alt="Rooftop Twenty Two"
-        width="180"
-        height="36"
-        style="height:36px;width:auto;display:block;"
-      />
-      <img
-        class="header-logo header-logo--navy"
-        src="/images/site/rooftop-logo-navy.svg"
-        alt="Rooftop Twenty Two"
-        width="180"
-        height="36"
-        style="height:36px;width:auto;display:none;"
-        aria-hidden="true"
-      />
+      <img class="header-logo header-logo--white" src="/images/site/rooftop-logo-white.svg" alt="Rooftop Twenty Two" width="180" height="36" style="height:34px;width:auto;display:block;" />
+      <img class="header-logo header-logo--navy" src="/images/site/rooftop-logo-navy.svg" alt="Rooftop Twenty Two" width="180" height="36" style="height:34px;width:auto;display:none;" aria-hidden="true" />
     </a>
 
-    <button
-      type="button"
-      class="text-white hover:text-[var(--color-mint)] transition-colors header__item"
-      data-header-item
-      data-menu-open-trigger
-      aria-label="Open menu"
-    >
-      <PressToTalkRing size={56} />
-    </button>
+    <!-- Desktop nav with mega-menus -->
+    <nav class="mainnav header__item" data-header-item aria-label="Primary">
+      <ul class="mainnav__list">
+        <li class="mainnav__item has-mega" data-mega>
+          <button type="button" class="mainnav__link" aria-expanded="false" aria-haspopup="true">Work</button>
+          <div class="mega" role="region" aria-label="Work">
+            <div class="mega__inner mega__inner--work">
+              <div class="mega__col">
+                <p class="mega__eyebrow">Selected work</p>
+                <a class="mega__all" href="/work/">View all projects &rarr;</a>
+              </div>
+              <ul class="mega__cards">
+                {featuredWork.map((w) => (
+                  <li>
+                    <a href={`/work/${w.id.replace(/\.mdx?$/, "")}/`}>
+                      <span class="mega__thumb"><img src={w.data.heroImage} alt={w.data.name} loading="lazy" /></span>
+                      <span class="mega__cardname">{w.data.name}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </li>
 
-    <a
-      href="/contact/"
-      class="wbtn wbtn--accent header__item"
-      data-header-item
-    >
-      Get in Touch
-    </a>
+        <li class="mainnav__item has-mega" data-mega>
+          <button type="button" class="mainnav__link" aria-expanded="false" aria-haspopup="true">Services</button>
+          <div class="mega" role="region" aria-label="Services">
+            <div class="mega__inner mega__inner--svc">
+              {serviceCols.map((col) => (
+                <div class="mega__col">
+                  <a class="mega__coltitle" href={`/services/${col.cluster}/`}>{col.name}</a>
+                  <ul class="mega__links">
+                    {col.leaves.map((s) => (
+                      <li><a href={`/services/${s.data.slug}/`}>{s.data.name}</a></li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+              <div class="mega__col mega__col--media">
+                <a class="mega__all" href="/services/">All services &rarr;</a>
+                <div class="mega__thumbs">
+                  {serviceThumbs.map((t) => (
+                    <span class="mega__thumb mega__thumb--sm"><img src={t.src} alt={t.label} loading="lazy" /></span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <li class="mainnav__item"><a class="mainnav__link" href="/about/">About</a></li>
+        <li class="mainnav__item"><a class="mainnav__link" href="/latest/">Latest</a></li>
+      </ul>
+    </nav>
+
+    <div class="header__right header__item" data-header-item>
+      <a href="/contact/" class="wbtn wbtn--accent header__cta">Get in Touch</a>
+      <button type="button" class="header__menu" data-menu-open-trigger aria-label="Open menu">
+        <PressToTalkRing size={52} />
+      </button>
+    </div>
   </div>
 </header>
 
 <style>
-  .header__item {
-    opacity: 0;
-    transform: translateY(-8px);
-    transition: opacity 600ms ease, transform 600ms ease;
-  }
-  .header__item--ready {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  /* Sticky: transparent over hero, solid near-black once scrolled.
-     (alternate-theme's white treatment still wins on light sections via !important.) */
-  [data-header] {
-    transition: background-color 320ms ease, backdrop-filter 320ms ease, box-shadow 320ms ease;
-  }
+  .header__item { opacity: 0; transform: translateY(-8px); transition: opacity 600ms ease, transform 600ms ease; }
+  .header__item--ready { opacity: 1; transform: translateY(0); }
+
+  [data-header] { transition: background-color 320ms ease, backdrop-filter 320ms ease, box-shadow 320ms ease; }
   [data-header].is-scrolled {
     background-color: rgba(11, 11, 12, 0.85);
     backdrop-filter: saturate(140%) blur(10px);
     -webkit-backdrop-filter: saturate(140%) blur(10px);
     box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08);
   }
-  /* Coral filler variant for the header CTA (kept here so it doesn't pollute globals) */
-  .btn-filler--solid-coral {
-    color: #ffffff;
-    background: var(--color-coral);
-    border-color: var(--color-coral);
-    padding: 10px 26px;
-    font-size: 0.875rem;
+
+  .header__right { display: flex; align-items: center; gap: 0.75rem; }
+
+  /* Desktop nav */
+  .mainnav { display: none; }
+  @media (min-width: 1024px) { .mainnav { display: block; } }
+  .mainnav__list { display: flex; align-items: center; gap: 0.5rem; list-style: none; margin: 0; padding: 0; }
+  .mainnav__item { position: relative; }
+  .mainnav__link {
+    font-family: var(--w-font-body); font-weight: 600; font-size: 0.98rem; color: inherit;
+    background: none; border: 0; cursor: pointer; text-decoration: none;
+    padding: 0.5rem 0.9rem; border-radius: var(--radius-pill); display: inline-block;
+    transition: color var(--w-dur-fast) var(--w-ease), background var(--w-dur-fast) var(--w-ease);
   }
-  .btn-filler--solid-coral > span { background-color: var(--color-navy-900); }
-  .btn-filler--solid-coral:hover { color: #ffffff; }
+  .mainnav__link:hover, .has-mega:hover .mainnav__link, .has-mega:focus-within .mainnav__link { color: var(--c-accent-2); }
+
+  /* Mega panel */
+  .mega {
+    position: absolute; top: calc(100% + 0.5rem); left: 0;
+    opacity: 0; visibility: hidden; transform: translateY(8px);
+    transition: opacity var(--w-dur-fast) var(--w-ease), transform var(--w-dur-fast) var(--w-ease), visibility var(--w-dur-fast);
+    z-index: 120;
+  }
+  .has-mega:hover .mega, .has-mega:focus-within .mega, .has-mega[data-open="true"] .mega {
+    opacity: 1; visibility: visible; transform: translateY(0);
+  }
+  .mega__inner {
+    background: #fff; color: var(--c-ink); border-radius: var(--w-radius);
+    box-shadow: var(--w-shadow-soft); border: 1px solid var(--c-line);
+    padding: 1.75rem; display: grid; gap: 2rem;
+  }
+  .mega__inner--svc { grid-template-columns: repeat(3, minmax(150px, 1fr)) 200px; width: min(86vw, 880px); }
+  .mega__inner--work { grid-template-columns: 160px 1fr; width: min(86vw, 620px); align-items: start; }
+  .mega__eyebrow, .mega__coltitle {
+    font-family: var(--w-font-body); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--c-ink); text-decoration: none; display: block; margin-bottom: 0.9rem;
+  }
+  .mega__coltitle:hover { color: var(--c-accent); }
+  .mega__links { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.55rem; }
+  .mega__links a { font-family: var(--w-font-body); font-size: 0.95rem; color: var(--c-ink-soft); text-decoration: none; }
+  .mega__links a:hover { color: var(--c-accent); }
+  .mega__all { font-family: var(--w-font-body); font-weight: 600; font-size: 0.9rem; color: var(--c-accent); text-decoration: none; }
+  .mega__all:hover { text-decoration: underline; }
+  .mega__col--media { display: flex; flex-direction: column; gap: 0.9rem; }
+  .mega__thumbs { display: grid; gap: 0.6rem; }
+  .mega__thumb { display: block; border-radius: 12px; overflow: hidden; aspect-ratio: 16/10; background: var(--c-bg-alt); }
+  .mega__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .mega__cards { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .mega__cards a { text-decoration: none; color: var(--c-ink); display: block; }
+  .mega__cardname { font-family: var(--w-font-body); font-weight: 600; font-size: 0.85rem; display: block; margin-top: 0.5rem; }
+  .mega__cards .mega__thumb { aspect-ratio: 4/3; }
+
+  /* Mobile menu trigger only on small screens */
+  .header__menu { color: inherit; }
+  @media (min-width: 1024px) { .header__menu { display: none; } }
+  @media (max-width: 1023px) { .header__cta { display: none; } }
 </style>
 
 <script>
-  // Stagger-in the header items shortly after load.
   document.addEventListener("DOMContentLoaded", () => {
     const items = document.querySelectorAll<HTMLElement>("[data-header-item]");
-    items.forEach((el, i) => {
-      setTimeout(() => el.classList.add("header__item--ready"), 120 + i * 110);
-    });
+    items.forEach((el, i) => setTimeout(() => el.classList.add("header__item--ready"), 120 + i * 110));
   });
 
-  // Solid header background once scrolled past the hero top.
   const headerEl = document.querySelector<HTMLElement>("[data-header]");
   if (headerEl) {
     const onScroll = () => headerEl.classList.toggle("is-scrolled", window.scrollY > 80);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
   }
+
+  // Mega-menu: click-toggle (touch/keyboard) + aria + Escape + outside click.
+  const megas = document.querySelectorAll<HTMLElement>("[data-mega]");
+  megas.forEach((li) => {
+    const btn = li.querySelector<HTMLButtonElement>(".mainnav__link");
+    if (!btn) return;
+    const setOpen = (open: boolean) => {
+      li.dataset.open = String(open);
+      btn.setAttribute("aria-expanded", String(open));
+    };
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const isOpen = li.dataset.open === "true";
+      megas.forEach((o) => { o.dataset.open = "false"; o.querySelector(".mainnav__link")?.setAttribute("aria-expanded", "false"); });
+      setOpen(!isOpen);
+    });
+    li.addEventListener("mouseleave", () => setOpen(false));
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") megas.forEach((o) => { o.dataset.open = "false"; o.querySelector(".mainnav__link")?.setAttribute("aria-expanded", "false"); });
+  });
+  document.addEventListener("click", (e) => {
+    if (!(e.target as HTMLElement).closest("[data-mega]")) {
+      megas.forEach((o) => { o.dataset.open = "false"; o.querySelector(".mainnav__link")?.setAttribute("aria-expanded", "false"); });
+    }
+  });
 </script>
