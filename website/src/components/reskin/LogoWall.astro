@@ -38,10 +38,12 @@ const track = [...half, ...half];
   .lw__marquee { margin-top: 2.25rem; overflow: hidden; }
   .lw__track {
     list-style: none; margin: 0; padding: 0;
-    display: flex; align-items: center; gap: clamp(2.5rem, 5vw, 5rem); width: max-content;
+    display: flex; align-items: center; width: max-content;
     will-change: transform; animation: lw-scroll 45s linear infinite;
   }
-  .lw__track li { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; }
+  /* Spacing as per-item margin (not flex gap) so the two halves are exactly equal
+   * width and the -50% loop is seamless (no jump at the wrap). */
+  .lw__track li { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; margin-right: clamp(2.5rem, 5vw, 5rem); }
   .lw__track img {
     max-height: 38px; width: auto; height: auto;
     opacity: 0.7; transition: opacity var(--w-dur-fast) var(--w-ease);

@@ -59,8 +59,8 @@ const track = [...cards, ...cards];
   /* Continuous marquee, left to right, pauses on hover/focus. */
   .sw__viewport { margin-top: 2.5rem; overflow: hidden; }
   .sw__rail {
-    list-style: none; margin: 0; padding: 0.5rem var(--w-gutter) 1rem;
-    display: flex; gap: 1.5rem; width: max-content;
+    list-style: none; margin: 0; padding: 0.5rem 0 1rem;
+    display: flex; width: max-content;
     will-change: transform; animation: sw-scroll 70s linear infinite;
   }
   .sw__rail:focus-within { animation-play-state: paused; }
@@ -69,7 +69,9 @@ const track = [...cards, ...cards];
     from { transform: translateX(-50%); }
     to   { transform: translateX(0); }
   }
-  .sw__card { flex: 0 0 min(80vw, 400px); }
+  /* translateZ promotes the card to its own layer — fixes Safari blanking of
+   * rounded/overflow-hidden content inside the animated (transformed) track. */
+  .sw__card { flex: 0 0 min(80vw, 400px); margin-right: 1.5rem; transform: translateZ(0); }
   .sw__card a { text-decoration: none; color: inherit; display: block; }
   .sw__img {
     margin: 0; border: 1px solid var(--c-line); border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 4 / 3;
