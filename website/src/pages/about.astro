@@ -133,9 +133,12 @@ const values = [
   .ab-life { background: var(--c-bg-alt); color: var(--c-ink); padding-block: var(--w-section-y); }
   .ab-life__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
   .ab-life__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
-  @media (min-width: 760px) { .ab-life__grid { grid-template-columns: repeat(4, 1fr); gap: 1.25rem; } }
-  .ab-shot { margin: 0; border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 1; }
-  .ab-shot--wide { grid-column: span 2; aspect-ratio: 2 / 1; }
+  @media (min-width: 760px) { .ab-life__grid { grid-template-columns: repeat(4, 1fr); grid-auto-rows: 1fr; gap: 1.25rem; } }
+  .ab-shot { margin: 0; border: 1px solid var(--c-line); border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 1; }
+  .ab-shot--wide { grid-column: span 2; }
+  /* On desktop the lead shot becomes a 2×2 anchor so the five images tile two
+   * clean rows of four with no empty cells. */
+  @media (min-width: 760px) { .ab-shot--wide { grid-row: span 2; aspect-ratio: auto; } }
   .ab-shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
   .ab-team { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
