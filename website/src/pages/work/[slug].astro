@@ -84,7 +84,9 @@ const extraImages = gallery.slice(sections.length);
       </figure>
     ))}
 
-    <div class="cs-wrap"><article class="cs-prose"><Content /></article></div>
+    {(entry.body ?? "").trim().length > 0 && (
+      <div class="cs-wrap"><article class="cs-prose"><Content /></article></div>
+    )}
   </section>
 
   <WContactForm
@@ -122,7 +124,10 @@ const extraImages = gallery.slice(sections.length);
 </Layout>
 
 <style>
-  .cs-body { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); display: flex; flex-direction: column; gap: clamp(2.5rem, 5vw, 4.5rem); }
+  .cs-body { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y) 0; display: flex; flex-direction: column; gap: clamp(2.5rem, 5vw, 4.5rem); }
+  /* When the last item is a full-bleed (navy) breaker, let it run straight into
+   * the navy contact band with no white gap. */
+  .cs-body > .cs-breaker--bleed:last-child { margin-bottom: 0; }
   .cs-wrap { max-width: 1100px; width: 100%; margin: 0 auto; padding-inline: var(--w-gutter); }
   .cs-sec { display: grid; grid-template-columns: 1fr; gap: 1rem 3rem; }
   @media (min-width: 860px) { .cs-sec { grid-template-columns: 0.8fr 1.2fr; } }

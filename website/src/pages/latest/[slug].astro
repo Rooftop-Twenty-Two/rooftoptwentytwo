@@ -2,6 +2,7 @@
 import { getCollection, render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import WCtaBand from "../../components/reskin/WCtaBand.astro";
+import Picture from "../../components/Picture.astro";
 import BreadcrumbSchema from "../../components/seo/BreadcrumbSchema.astro";
 import ArticleSchema from "../../components/seo/ArticleSchema.astro";
 
@@ -11,70 +12,164 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
-const { Content } = await render(entry);
+const { Content, headings } = await render(entry);
 const { title, slug, excerpt, metaDescription, author, publishedAt, updatedAt, heroImage, tags } = entry.data;
 
 const pageUrl = `/latest/${slug}/`;
+const fullUrl = new URL(pageUrl, Astro.site ?? Astro.url.origin).href;
 const dateFmt = new Intl.DateTimeFormat("en-IE", { day: "numeric", month: "long", year: "numeric" });
+
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const words = (entry.body ?? "").trim().split(/\s+/).filter(Boolean).length;
+const readMins = Math.max(1, Math.round(words / 200));
+
+const related = (await getCollection("articles", ({ data }) => !data.draft))
+  .filter((a) => a.data.slug !== slug)
+  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime())
+  .slice(0, 3);
+
+const shareLinkedIn = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(fullUrl)}`;
+const shareX = `https://twitter.com/intent/tweet?url=${encodeURIComponent(fullUrl)}&text=${encodeURIComponent(title)}`;
+const shareEmail = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(fullUrl)}`;
 ---
 
 <Layout title={`${title} | Rooftop Twenty Two`} description={metaDescription}>
   <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "Insights", url: "/latest/" }, { name: title, url: pageUrl }]} />
-  <ArticleSchema
-    headline={title}
-    description={metaDescription}
-    url={pageUrl}
-    image={heroImage}
-    datePublished={publishedAt}
-    dateModified={updatedAt ?? publishedAt}
-    authorName={author}
-  />
+  <ArticleSchema headline={title} description={metaDescription} url={pageUrl} image={heroImage} datePublished={publishedAt} dateModified={updatedAt ?? publishedAt} authorName={author} />
 
-  <article class="art">
-    <header class="art__head">
-      <a href="/latest/" class="art__back r22-arrow"><span class="r22-arrow__i" aria-hidden="true">&larr;</span> All insights</a>
-      <div class="art__meta">
-        {tags[0] && <span class="art__chip">{tags[0]}</span>}
-        <span class="art__date">{dateFmt.format(publishedAt)} · {author}</span>
+  <!-- Split hero -->
+  <section class="ap-hero">
+    <div class="ap-hero__inner">
+      <div class="ap-hero__copy">
+        <a href="/latest/" class="ap-back">&larr; All insights</a>
+        {tags[0] && <span class="ap-chip">{tags[0]}</span>}
+        <h1 class="ap-title">{title}</h1>
+        <div class="ap-meta">
+          <span class="ap-meta__author">{author}</span>
+          <span class="ap-dot" aria-hidden="true">·</span>
+          <span>{dateFmt.format(publishedAt)}</span>
+          <span class="ap-dot" aria-hidden="true">·</span>
+          <span>{readMins} min read</span>
+        </div>
       </div>
-      <h1 class="art__title">{title}</h1>
-      <p class="art__lead">{excerpt}</p>
-    </header>
-
-    {heroImage && (
-      <figure class="art__hero">
-        <img src={heroImage} alt={title} loading="eager" decoding="async" />
-      </figure>
-    )}
-
-    <div class="article-body">
-      <Content />
+      {heroImage && (
+        <figure class="ap-hero__media">
+          <img src={heroImage} alt={title} loading="eager" decoding="async" />
+        </figure>
+      )}
     </div>
-  </article>
+  </section>
+
+  <!-- Body + sidebar -->
+  <section class="ap-content">
+    <div class="ap-content__inner">
+      <aside class="ap-side">
+        <div class="ap-side__sticky">
+          {toc.length > 0 && (
+            <nav class="ap-toc" aria-label="In this article">
+              <p class="ap-side__label">In this article</p>
+              <ol>
+                {toc.map((h) => (
+                  <li class:list={["ap-toc__item", h.depth === 3 && "ap-toc__item--sub"]}>
+                    <a href={`#${h.slug}`}>{h.text}</a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          )}
+
+          <div class="ap-share">
+            <p class="ap-side__label">Share</p>
+            <div class="ap-share__links">
+              <a href={shareLinkedIn} target="_blank" rel="noopener" aria-label="Share on LinkedIn">in</a>
+              <a href={shareX} target="_blank" rel="noopener" aria-label="Share on X">X</a>
+              <a href={shareEmail} aria-label="Share by email">@</a>
+            </div>
+          </div>
+
+          <div class="ap-side-cta">
+            <p class="ap-side-cta__h">Want to talk?</p>
+            <p class="ap-side-cta__b">Tell us what you&rsquo;re working on and let&rsquo;s make it happen.</p>
+            <a href="/contact/#contact" class="wbtn wbtn--accent">Get in touch</a>
+          </div>
+        </div>
+      </aside>
+
+      <div class="article-body">
+        <Content />
+      </div>
+    </div>
+  </section>
+
+  <!-- Related -->
+  {related.length > 0 && (
+    <section class="ap-related">
+      <div class="ap-related__inner">
+        <p class="kicker kicker--script">More insights</p>
+        <h2 class="ap-related__h">Insights you&rsquo;ll <em>like</em>.</h2>
+        <ul class="ap-related__grid">
+          {related.map((a) => (
+            <li>
+              <a class="ap-rcard" href={`/latest/${a.data.slug}/`}>
+                <figure class="ap-rcard__img">
+                  {a.data.heroImage
+                    ? <Picture src={a.data.heroImage} alt={a.data.title} loading="lazy" decoding="async" />
+                    : <span class="ap-rcard__ph"></span>}
+                  {a.data.tags[0] && <span class="ap-rcard__chip">{a.data.tags[0]}</span>}
+                </figure>
+                <span class="ap-rcard__date">{dateFmt.format(a.data.publishedAt)}</span>
+                <h3 class="ap-rcard__title">{a.data.title}</h3>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
 
   <WCtaBand />
 </Layout>
 
 <style>
-  .art { background: var(--c-bg); color: var(--c-ink); padding-block: clamp(3rem, 7vw, 6rem) var(--w-section-y); }
-  .art__head { max-width: 760px; margin: 0 auto; padding-inline: var(--w-gutter); }
-  .art__back { display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--w-font-body); font-weight: 600; font-size: 0.9rem; color: var(--c-accent); text-decoration: none; }
-  .art__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.85rem; margin-top: 1.75rem; }
-  .art__chip { font-family: var(--w-font-body); font-weight: 700; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--c-accent-ink); background: var(--c-accent); padding: 0.3rem 0.7rem; border-radius: var(--radius-pill); }
-  .art__date { font-family: var(--w-font-body); font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--c-ink-soft); }
-  .art__title { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-display); line-height: var(--lh-display); letter-spacing: var(--tracking-display); color: var(--c-ink); margin: 1rem 0 0; }
-  .art__lead { font-family: var(--w-font-body); font-size: clamp(1.2rem, 0.6vw + 1.1rem, 1.45rem); line-height: 1.5; color: var(--c-ink-soft); margin: 1.5rem 0 0; }
+  /* Hero */
+  .ap-hero { background: var(--c-bg); color: var(--c-ink); padding-block: clamp(2.5rem, 6vw, 5rem) clamp(2rem, 4vw, 3.5rem); }
+  .ap-hero__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); display: grid; grid-template-columns: 1fr; gap: 2.5rem; align-items: center; }
+  @media (min-width: 900px) { .ap-hero__inner { grid-template-columns: 1.05fr 0.95fr; gap: 4rem; } }
+  .ap-back { font-family: var(--w-font-body); font-weight: 600; font-size: 0.9rem; color: var(--c-accent); text-decoration: none; }
+  .ap-chip { display: inline-block; margin-top: 1.5rem; font-family: var(--w-font-body); font-weight: 700; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--c-accent-ink); background: var(--c-accent); padding: 0.3rem 0.7rem; border-radius: var(--radius-pill); }
+  .ap-title { font-family: var(--w-font-display); font-weight: 600; font-size: clamp(2.25rem, 4vw, 3.75rem); line-height: 1.05; letter-spacing: var(--tracking-display); color: var(--c-ink); margin: 1rem 0 0; }
+  .ap-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; margin-top: 1.5rem; font-family: var(--w-font-body); font-size: 0.9rem; color: var(--c-ink-soft); }
+  .ap-meta__author { font-weight: 700; color: var(--c-ink); }
+  .ap-dot { color: var(--c-line); }
+  .ap-hero__media { margin: 0; border: 1px solid var(--c-line); border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 16 / 11; box-shadow: var(--w-shadow-soft); }
+  .ap-hero__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-  .art__hero { max-width: 1000px; margin: clamp(2.5rem, 5vw, 4rem) auto 0; padding-inline: var(--w-gutter); }
-  .art__hero img { width: 100%; height: auto; display: block; border: 1px solid var(--c-line); border-radius: var(--w-radius); }
+  /* Body + sidebar */
+  .ap-content { background: var(--c-bg); color: var(--c-ink); padding-block: clamp(1rem, 3vw, 2.5rem) var(--w-section-y); }
+  .ap-content__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); display: grid; grid-template-columns: 1fr; gap: 3rem; }
+  @media (min-width: 960px) { .ap-content__inner { grid-template-columns: 240px minmax(0, 1fr); gap: 4.5rem; align-items: start; } }
+  .ap-side__sticky { display: flex; flex-direction: column; gap: 2rem; }
+  @media (min-width: 960px) { .ap-side__sticky { position: sticky; top: 6rem; } }
+  .ap-side__label { font-family: var(--w-font-body); font-weight: 700; font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c-ink-soft); margin: 0 0 0.85rem; }
 
-  .article-body {
-    max-width: 760px; margin: clamp(2.5rem, 5vw, 3.5rem) auto 0; padding-inline: var(--w-gutter);
-    font-family: var(--w-font-body); font-size: 1.15rem; line-height: 1.8; color: var(--c-ink-soft);
-  }
+  .ap-toc ol { list-style: none; margin: 0; padding: 0; border-left: 1px solid var(--c-line); }
+  .ap-toc__item a { display: block; padding: 0.4rem 0 0.4rem 1rem; margin-left: -1px; border-left: 2px solid transparent; font-family: var(--w-font-body); font-size: 0.92rem; line-height: 1.35; color: var(--c-ink-soft); text-decoration: none; transition: color var(--w-dur-fast) var(--w-ease), border-color var(--w-dur-fast) var(--w-ease); }
+  .ap-toc__item a:hover { color: var(--c-accent); border-color: var(--c-accent); }
+  .ap-toc__item--sub a { padding-left: 1.75rem; font-size: 0.86rem; }
+
+  .ap-share__links { display: flex; gap: 0.6rem; }
+  .ap-share__links a { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--c-line); color: var(--c-ink); text-decoration: none; font-family: var(--w-font-body); font-weight: 700; font-size: 0.85rem; transition: border-color var(--w-dur-fast) var(--w-ease), color var(--w-dur-fast) var(--w-ease); }
+  .ap-share__links a:hover { border-color: var(--c-accent); color: var(--c-accent); }
+
+  .ap-side-cta { background: var(--c-dark); color: var(--c-on-dark); border-radius: var(--w-radius); padding: 1.5rem; }
+  .ap-side-cta__h { font-family: var(--w-font-display); font-weight: 600; font-size: 1.2rem; margin: 0; color: var(--c-on-dark); }
+  .ap-side-cta__b { font-family: var(--w-font-body); font-size: 0.9rem; line-height: 1.5; color: var(--c-on-dark-soft); margin: 0.5rem 0 1.1rem; }
+
+  /* Article body */
+  .article-body { max-width: 740px; font-family: var(--w-font-body); font-size: 1.15rem; line-height: 1.8; color: var(--c-ink-soft); }
   .article-body :global(p) { margin: 0 0 1.4rem; }
-  .article-body :global(h2) { font-family: var(--w-font-display); font-weight: 600; color: var(--c-ink); font-size: clamp(1.7rem, 3vw, 2.25rem); line-height: 1.15; letter-spacing: var(--tracking-display); margin: 2.75rem 0 0.85rem; }
-  .article-body :global(h3) { font-family: var(--w-font-display); font-weight: 600; color: var(--c-ink); font-size: clamp(1.35rem, 2.2vw, 1.6rem); line-height: 1.2; margin: 2.25rem 0 0.6rem; }
+  .article-body :global(h2) { font-family: var(--w-font-display); font-weight: 600; color: var(--c-ink); font-size: clamp(1.7rem, 3vw, 2.25rem); line-height: 1.15; letter-spacing: var(--tracking-display); margin: 2.75rem 0 0.85rem; scroll-margin-top: 6rem; }
+  .article-body :global(h3) { font-family: var(--w-font-display); font-weight: 600; color: var(--c-ink); font-size: clamp(1.35rem, 2.2vw, 1.6rem); line-height: 1.2; margin: 2.25rem 0 0.6rem; scroll-margin-top: 6rem; }
   .article-body :global(strong) { color: var(--c-ink); font-weight: 700; }
   .article-body :global(a) { color: var(--c-accent); text-decoration: underline; text-underline-offset: 2px; }
   .article-body :global(ul), .article-body :global(ol) { margin: 0 0 1.4rem; padding-left: 1.4rem; }
@@ -83,7 +178,6 @@ const dateFmt = new Intl.DateTimeFormat("en-IE", { day: "numeric", month: "long"
   .article-body :global(li) { margin-bottom: 0.5rem; }
   .article-body :global(li::marker) { color: var(--c-accent); }
   .article-body :global(blockquote) { margin: 2rem 0; padding-left: 1.5rem; border-left: 3px solid var(--c-accent); font-family: var(--w-font-display); font-style: italic; font-size: 1.4rem; line-height: 1.4; color: var(--c-ink); }
-
   .article-body :global(img) { display: block; width: 100%; height: auto; border: 1px solid var(--c-line); border-radius: var(--w-radius); margin: 2rem 0; }
   .article-body :global(.article-video) { margin: 2.5rem 0; }
   .article-body :global(.article-video video) { display: block; width: 100%; max-height: 72vh; margin: 0 auto; border-radius: var(--w-radius); background: #000; }
@@ -91,4 +185,20 @@ const dateFmt = new Intl.DateTimeFormat("en-IE", { day: "numeric", month: "long"
   @media (min-width: 640px) { .article-body :global(.article-gallery) { grid-template-columns: 1fr 1fr; } }
   .article-body :global(.article-gallery p) { margin: 0; }
   .article-body :global(.article-gallery img) { margin: 0; height: 100%; object-fit: cover; }
+
+  /* Related */
+  .ap-related { background: var(--c-bg-alt); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .ap-related__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .ap-related__h { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); line-height: var(--lh-heading); letter-spacing: var(--tracking-display); margin: 0.3rem 0 2.5rem; }
+  .ap-related__h em { font-style: italic; color: var(--c-accent); }
+  .ap-related__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 2rem; }
+  @media (min-width: 760px) { .ap-related__grid { grid-template-columns: repeat(3, 1fr); } }
+  .ap-rcard { display: block; text-decoration: none; color: inherit; }
+  .ap-rcard__img { position: relative; margin: 0; border: 1px solid var(--c-line); border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 16 / 10; background: var(--c-dark); }
+  .ap-rcard__img :global(img) { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform var(--w-dur) var(--w-ease); }
+  .ap-rcard:hover .ap-rcard__img :global(img) { transform: scale(1.04); }
+  .ap-rcard__chip { position: absolute; top: 0.85rem; left: 0.85rem; font-family: var(--w-font-body); font-weight: 700; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--c-ink); background: rgba(255,255,255,0.92); padding: 0.3rem 0.65rem; border-radius: var(--radius-pill); }
+  .ap-rcard__date { display: block; font-family: var(--w-font-body); font-size: 0.78rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--c-ink-soft); margin-top: 1rem; }
+  .ap-rcard__title { font-family: var(--w-font-display); font-weight: 600; font-size: 1.3rem; line-height: 1.2; color: var(--c-ink); margin: 0.4rem 0 0; }
+  .ap-rcard:hover .ap-rcard__title { color: var(--c-accent); }
 </style>
