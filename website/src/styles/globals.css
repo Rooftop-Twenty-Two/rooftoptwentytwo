@@ -402,9 +402,10 @@ body {
   height: 520px;
   margin-left: -260px;
   margin-top: -260px;
-  /* Mint halo, normal compositing so it reads on light sections too (screen-blend
-   * only lightened the dark header/footer, which is why it looked header/footer-only). */
-  background: radial-gradient(circle, rgba(1, 255, 178, 0.16) 0%, rgba(1, 255, 178, 0.07) 38%, rgba(1, 255, 178, 0) 68%);
+  /* Adaptive halo: --glow-rgb is swapped by JS to match the section under the
+   * cursor (mint on dark surfaces, coral on light), so it reads site-wide. */
+  --glow-rgb: 1 255 178;
+  background: radial-gradient(circle, rgb(var(--glow-rgb) / 0.20) 0%, rgb(var(--glow-rgb) / 0.09) 38%, rgb(var(--glow-rgb) / 0) 68%);
   pointer-events: none;
   z-index: 1;
   transform: translate3d(-1000px, -1000px, 0);

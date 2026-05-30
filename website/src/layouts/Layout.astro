@@ -174,11 +174,34 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://rooftoptwen
       // ---------- Cursor glow (radial blob, transform-only for smoothness) ----------
       const glow = document.querySelector<HTMLElement>("[data-cursor-glow]");
       if (glow && window.matchMedia("(hover: hover)").matches && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        const MINT = "1 255 178";
+        const CORAL = "225 80 71";
+        let cx = 0, cy = 0, raf = 0;
+        // Adapt the glow colour to the surface under the cursor so it reads on
+        // light *and* dark sections (not just the dark header/footer).
+        const adapt = () => {
+          raf = 0;
+          const el = document.elementFromPoint(cx, cy); // glow is pointer-events:none
+          let node: HTMLElement | null = el as HTMLElement | null;
+          while (node && node !== document.documentElement) {
+            const bg = getComputedStyle(node).backgroundColor;
+            const m = bg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+            if (m && (m[4] === undefined || parseFloat(m[4]) > 0.5)) {
+              const lum = (0.2126 * +m[1] + 0.7152 * +m[2] + 0.0722 * +m[3]) / 255;
+              glow.style.setProperty("--glow-rgb", lum < 0.5 ? MINT : CORAL);
+              return;
+            }
+            node = node.parentElement;
+          }
+          glow.style.setProperty("--glow-rgb", MINT); // default canvas is dark
+        };
         window.addEventListener(
           "mousemove",
           (e) => {
             glow.classList.add("is-active");
-            glow.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+            cx = e.clientX; cy = e.clientY;
+            glow.style.transform = `translate3d(${cx}px, ${cy}px, 0)`;
+            if (!raf) raf = requestAnimationFrame(adapt);
           },
           { passive: true }
         );
