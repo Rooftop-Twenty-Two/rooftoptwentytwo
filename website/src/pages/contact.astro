@@ -85,7 +85,10 @@ const directions = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
           <div class="ct__details-info">
             <a class="ct__line" href="tel:+35316991422"><span class="ct__line-ic" aria-hidden="true">&#9742;</span> +353 1 699 1422</a>
             <a class="ct__line" href="mailto:hey@rooftoptwentytwo.ie"><span class="ct__line-ic" aria-hidden="true">&#9993;</span> hey@rooftoptwentytwo.ie</a>
+            <p class="ct__office-label">Head Office</p>
             <address class="ct__addr">Rooftop Twenty Two, Claremont Avenue,<br />Glasnevin, Dublin 11, D11 YNR2</address>
+            <p class="ct__office-label">Sandyford Office</p>
+            <address class="ct__addr">Suite 16, Beacon Court, Beacon Mall,<br />Sandyford, Dublin 18, D18 WV72</address>
             <a class="ct__directions" href={directions} target="_blank" rel="noopener">Get directions &rarr;</a>
           </div>
         </div>
@@ -141,6 +144,7 @@ const directions = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
   .ct__line { display: inline-flex; align-items: center; gap: 0.6rem; font-family: var(--w-font-body); font-weight: 600; color: var(--c-on-dark); text-decoration: none; }
   .ct__line:hover { color: var(--c-accent-2); }
   .ct__line-ic { color: var(--c-accent-2); }
+  .ct__office-label { font-family: var(--w-font-body); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--c-accent-2); margin: 1rem 0 0; }
   .ct__addr { font-style: normal; font-family: var(--w-font-body); color: var(--c-on-dark-soft); line-height: 1.6; margin-top: 0.25rem; }
   .ct__directions { font-family: var(--w-font-body); font-weight: 600; color: var(--c-accent); text-decoration: none; margin-top: 0.25rem; }
   .ct__directions:hover { text-decoration: underline; }

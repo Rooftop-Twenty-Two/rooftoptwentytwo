@@ -22,13 +22,22 @@ const data = {
     "Independent performance-and-creative agency in Dublin helping Irish businesses win at strategy, branding, web, SEO, paid media, and social.",
   email: "hey@rooftoptwentytwo.ie",
   telephone: "+353 1 699 1422",
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: "Claremont Avenue, Glasnevin",
-    addressLocality: "Dublin 11",
-    postalCode: "D11 YNR2",
-    addressCountry: "IE",
-  },
+  address: [
+    {
+      "@type": "PostalAddress",
+      streetAddress: "Claremont Avenue, Glasnevin",
+      addressLocality: "Dublin 11",
+      postalCode: "D11 YNR2",
+      addressCountry: "IE",
+    },
+    {
+      "@type": "PostalAddress",
+      streetAddress: "Suite 16, Beacon Court, Beacon Mall, Sandyford",
+      addressLocality: "Dublin 18",
+      postalCode: "D18 WV72",
+      addressCountry: "IE",
+    },
+  ],
   areaServed: { "@type": "Country", name: "Ireland" },
   sameAs: [
     "https://ie.linkedin.com/company/rooftop-twenty-two",
