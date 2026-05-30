@@ -79,12 +79,22 @@ const extraImages = gallery.slice(sections.length);
               <h2 class="cs-sec__h">{sec.heading}</h2>
             </div>
             <div class="cs-sec__content">
-              <p class="cs-sec__body">{sec.body}</p>
+              {sec.body.split(/\n{2,}/).filter((p) => p.trim()).map((p) => (
+                <p class="cs-sec__body">{p}</p>
+              ))}
               {sec.bullets && sec.bullets.length > 0 && (
                 <ul class="cs-sec__bullets">
                   {sec.bullets.map((b) => (<li>{b}</li>))}
                 </ul>
               )}
+              {sec.groups && sec.groups.length > 0 && sec.groups.map((g) => (
+                <div class="cs-sec__group">
+                  <h3 class="cs-sec__grouph">{g.label}</h3>
+                  <ul class="cs-sec__bullets">
+                    {g.items.map((it) => (<li>{it}</li>))}
+                  </ul>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -159,7 +169,11 @@ const extraImages = gallery.slice(sections.length);
   .cs-sec__n { font-family: var(--w-font-display); font-weight: 700; font-size: 1.5rem; color: var(--c-accent); }
   .cs-sec__h { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); line-height: var(--lh-heading); letter-spacing: var(--tracking-display); margin: 0; }
   .cs-sec__body { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.75; color: var(--c-ink-soft); margin: 0; }
+  .cs-sec__group { margin-top: 1.75rem; }
+  .cs-sec__grouph { font-family: var(--w-font-display); font-weight: 600; font-size: 1.15rem; color: var(--c-ink); margin: 0; }
+  .cs-sec__group + .cs-sec__group { margin-top: 1.5rem; }
   .cs-sec__bullets { margin: 1.25rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.6rem; }
+  .cs-sec__grouph + .cs-sec__bullets { margin-top: 0.75rem; }
   .cs-sec__bullets li { font-family: var(--w-font-body); color: var(--c-ink-soft); line-height: 1.5; padding-left: 1.5rem; position: relative; }
   .cs-sec__bullets li::before { content: ""; position: absolute; left: 0; top: 0.5em; width: 12px; height: 12px; background: var(--c-accent); border-radius: 0 100% 0 0; }
   .cs-prose { max-width: 65ch; font-family: var(--w-font-body); font-size: 1.05rem; line-height: 1.75; color: var(--c-ink-soft); }
