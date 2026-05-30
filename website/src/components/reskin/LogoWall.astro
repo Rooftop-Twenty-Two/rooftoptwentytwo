@@ -1,12 +1,14 @@
 ---
 // S4, Logo wall / trust bar. Monochrome (white) client logos on a dark band,
-// scrolling as a seamless left-to-right marquee. Logos are drawn from clients we
-// have published case studies for.
+// scrolling as a seamless left-to-right marquee.
 const logos = [
   { src: "/images/logos/GFP_Rev.svg", alt: "Gourmet Food Parlour" },
+  { src: "/images/logos/ILT_Rev.svg", alt: "Irish Landmark Trust" },
   { src: "/images/logos/TC-Matthews_Rev.svg", alt: "TC Matthews" },
+  { src: "/images/logos/MIG_Rev.svg", alt: "McCarthy Insurance Group" },
   { src: "/images/logos/1934_Rev.svg", alt: "The 1933 Furniture Company" },
   { src: "/images/logos/Josesph-May_Rev.svg", alt: "Joseph May" },
+  { src: "/images/logos/Shomera_Rev.svg", alt: "Shomera" },
   { src: "/images/logos/GCJ_Rev.png", alt: "Guinness Cork Jazz" },
 ];
 // Repeat into a long track so a single half fills wide viewports; the track is
@@ -51,7 +53,8 @@ const track = [...half, ...half];
     opacity: 0.65; transition: opacity var(--w-dur-fast) var(--w-ease);
   }
   .lw__track li:hover img { opacity: 1; }
-  .lw:hover .lw__track { animation-play-state: paused; }
+  /* Only pause on pointer devices — :hover sticks after a tap on touchscreens. */
+  @media (hover: hover) { .lw:hover .lw__track { animation-play-state: paused; } }
 
   /* Two identical halves → translate left-to-right by one half and loop seamlessly. */
   @keyframes lw-scroll {

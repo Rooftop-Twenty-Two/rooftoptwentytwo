@@ -118,7 +118,8 @@ const track = [...testimonials, ...testimonials];
     display: flex; align-items: stretch; gap: 1.5rem; width: max-content;
     animation: tg-scroll 120s linear infinite;
   }
-  .tg:hover .tg__track, .tg__track:focus-within { animation-play-state: paused; }
+  .tg__track:focus-within { animation-play-state: paused; }
+  @media (hover: hover) { .tg:hover .tg__track { animation-play-state: paused; } }
   @keyframes tg-scroll {
     from { transform: translateX(-50%); }
     to   { transform: translateX(0); }

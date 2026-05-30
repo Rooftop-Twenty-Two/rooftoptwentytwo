@@ -67,7 +67,8 @@ const track = [...cards, ...cards];
     display: flex; gap: 1.5rem; width: max-content;
     animation: sw-scroll 70s linear infinite;
   }
-  .sw:hover .sw__rail, .sw__rail:focus-within { animation-play-state: paused; }
+  .sw__rail:focus-within { animation-play-state: paused; }
+  @media (hover: hover) { .sw:hover .sw__rail { animation-play-state: paused; } }
   @keyframes sw-scroll {
     from { transform: translateX(-50%); }
     to   { transform: translateX(0); }
