@@ -1,6 +1,12 @@
 ---
 // S8, Feature dark band. "Ownership / partner" statement on the left, with the
-// 2026 awards sitting on the right. One high-contrast moment, two jobs done.
+// team awards photo + 2026 awards on the right. One high-contrast moment.
+import { existsSync } from "node:fs";
+import path from "node:path";
+
+const photo = "/images/spider-awards-team.jpg";
+const hasPhoto = existsSync(path.join(process.cwd(), "public", photo));
+
 const awards = [
   { result: "Gold", name: "Spider Awards", logo: "/images/Spiders-Logos-Isolated3-blog-cutout.png", href: "/latest/spider-awards-2026-gold/" },
   { result: "Finalist", name: "Digital Media Awards", logo: "/images/DMA-Generic-Pink-Blue-270x270-1-cutout.png", href: "/latest/digital-media-awards-seo-finalist/" },
@@ -22,18 +28,26 @@ const awards = [
       </div>
     </div>
 
-    <div class="fb__awards reveal">
-      <p class="kicker kicker--on-dark kicker--script">2026 awards</p>
-      <ul class="fb__awards-list">
-        {awards.map((a) => (
-          <li class="fb__award">
-            <a href={a.href}>
-              <img class="fb__award-logo" src={a.logo} alt={a.name} loading="lazy" decoding="async" />
-              <span class="fb__award-txt"><b>{a.result}</b><span class="fb__award-sep">·</span>{a.name}</span>
-            </a>
-          </li>
-        ))}
-      </ul>
+    <div class="fb__right reveal">
+      {hasPhoto && (
+        <figure class="fb__photo">
+          <img src={photo} alt="The Rooftop Twenty Two team collecting Gold at the 2026 Spider Awards" loading="lazy" decoding="async" />
+          <figcaption>The team picking up Gold at the 2026 Spider Awards.</figcaption>
+        </figure>
+      )}
+      <div class="fb__awards">
+        <p class="kicker kicker--on-dark kicker--script">2026 awards</p>
+        <ul class="fb__awards-list">
+          {awards.map((a) => (
+            <li class="fb__award">
+              <a href={a.href}>
+                <img class="fb__award-logo" src={a.logo} alt={a.name} loading="lazy" decoding="async" />
+                <span class="fb__award-txt"><b>{a.result}</b><span class="fb__award-sep">·</span>{a.name}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   </div>
 </section>
@@ -45,7 +59,7 @@ const awards = [
     display: grid; grid-template-columns: 1fr; gap: 3rem;
   }
   @media (min-width: 920px) {
-    .fb__inner { grid-template-columns: 1.15fr 0.85fr; gap: 4rem; align-items: center; }
+    .fb__inner { grid-template-columns: 1.05fr 0.95fr; gap: 4rem; align-items: center; }
   }
   .fb__title {
     font-family: var(--w-font-display); font-weight: 600;
@@ -57,13 +71,15 @@ const awards = [
   .fb__cta { display: flex; flex-wrap: wrap; gap: 0.85rem; margin-top: 2.25rem; }
   .fb__ghost { color: var(--c-on-dark); }
 
-  /* Awards column */
-  .fb__awards-list { list-style: none; margin: 1.5rem 0 0; padding: 0; display: grid; gap: 1.5rem; }
-  @media (min-width: 920px) { .fb__awards { border-left: 1px solid rgba(255,255,255,0.14); padding-left: 3rem; } }
+  /* Right column: awards photo + the awards list. */
+  .fb__photo { margin: 0 0 2rem; border-radius: var(--w-radius); overflow: hidden; box-shadow: var(--w-shadow-soft); }
+  .fb__photo img { width: 100%; height: auto; display: block; }
+  .fb__photo figcaption { font-family: var(--w-font-body); font-size: 0.85rem; color: var(--c-on-dark-soft); padding: 0.85rem 0 0; }
+  .fb__awards-list { list-style: none; margin: 1.25rem 0 0; padding: 0; display: grid; gap: 1.25rem; }
   .fb__award a { display: flex; align-items: center; gap: 1rem; text-decoration: none; color: var(--c-on-dark); opacity: 0.85; transition: opacity var(--w-dur-fast) var(--w-ease); }
   .fb__award a:hover { opacity: 1; }
-  .fb__award-logo { height: 46px; width: auto; max-width: 120px; object-fit: contain; filter: brightness(0) invert(1); }
-  .fb__award-txt { font-family: var(--w-font-body); font-size: 0.92rem; color: #fff; }
+  .fb__award-logo { height: 42px; width: auto; max-width: 110px; object-fit: contain; filter: brightness(0) invert(1); }
+  .fb__award-txt { font-family: var(--w-font-body); font-size: 0.9rem; color: #fff; }
   .fb__award-txt b { font-weight: 700; color: var(--c-accent-2); }
   .fb__award-sep { padding: 0 0.45rem; opacity: 0.5; }
 </style>
