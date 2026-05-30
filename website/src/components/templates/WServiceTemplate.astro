@@ -26,16 +26,38 @@ const {
 const pageUrl = `/services/${slug}/`;
 const title = `${name} | Rooftop Twenty Two`;
 
+// Portfolio service tags that count as "relevant" to each service, so the work
+// row can show every matching case study (curated ones first), not just three.
+const serviceTagMap: Record<string, string[]> = {
+  "performance-marketing": ["Google Ads", "Paid Social Media", "SEO", "Digital Marketing"],
+  "google-ads": ["Google Ads"],
+  "paid-social": ["Paid Social Media"],
+  "seo": ["SEO"],
+  "email-marketing": [],
+  "creative-and-content": ["Social Media", "Photography", "Videography", "Video", "Brand Design", "Brand Identity", "Branding", "Brand Strategy", "Brand Naming"],
+  "design": ["Brand Design", "Brand Identity", "Brand Strategy", "Brand Naming"],
+  "social-media-management": ["Social Media"],
+  "photo-and-video": ["Photography", "Videography", "Video"],
+  "web": ["Web Design", "Web Development"],
+  "website-design-and-build": ["Web Design", "Web Development"],
+  "website-care": ["Web Design", "Web Development"],
+};
+
 const portfolio = await getCollection("portfolio");
 const pfBySlug = new Map(portfolio.map((p) => [p.data.slug, p.data]));
-const caseStudies = (caseStudySlugs ?? [])
+const tags = serviceTagMap[slug] ?? [];
+// Curated case studies lead the row, in the order set on the service.
+const curated = (caseStudySlugs ?? [])
   .map((sl) => pfBySlug.get(sl))
-  .filter((p): p is NonNullable<typeof p> => Boolean(p && p.heroImage))
-  .slice(0, 3);
-// Add a "view all work" tile when there are fewer than 3 cases so the row
-// fills its height instead of leaving a bare empty half.
-const showWorkCta = caseStudies.length > 0 && caseStudies.length < 3;
-const workCols = Math.min(caseStudies.length + (showWorkCta ? 1 : 0), 3);
+  .filter((p): p is NonNullable<typeof p> => Boolean(p && p.heroImage));
+const curatedSlugs = new Set(curated.map((c) => c.slug));
+// Then every other case study tagged with one of this service's disciplines.
+const others = portfolio
+  .map((p) => p.data)
+  .filter((p) => p.heroImage && !p.needs_review && !curatedSlugs.has(p.slug)
+    && (p.services ?? []).some((s) => tags.includes(s)))
+  .sort((a, b) => (a.order ?? 100) - (b.order ?? 100));
+const caseStudies = [...curated, ...others];
 
 // Emphasise the final word of the heading.
 const hw = heroHeading.trim().split(/\s+/);
@@ -112,11 +134,16 @@ const breadcrumbs = isClusterParent
   {caseStudies.length > 0 && (
     <section class="ws-work">
       <div class="ws-work__inner">
-        <p class="kicker">Proof</p>
-        <h2 class="ws-h2 ws-mb">Work we&rsquo;d <em>put our name to</em>.</h2>
-        <ul class="ws-work__grid" style={`--ws-cols:${workCols}`}>
+        <div class="ws-work__top">
+          <div>
+            <p class="kicker">Proof</p>
+            <h2 class="ws-h2">Work we&rsquo;d <em>put our name to</em>.</h2>
+          </div>
+          <a href="/work/" class="wbtn wbtn--primary ws-work__all">View all projects</a>
+        </div>
+        <ul class="ws-work__row">
           {caseStudies.map((cs) => (
-            <li class="reveal">
+            <li>
               <a class="r22-card" href={`/work/${cs.slug}/`}>
                 <figure class="ws-work__img r22-media"><Picture src={cs.heroImage} alt={cs.name} loading="lazy" decoding="async" /></figure>
                 <span class="ws-work__name">{cs.name}</span>
@@ -124,15 +151,6 @@ const breadcrumbs = isClusterParent
               </a>
             </li>
           ))}
-          {showWorkCta && (
-            <li class="reveal">
-              <a class="ws-work__cta" href="/work/">
-                <span class="ws-work__cta-k">More results</span>
-                <span class="ws-work__cta-h">See the full portfolio</span>
-                <span class="r22-arrow ws-work__cta-a">Browse all work <span class="r22-arrow__i" aria-hidden="true">&rarr;</span></span>
-              </a>
-            </li>
-          )}
         </ul>
       </div>
     </section>
@@ -228,22 +246,25 @@ const breadcrumbs = isClusterParent
 
   .ws-work { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
   .ws-work__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
-  .ws-work__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 2rem; }
-  @media (min-width: 720px) { .ws-work__grid { grid-template-columns: repeat(var(--ws-cols, 3), 1fr); } }
-  .ws-work__grid a { text-decoration: none; color: inherit; display: block; }
+  .ws-work__top { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1.25rem; margin-bottom: 2.5rem; }
+  .ws-work__all { white-space: nowrap; }
+  /* Horizontal scroll row: cards of fixed width, swipe/scroll to see more. */
+  .ws-work__row {
+    list-style: none; margin: 0; padding: 0 0 1rem; display: flex; gap: 1.75rem;
+    overflow-x: auto; scroll-snap-type: x mandatory;
+    scrollbar-width: thin; scrollbar-color: var(--c-line) transparent;
+    /* bleed to the screen edge so the last card hints there's more */
+    margin-inline: calc(var(--w-gutter) * -1); padding-inline: var(--w-gutter);
+  }
+  .ws-work__row::-webkit-scrollbar { height: 6px; }
+  .ws-work__row::-webkit-scrollbar-thumb { background: var(--c-line); border-radius: 999px; }
+  .ws-work__row > li { flex: 0 0 clamp(260px, 80vw, 360px); scroll-snap-align: start; }
+  @media (min-width: 720px) { .ws-work__row > li { flex-basis: 360px; } }
+  .ws-work__row a { text-decoration: none; color: inherit; display: block; }
   .ws-work__img { margin: 0; border: 1px solid var(--c-line); border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 4 / 3; box-shadow: var(--w-shadow-soft); }
   .ws-work__img img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .ws-work__name { display: block; font-family: var(--w-font-display); font-weight: 600; font-size: 1.25rem; margin-top: 1rem; }
   .ws-work__tag { display: block; font-family: var(--w-font-body); font-size: 0.95rem; color: var(--c-ink-soft); margin-top: 0.3rem; line-height: 1.4; }
-  /* Fill tile when a service has < 3 cases, keeps the row from going bare. */
-  .ws-work__cta {
-    display: flex; flex-direction: column; justify-content: center; gap: 0.5rem;
-    height: 100%; min-height: 0; aspect-ratio: 4 / 3; padding: 1.75rem;
-    background: var(--c-dark); color: var(--c-on-dark); border-radius: var(--w-radius);
-  }
-  .ws-work__cta-k { font-family: var(--w-font-body); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--c-accent-2-bright); }
-  .ws-work__cta-h { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); line-height: 1.1; }
-  .ws-work__cta-a { font-family: var(--w-font-body); font-weight: 600; color: var(--c-accent-2-bright); margin-top: 0.5rem; }
 
   .ws-rel { background: var(--c-bg-alt); color: var(--c-ink); padding-block: var(--w-section-y); }
   .ws-rel__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); display: grid; grid-template-columns: 1fr; gap: 3rem; }
