@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
 import PageHero from "../components/reskin/PageHero.astro";
 import ClientTestimonials from "../components/reskin/ClientTestimonials.astro";
+import AwardsBand from "../components/reskin/AwardsBand.astro";
 import WCtaBand from "../components/reskin/WCtaBand.astro";
 import Picture from "../components/Picture.astro";
 
@@ -22,12 +23,6 @@ const values = [
   { title: "Owners, not vendors", body: "We work like we're part of your team, invested in your growth, not just billing for hours." },
   { title: "Everything in-house", body: "Strategy, brand, web, paid, and content under one roof. One joined-up team, no hand-offs." },
   { title: "Accountable to outcomes", body: "We measure success the way you do: pipeline, revenue, and results that compound over time." },
-];
-
-const awards = [
-  { result: "Gold", name: "Spider Awards", logo: "/images/Spiders-Logos-Isolated3-blog-cutout.png", href: "/latest/spider-awards-2026-gold/" },
-  { result: "Finalist", name: "Digital Media Awards", logo: "/images/DMA-Generic-Pink-Blue-270x270-1-cutout.png", href: "/latest/digital-media-awards-seo-finalist/" },
-  { result: "Nominated", name: "European Search Awards", logo: "/images/European-Search-Awards-Logo_full_colour-cutout.png", href: "/latest/european-search-awards-two-nominations/" },
 ];
 ---
 
@@ -60,6 +55,8 @@ const awards = [
       </div>
     </div>
   </section>
+
+  <AwardsBand />
 
   <!-- Values -->
   <section class="ab-vals" id="how-we-work">
@@ -114,24 +111,6 @@ const awards = [
     </div>
   </section>
 
-  <!-- Awards -->
-  <section class="ab-awards">
-    <div class="ab-awards__inner">
-      <p class="kicker kicker--on-dark kicker--script">2026 awards</p>
-      <h2 class="ab-h2 ab-awards__title">Recognised for the work.</h2>
-      <ul class="ab-awards__list">
-        {awards.map((a) => (
-          <li class="ab-award reveal">
-            <a href={a.href}>
-              <img class="ab-award__logo" src={a.logo} alt={a.name} loading="lazy" decoding="async" />
-              <span class="ab-award__txt"><b>{a.result}</b><span class="ab-award__sep">·</span>{a.name}</span>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </div>
-  </section>
-
   <ClientTestimonials />
   <WCtaBand />
 </Layout>
@@ -178,16 +157,4 @@ const awards = [
   .ab-member--static:hover .ab-member__img img { filter: grayscale(1); transform: none; }
   .ab-member__name { font-family: var(--w-font-display); font-weight: 600; font-size: 1.1rem; color: var(--c-ink); margin: 0.85rem 0 0; }
   .ab-member__role { font-family: var(--w-font-body); font-size: var(--fs-small); color: var(--c-ink-soft); margin: 0.2rem 0 0; }
-
-  .ab-awards { background: var(--c-dark); color: var(--c-on-dark); padding-block: var(--w-section-y); }
-  .ab-awards__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
-  .ab-awards__title { color: var(--c-on-dark); margin-bottom: 2.5rem; }
-  .ab-awards__list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
-  @media (min-width: 760px) { .ab-awards__list { grid-template-columns: repeat(3, 1fr); gap: 2.5rem; } }
-  .ab-award a { display: flex; align-items: center; gap: 1rem; text-decoration: none; color: var(--c-on-dark); opacity: 0.85; transition: opacity var(--w-dur-fast) var(--w-ease); }
-  .ab-award a:hover { opacity: 1; }
-  .ab-award__logo { height: 56px; width: auto; filter: brightness(0) invert(1); }
-  .ab-award__txt { font-family: var(--w-font-body); font-size: 0.95rem; color: #fff; }
-  .ab-award__txt b { font-weight: 700; color: var(--c-accent-2); }
-  .ab-award__sep { padding: 0 0.45rem; opacity: 0.5; }
 </style>
