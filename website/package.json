@@ -16,6 +16,7 @@
     "@astrojs/mdx": "^5.0.6",
     "@astrojs/node": "^10.1.1",
     "@astrojs/sitemap": "^3.7.3",
+    "@astrojs/vercel": "^10.0.8",
     "astro": "^6.3.8",
     "cheerio": "^1.2.0",
     "zod": "^4.4.3"
