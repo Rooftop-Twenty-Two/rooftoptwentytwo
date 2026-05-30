@@ -1,0 +1,22 @@
+---
+// S12 — Impact stats strip. Real aggregate numbers (mirrors the figures already
+// asserted across the site), animated via the Odometer component. Off-white.
+import Odometer from "./Odometer.astro";
+---
+
+<section class="is">
+  <div class="is__inner reveal">
+    <Odometer to={8000} suffix="+" label="Projects completed" />
+    <Odometer to={10} suffix="+ yrs" label="Building Irish brands" />
+    <Odometer to={100} suffix="%" label="In-house: creative, web, paid & SEO" />
+  </div>
+</section>
+
+<style>
+  .is { background: var(--c-bg-alt); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .is__inner {
+    max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter);
+    display: grid; grid-template-columns: 1fr; gap: 3rem;
+  }
+  @media (min-width: 760px) { .is__inner { grid-template-columns: repeat(3, 1fr); gap: 2rem; } }
+</style>

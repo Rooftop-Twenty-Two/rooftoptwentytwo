@@ -1,0 +1,73 @@
+---
+// S6 — Services overview (condensed). Kicker + intro + a list of service rows
+// (label + blurb + explore link). White section. Content mirrors the three
+// R22 clusters.
+const services = [
+  {
+    name: "Performance Marketing",
+    href: "/services/performance-marketing/",
+    body: "Google Ads, paid social, SEO, and email — built around the conversions that move your business.",
+  },
+  {
+    name: "Creative & Content",
+    href: "/services/creative-and-content/",
+    body: "Brand, social, photo, and video, produced in-house at the cadence the channels actually need.",
+  },
+  {
+    name: "Web",
+    href: "/services/web/",
+    body: "Strategy, design, build, and care — modern sites chosen against your buyer journey, not our preference.",
+  },
+];
+---
+
+<section class="so">
+  <div class="so__inner">
+    <div class="so__head reveal">
+      <p class="kicker">Our expertise</p>
+      <h2 class="so__title">Everything you need to grow, <em>under one roof</em>.</h2>
+    </div>
+    <ul class="so__list">
+      {services.map((s, i) => (
+        <li class="so__row reveal">
+          <span class="so__num">{String(i + 1).padStart(2, "0")}</span>
+          <a class="so__name" href={s.href}>{s.name}</a>
+          <p class="so__body">{s.body}</p>
+          <a class="so__link" href={s.href} aria-label={`Explore ${s.name}`}>Explore &rarr;</a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .so { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .so__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .so__title {
+    font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2);
+    line-height: var(--lh-heading); letter-spacing: var(--tracking-display); margin: 0.5rem 0 0; max-width: 18ch;
+  }
+  .so__title em { font-style: italic; }
+  .so__list { list-style: none; margin: 2.5rem 0 0; padding: 0; border-top: 1px solid var(--c-line); }
+  .so__row {
+    display: grid; grid-template-columns: auto 1fr; gap: 0.25rem 1.5rem; align-items: baseline;
+    padding: 2rem 0; border-bottom: 1px solid var(--c-line);
+  }
+  @media (min-width: 860px) {
+    .so__row { grid-template-columns: 4rem 1fr 1.4fr auto; align-items: center; }
+  }
+  .so__num { font-family: var(--w-font-display); font-weight: 600; color: var(--c-ink-soft); font-size: 1.1rem; }
+  .so__name {
+    font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3);
+    line-height: 1.1; color: var(--c-ink); text-decoration: none;
+  }
+  .so__name:hover { color: var(--c-ink-soft); }
+  .so__body { font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-ink-soft); line-height: 1.55; margin: 0; grid-column: 1 / -1; }
+  @media (min-width: 860px) { .so__body { grid-column: auto; } }
+  .so__link {
+    font-family: var(--w-font-body); font-weight: 600; font-size: 0.95rem; color: var(--c-ink);
+    text-decoration: none; white-space: nowrap; transition: color var(--w-dur-fast) var(--w-ease); grid-column: 1 / -1;
+  }
+  @media (min-width: 860px) { .so__link { grid-column: auto; justify-self: end; } }
+  .so__row:hover .so__link { color: var(--c-ink-soft); }
+</style>

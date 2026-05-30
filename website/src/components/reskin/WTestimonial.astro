@@ -1,0 +1,48 @@
+---
+// S9 — Single large testimonial. White section. Reuses the Nostra quote.
+interface Props {
+  quote?: string;
+  name?: string;
+  company?: string;
+  portrait?: string;
+  logo?: string;
+}
+const {
+  quote = "Rooftop Twenty Two act as my Digital Marketing function in Nostra. They integrated seamlessly, bringing a wealth of experience and guidance. We achieved far more than expected in a relatively short period, and I would highly recommend Rooftop to any company seeking large-agency experience with a personal touch.",
+  name = "Conor O'Brien",
+  company = "Nostra",
+  portrait = "/images/site/conor-obrien.jpg",
+  logo = "/images/logos/Nostra.svg",
+} = Astro.props;
+---
+
+<section class="ts">
+  <div class="ts__inner reveal">
+    <p class="kicker">What clients say</p>
+    <blockquote class="ts__quote">&ldquo;{quote}&rdquo;</blockquote>
+    <div class="ts__by">
+      <img class="ts__portrait" src={portrait} alt={name} loading="lazy" decoding="async" />
+      <div class="ts__who">
+        <span class="ts__name">{name}</span>
+        <span class="ts__co">{company}</span>
+      </div>
+      {logo && <img class="ts__logo" src={logo} alt={company} loading="lazy" decoding="async" />}
+    </div>
+  </div>
+</section>
+
+<style>
+  .ts { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .ts__inner { max-width: 1000px; margin: 0 auto; padding-inline: var(--w-gutter); text-align: center; }
+  .ts__quote {
+    font-family: var(--w-font-display); font-weight: 500;
+    font-size: clamp(1.5rem, 2.2vw + 1rem, 2.75rem);
+    line-height: 1.18; letter-spacing: -0.01em; margin: 1.5rem auto 0; max-width: 24ch; color: var(--c-ink);
+  }
+  .ts__by { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 2.5rem; }
+  .ts__portrait { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; }
+  .ts__who { display: flex; flex-direction: column; text-align: left; }
+  .ts__name { font-family: var(--w-font-body); font-weight: 700; }
+  .ts__co { font-family: var(--w-font-body); color: var(--c-ink-soft); font-size: var(--fs-small); }
+  .ts__logo { height: 26px; width: auto; margin-left: 0.5rem; opacity: 0.8; }
+</style>

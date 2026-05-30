@@ -1,0 +1,72 @@
+---
+// S5 — Selected work. Horizontally-scrollable case-study cards pulled from the
+// portfolio collection. Off-white section. No fabricated metrics — cards show
+// real client, tagline and imagery, linking to the case study.
+import { getCollection } from "astro:content";
+
+const all = (await getCollection("portfolio")).sort(
+  (a, b) => (a.data.order ?? 100) - (b.data.order ?? 100)
+);
+const featured = all.filter((p) => p.data.featured && p.data.heroImage);
+const cards = (featured.length >= 4 ? featured : all.filter((p) => p.data.heroImage)).slice(0, 8);
+---
+
+<section class="sw">
+  <div class="sw__head">
+    <p class="kicker">Selected work</p>
+    <h2 class="sw__title">Results we&rsquo;re <em>proud of</em>.</h2>
+    <a href="/work/" class="wbtn wbtn--primary sw__all">View all work</a>
+  </div>
+
+  <ul class="sw__rail">
+    {cards.map((c) => (
+      <li class="sw__card reveal">
+        <a href={`/work/${c.data.slug}/`}>
+          <figure class="sw__img">
+            <img src={c.data.heroImage} alt={c.data.name} loading="lazy" decoding="async" />
+          </figure>
+          <div class="sw__meta">
+            <span class="sw__client">{c.data.name}</span>
+            <span class="sw__tag">{c.data.tagline}</span>
+          </div>
+        </a>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .sw { background: var(--c-bg-alt); color: var(--c-ink); padding-block: var(--w-section-y); overflow: hidden; }
+  .sw__head {
+    max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter);
+    display: grid; gap: 0.75rem; align-items: end;
+  }
+  @media (min-width: 820px) {
+    .sw__head { grid-template-columns: 1fr auto; }
+    .sw__all { justify-self: end; }
+  }
+  .sw__title {
+    font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2);
+    line-height: var(--lh-heading); letter-spacing: var(--tracking-display); margin: 0.25rem 0 0;
+  }
+  .sw__title em { font-style: italic; color: var(--c-ink); }
+  .sw__all { margin-top: 0.5rem; }
+
+  .sw__rail {
+    list-style: none; margin: 2.5rem 0 0; padding: 0 var(--w-gutter) 1rem;
+    display: grid; grid-auto-flow: column; grid-auto-columns: min(80vw, 420px);
+    gap: 1.5rem; overflow-x: auto; scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch; scrollbar-width: thin;
+  }
+  .sw__card { scroll-snap-align: start; }
+  .sw__card a { text-decoration: none; color: inherit; display: block; }
+  .sw__img {
+    margin: 0; border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 4 / 3;
+    background: #fff; box-shadow: var(--w-shadow-soft);
+  }
+  .sw__img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform var(--w-dur) var(--w-ease); }
+  .sw__card a:hover .sw__img img { transform: scale(1.04); }
+  .sw__meta { display: flex; flex-direction: column; gap: 0.2rem; margin-top: 1.1rem; }
+  .sw__client { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); line-height: 1.1; }
+  .sw__tag { font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-ink-soft); }
+</style>

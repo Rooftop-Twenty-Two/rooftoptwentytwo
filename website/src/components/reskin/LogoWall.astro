@@ -1,0 +1,42 @@
+---
+// S4 — Logo wall / trust bar. Monochrome (white) client logos on a dark band.
+const logos = [
+  { src: "/images/logos/GFP_Rev.svg", alt: "Gourmet Food Parlour" },
+  { src: "/images/logos/ILT_Rev.svg", alt: "Irish Landmark Trust" },
+  { src: "/images/logos/MIG_Rev.svg", alt: "Midlands Park Hotel" },
+  { src: "/images/logos/TC-Matthews_Rev.svg", alt: "TC Matthews" },
+  { src: "/images/logos/Nostra_Rev.svg", alt: "Nostra" },
+  { src: "/images/logos/1934_Rev.svg", alt: "The 1933 Furniture Company" },
+  { src: "/images/logos/Josesph-May_Rev.svg", alt: "Joseph May" },
+  { src: "/images/logos/Shomera_Rev.svg", alt: "Shomera" },
+];
+---
+
+<section class="lw">
+  <div class="lw__inner">
+    <p class="kicker kicker--on-dark">Trusted by ambitious Irish brands</p>
+    <ul class="lw__grid">
+      {logos.map((l) => (
+        <li><img src={l.src} alt={l.alt} loading="lazy" decoding="async" /></li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .lw { background: var(--c-dark); color: var(--c-on-dark); padding-block: clamp(3rem, 6vw, 5rem); }
+  .lw__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .lw__grid {
+    list-style: none; margin: 2rem 0 0; padding: 0;
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 2.5rem 2rem;
+    align-items: center;
+  }
+  @media (min-width: 640px) { .lw__grid { grid-template-columns: repeat(4, 1fr); } }
+  @media (min-width: 1024px) { .lw__grid { grid-template-columns: repeat(8, 1fr); } }
+  .lw__grid li { display: flex; align-items: center; justify-content: center; }
+  .lw__grid img {
+    max-height: 38px; max-width: 100%; width: auto; height: auto;
+    opacity: 0.7; transition: opacity var(--w-dur-fast) var(--w-ease);
+  }
+  .lw__grid li:hover img { opacity: 1; }
+</style>
