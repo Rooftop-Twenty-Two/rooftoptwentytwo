@@ -151,8 +151,18 @@ const awards = awardDefs.map((a) => ({ ...a, hasLogo: existsSync(path.join(proce
   .whero__award-txt { font-family: var(--w-font-body); font-size: 0.8rem; letter-spacing: 0.02em; color: #fff; white-space: nowrap; }
   .whero__award-txt b { font-weight: 700; }
   .whero__award-txt span { color: var(--c-on-dark-soft); padding: 0 0.15rem; }
-  /* On smaller screens the bottom-left content needs the room — hide to avoid overlap. */
-  @media (max-width: 880px) { .whero__awards { display: none; } }
+  /* On mobile the hero stacks and the awards sit in-flow below the content. */
+  @media (max-width: 880px) {
+    .whero { flex-direction: column; justify-content: flex-end; align-items: stretch; }
+    .whero__awards {
+      position: static; right: auto; bottom: auto; width: 100%;
+      align-items: flex-start; text-align: left; flex-wrap: wrap;
+      flex-direction: row; gap: 1rem 1.75rem;
+      margin-top: 1.75rem; padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.16);
+    }
+    .whero__award-logo { height: 26px; }
+  }
 
   @media (prefers-reduced-motion: reduce) {
     .whero__media img { animation: none; transform: scale(1.02); }

@@ -1,0 +1,117 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import PageHero from "../../components/reskin/PageHero.astro";
+import WCtaBand from "../../components/reskin/WCtaBand.astro";
+import BreadcrumbSchema from "../../components/seo/BreadcrumbSchema.astro";
+
+const jobs = (await getCollection("jobs", ({ data }) => !data.draft))
+  .sort((a, b) => (a.data.order ?? 100) - (b.data.order ?? 100));
+
+const benefits = [
+  { title: "Hybrid by default", body: "Work from home Wednesdays and Fridays, together in the studio the rest of the week." },
+  { title: "Flexi-time", body: "Start and finish around your life. We care about the work, not the clock." },
+  { title: "Pension contribution", body: "We contribute to your pension, helping you build for the long term." },
+  { title: "Health insurance, paid", body: "Private health insurance, fully covered by us." },
+  { title: "One in-house team", body: "Strategy, brand, web and performance under one roof — no silos, no hand-offs." },
+  { title: "Work you'll be proud of", body: "Real projects for ambitious Irish brands, with your name on the results." },
+];
+---
+
+<Layout title="Careers | Rooftop Twenty Two" description="Join Rooftop Twenty Two, an independent branding and digital studio in Dublin. Hybrid working, flexi-time, pension and health insurance. See our open roles.">
+  <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "Careers", url: "/careers/" }]} />
+
+  <PageHero
+    kicker="Careers"
+    title="Grow your career on the <em>rooftop</em>."
+    intro="We're an independent branding and digital studio in Dublin, a senior, in-house team that treats every client's growth like our own. If you do great work and want to do it alongside people who care, we'd love to hear from you."
+    primary={{ label: "See open roles", href: "#roles" }}
+    secondary={{ label: "Get in touch", href: "/contact/#contact" }}
+  />
+
+  <!-- Why work here -->
+  <section class="cr-why">
+    <div class="cr-why__inner">
+      <div class="reveal">
+        <p class="kicker kicker--script">Why Rooftop</p>
+        <h2 class="cr-h2">Big-team thinking, <em>without the big-team feeling</em>.</h2>
+      </div>
+      <ul class="cr-benefits">
+        {benefits.map((b, i) => (
+          <li class="cr-benefit reveal">
+            <span class="cr-benefit__n">{String(i + 1).padStart(2, "0")}</span>
+            <h3 class="cr-benefit__title">{b.title}</h3>
+            <p class="cr-benefit__body">{b.body}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Open roles -->
+  <section class="cr-roles" id="roles">
+    <div class="cr-roles__inner">
+      <p class="kicker kicker--script">Open roles</p>
+      <h2 class="cr-h2 cr-mb">We&rsquo;re currently hiring for {jobs.length} {jobs.length === 1 ? "role" : "roles"}.</h2>
+      {jobs.length > 0 ? (
+        <ul class="cr-list">
+          {jobs.map((j) => (
+            <li class="cr-row reveal">
+              <a class="cr-row__link" href={`/careers/${j.data.slug}/`}>
+                <div class="cr-row__main">
+                  <h3 class="cr-row__title">{j.data.title}</h3>
+                  <p class="cr-row__sum">{j.data.summary}</p>
+                </div>
+                <div class="cr-row__meta">
+                  <span class="cr-tag">{j.data.type}</span>
+                  <span class="cr-tag">{j.data.location}</span>
+                </div>
+                <span class="cr-row__cta r22-arrow">View role <span class="r22-arrow__i" aria-hidden="true">&rarr;</span></span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="cr-empty">No open roles right now, but we&rsquo;re always glad to hear from good people. <a href="/contact/#contact">Get in touch</a>.</p>
+      )}
+      <p class="cr-note">Don&rsquo;t see the right role? Send us a line at <a href="mailto:hey@rooftoptwentytwo.ie">hey@rooftoptwentytwo.ie</a> — we&rsquo;re always happy to meet good people.</p>
+    </div>
+  </section>
+
+  <WCtaBand heading="Like the sound of us?" body="Tell us a little about yourself and what you're looking for. We read every message and reply properly." />
+</Layout>
+
+<style>
+  .cr-h2 { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); line-height: var(--lh-heading); letter-spacing: var(--tracking-display); color: var(--c-ink); margin: 0.4rem 0 0; }
+  .cr-h2 em { font-style: italic; color: var(--c-accent); }
+  .cr-mb { margin-bottom: 2.5rem; }
+
+  .cr-why { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .cr-why__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .cr-benefits { list-style: none; margin: 3rem 0 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
+  @media (min-width: 640px) { .cr-benefits { grid-template-columns: 1fr 1fr; gap: 2.5rem 3rem; } }
+  @media (min-width: 960px) { .cr-benefits { grid-template-columns: repeat(3, 1fr); } }
+  .cr-benefit__n { font-family: var(--w-font-display); font-weight: 700; font-size: 1.5rem; color: var(--c-accent); }
+  .cr-benefit__title { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); color: var(--c-ink); margin: 0.6rem 0 0; }
+  .cr-benefit__body { font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-ink-soft); line-height: 1.6; margin: 0.6rem 0 0; }
+
+  .cr-roles { background: var(--c-bg-alt); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .cr-roles__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .cr-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--c-line); }
+  .cr-row { border-bottom: 1px solid var(--c-line); }
+  .cr-row__link {
+    display: grid; grid-template-columns: 1fr; gap: 0.75rem; padding: 1.75rem 0;
+    text-decoration: none; color: inherit; align-items: center;
+  }
+  @media (min-width: 820px) { .cr-row__link { grid-template-columns: 1.6fr 1fr auto; gap: 2rem; } }
+  .cr-row__title { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); color: var(--c-ink); margin: 0; transition: color var(--w-dur-fast) var(--w-ease); }
+  .cr-row__link:hover .cr-row__title { color: var(--c-accent); }
+  .cr-row__sum { font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-ink-soft); line-height: 1.5; margin: 0.35rem 0 0; }
+  .cr-row__meta { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .cr-tag { font-family: var(--w-font-body); font-size: 0.8rem; font-weight: 600; color: var(--c-ink); background: var(--c-bg); border: 1px solid var(--c-line); border-radius: var(--radius-pill); padding: 0.35rem 0.8rem; white-space: nowrap; }
+  .cr-row__cta { font-family: var(--w-font-body); font-weight: 600; color: var(--c-accent); white-space: nowrap; }
+  @media (min-width: 820px) { .cr-row__cta { justify-self: end; } }
+  .cr-note { font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-ink-soft); margin: 2.5rem 0 0; }
+  .cr-note a, .cr-empty a { color: var(--c-accent); text-decoration: none; font-weight: 600; }
+  .cr-empty { font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-ink-soft); }
+</style>

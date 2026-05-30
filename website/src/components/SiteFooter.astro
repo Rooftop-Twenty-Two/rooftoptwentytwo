@@ -31,6 +31,7 @@ const year = new Date().getFullYear();
           <a href="/programmes/" class="r22-link r22-link--on-dark">EI Programmes</a>
           <a href="/latest/" class="r22-link r22-link--on-dark">Latest</a>
           <a href="/about/" class="r22-link r22-link--on-dark">About</a>
+          <a href="/careers/" class="r22-link r22-link--on-dark">Careers</a>
           <a href="/contact/" class="r22-link r22-link--on-dark">Contact</a>
         </nav>
       </div>
@@ -90,6 +91,32 @@ const year = new Date().getFullYear();
     </div>
 
     <hr class="mt-16 border-t" style="border-color:rgba(255,255,255,0.08);" />
+
+    <div class="footer-awards">
+      <p class="footer-awards__label">Award-winning work</p>
+      <ul class="footer-awards__list">
+        <li>
+          <a href="/latest/spider-awards-2026-gold/">
+            <img class="footer-awards__logo" src="/images/Spiders-Logos-Isolated3-blog-cutout.png" alt="Spider Awards" loading="lazy" decoding="async" />
+            <span class="footer-awards__txt"><b>Gold</b> · Spider Awards</span>
+          </a>
+        </li>
+        <li>
+          <a href="/latest/digital-media-awards-seo-finalist/">
+            <img class="footer-awards__logo" src="/images/DMA-Generic-Pink-Blue-270x270-1-cutout.png" alt="Digital Media Awards" loading="lazy" decoding="async" />
+            <span class="footer-awards__txt"><b>Finalist</b> · Digital Media Awards</span>
+          </a>
+        </li>
+        <li>
+          <a href="/latest/european-search-awards-two-nominations/">
+            <img class="footer-awards__logo" src="/images/European-Search-Awards-Logo_full_colour-cutout.png" alt="European Search Awards" loading="lazy" decoding="async" />
+            <span class="footer-awards__txt"><b>Nominated</b> · European Search Awards</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <hr class="mt-12 border-t" style="border-color:rgba(255,255,255,0.08);" />
     <p class="mt-6 text-xs" style="color:rgba(255,255,255,0.5);">
       © Rooftop Twenty Two. {year}. All rights reserved.
     </p>
@@ -114,4 +141,13 @@ const year = new Date().getFullYear();
   }
   .footer-news__input::placeholder { color: rgba(255,255,255,0.45); }
   .footer-news__input:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
+
+  .footer-awards { margin-top: 2.5rem; }
+  .footer-awards__label { font-family: var(--w-font-body); font-weight: 700; font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c-accent-2); margin: 0 0 1.25rem; }
+  .footer-awards__list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 1.5rem 2.5rem; }
+  .footer-awards__list a { display: inline-flex; align-items: center; gap: 0.8rem; text-decoration: none; color: var(--c-on-dark); opacity: 0.82; transition: opacity var(--w-dur-fast) var(--w-ease); }
+  .footer-awards__list a:hover { opacity: 1; }
+  .footer-awards__logo { height: 34px; width: auto; filter: brightness(0) invert(1); }
+  .footer-awards__txt { font-family: var(--w-font-body); font-size: 0.85rem; color: #fff; white-space: nowrap; }
+  .footer-awards__txt b { font-weight: 700; }
 </style>

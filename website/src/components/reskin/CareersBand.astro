@@ -1,0 +1,58 @@
+---
+// Homepage careers band. Pulls open roles and links to the Careers page.
+import { getCollection } from "astro:content";
+const jobs = (await getCollection("jobs", ({ data }) => !data.draft))
+  .sort((a, b) => (a.data.order ?? 100) - (b.data.order ?? 100));
+---
+
+<section class="cb">
+  <div class="cb__inner">
+    <div class="cb__copy reveal">
+      <p class="kicker kicker--on-dark kicker--script">Careers</p>
+      <h2 class="cb__title">We&rsquo;re <em>hiring</em>.</h2>
+      <p class="cb__body">
+        Join an independent Dublin studio with hybrid working (home on Wednesdays and
+        Fridays), flexi-time, a pension contribution and paid health insurance, and real
+        work you&rsquo;ll be proud of.
+      </p>
+      <a href="/careers/" class="wbtn wbtn--accent">See all roles</a>
+    </div>
+
+    {jobs.length > 0 && (
+      <ul class="cb__roles reveal">
+        {jobs.map((j) => (
+          <li>
+            <a href={`/careers/${j.data.slug}/`}>
+              <span class="cb__role-main">
+                <span class="cb__role-title">{j.data.title}</span>
+                <span class="cb__role-meta">{j.data.type} · {j.data.location}</span>
+              </span>
+              <span class="cb__role-arrow" aria-hidden="true">&rarr;</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+</section>
+
+<style>
+  .cb { background: var(--c-dark); color: var(--c-on-dark); padding-block: var(--w-section-y); }
+  .cb__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); display: grid; grid-template-columns: 1fr; gap: 3rem; align-items: center; }
+  @media (min-width: 900px) { .cb__inner { grid-template-columns: 1fr 1fr; gap: 4.5rem; } }
+  .cb__title { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); line-height: var(--lh-heading); letter-spacing: var(--tracking-display); margin: 0.4rem 0 0; color: var(--c-on-dark); }
+  .cb__title em { font-style: italic; color: var(--c-accent-2); }
+  .cb__body { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: var(--lh-body); color: var(--c-on-dark-soft); margin: 1.25rem 0 1.75rem; max-width: 46ch; }
+
+  .cb__roles { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--c-line-dark); }
+  .cb__roles a {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    padding: 1.25rem 0; border-bottom: 1px solid var(--c-line-dark);
+    text-decoration: none; color: var(--c-on-dark);
+    transition: padding-left var(--w-dur-fast) var(--w-ease);
+  }
+  .cb__roles a:hover { padding-left: 0.5rem; }
+  .cb__role-title { display: block; font-family: var(--w-font-display); font-weight: 600; font-size: 1.3rem; }
+  .cb__role-meta { display: block; font-family: var(--w-font-body); font-size: var(--fs-small); color: var(--c-on-dark-soft); margin-top: 0.2rem; }
+  .cb__role-arrow { color: var(--c-accent-2); font-size: 1.2rem; flex: 0 0 auto; }
+</style>

@@ -170,4 +170,22 @@ const landing = defineCollection({
   }),
 });
 
-export const collections = { portfolio, team, services, sectors, programmes, articles, landing };
+// Open roles for the Careers section.
+const jobs = defineCollection({
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/jobs" }),
+  schema: z.object({
+    title: z.string(),
+    slug: z.string(),
+    summary: z.string(),
+    type: z.string().default("Full-time"),
+    location: z.string().default("Dublin · Hybrid"),
+    order: z.number().default(100),
+    intro: z.string(),
+    responsibilities: z.array(z.string()).default([]),
+    requirements: z.array(z.string()).default([]),
+    niceToHave: z.array(z.string()).default([]),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { portfolio, team, services, sectors, programmes, articles, landing, jobs };
