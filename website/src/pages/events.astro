@@ -1,0 +1,318 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PageHero from "../components/reskin/PageHero.astro";
+import BreadcrumbSchema from "../components/seo/BreadcrumbSchema.astro";
+
+// Events are kept as data so the featured layout is reusable: add a second
+// object here (in-person or online) and it can drive its own card without a
+// rebuild. The first entry is the featured event on the page.
+const events = [
+  {
+    id: "diarmuid-mcsweeney-gym-coffee",
+    kicker: "An evening at Rooftop Twenty Two",
+    title: "From nothing to a brand the whole country knows.",
+    speaker: "Diarmuid McSweeney",
+    speakerRole: "Founder, Gym+Coffee",
+    where: "Our Dublin studio",
+    date: null, // null renders a styled "to be confirmed" state
+    format: "In person. Limited seats.",
+    recorded: "Recorded, with segments posted online afterwards.",
+    body: [
+      "Diarmuid McSweeney took Gym+Coffee from a standing start to a name people wear up and down the country, and well beyond it. No huge launch budget. Just a clear idea and digital marketing done properly.",
+      "He&rsquo;s coming into our studio to talk through how it actually happened. The bets that paid off, the ones that didn&rsquo;t, and what he&rsquo;d do differently if he were starting again today. It&rsquo;s the kind of conversation we usually only get to have across the table. This time you&rsquo;re in the room for it.",
+      "Spaces are limited. We&rsquo;re keeping the room small on purpose so it stays a proper conversation, so get your name down early.",
+    ],
+    bio: "Diarmuid co-founded Gym+Coffee in 2017 and built it from an online-only idea into one of Ireland&rsquo;s best-known lifestyle brands, with stores here, in the UK and beyond. His background is brand and marketing, and Gym+Coffee&rsquo;s growth came the hard, smart way: a clear idea, a real community, and digital done properly. He knows what it takes to build something people actually care about.",
+  },
+];
+
+const featured = events[0];
+---
+
+<Layout
+  title="Events | Talks, Podcasts & Webinars | Rooftop Twenty Two"
+  description="Rooftop Twenty Two events: talks, podcasts and webinars from people who've built the thing. First up, Gym+Coffee founder Diarmuid McSweeney, in our Dublin studio."
+  hideStickyMobileCTA={true}
+>
+  <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "Events", url: "/events/" }]} />
+
+  <PageHero
+    kicker="Rooftop events"
+    title="Events worth <em>showing up for</em>."
+    intro="We&rsquo;re opening the doors. Talks, podcasts and webinars from people who&rsquo;ve actually built the thing. Some online, some in our Dublin studio. No fluff and no sales pitch. Just an hour with someone who knows what they&rsquo;re talking about, and the chance to take something useful home."
+    primary={{ label: "See the first event", href: "#featured" }}
+    secondary={{ label: "Register your interest", href: "#register" }}
+  />
+
+  <!-- Featured event -->
+  <section class="ev-feat" id="featured">
+    <div class="ev-feat__inner">
+      <div class="ev-feat__main reveal">
+        <p class="kicker kicker--script">{featured.kicker}</p>
+        <h2 class="ev-feat__title">{featured.title}</h2>
+        {featured.body.map((p) => <p class="ev-feat__body" set:html={p} />)}
+
+        <div class="ev-speaker">
+          <p class="ev-speaker__label">Your speaker</p>
+          <p class="ev-speaker__name">{featured.speaker}<span class="ev-speaker__role">{featured.speakerRole}</span></p>
+          <p class="ev-speaker__bio" set:html={featured.bio} />
+        </div>
+
+        <a href="#register" class="wbtn wbtn--accent ev-feat__cta">Put my name down</a>
+      </div>
+
+      <aside class="ev-feat__aside reveal">
+        <div class="ev-card">
+          <p class="ev-card__eyebrow">The details</p>
+          <dl class="ev-card__list">
+            <div class="ev-card__row">
+              <dt>Speaker</dt>
+              <dd>{featured.speaker}, {featured.speakerRole}</dd>
+            </div>
+            <div class="ev-card__row">
+              <dt>Where</dt>
+              <dd>{featured.where}</dd>
+            </div>
+            <div class="ev-card__row">
+              <dt>When</dt>
+              <dd>
+                {featured.date
+                  ? featured.date
+                  : <span class="ev-tbc">Date to be confirmed</span>}
+              </dd>
+            </div>
+            <div class="ev-card__row">
+              <dt>Format</dt>
+              <dd>{featured.format}</dd>
+            </div>
+          </dl>
+          <p class="ev-card__seats">Spaces are limited. We&rsquo;re keeping the room small on purpose.</p>
+          <p class="ev-card__rec">{featured.recorded}</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- What to expect -->
+  <section class="ev-exp">
+    <div class="ev-exp__inner">
+      <div class="ev-exp__head reveal">
+        <p class="kicker kicker--script">On the day</p>
+        <h2 class="ev-h2">What to expect.</h2>
+      </div>
+      <div class="ev-exp__body reveal">
+        <p>An hour or so with Diarmuid, in the room, talking straight. He&rsquo;ll walk through how Gym+Coffee actually grew. The early decisions, what worked, what didn&rsquo;t, and the digital marketing that moved the needle.</p>
+        <p>It&rsquo;s a conversation, not a lecture. Bring your questions. He&rsquo;s happy to take them, whether you&rsquo;re building a brand of your own, stuck on a bit of your own marketing, or just want to know how it was really done.</p>
+        <ul class="ev-exp__list">
+          <li>A proper sit-down talk, not a sales deck.</li>
+          <li>Real questions, real answers.</li>
+          <li>Time to meet the rooftop team and the rest of the room.</li>
+          <li>Something in your hand to drink, before and after.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Register interest -->
+  <section class="ev-reg" id="register">
+    <div class="ev-reg__inner">
+      <div class="ev-reg__head reveal">
+        <p class="kicker kicker--on-dark kicker--script">Save your spot</p>
+        <h2 class="ev-reg__title">Register your interest.</h2>
+        <p class="ev-reg__lead">We can only fit so many people in the room, so this isn&rsquo;t a ticket just yet. Put your name down and we&rsquo;ll be in touch with the date and a seat as soon as it&rsquo;s locked in. First come, first served. We&rsquo;ll let you know either way.</p>
+      </div>
+
+      <form class="ev-form reveal" data-event-form data-endpoint="" novalidate>
+        <input type="hidden" name="event" value={featured.id} />
+        <div class="ev-form__field">
+          <label class="ev-form__label" for="ev-name">Name</label>
+          <input id="ev-name" type="text" name="name" required autocomplete="name" />
+          <span class="ev-form__err" data-err-for="name" hidden>Please add your name.</span>
+        </div>
+        <div class="ev-form__field">
+          <label class="ev-form__label" for="ev-email">Email</label>
+          <input id="ev-email" type="email" name="email" required autocomplete="email" />
+          <span class="ev-form__err" data-err-for="email" hidden>Please add a valid email.</span>
+        </div>
+        <div class="ev-form__field">
+          <label class="ev-form__label" for="ev-company">Company <span class="ev-form__opt">(optional)</span></label>
+          <input id="ev-company" type="text" name="company" autocomplete="organization" />
+        </div>
+        <div class="ev-form__field">
+          <label class="ev-form__label" for="ev-q">Anything you&rsquo;d like Diarmuid to cover? <span class="ev-form__opt">(optional)</span></label>
+          <textarea id="ev-q" name="question" rows="4"></textarea>
+        </div>
+        <input type="text" name="_gotcha" class="ev-form__hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <button type="submit" class="wbtn wbtn--accent ev-form__submit">Put my name down</button>
+        <p class="ev-form__note">No spam. We&rsquo;ll only email you about this event.</p>
+        <p class="ev-form__status" role="status" aria-live="polite" data-form-status hidden></p>
+      </form>
+
+      <div class="ev-done reveal" data-event-done hidden>
+        <p class="kicker kicker--on-dark kicker--script">You&rsquo;re on the list</p>
+        <h3 class="ev-done__h">Brilliant. We&rsquo;ve got you.</h3>
+        <p class="ev-done__b">We&rsquo;ll be in touch with the date and a seat as soon as it&rsquo;s confirmed. If it fills up, you&rsquo;ll be first to know about the recording.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Future events -->
+  <section class="ev-more">
+    <div class="ev-more__inner reveal">
+      <p class="kicker kicker--script">What&rsquo;s next</p>
+      <h2 class="ev-h2">This is just the start.</h2>
+      <p class="ev-more__body">Diarmuid is our first guest, not our last. We&rsquo;ve got more events lined up, a podcast on the way, and more guests we&rsquo;re getting into the room. Webinars and online sessions too, for the people who can&rsquo;t make it in person. We&rsquo;ll post it all here first, so check back or put your name down to be kept in the loop.</p>
+      <a href="#register" class="wbtn wbtn--primary">Keep me in the loop</a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .ev-h2 { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); line-height: var(--lh-heading); letter-spacing: var(--tracking-display); color: var(--c-ink); margin: 0.4rem 0 0; }
+
+  /* Featured event */
+  .ev-feat { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .ev-feat__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); display: grid; grid-template-columns: 1fr; gap: 3rem; }
+  @media (min-width: 940px) { .ev-feat__inner { grid-template-columns: 1.5fr 1fr; gap: 4rem; align-items: start; } }
+  .ev-feat__title { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); line-height: 1.04; letter-spacing: var(--tracking-display); margin: 0.5rem 0 1.5rem; }
+  .ev-feat__body { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.7; color: var(--c-ink-soft); margin: 0 0 1.1rem; max-width: 60ch; }
+  .ev-feat__cta { margin-top: 1.5rem; }
+
+  .ev-speaker { margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--c-line); }
+  .ev-speaker__label { font-family: var(--w-font-body); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c-accent); margin: 0; }
+  .ev-speaker__name { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); color: var(--c-ink); margin: 0.6rem 0 0; }
+  .ev-speaker__role { display: block; font-family: var(--w-font-body); font-weight: 400; font-size: 0.95rem; color: var(--c-ink-soft); margin-top: 0.2rem; }
+  .ev-speaker__bio { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.7; color: var(--c-ink-soft); margin: 1rem 0 0; max-width: 60ch; }
+
+  /* Details card */
+  .ev-feat__aside { position: relative; }
+  @media (min-width: 940px) { .ev-feat__aside { position: sticky; top: 6rem; } }
+  .ev-card { background: var(--c-dark); color: var(--c-on-dark); border-radius: var(--w-radius); padding: clamp(1.75rem, 3vw, 2.5rem); }
+  .ev-card__eyebrow { font-family: var(--w-font-body); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c-accent-2); margin: 0 0 1.25rem; }
+  .ev-card__list { margin: 0; padding: 0; }
+  .ev-card__row { display: grid; grid-template-columns: 1fr; gap: 0.15rem; padding: 0.9rem 0; border-top: 1px solid rgba(255,255,255,0.12); }
+  .ev-card__row:first-child { border-top: 0; padding-top: 0; }
+  .ev-card__row dt { font-family: var(--w-font-body); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--c-on-dark-soft); }
+  .ev-card__row dd { font-family: var(--w-font-body); font-size: 1.05rem; color: var(--c-on-dark); margin: 0; }
+  .ev-tbc { display: inline-block; font-family: var(--w-font-body); font-weight: 600; font-size: 0.9rem; color: var(--c-dark); background: var(--c-accent-2); border-radius: var(--radius-pill); padding: 0.2rem 0.7rem; }
+  .ev-card__seats { font-family: var(--w-font-display); font-weight: 600; font-size: 1.05rem; line-height: 1.35; color: var(--c-accent-2); margin: 1.5rem 0 0; }
+  .ev-card__rec { font-family: var(--w-font-body); font-size: 0.9rem; line-height: 1.5; color: var(--c-on-dark-soft); margin: 0.75rem 0 0; }
+
+  /* What to expect */
+  .ev-exp { background: var(--c-bg-alt); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .ev-exp__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); display: grid; grid-template-columns: 1fr; gap: 2rem; }
+  @media (min-width: 900px) { .ev-exp__inner { grid-template-columns: 0.8fr 1.2fr; gap: 4rem; } }
+  .ev-exp__body p { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.7; color: var(--c-ink-soft); margin: 0 0 1.25rem; max-width: 60ch; }
+  .ev-exp__list { list-style: none; margin: 1.75rem 0 0; padding: 0; display: grid; gap: 0.85rem; }
+  .ev-exp__list li { position: relative; padding-left: 1.6rem; font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-ink); line-height: 1.5; }
+  .ev-exp__list li::before { content: ""; position: absolute; left: 0; top: 0.5em; width: 0.6rem; height: 0.6rem; border-radius: 0 100% 0 0; background: var(--c-accent); }
+
+  /* Register */
+  .ev-reg { background: var(--c-dark); color: var(--c-on-dark); padding-block: var(--w-section-y); }
+  .ev-reg__inner { max-width: 720px; margin: 0 auto; padding-inline: var(--w-gutter); }
+  .ev-reg__title { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); letter-spacing: var(--tracking-display); color: var(--c-on-dark); margin: 0.4rem 0 0; }
+  .ev-reg__lead { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.65; color: var(--c-on-dark-soft); margin: 1rem 0 2.5rem; }
+  .ev-form { display: grid; gap: 1.25rem; }
+  .ev-form__field { display: grid; gap: 0.45rem; }
+  .ev-form__label { font-family: var(--w-font-body); font-weight: 600; font-size: 0.85rem; color: var(--c-on-dark); }
+  .ev-form__opt { font-weight: 400; color: var(--c-on-dark-soft); }
+  .ev-form__field input, .ev-form__field textarea {
+    font-family: var(--w-font-body); font-size: 1rem; padding: 0.85rem 1rem;
+    border-radius: 12px; border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.04); color: #fff;
+  }
+  .ev-form__field input:focus, .ev-form__field textarea:focus { outline: 2px solid var(--c-accent-2); outline-offset: 1px; }
+  .ev-form__field textarea { resize: vertical; }
+  .ev-form__field input[aria-invalid="true"] { border-color: var(--c-accent); }
+  .ev-form__err { font-family: var(--w-font-body); font-size: 0.8rem; color: #ffb3ad; }
+  .ev-form__hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+  .ev-form__submit { justify-self: start; margin-top: 0.25rem; }
+  .ev-form__note { font-family: var(--w-font-body); font-size: var(--fs-small); color: var(--c-on-dark-soft); margin: 0; }
+  .ev-form__status { font-family: var(--w-font-body); font-size: var(--fs-small); color: #ffb3ad; margin: 0; }
+
+  .ev-done { text-align: left; }
+  .ev-done__h { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); color: var(--c-on-dark); margin: 0.4rem 0 0; }
+  .ev-done__b { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.65; color: var(--c-on-dark-soft); margin: 1rem 0 0; max-width: 52ch; }
+
+  /* Future events */
+  .ev-more { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .ev-more__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); max-width: 760px; }
+  .ev-more__body { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.7; color: var(--c-ink-soft); margin: 1.25rem 0 2rem; }
+</style>
+
+<script>
+  // Register-of-interest form: client validation, success swap, and a real
+  // submission with a graceful fallback so it is never a dead no-op.
+  // Drop the live CRM/handler URL into data-endpoint to POST there.
+  const form = document.querySelector<HTMLFormElement>("[data-event-form]");
+  const done = document.querySelector<HTMLElement>("[data-event-done]");
+  if (form && done) {
+    const status = form.querySelector<HTMLElement>("[data-form-status]");
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    const showErr = (name: string, on: boolean) => {
+      const field = form.querySelector<HTMLElement>(`[data-err-for="${name}"]`);
+      const input = form.querySelector<HTMLInputElement>(`[name="${name}"]`);
+      if (field) field.hidden = !on;
+      if (input) input.setAttribute("aria-invalid", on ? "true" : "false");
+    };
+
+    const validate = () => {
+      const name = (form.elements.namedItem("name") as HTMLInputElement)?.value.trim();
+      const email = (form.elements.namedItem("email") as HTMLInputElement)?.value.trim();
+      const nameOk = !!name;
+      const emailOk = emailRe.test(email || "");
+      showErr("name", !nameOk);
+      showErr("email", !emailOk);
+      return nameOk && emailOk;
+    };
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (status) status.hidden = true;
+      // Honeypot: silently succeed for bots.
+      if ((form.elements.namedItem("_gotcha") as HTMLInputElement)?.value) {
+        form.hidden = true; done.hidden = false; return;
+      }
+      if (!validate()) {
+        const firstErr = form.querySelector<HTMLInputElement>('[aria-invalid="true"]');
+        firstErr?.focus();
+        return;
+      }
+
+      const data = Object.fromEntries(new FormData(form).entries());
+      const endpoint = form.dataset.endpoint;
+      const btn = form.querySelector<HTMLButtonElement>('[type="submit"]');
+      if (btn) { btn.disabled = true; btn.textContent = "Sending..."; }
+
+      const succeed = () => { form.hidden = true; done.hidden = false; done.scrollIntoView({ behavior: "smooth", block: "center" }); };
+      const fail = (msg: string) => {
+        if (status) { status.textContent = msg; status.hidden = false; }
+        if (btn) { btn.disabled = false; btn.textContent = "Put my name down"; }
+      };
+
+      try {
+        if (endpoint) {
+          const res = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify(data),
+          });
+          if (!res.ok) throw new Error("bad status");
+          succeed();
+        } else {
+          // No endpoint configured yet: fall back to an email so a real
+          // sign-up still reaches us rather than vanishing.
+          const subject = encodeURIComponent("Event interest: Diarmuid McSweeney, Gym+Coffee");
+          const body = encodeURIComponent(
+            `Name: ${data.name}\nEmail: ${data.email}\nCompany: ${data.company || "-"}\n\nFor Diarmuid: ${data.question || "-"}`
+          );
+          window.location.href = `mailto:hey@rooftoptwentytwo.ie?subject=${subject}&body=${body}`;
+          succeed();
+        }
+      } catch {
+        fail("Something went wrong. Email us at hey@rooftoptwentytwo.ie and we'll add you.");
+      }
+    });
+  }
+</script>

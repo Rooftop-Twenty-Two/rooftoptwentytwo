@@ -169,6 +169,11 @@ const isActive = (base: string) => path === base || path.startsWith(base);
         <li class:list={["hd__item", isActive("/careers") && "is-active"]}>
           <a class="hd__link" href="/careers/">Careers</a>
         </li>
+
+        <!-- EVENTS -->
+        <li class:list={["hd__item", isActive("/events") && "is-active"]}>
+          <a class="hd__link" href="/events/">Events</a>
+        </li>
       </ul>
     </nav>
 
