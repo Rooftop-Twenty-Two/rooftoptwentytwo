@@ -99,9 +99,15 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://rooftoptwen
         let half = track.scrollWidth / 2;
         let paused = false;
         let last = 0;
-        const start = () => { half = track.scrollWidth / 2; vp.scrollLeft = half; };
+        const measure = () => { half = track.scrollWidth / 2; };
+        const start = () => { measure(); vp.scrollLeft = half; };
         start();
-        window.addEventListener("resize", () => { half = track.scrollWidth / 2; }, { passive: true });
+        window.addEventListener("resize", measure, { passive: true });
+        // Re-measure once the real fonts swap in (cards reflow wider) and after
+        // full load, so `half` never stays stale — a stale value makes the loop
+        // reset into a blank gap and look "stuck" on some page loads.
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+        window.addEventListener("load", measure, { passive: true });
         if (canHover) {
           vp.addEventListener("mouseenter", () => { paused = true; });
           vp.addEventListener("mouseleave", () => { paused = false; });
