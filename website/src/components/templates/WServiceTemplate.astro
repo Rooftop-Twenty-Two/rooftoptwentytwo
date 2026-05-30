@@ -26,6 +26,18 @@ const {
 const pageUrl = `/services/${slug}/`;
 const title = `${name} | Rooftop Twenty Two`;
 
+// Service heroes use studio/office shots (not client logos). Pick one
+// deterministically from the slug so each service keeps a consistent image.
+const officeShots = [
+  "/images/office/office-studio-01.jpg",
+  "/images/office/office-collab-01.jpg",
+  "/images/office/office-work-01.jpg",
+  "/images/office/office-collab-02.jpg",
+  "/images/office/office-work-02.jpg",
+  "/images/office/office-portrait-01.jpg",
+];
+const heroBg = officeShots[[...slug].reduce((a, c) => a + c.charCodeAt(0), 0) % officeShots.length];
+
 // Portfolio service tags that count as "relevant" to each service, so the work
 // row can show every matching case study (curated ones first), not just three.
 const serviceTagMap: Record<string, string[]> = {
@@ -78,7 +90,7 @@ const breadcrumbs = isClusterParent
     kicker={heroEyebrow ?? cluster.replace(/-/g, " ")}
     title={heroTitle}
     intro={heroBody}
-    bg={caseStudies[0]?.heroImage}
+    bg={heroBg}
     primary={{ label: `Talk to us about ${name}`, href: `/contact/?service=${slug}#contact` }}
     secondary={{ label: "See selected work", href: "/work/" }}
   />
