@@ -6,13 +6,26 @@ import PressToTalkRing from "./PressToTalkRing.astro";
 const services = (await getCollection("services")).sort(
   (a, b) => (a.data.order ?? 100) - (b.data.order ?? 100)
 );
-const svcLinks = [
-  "paid-social", "seo", "photo-and-video",
-  "website-design-and-build", "email-marketing", "social-media-management",
-]
-  .map((slug) => services.find((s) => s.data.slug === slug))
-  .filter(Boolean)
-  .map((s) => ({ name: s!.data.name, href: `/services/${s!.data.slug}/` }));
+// Group services into the same three clusters used on the homepage:
+// Creative & Content, Web, Performance Marketing.
+const clusterOrder = ["creative-and-content", "web", "performance-marketing"];
+const clusterNames: Record<string, string> = {
+  "creative-and-content": "Creative & Content",
+  "web": "Web",
+  "performance-marketing": "Performance Marketing",
+};
+const svcGroups = clusterOrder.map((cl) => {
+  const parent = services.find((s) => s.data.cluster === cl && s.data.isClusterParent);
+  const children = services
+    .filter((s) => s.data.cluster === cl && !s.data.isClusterParent)
+    .sort((a, b) => (a.data.order ?? 100) - (b.data.order ?? 100))
+    .map((s) => ({ name: s.data.name, href: `/services/${s.data.slug}/` }));
+  return {
+    name: clusterNames[cl],
+    href: parent ? `/services/${parent.data.slug}/` : "/services/",
+    children,
+  };
+});
 
 const portfolio = (await getCollection("portfolio", ({ data }) => !data.needs_review))
   .sort((a, b) => (a.data.order ?? 100) - (b.data.order ?? 100));
@@ -75,23 +88,22 @@ const isActive = (base: string) => path === base || path.startsWith(base);
         <li class:list={["hd__item has-mega", isActive("/services") && "is-active"]} data-mega>
           <button type="button" class="hd__link" id="t-services" aria-haspopup="true" aria-expanded="false" aria-controls="mp-services">Services</button>
           <div class="mega" id="mp-services" role="region" aria-labelledby="t-services">
-            <div class="mega__grid">
-              <div class="mega__a">
-                <p class="mega__eyebrow">Our expertise</p>
-                <ul class="mega__links">
-                  {svcLinks.map((s) => <li><a class="r22-link" href={s.href}>{s.name}</a></li>)}
-                </ul>
-                <a class="mega__viewall r22-link" href="/services/">View all services &rarr;</a>
+            <div class="mega__grid mega__grid--services">
+              <div class="mega__cats">
+                {svcGroups.map((g) => (
+                  <div class="mega__cat">
+                    <a class="mega__cat-h" href={g.href}>{g.name}</a>
+                    <ul class="mega__cat-links">
+                      {g.children.map((c) => <li><a class="r22-link" href={c.href}>{c.name}</a></li>)}
+                    </ul>
+                  </div>
+                ))}
               </div>
               <a class="mega__featured mega__featured--cta" href="/contact/">
                 <span class="mega__ftitle">Not sure where to start?</span>
                 <span class="mega__fsub">Tell us what you&rsquo;re scaling and we&rsquo;ll point you the right way.</span>
                 <span class="mega__cta-row"><img class="mega__avatar" src="/images/hero/Cathal.png" alt="" loading="lazy" /> Get in touch &rarr;</span>
               </a>
-              <div class="mega__media">
-                <a class="mega__tile" href="/work/"><img src="/images/office/office-work-01.jpg" alt="Social campaign work in progress" loading="lazy" /></a>
-                <a class="mega__tile" href="/about/"><img src="/images/office/office-collab-01.jpg" alt="The in-house team at work" loading="lazy" /></a>
-              </div>
             </div>
           </div>
         </li>
@@ -226,6 +238,22 @@ const isActive = (base: string) => path === base || path.startsWith(base);
     grid-template-columns: 220px 240px 200px; width: max-content; max-width: 88vw;
   }
   .mega__grid--work { grid-template-columns: 200px 240px 200px; }
+  /* Services panel: three homepage clusters as columns, plus the CTA. */
+  .mega__grid--services { grid-template-columns: auto 240px; align-items: stretch; }
+  .mega__cats { display: grid; grid-template-columns: repeat(3, minmax(150px, 1fr)); gap: 2rem; }
+  .mega__cat-h {
+    display: block; font-family: var(--w-font-display); font-weight: 700; font-size: 1.05rem;
+    color: var(--c-ink); text-decoration: none; padding-bottom: 0.6rem; margin-bottom: 0.4rem;
+    border-bottom: 1px solid var(--c-line); transition: color var(--w-dur-fast) var(--w-ease);
+  }
+  .mega__cat-h:hover { color: var(--c-accent); }
+  .mega__cat-links { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.1rem; }
+  .mega__cat-links a {
+    display: block; font-family: var(--w-font-body); font-size: 0.95rem;
+    color: var(--c-ink-soft); text-decoration: none; padding: 0.32rem 0;
+    transition: color var(--w-dur-fast) var(--w-ease);
+  }
+  .mega__cat-links a:hover { color: var(--c-accent); }
   .mega__eyebrow { font-family: var(--w-font-body); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--c-ink-soft); margin: 0 0 1rem; }
   .mega__links { list-style: none; margin: 0 0 1rem; padding: 0; display: grid; gap: 0.15rem; }
   .mega__links a {
