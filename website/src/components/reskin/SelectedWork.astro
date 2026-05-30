@@ -58,14 +58,14 @@ const track = [...cards, ...cards];
 
   /* Continuous marquee, left to right, pauses on hover/focus. */
   .sw__viewport {
-    margin-top: 2.5rem; overflow: hidden;
+    margin-top: 2.5rem; overflow: hidden; transform: translateZ(0);
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
             mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
   }
   .sw__rail {
     list-style: none; margin: 0; padding: 0.5rem var(--w-gutter) 1rem;
     display: flex; gap: 1.5rem; width: max-content;
-    animation: sw-scroll 70s linear infinite;
+    will-change: transform; animation: sw-scroll 70s linear infinite;
   }
   .sw__rail:focus-within { animation-play-state: paused; }
   @media (hover: hover) { .sw:hover .sw__rail { animation-play-state: paused; } }

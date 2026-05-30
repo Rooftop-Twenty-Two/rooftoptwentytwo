@@ -37,13 +37,14 @@ const track = [...half, ...half];
   .lw__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
   .lw__marquee {
     margin-top: 2.25rem; overflow: hidden;
+    transform: translateZ(0);  /* own layer — fixes Safari mask + transform blank-render */
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
             mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
   }
   .lw__track {
     list-style: none; margin: 0; padding: 0;
     display: flex; align-items: center; gap: clamp(2.5rem, 5vw, 5rem); width: max-content;
-    animation: lw-scroll 45s linear infinite;
+    will-change: transform; animation: lw-scroll 45s linear infinite;
   }
   .lw__track li { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; }
   .lw__track img {
