@@ -1,6 +1,6 @@
 ---
 name: "Justin"
 role: "Creative Director"
-portrait: "/images/hero/Justin2.png"
+portrait: "/images/team/justin-portrait.png"
 order: 4
 ---
