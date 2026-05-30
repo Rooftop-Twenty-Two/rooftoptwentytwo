@@ -1,0 +1,85 @@
+---
+// Latest news & insights — pulls the three most recent articles for the
+// homepage. Image-led cards (tag chip, title overlay, arrow), with a link to
+// the full /latest/ index. Off-white section.
+import { getCollection } from "astro:content";
+import Picture from "../Picture.astro";
+
+const posts = (await getCollection("articles", ({ data }) => !data.draft))
+  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime())
+  .slice(0, 3);
+
+const dateFmt = new Intl.DateTimeFormat("en-IE", { day: "numeric", month: "short", year: "numeric" });
+---
+
+{posts.length > 0 && (
+  <section class="li">
+    <div class="li__inner">
+      <div class="li__head reveal">
+        <div>
+          <p class="kicker kicker--script">From the studio</p>
+          <h2 class="li__title">Latest news &amp; <em>insights</em>.</h2>
+        </div>
+        <a href="/latest/" class="wbtn wbtn--primary li__all">View all insights</a>
+      </div>
+
+      <ul class="li__grid">
+        {posts.map((p) => (
+          <li class="reveal">
+            <a class="li__card r22-card" href={`/latest/${p.data.slug}/`}>
+              <figure class="li__media r22-media">
+                {p.data.heroImage
+                  ? <Picture src={p.data.heroImage} alt={p.data.title} loading="lazy" decoding="async" />
+                  : <div class="li__placeholder"></div>}
+                <span class="li__scrim" aria-hidden="true"></span>
+                {p.data.tags[0] && <span class="li__chip">{p.data.tags[0]}</span>}
+                <span class="li__arrow" aria-hidden="true">&#8599;</span>
+                <div class="li__cap">
+                  <span class="li__date">{dateFmt.format(p.data.publishedAt)}</span>
+                  <h3 class="li__h">{p.data.title}</h3>
+                </div>
+              </figure>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+)}
+
+<style>
+  .li { background: var(--c-bg-alt); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .li__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .li__head { display: grid; gap: 1.25rem; align-items: end; margin-bottom: 2.75rem; }
+  @media (min-width: 820px) { .li__head { grid-template-columns: 1fr auto; } }
+  .li__title { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); line-height: var(--lh-heading); letter-spacing: var(--tracking-display); margin: 0.25rem 0 0; }
+  .li__title em { font-style: italic; color: var(--c-accent); }
+
+  .li__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+  @media (min-width: 720px) { .li__grid { grid-template-columns: repeat(3, 1fr); } }
+  .li__card { display: block; text-decoration: none; color: inherit; }
+  .li__media {
+    position: relative; margin: 0; border-radius: var(--w-radius); overflow: hidden;
+    aspect-ratio: 4 / 5; border: 1px solid var(--c-line); box-shadow: var(--w-shadow-soft); background: var(--c-dark);
+  }
+  .li__media :global(img) { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform var(--w-dur) var(--w-ease); }
+  .li__card:hover .li__media :global(img) { transform: scale(1.05); }
+  .li__placeholder { width: 100%; height: 100%; background: var(--c-dark); }
+  .li__scrim { position: absolute; inset: 0; background: linear-gradient(to top, rgba(13,32,48,0.92) 0%, rgba(13,32,48,0.25) 45%, rgba(13,32,48,0.05) 100%); }
+
+  .li__chip {
+    position: absolute; top: 1rem; left: 1rem; z-index: 1;
+    font-family: var(--w-font-body); font-weight: 700; font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--c-ink); background: rgba(255,255,255,0.92); padding: 0.35rem 0.7rem; border-radius: var(--radius-pill);
+  }
+  .li__arrow {
+    position: absolute; top: 1rem; right: 1rem; z-index: 1;
+    display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px;
+    border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.55); color: #fff; font-size: 1rem;
+    transition: background-color var(--w-dur-fast) var(--w-ease), color var(--w-dur-fast) var(--w-ease);
+  }
+  .li__card:hover .li__arrow { background: var(--c-accent); border-color: var(--c-accent); color: #fff; }
+  .li__cap { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; padding: 1.4rem; }
+  .li__date { font-family: var(--w-font-body); font-size: 0.75rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--c-accent-2); }
+  .li__h { font-family: var(--w-font-display); font-weight: 600; font-size: 1.35rem; line-height: 1.15; color: #fff; margin: 0.4rem 0 0; }
+</style>
