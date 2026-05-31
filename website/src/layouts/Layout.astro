@@ -106,6 +106,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://rooftoptwen
         const track = vp.firstElementChild as HTMLElement | null;
         if (!track) return;
         const durSec = parseFloat(vp.dataset.marquee || "60") || 60;
+        // data-marquee-dir="reverse" scrolls right→left (opposite of default).
+        const reverse = vp.dataset.marqueeDir === "reverse";
         let half = track.scrollWidth / 2;
         let paused = false;
         let last = 0;
@@ -127,8 +129,14 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://rooftoptwen
           if (!last) last = ts;
           const dt = ts - last; last = ts;
           if (!paused && half > 0) {
-            vp.scrollLeft -= (half / (durSec * 1000)) * dt;
-            if (vp.scrollLeft <= 0) vp.scrollLeft += half;
+            const step = (half / (durSec * 1000)) * dt;
+            if (reverse) {
+              vp.scrollLeft += step;
+              if (vp.scrollLeft >= half) vp.scrollLeft -= half;
+            } else {
+              vp.scrollLeft -= step;
+              if (vp.scrollLeft <= 0) vp.scrollLeft += half;
+            }
           }
           requestAnimationFrame(tick);
         };

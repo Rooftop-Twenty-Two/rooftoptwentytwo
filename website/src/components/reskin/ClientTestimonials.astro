@@ -103,8 +103,11 @@ const track = [...testimonials, ...testimonials];
   }
   .tg__title em { font-style: italic; color: var(--c-accent); }
 
-  /* Continuous marquee — native-scroll driven (see Layout), pauses on hover. */
-  .tg__viewport { overflow: hidden; }
+  /* Continuous marquee — native-scroll driven (see Layout), pauses on hover.
+   * Natively swipeable (overflow-x:auto, hidden scrollbar) so the cards are
+   * always reachable on touch even if the auto-scroll JS doesn't run. */
+  .tg__viewport { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .tg__viewport::-webkit-scrollbar { display: none; }
   .tg__track {
     list-style: none; margin: 0; padding: 0.5rem 0;
     display: flex; align-items: stretch; width: max-content;

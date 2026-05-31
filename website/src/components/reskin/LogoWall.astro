@@ -24,7 +24,7 @@ const track = [...half, ...half];
   <div class="lw__inner">
     <p class="kicker kicker--on-dark">Trusted by ambitious Irish brands</p>
   </div>
-  <div class="lw__marquee" data-marquee="38" aria-hidden="false">
+  <div class="lw__marquee" data-marquee="38" data-marquee-dir="reverse" aria-hidden="false">
     <ul class="lw__track" role="list">
       {track.map((l, i) => (
         <li aria-hidden={i >= half.length ? "true" : "false"}>
