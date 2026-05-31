@@ -7,6 +7,18 @@ import Picture from "../../components/Picture.astro";
 
 const entries = (await getCollection("portfolio", ({ data }) => !data.needs_review))
   .sort((a, b) => (a.data.order ?? 100) - (b.data.order ?? 100));
+
+// Group the granular service tags into a few clear filter categories so the
+// case studies can be filtered by type. A project can belong to several.
+const FILTERS: { id: string; label: string; tags: string[] }[] = [
+  { id: "brand", label: "Brand & creative", tags: ["Brand Design", "Brand Identity", "Brand Naming", "Brand Strategy", "Branding"] },
+  { id: "web", label: "Web", tags: ["Web Design", "Web Development"] },
+  { id: "content", label: "Social & content", tags: ["Social Media", "Photography", "Videography", "Video", "Campaign Management"] },
+  { id: "performance", label: "Performance marketing", tags: ["Google Ads", "Paid Social Media", "SEO", "Digital Marketing"] },
+];
+
+const categoriesFor = (services: string[] = []) =>
+  FILTERS.filter((f) => services.some((s) => f.tags.includes(s))).map((f) => f.id);
 ---
 
 <Layout
@@ -20,13 +32,20 @@ const entries = (await getCollection("portfolio", ({ data }) => !data.needs_revi
   />
 
   <section class="wk">
-    <ul class="wk__grid">
+    <div class="wk__filters" role="tablist" aria-label="Filter case studies by type" data-work-filters>
+      <button type="button" class="wk__filter is-active" role="tab" aria-selected="true" data-filter="all">All work</button>
+      {FILTERS.map((f) => (
+        <button type="button" class="wk__filter" role="tab" aria-selected="false" data-filter={f.id}>{f.label}</button>
+      ))}
+    </div>
+
+    <ul class="wk__grid" data-work-grid>
       {entries.map((e) => {
         const slug = e.id.replace(/\.mdx?$/, "");
         const services = (e.data.services ?? []).slice(0, 3);
-        const featured = e.data.featured ?? false;
+        const cats = categoriesFor(e.data.services);
         return (
-          <li class:list={["wk__card reveal", featured ? "wk__card--featured" : ""]}>
+          <li class="wk__card reveal" data-categories={cats.join(" ")}>
             <a href={`/work/${slug}/`}>
               <figure class="wk__img" style={e.data.heroImage ? undefined : "background:var(--c-line);"}>
                 {e.data.heroImage && (
@@ -50,6 +69,7 @@ const entries = (await getCollection("portfolio", ({ data }) => !data.needs_revi
         );
       })}
     </ul>
+    <p class="wk__empty" data-work-empty hidden>No case studies in that category yet. <button type="button" class="wk__empty-reset" data-filter="all">Show all work</button></p>
   </section>
 
   <WCtaBand />
@@ -57,12 +77,31 @@ const entries = (await getCollection("portfolio", ({ data }) => !data.needs_revi
 
 <style>
   .wk { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+
+  /* Filter bar */
+  .wk__filters {
+    max-width: var(--w-container); margin: 0 auto 2.5rem; padding-inline: var(--w-gutter);
+    display: flex; flex-wrap: wrap; gap: 0.6rem;
+  }
+  .wk__filter {
+    font-family: var(--w-font-body); font-weight: 600; font-size: 0.92rem;
+    color: var(--c-ink-soft); background: transparent;
+    border: 1.5px solid var(--c-line); border-radius: var(--radius-pill);
+    padding: 0.55rem 1.15rem; cursor: pointer;
+    transition: color var(--w-dur-fast) var(--w-ease), background var(--w-dur-fast) var(--w-ease), border-color var(--w-dur-fast) var(--w-ease);
+  }
+  .wk__filter:hover { color: var(--c-ink); border-color: var(--c-ink); }
+  .wk__filter.is-active { color: #fff; background: var(--c-ink); border-color: var(--c-ink); }
+  .wk__filter:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
+
   .wk__grid {
     list-style: none; margin: 0 auto; padding-inline: var(--w-gutter); max-width: var(--w-container);
     display: grid; grid-template-columns: 1fr; gap: 2.5rem;
   }
   @media (min-width: 640px) { .wk__grid { grid-template-columns: repeat(2, 1fr); gap: 2.5rem 1.75rem; } }
   @media (min-width: 960px) { .wk__grid { grid-template-columns: repeat(3, 1fr); gap: 3rem 1.75rem; } }
+  .wk__card { transition: opacity var(--w-dur) var(--w-ease); }
+  .wk__card[hidden] { display: none; }
   .wk__card a { display: block; text-decoration: none; color: inherit; }
   .wk__img {
     margin: 0; border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 4 / 3;
@@ -81,4 +120,40 @@ const entries = (await getCollection("portfolio", ({ data }) => !data.needs_revi
     padding: 0.35rem 0.8rem; border: 1px solid var(--c-line); border-radius: var(--radius-pill);
     font-family: var(--w-font-body); font-size: 0.75rem; letter-spacing: 0.03em; color: var(--c-ink-soft);
   }
+  .wk__empty { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); font-family: var(--w-font-body); color: var(--c-ink-soft); }
+  .wk__empty-reset { background: none; border: 0; color: var(--c-accent); font-weight: 600; cursor: pointer; font-family: inherit; font-size: inherit; }
+  .wk__empty-reset:hover { text-decoration: underline; }
 </style>
+
+<script>
+  // Client-side case-study filter. Cards carry data-categories; buttons toggle
+  // which categories show. Progressive: without JS, all cards are visible.
+  const root = document.querySelector<HTMLElement>("[data-work-filters]");
+  const grid = document.querySelector<HTMLElement>("[data-work-grid]");
+  const empty = document.querySelector<HTMLElement>("[data-work-empty]");
+  if (root && grid) {
+    const cards = Array.from(grid.querySelectorAll<HTMLElement>(".wk__card"));
+    const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-filter]"));
+
+    const apply = (filter: string) => {
+      let shown = 0;
+      cards.forEach((card) => {
+        const cats = (card.dataset.categories || "").split(" ").filter(Boolean);
+        const match = filter === "all" || cats.includes(filter);
+        card.hidden = !match;
+        if (match) shown++;
+      });
+      if (empty) empty.hidden = shown > 0;
+      // Update the active state on the tablist buttons.
+      root.querySelectorAll<HTMLButtonElement>(".wk__filter").forEach((b) => {
+        const on = b.dataset.filter === filter;
+        b.classList.toggle("is-active", on);
+        b.setAttribute("aria-selected", on ? "true" : "false");
+      });
+    };
+
+    buttons.forEach((b) =>
+      b.addEventListener("click", () => apply(b.dataset.filter || "all"))
+    );
+  }
+</script>
