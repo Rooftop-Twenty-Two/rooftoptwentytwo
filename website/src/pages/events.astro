@@ -72,20 +72,6 @@ const ev = events[0];
 
       <div class="eb-content">
         <div class="eb-block reveal">
-          <h2 class="eb-h2">About this event</h2>
-          {ev.body.map((p) => <p class="eb-p" set:html={p} />)}
-        </div>
-
-        <div class="eb-block reveal">
-          <h2 class="eb-h2">What to expect</h2>
-          <p class="eb-p">An hour or so with Diarmuid, in the room, talking straight. He&rsquo;ll walk through how Gym+Coffee actually grew. The early decisions, what worked, what didn&rsquo;t, and the digital marketing that moved the needle.</p>
-          <p class="eb-p">It&rsquo;s a conversation, not a lecture. Bring your questions. He&rsquo;s happy to take them, whether you&rsquo;re building a brand of your own, stuck on a bit of your own marketing, or just want to know how it was really done.</p>
-          <ul class="eb-list">
-            {ev.expect.map((item) => <li>{item}</li>)}
-          </ul>
-        </div>
-
-        <div class="eb-block reveal">
           <h2 class="eb-h2">About the speaker</h2>
           <div class="eb-speaker">
             {ev.headshot && hasFile(ev.headshot) && (
@@ -97,6 +83,20 @@ const ev = events[0];
               <p class="eb-p" set:html={ev.bio} />
             </div>
           </div>
+        </div>
+
+        <div class="eb-block reveal">
+          <h2 class="eb-h2">About this event</h2>
+          {ev.body.map((p) => <p class="eb-p" set:html={p} />)}
+        </div>
+
+        <div class="eb-block reveal">
+          <h2 class="eb-h2">What to expect</h2>
+          <p class="eb-p">An hour or so with Diarmuid, in the room, talking straight. He&rsquo;ll walk through how Gym+Coffee actually grew. The early decisions, what worked, what didn&rsquo;t, and the digital marketing that moved the needle.</p>
+          <p class="eb-p">It&rsquo;s a conversation, not a lecture. Bring your questions. He&rsquo;s happy to take them, whether you&rsquo;re building a brand of your own, stuck on a bit of your own marketing, or just want to know how it was really done.</p>
+          <ul class="eb-list">
+            {ev.expect.map((item) => <li>{item}</li>)}
+          </ul>
         </div>
       </div>
 
