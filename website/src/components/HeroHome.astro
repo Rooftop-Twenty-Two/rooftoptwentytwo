@@ -22,7 +22,12 @@ const awards = awardDefs.map((a) => ({ ...a, hasLogo: existsSync(path.join(proce
 
 <section class="whero">
   <div class="whero__media" aria-hidden="true">
-    <img src={poster} alt="" fetchpriority="high" />
+    <picture>
+      <!-- On phones the wide studio shot's big wall wordmark clashes with the
+           headline, so swap to a calmer team shot below 880px. -->
+      <source media="(max-width: 880px)" srcset="/images/office/office-collab-01.jpg" />
+      <img src={poster} alt="" fetchpriority="high" />
+    </picture>
     <div class="whero__scrim"></div>
   </div>
 
@@ -79,6 +84,14 @@ const awards = awardDefs.map((a) => ({ ...a, hasLogo: existsSync(path.join(proce
     position: absolute; inset: 0;
     background:
       linear-gradient(to top, rgba(13,32,48,0.94) 0%, rgba(13,32,48,0.42) 45%, rgba(13,32,48,0.6) 100%);
+  }
+  /* On mobile the headline sits over the image, so darken the scrim across the
+     whole frame (especially the top) to guarantee contrast on any photo. */
+  @media (max-width: 880px) {
+    .whero__scrim {
+      background:
+        linear-gradient(to top, rgba(13,32,48,0.96) 0%, rgba(13,32,48,0.74) 50%, rgba(13,32,48,0.82) 100%);
+    }
   }
   @keyframes whero-pan {
     from { transform: scale(1.02) translate3d(0, 0, 0); }
