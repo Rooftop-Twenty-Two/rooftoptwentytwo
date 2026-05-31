@@ -19,3 +19,7 @@ _rebuild_screenshots/
 
 # Logs / debug
 *.log
+
+# Brand kit deliverable (generated, already sent to user)
+brand-kit/
+rooftop-brand-kit.zip
