@@ -1,0 +1,43 @@
+---
+// S14, Pre-footer CTA band. Oversized heading + CTA over a wide photo with a
+// dark overlay.
+interface Props {
+  heading?: string;
+  body?: string;
+  bg?: string;
+}
+const {
+  heading = "Let's talk about where you're headed.",
+  body = "Tell us what you're scaling, launching, or rebuilding. We'll come back with a thoughtful reply and a time to talk it through.",
+  bg = "/images/office/office-studio-01.jpg",
+} = Astro.props;
+---
+
+<section class="cta" style={`--cta-bg:url('${bg}')`}>
+  <div class="cta__inner reveal">
+    <h2 class="cta__title">{heading}</h2>
+    <p class="cta__body">{body}</p>
+    <a href="/contact/" class="wbtn wbtn--accent cta__btn">Start the conversation</a>
+  </div>
+</section>
+
+<style>
+  .cta {
+    position: relative; isolation: isolate; color: var(--c-on-dark);
+    padding-block: clamp(5rem, 12vw, 11rem);
+    background-image:
+      linear-gradient(rgba(13,32,48,0.78), rgba(13,32,48,0.72)), var(--cta-bg);
+    background-size: cover; background-position: center;
+  }
+  .cta__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .cta__title {
+    font-family: var(--w-font-display); font-weight: 600;
+    font-size: clamp(2.25rem, 4vw + 1rem, 5rem);
+    line-height: 1.02; letter-spacing: var(--tracking-display); margin: 0; max-width: 18ch;
+  }
+  .cta__body {
+    font-family: var(--w-font-body); font-size: var(--fs-body); line-height: var(--lh-body);
+    color: var(--c-on-dark-soft); margin: 1.5rem 0 0; max-width: 46ch;
+  }
+  .cta__btn { margin-top: 2.25rem; }
+</style>

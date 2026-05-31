@@ -1,0 +1,353 @@
+---
+// Service detail, re-skin (Wolfgang language). Reuses PageHero + WCtaBand.
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import PageHero from "../reskin/PageHero.astro";
+import WCtaBand from "../reskin/WCtaBand.astro";
+import BreadcrumbSchema from "../seo/BreadcrumbSchema.astro";
+import ServiceSchema from "../seo/ServiceSchema.astro";
+import Picture from "../Picture.astro";
+
+type ProcessStep = { step: string; label: string; body: string };
+type FAQ = { question: string; answer: string };
+interface Props {
+  name: string; slug: string; cluster: string; isClusterParent: boolean;
+  summary: string; metaDescription: string; heroEyebrow?: string;
+  heroHeading: string; heroBody: string; whatItIs: string; whatsIncluded: string[];
+  process: ProcessStep[]; sectorsThatBuy: string[]; relatedServices: string[];
+  relatedProgrammes: string[]; caseStudySlugs: string[]; faq: FAQ[];
+}
+const {
+  name, slug, cluster, isClusterParent, summary, metaDescription, heroEyebrow,
+  heroHeading, heroBody, whatItIs, whatsIncluded, process, sectorsThatBuy,
+  relatedServices, caseStudySlugs, faq,
+} = Astro.props;
+
+const pageUrl = `/services/${slug}/`;
+const title = `${name} | Rooftop Twenty Two`;
+
+// Service heroes use studio/office shots (not client logos). Pick one
+// deterministically from the slug so each service keeps a consistent image.
+const officeShots = [
+  "/images/office/office-studio-01.jpg",
+  "/images/office/office-collab-01.jpg",
+  "/images/office/office-work-01.jpg",
+  "/images/office/office-collab-02.jpg",
+  "/images/office/office-work-02.jpg",
+  "/images/office/office-portrait-01.jpg",
+];
+const heroBg = officeShots[[...slug].reduce((a, c) => a + c.charCodeAt(0), 0) % officeShots.length];
+
+// Portfolio service tags that count as "relevant" to each service, so the work
+// row can show every matching case study (curated ones first), not just three.
+const serviceTagMap: Record<string, string[]> = {
+  "performance-marketing": ["Google Ads", "Paid Social Media", "SEO", "Digital Marketing"],
+  "google-ads": ["Google Ads"],
+  "paid-social": ["Paid Social Media"],
+  "seo": ["SEO"],
+  "email-marketing": [],
+  "creative-and-content": ["Social Media", "Photography", "Videography", "Video", "Brand Design", "Brand Identity", "Branding", "Brand Strategy", "Brand Naming"],
+  "design": ["Brand Design", "Brand Identity", "Brand Strategy", "Brand Naming"],
+  "social-media-management": ["Social Media"],
+  "photo-and-video": ["Photography", "Videography", "Video"],
+  "web": ["Web Design", "Web Development"],
+  "website-design-and-build": ["Web Design", "Web Development"],
+  "website-care": ["Web Design", "Web Development"],
+};
+
+const portfolio = await getCollection("portfolio");
+const pfBySlug = new Map(portfolio.map((p) => [p.data.slug, p.data]));
+const tags = serviceTagMap[slug] ?? [];
+// Curated case studies lead the row, in the order set on the service.
+const curated = (caseStudySlugs ?? [])
+  .map((sl) => pfBySlug.get(sl))
+  .filter((p): p is NonNullable<typeof p> => Boolean(p && p.heroImage));
+const curatedSlugs = new Set(curated.map((c) => c.slug));
+// Then every other case study tagged with one of this service's disciplines.
+const others = portfolio
+  .map((p) => p.data)
+  .filter((p) => p.heroImage && !p.needs_review && !curatedSlugs.has(p.slug)
+    && (p.services ?? []).some((s) => tags.includes(s)))
+  .sort((a, b) => (a.order ?? 100) - (b.order ?? 100));
+const caseStudies = [...curated, ...others];
+
+// Emphasise the final word of the heading.
+const hw = heroHeading.trim().split(/\s+/);
+const heroTitle = hw.length > 1
+  ? `${hw.slice(0, -1).join(" ")} <em>${hw[hw.length - 1]}</em>`
+  : heroHeading;
+
+const breadcrumbs = isClusterParent
+  ? [{ name: "Home", url: "/" }, { name: "Services", url: "/services/" }, { name, url: pageUrl }]
+  : [{ name: "Home", url: "/" }, { name: "Services", url: "/services/" }, { name: cluster.replace(/-/g, " "), url: `/services/${cluster}/` }, { name, url: pageUrl }];
+---
+
+<Layout title={title} description={metaDescription}>
+  <BreadcrumbSchema items={breadcrumbs} />
+  <ServiceSchema name={name} description={metaDescription} url={pageUrl} />
+
+  <PageHero
+    kicker={heroEyebrow ?? cluster.replace(/-/g, " ")}
+    title={heroTitle}
+    intro={heroBody}
+    bg={heroBg}
+    primary={{ label: `Talk to us about ${name}`, href: `/contact/?service=${slug}#contact` }}
+    secondary={{ label: "See selected work", href: "/work/" }}
+  />
+
+  <!-- What it is -->
+  <section class="ws-split">
+    <div class="ws-split__inner">
+      <div class="reveal">
+        <p class="kicker">What it is</p>
+        <h2 class="ws-h2">How we approach {name}</h2>
+      </div>
+      <p class="ws-lead reveal">{whatItIs}</p>
+    </div>
+  </section>
+
+  {whatsIncluded.length > 0 && (
+    <section class="ws-inc">
+      <div class="ws-inc__inner">
+        <p class="kicker">What&rsquo;s included</p>
+        <h2 class="ws-h2 ws-mb">Everything {name} should cover</h2>
+        <ul class="ws-cap">
+          {whatsIncluded.map((it, i) => (
+            <li class="reveal">
+              <span class="ws-cap__num">{String(i + 1).padStart(2, "0")}</span>
+              <span class="ws-cap__label">{it}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  {process.length > 0 && (
+    <section class="ws-proc">
+      <div class="ws-proc__inner">
+        <p class="kicker kicker--on-dark">How we work</p>
+        <h2 class="ws-h2 ws-mb" style="color:var(--c-on-dark);">The process</h2>
+        <ol class="ws-steps">
+          {process.map((p) => (
+            <li class="reveal">
+              <span class="ws-steps__n">{p.step}</span>
+              <div>
+                <h3 class="ws-steps__label">{p.label}</h3>
+                <p class="ws-steps__body">{p.body}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  )}
+
+  {caseStudies.length > 0 && (
+    <section class="ws-work">
+      <div class="ws-work__inner">
+        <div class="ws-work__top">
+          <div>
+            <p class="kicker">Proof</p>
+            <h2 class="ws-h2">Work we&rsquo;re <em>proud of</em>.</h2>
+          </div>
+          <div class="ws-work__controls">
+            <a href="/work/" class="wbtn wbtn--primary ws-work__all">View all projects</a>
+            {caseStudies.length > 1 && (
+              <div class="ws-work__arrows" data-work-arrows hidden>
+                <button type="button" class="ws-arrow" data-work-prev aria-label="Previous case studies">
+                  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 5l-7 7 7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <button type="button" class="ws-arrow" data-work-next aria-label="Next case studies">
+                  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+        <ul class="ws-work__row" data-work-row>
+          {caseStudies.map((cs) => (
+            <li>
+              <a class="r22-card" href={`/work/${cs.slug}/`}>
+                <figure class="ws-work__img r22-media"><Picture src={cs.heroImage} alt={cs.name} loading="lazy" decoding="async" /></figure>
+                <span class="ws-work__name">{cs.name}</span>
+                {cs.tagline && <span class="ws-work__tag">{cs.tagline}</span>}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  {(sectorsThatBuy.length > 0 || relatedServices.length > 0) && (
+    <section class="ws-rel">
+      <div class="ws-rel__inner">
+        {sectorsThatBuy.length > 0 && (
+          <div>
+            <p class="kicker">Where this lands</p>
+            <h2 class="ws-h3 ws-mb-s">Sectors that buy {name}</h2>
+            <ul class="ws-pills">
+              {sectorsThatBuy.map((s) => (
+                <li><a href={`/sectors/${s}/`}>{s.replace(/-/g, " ").replace(/\b\w/g, (m) => m.toUpperCase())}</a></li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {relatedServices.length > 0 && (
+          <div>
+            <p class="kicker">Often paired with</p>
+            <h2 class="ws-h3 ws-mb-s">Related services</h2>
+            <ul class="ws-pills">
+              {relatedServices.map((s) => (
+                <li><a href={`/services/${s}/`}>{s.replace(/-/g, " ").replace(/\b\w/g, (m) => m.toUpperCase())}</a></li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    </section>
+  )}
+
+  {faq.length > 0 && (
+    <section class="ws-faq">
+      <div class="ws-faq__inner">
+        <div class="ws-faq__main">
+          <p class="kicker">FAQ</p>
+          <h2 class="ws-h2 ws-mb">{name} questions</h2>
+          <ul class="ws-faq__list">
+            {faq.map((f) => (
+              <li class="reveal">
+                <h3 class="ws-faq__q">{f.question}</h3>
+                <p class="ws-faq__a">{f.answer}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <aside class="ws-faq__aside reveal">
+          <div class="ws-faq__card">
+            <p class="kicker kicker--on-dark">Still have questions?</p>
+            <p class="ws-faq__card-h">Talk to the team that does the work.</p>
+            <p class="ws-faq__card-b">No account managers passing notes, you speak to the people running your {name}.</p>
+            <a href={`/contact/?service=${slug}#contact`} class="wbtn wbtn--accent">Talk to us about {name}</a>
+          </div>
+        </aside>
+      </div>
+    </section>
+  )}
+
+  <WCtaBand />
+</Layout>
+
+<script>
+  // Prev/next toggles for the case-study scroll row.
+  const row = document.querySelector<HTMLElement>("[data-work-row]");
+  const arrows = document.querySelector<HTMLElement>("[data-work-arrows]");
+  if (row && arrows) {
+    const prev = arrows.querySelector<HTMLButtonElement>("[data-work-prev]");
+    const next = arrows.querySelector<HTMLButtonElement>("[data-work-next]");
+    const step = () => {
+      const card = row.querySelector<HTMLElement>("li");
+      const gap = parseFloat(getComputedStyle(row).columnGap || "28") || 28;
+      return card ? card.offsetWidth + gap : row.clientWidth * 0.85;
+    };
+    const overflows = () => row.scrollWidth - row.clientWidth > 4;
+    const sync = () => {
+      arrows.hidden = !overflows();
+      if (prev) prev.disabled = row.scrollLeft <= 2;
+      if (next) next.disabled = row.scrollLeft >= row.scrollWidth - row.clientWidth - 2;
+    };
+    prev?.addEventListener("click", () => row.scrollBy({ left: -step(), behavior: "smooth" }));
+    next?.addEventListener("click", () => row.scrollBy({ left: step(), behavior: "smooth" }));
+    row.addEventListener("scroll", sync, { passive: true });
+    window.addEventListener("resize", sync, { passive: true });
+    sync();
+  }
+</script>
+
+<style>
+  .ws-h2 { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); line-height: var(--lh-heading); letter-spacing: var(--tracking-display); color: var(--c-ink); margin: 0.5rem 0 0; }
+  .ws-h2 :global(em) { font-style: italic; color: var(--c-accent); }
+  .ws-h3 { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); line-height: 1.1; color: var(--c-ink); margin: 0.5rem 0 0; }
+  .ws-mb { margin-bottom: 2.5rem; }
+  .ws-mb-s { margin-bottom: 1.25rem; }
+
+  .ws-split { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .ws-split__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); display: grid; grid-template-columns: 1fr; gap: 2rem; }
+  @media (min-width: 900px) { .ws-split__inner { grid-template-columns: 0.8fr 1.2fr; gap: 4rem; } }
+  .ws-lead { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.75; color: var(--c-ink-soft); margin: 0; }
+
+  .ws-inc { background: var(--c-bg-alt); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .ws-inc__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .ws-cap { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 0; border-top: 1px solid var(--c-line); }
+  @media (min-width: 760px) { .ws-cap { grid-template-columns: 1fr 1fr; column-gap: 4rem; } }
+  .ws-cap li { display: flex; gap: 1.25rem; align-items: baseline; padding: 1.4rem 0; border-bottom: 1px solid var(--c-line); }
+  .ws-cap__num { font-family: var(--w-font-display); font-weight: 600; color: var(--c-accent); }
+  .ws-cap__label { font-family: var(--w-font-display); font-size: 1.25rem; line-height: 1.25; color: var(--c-ink); }
+
+  .ws-proc { background: var(--c-dark); color: var(--c-on-dark); padding-block: var(--w-section-y); }
+  .ws-proc__inner { max-width: 1100px; margin: 0 auto; padding-inline: var(--w-gutter); }
+  .ws-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
+  @media (min-width: 760px) { .ws-steps { grid-template-columns: 1fr 1fr; gap: 3rem; } }
+  .ws-steps li { display: flex; gap: 1.25rem; }
+  .ws-steps__n { font-family: var(--w-font-display); font-weight: 700; font-size: 2.5rem; line-height: 1; color: var(--c-accent-2-bright); flex: 0 0 auto; }
+  .ws-steps__label { font-family: var(--w-font-display); font-weight: 600; font-size: 1.5rem; color: var(--c-on-dark); margin: 0; line-height: 1.15; }
+  .ws-steps__body { font-family: var(--w-font-body); font-size: 1rem; color: var(--c-on-dark-soft); line-height: 1.6; margin: 0.5rem 0 0; }
+
+  .ws-work { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .ws-work__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .ws-work__top { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1.25rem; margin-bottom: 2.5rem; }
+  .ws-work__controls { display: flex; align-items: center; gap: 1rem; }
+  .ws-work__all { white-space: nowrap; }
+  .ws-work__arrows { display: flex; gap: 0.6rem; }
+  .ws-arrow {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 48px; height: 48px; border-radius: 50%; background: transparent;
+    border: 1.5px solid var(--c-ink); color: var(--c-ink); cursor: pointer;
+    transition: background var(--w-dur-fast) var(--w-ease), color var(--w-dur-fast) var(--w-ease), opacity var(--w-dur-fast) var(--w-ease);
+  }
+  .ws-arrow:hover { background: var(--c-ink); color: var(--c-bg); }
+  .ws-arrow:disabled { opacity: 0.3; cursor: default; }
+  .ws-arrow:disabled:hover { background: transparent; color: var(--c-ink); }
+  /* Horizontal scroll row: cards of fixed width, swipe/scroll to see more. */
+  .ws-work__row {
+    list-style: none; margin: 0; padding: 0 0 1rem; display: flex; gap: 1.75rem;
+    overflow-x: auto; scroll-snap-type: x mandatory;
+    scrollbar-width: thin; scrollbar-color: var(--c-line) transparent;
+    /* bleed to the screen edge so the last card hints there's more */
+    margin-inline: calc(var(--w-gutter) * -1); padding-inline: var(--w-gutter);
+  }
+  .ws-work__row::-webkit-scrollbar { height: 6px; }
+  .ws-work__row::-webkit-scrollbar-thumb { background: var(--c-line); border-radius: 999px; }
+  .ws-work__row > li { flex: 0 0 clamp(260px, 80vw, 360px); scroll-snap-align: start; }
+  @media (min-width: 720px) { .ws-work__row > li { flex-basis: 360px; } }
+  .ws-work__row a { text-decoration: none; color: inherit; display: block; }
+  .ws-work__img { margin: 0; border: 1px solid var(--c-line); border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 4 / 3; box-shadow: var(--w-shadow-soft); }
+  .ws-work__img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .ws-work__name { display: block; font-family: var(--w-font-display); font-weight: 600; font-size: 1.25rem; margin-top: 1rem; }
+  .ws-work__tag { display: block; font-family: var(--w-font-body); font-size: 0.95rem; color: var(--c-ink-soft); margin-top: 0.3rem; line-height: 1.4; }
+
+  .ws-rel { background: var(--c-bg-alt); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .ws-rel__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); display: grid; grid-template-columns: 1fr; gap: 3rem; }
+  @media (min-width: 760px) { .ws-rel__inner { grid-template-columns: 1fr 1fr; gap: 4rem; } }
+  .ws-pills { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .ws-pills a {
+    display: inline-flex; padding: 0.6rem 1.1rem; border: 1px solid var(--c-line); border-radius: var(--radius-pill);
+    font-family: var(--w-font-body); font-size: 0.95rem; color: var(--c-ink); text-decoration: none; background: var(--c-bg);
+    transition: border-color var(--w-dur-fast) var(--w-ease), color var(--w-dur-fast) var(--w-ease);
+  }
+  .ws-pills a:hover { border-color: var(--c-ink); }
+
+  .ws-faq { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .ws-faq__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); display: grid; grid-template-columns: 1fr; gap: 3rem; }
+  @media (min-width: 940px) { .ws-faq__inner { grid-template-columns: 1.5fr 1fr; gap: 4rem; align-items: start; } }
+  .ws-faq__aside { }
+  @media (min-width: 940px) { .ws-faq__aside { position: sticky; top: 6rem; } }
+  .ws-faq__card { background: var(--c-dark); color: var(--c-on-dark); border-radius: var(--w-radius); padding: clamp(1.75rem, 3vw, 2.5rem); }
+  .ws-faq__card-h { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); line-height: 1.1; margin: 0.75rem 0 0; color: var(--c-on-dark); }
+  .ws-faq__card-b { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.6; color: var(--c-on-dark-soft); margin: 1rem 0 1.75rem; }
+  .ws-faq__list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--c-line); }
+  .ws-faq__list li { padding: 1.75rem 0; border-bottom: 1px solid var(--c-line); }
+  .ws-faq__q { font-family: var(--w-font-display); font-weight: 600; font-size: 1.3rem; color: var(--c-ink); margin: 0; }
+  .ws-faq__a { font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-ink-soft); line-height: 1.65; margin: 0.75rem 0 0; }
+</style>

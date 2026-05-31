@@ -1,6 +1,6 @@
 ---
 import { getCollection } from "astro:content";
-import ServicePageTemplate from "../../components/templates/ServicePageTemplate.astro";
+import WServiceTemplate from "../../components/templates/WServiceTemplate.astro";
 
 export async function getStaticPaths() {
   const entries = await getCollection("services");
@@ -13,4 +13,4 @@ export async function getStaticPaths() {
 const { data } = Astro.props;
 ---
 
-<ServicePageTemplate {...data} />
+<WServiceTemplate {...data} />

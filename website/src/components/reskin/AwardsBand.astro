@@ -1,0 +1,45 @@
+---
+// 2026 awards — dark trust band shared by the homepage and About page.
+// White-reversed logos on navy, result highlighted in the mint accent.
+interface Props {
+  heading?: string;
+}
+const { heading = "Recognised for the work." } = Astro.props;
+
+const awards = [
+  { result: "Gold", name: "Spider Awards", logo: "/images/spider-awards-rev.png", href: "/latest/spider-awards-2026-gold/" },
+  { result: "Finalist", name: "Digital Media Awards", logo: "/images/DMA-Generic-Pink-Blue-270x270-1-cutout.png", href: "/latest/digital-media-awards-seo-finalist/" },
+  { result: "Finalist", name: "European Search Awards", logo: "/images/European-Search-Awards-Logo_full_colour-cutout.png", href: "/latest/european-search-awards-two-nominations/" },
+];
+---
+
+<section class="aw">
+  <div class="aw__inner">
+    <p class="kicker kicker--on-dark kicker--script">2026 awards</p>
+    <h2 class="aw__title">{heading}</h2>
+    <ul class="aw__list">
+      {awards.map((a) => (
+        <li class="aw__item reveal">
+          <a href={a.href}>
+            <img class="aw__logo" src={a.logo} alt={a.name} loading="lazy" decoding="async" />
+            <span class="aw__txt"><b>{a.result}</b><span class="aw__sep">·</span>{a.name}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .aw { background: var(--c-dark); color: var(--c-on-dark); padding-block: var(--w-section-y); }
+  .aw__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .aw__title { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); line-height: var(--lh-heading); letter-spacing: var(--tracking-display); color: var(--c-on-dark); margin: 0.5rem 0 2.5rem; }
+  .aw__list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+  @media (min-width: 760px) { .aw__list { grid-template-columns: repeat(3, 1fr); gap: 2.5rem; } }
+  .aw__item a { display: flex; align-items: center; gap: 1rem; text-decoration: none; color: var(--c-on-dark); opacity: 0.85; transition: opacity var(--w-dur-fast) var(--w-ease); }
+  .aw__item a:hover { opacity: 1; }
+  .aw__logo { height: 56px; width: auto; filter: brightness(0) invert(1); }
+  .aw__txt { font-family: var(--w-font-body); font-size: 0.95rem; color: #fff; }
+  .aw__txt b { font-weight: 700; color: var(--c-accent-2); }
+  .aw__sep { padding: 0 0.45rem; opacity: 0.5; }
+</style>

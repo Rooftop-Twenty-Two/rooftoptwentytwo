@@ -1,8 +1,9 @@
 ---
 import { getCollection, render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
-import PortfolioDetailHero from "../../components/PortfolioDetailHero.astro";
-import CaseSection from "../../components/CaseSection.astro";
+import PageHero from "../../components/reskin/PageHero.astro";
+import WContactForm from "../../components/reskin/WContactForm.astro";
+import Picture from "../../components/Picture.astro";
 
 export async function getStaticPaths() {
   const entries = await getCollection("portfolio", ({ data }) => !data.needs_review);
@@ -14,446 +15,217 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
-const { name, tagline, summary, heroImage, wordmark, sections, services, gallery } = entry.data;
+const { name, tagline, summary, metaDescription, heroImage, sections, services, gallery, websiteUrl, videos } = entry.data;
 
-// Build the More Work strip: 3 next case studies in order, wrapping around.
 const allSorted = (await getCollection("portfolio", ({ data }) => !data.needs_review))
   .sort((a, b) => (a.data.order ?? 100) - (b.data.order ?? 100));
 const currentSlug = entry.id.replace(/\.mdx?$/, "");
-const currentIndex = allSorted.findIndex(
-  (e) => e.id.replace(/\.mdx?$/, "") === currentSlug
-);
-const moreWork = Array.from({ length: 3 }).map((_, i) => {
-  const idx = (currentIndex + 1 + i) % allSorted.length;
-  return allSorted[idx];
-});
+const currentIndex = allSorted.findIndex((e) => e.id.replace(/\.mdx?$/, "") === currentSlug);
+const moreWork = Array.from({ length: 3 }).map((_, i) => allSorted[(currentIndex + 1 + i) % allSorted.length]);
 
-// Interleave gallery images between sections.
-const interleavedAt = new Set<number>();
-const showcasePositions = [0, 2];
-const interleaved: { afterIndex: number; src: string }[] = [];
-let nextGalleryIndex = 0;
-for (const pos of showcasePositions) {
-  if (pos < sections.length && nextGalleryIndex < gallery.length) {
-    interleaved.push({ afterIndex: pos, src: gallery[nextGalleryIndex] });
-    interleavedAt.add(nextGalleryIndex);
-    nextGalleryIndex++;
-  }
-}
-const remainingGallery = gallery.filter((_, i) => !interleavedAt.has(i));
+// Case-study photography is interleaved between the narrative sections as large
+// image breakers (no standalone gallery). One image follows each section; any
+// remaining images become additional breakers before the prose. Breakers
+// alternate full-bleed / inset to open up the gaps and pace the page.
+const sectionImages = sections.map((_, i) => gallery[i] ?? null);
+const extraImages = gallery.slice(sections.length);
 ---
 
-<Layout
-  title={`${name} | Rooftop Twenty Two`}
-  description={summary ?? tagline ?? name}
-  theme="light"
->
-  <PortfolioDetailHero {name} {tagline} {heroImage} {wordmark} {services} />
+<Layout title={`${name} Case Study | Rooftop Twenty Two`} description={metaDescription ?? summary ?? tagline ?? name}>
+  <PageHero
+    kicker={(services ?? []).slice(0, 3).join(" · ") || "Case study"}
+    title={name}
+    intro={tagline ?? summary}
+    bg={heroImage}
+    primary={websiteUrl
+      ? { label: "Visit the website", href: websiteUrl, external: true }
+      : { label: "Start a similar project", href: "/contact/" }}
+    secondary={websiteUrl
+      ? { label: "Start a similar project", href: "/contact/" }
+      : { label: "All work", href: "/work/" }}
+  />
 
-  <div class="case-main" data-theme-switch>
-    <div class="mx-auto max-w-[1280px] px-6 md:px-12 case-grid">
-      <div class="case-body">
-        {sections.map((sec, i) => (
-          <>
-            <CaseSection number={sec.number} heading={sec.heading} bullets={sec.bullets}>
-              <p>{sec.body}</p>
-            </CaseSection>
-            {interleaved
-              .filter((il) => il.afterIndex === i)
-              .map((il) => (
-                <figure class="case-showcase">
-                  <img
-                    src={il.src}
-                    alt={`${name} project visual`}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </figure>
-              ))}
-          </>
-        ))}
-
-        <article class="case-article prose">
-          <Content />
-        </article>
-
-        <div class="case-back">
-          <a href="/work/" class="case-back__link">← Back to all projects</a>
-        </div>
-      </div>
-
-      <aside class="case-rail">
-        <div class="case-rail__card">
-          <p class="case-rail__eyebrow">Got a project in mind?</p>
-          <p class="case-rail__body">
-            Tell us what you're scaling, launching, or rebuilding. We'll send a thoughtful reply and a time to talk it through.
-          </p>
-          <a href="/contact/" class="case-rail__cta">Start the conversation →</a>
-        </div>
-      </aside>
-    </div>
-
-    {remainingGallery.length > 0 && (
-      <section class="case-gallery">
-        <div class="mx-auto max-w-[1440px] px-6 md:px-12">
-          <p class="case-gallery__eyebrow">Selected visuals</p>
-        </div>
-        <ul class="case-gallery__grid list-none p-0 m-0">
-          {remainingGallery.map((src, i) => (
-            <li
-              class:list={[
-                "case-gallery__item",
-                i % 5 === 0 ? "case-gallery__item--wide" : "",
-                i % 7 === 0 ? "case-gallery__item--tall" : "",
-              ]}
-            >
-              <img src={src} alt={`${name} project visual ${i + 1}`} loading="lazy" decoding="async" />
+  {videos.length > 0 && (
+    <section class="cs-videos">
+      <div class="cs-videos__inner">
+        <p class="kicker kicker--script">In motion</p>
+        <h2 class="cs-videos__h">The campaign, <em>in motion</em>.</h2>
+        <ul class="cs-videos__grid">
+          {videos.map((id) => (
+            <li class="cs-videos__item">
+              <div class="cs-videos__frame">
+                <iframe
+                  src={`https://player.mux.com/${id}`}
+                  title={`${name} campaign video`}
+                  loading="lazy"
+                  allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+                  allowfullscreen
+                ></iframe>
+              </div>
             </li>
           ))}
         </ul>
-      </section>
-    )}
-
-    <section class="more-work">
-      <div class="mx-auto max-w-[1440px] px-6 md:px-12">
-        <div class="more-work__head">
-          <p class="more-work__eyebrow">More work</p>
-          <a href="/work/" class="more-work__index">View all projects →</a>
-        </div>
-        <ul class="more-work__grid list-none p-0 m-0">
-          {moreWork.map((e) => {
-            const slug = e.id.replace(/\.mdx?$/, "");
-            const svcs = (e.data.services ?? []).slice(0, 2);
-            return (
-              <li class="more-work__card">
-                <a href={`/work/${slug}/`} class="more-work__link">
-                  <div
-                    class="more-work__banner"
-                    style={e.data.heroImage
-                      ? `background-image:url('${e.data.heroImage}');`
-                      : `background-color: var(--color-navy-700);`}
-                  >
-                    {e.data.wordmark && (
-                      <img
-                        class="more-work__wordmark"
-                        src={e.data.wordmark}
-                        alt={`${e.data.name} wordmark`}
-                        loading="lazy"
-                        decoding="async"
-                      />
-                    )}
-                    <div class="more-work__overlay" aria-hidden="true"></div>
-                  </div>
-                  <div class="more-work__meta">
-                    <h3 class="more-work__title">{e.data.name}</h3>
-                    {svcs.length > 0 && (
-                      <p class="more-work__svcs">{svcs.join(" · ")}</p>
-                    )}
-                  </div>
-                </a>
-              </li>
-            );
-          })}
-        </ul>
       </div>
     </section>
-  </div>
+  )}
+
+  <section class="cs-body">
+    {sections.map((sec, i) => (
+      <>
+        <div class="cs-wrap">
+          <div class="cs-sec reveal">
+            <div class="cs-sec__head">
+              <span class="cs-sec__n">{sec.number}</span>
+              <h2 class="cs-sec__h">{sec.heading}</h2>
+            </div>
+            <div class="cs-sec__content">
+              {sec.body.split(/\n{2,}/).filter((p) => p.trim()).map((p) => (
+                <p class="cs-sec__body">{p}</p>
+              ))}
+              {sec.bullets && sec.bullets.length > 0 && (
+                <ul class="cs-sec__bullets">
+                  {sec.bullets.map((b) => (<li>{b}</li>))}
+                </ul>
+              )}
+              {sec.groups && sec.groups.length > 0 && sec.groups.map((g) => (
+                <div class="cs-sec__group">
+                  <h3 class="cs-sec__grouph">{g.label}</h3>
+                  <ul class="cs-sec__bullets">
+                    {g.items.map((it) => (<li>{it}</li>))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        {sectionImages[i] && (
+          <figure class:list={["cs-breaker reveal", i % 2 === 0 ? "cs-breaker--bleed" : "cs-breaker--inset"]}>
+            <div class="cs-breaker__media r22-media">
+              <Picture src={sectionImages[i]} alt={`${name}, ${sec.heading}`} loading="lazy" decoding="async" />
+            </div>
+            <figcaption class="cs-breaker__cap">{name} <span aria-hidden="true">·</span> {sec.heading}</figcaption>
+          </figure>
+        )}
+      </>
+    ))}
+
+    {extraImages.map((src, j) => (
+      <figure class:list={["cs-breaker reveal", (sections.length + j) % 2 === 0 ? "cs-breaker--bleed" : "cs-breaker--inset"]}>
+        <div class="cs-breaker__media r22-media">
+          <Picture src={src} alt={`${name} project visual`} loading="lazy" decoding="async" />
+        </div>
+        <figcaption class="cs-breaker__cap">{name} <span aria-hidden="true">·</span> Selected work</figcaption>
+      </figure>
+    ))}
+
+    {(entry.body ?? "").trim().length > 0 && (
+      <div class="cs-wrap"><article class="cs-prose"><Content /></article></div>
+    )}
+  </section>
+
+  <WContactForm
+    heading={`Want results like ${name}'s? <em>Let's talk</em>.`}
+    routing={`project:${Astro.params.slug}`}
+    prefillSubject={`Project enquiry, inspired by ${name}`}
+  />
+
+  <section class="cs-more">
+    <div class="cs-more__inner">
+      <div class="cs-more__head">
+        <h2 class="cs-more__title">More work you&rsquo;ll like</h2>
+        <a href="/work/" class="wbtn wbtn--primary">View all projects</a>
+      </div>
+      <ul class="cs-more__grid">
+        {moreWork.map((e) => {
+          const slug = e.id.replace(/\.mdx?$/, "");
+          const svcs = (e.data.services ?? []).slice(0, 2);
+          return (
+            <li>
+              <a href={`/work/${slug}/`}>
+                <figure class="cs-more__img" style={e.data.heroImage ? undefined : "background:var(--c-line);"}>
+                  {e.data.heroImage && <Picture src={e.data.heroImage} alt={e.data.name} loading="lazy" decoding="async" />}
+                </figure>
+                <h3 class="cs-more__name">{e.data.name}</h3>
+                {svcs.length > 0 && <p class="cs-more__svcs">{svcs.join(" · ")}</p>}
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  </section>
+
 </Layout>
 
 <style>
-  /* Light body theme for the case study, overriding the site's dark default */
-  :global(body.theme-light) {
-    background-color: var(--color-stone-100, #F9F9F9);
-  }
-  .case-main {
-    background-color: var(--color-stone-100, #F9F9F9);
-    color: var(--color-text-on-light, #143A4F);
-  }
-  .case-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 2.5rem;
-    padding-bottom: clamp(3rem, 6vw, 5rem);
-  }
-  @media (min-width: 1024px) {
-    .case-grid {
-      grid-template-columns: minmax(0, 1fr) 300px;
-      gap: 4rem;
-    }
-  }
+  .cs-body { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y) 0; display: flex; flex-direction: column; gap: clamp(2.5rem, 5vw, 4.5rem); }
+  /* When the last item is a full-bleed (navy) breaker, let it run straight into
+   * the navy contact band with no white gap. */
+  .cs-body > .cs-breaker--bleed:last-child { margin-bottom: 0; }
+  .cs-wrap { max-width: 1100px; width: 100%; margin: 0 auto; padding-inline: var(--w-gutter); }
+  .cs-sec { display: grid; grid-template-columns: 1fr; gap: 1rem 3rem; }
+  @media (min-width: 860px) { .cs-sec { grid-template-columns: 0.8fr 1.2fr; } }
+  .cs-sec__head { display: flex; gap: 1rem; align-items: baseline; }
+  .cs-sec__n { font-family: var(--w-font-display); font-weight: 700; font-size: 1.5rem; color: var(--c-accent); }
+  .cs-sec__h { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); line-height: var(--lh-heading); letter-spacing: var(--tracking-display); margin: 0; }
+  .cs-sec__body { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.75; color: var(--c-ink-soft); margin: 0; }
+  .cs-sec__group { margin-top: 1.75rem; }
+  .cs-sec__grouph { font-family: var(--w-font-display); font-weight: 600; font-size: 1.15rem; color: var(--c-ink); margin: 0; }
+  .cs-sec__group + .cs-sec__group { margin-top: 1.5rem; }
+  .cs-sec__bullets { margin: 1.25rem 0 0; padding: 0; list-style: none; display: grid; gap: 0.6rem; }
+  .cs-sec__grouph + .cs-sec__bullets { margin-top: 0.75rem; }
+  .cs-sec__bullets li { font-family: var(--w-font-body); color: var(--c-ink-soft); line-height: 1.5; padding-left: 1.5rem; position: relative; }
+  .cs-sec__bullets li::before { content: ""; position: absolute; left: 0; top: 0.5em; width: 12px; height: 12px; background: var(--c-accent); border-radius: 0 100% 0 0; }
+  .cs-prose { max-width: 65ch; font-family: var(--w-font-body); font-size: 1.05rem; line-height: 1.75; color: var(--c-ink-soft); }
+  .cs-prose :global(h2), .cs-prose :global(h3) { font-family: var(--w-font-display); color: var(--c-ink); line-height: 1.15; margin: 2rem 0 0.75rem; }
+  .cs-prose :global(a) { color: var(--c-ink); text-decoration: underline; }
 
-  /* Sticky right rail (Deuce-style) */
-  .case-rail {
-    align-self: start;
-    width: 100%;
+  /* Interleaved image breakers (replace the old standalone gallery). Every image
+   * is framed consistently (border + radius + shadow, fixed 16:9) so busy client
+   * UI screenshots read as presented work, not raw bleed. "Feature" breakers sit
+   * on a calm navy mat band for brand contrast and pacing; the rest on the page. */
+  .cs-breaker { margin: 0; }
+  .cs-breaker__media {
+    width: min(1100px, calc(100% - 2 * var(--w-gutter)));
+    margin-inline: auto;
+    border-radius: var(--w-radius); border: 1px solid var(--c-line);
+    box-shadow: var(--w-shadow-soft); background: var(--c-bg-alt);
   }
-  @media (min-width: 1024px) {
-    .case-rail {
-      align-self: stretch;
-    }
+  .cs-breaker__media img { display: block; width: 100%; height: 100%; object-fit: cover; aspect-ratio: 16 / 9; }
+  .cs-breaker__cap {
+    width: min(1100px, calc(100% - 2 * var(--w-gutter)));
+    margin: 0.9rem auto 0;
+    font-family: var(--w-font-body); font-size: var(--fs-small); letter-spacing: 0.04em;
+    text-transform: uppercase; color: var(--c-ink-soft);
   }
-  .case-rail__card {
-    position: relative;
-    background: var(--color-coral, #E15047);
-    color: #ffffff;
-    border-radius: var(--radius-card-lg, 18px);
-    padding: 1.75rem 1.75rem 1.5rem;
-    box-shadow: 0 14px 36px rgba(225, 80, 71, 0.18);
-  }
-  @media (min-width: 1024px) {
-    .case-rail__card {
-      position: sticky;
-      top: 7.5rem;
-    }
-  }
-  .case-rail__eyebrow {
-    font-family: var(--font-display);
-    font-size: clamp(1.5rem, 1.8vw, 1.875rem);
-    line-height: 1.05;
-    letter-spacing: -0.01em;
-    margin: 0 0 0.875rem;
-    color: #ffffff;
-  }
-  .case-rail__body {
-    font-family: var(--font-sans);
-    font-size: 0.95rem;
-    line-height: 1.55;
-    color: rgba(255, 255, 255, 0.92);
-    margin: 0 0 1.25rem;
-  }
-  .case-rail__cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: #ffffff;
-    color: var(--color-coral, #E15047);
-    font-family: var(--font-sans);
-    font-weight: 600;
-    font-size: 0.95rem;
-    padding: 0.7rem 1.1rem;
-    border-radius: 9999px;
-    text-decoration: none;
-    transition: gap 180ms ease, transform 180ms ease;
-  }
-  .case-rail__cta:hover {
-    gap: 0.75rem;
-    transform: translateY(-1px);
-  }
+  .cs-breaker__cap span { color: var(--c-accent); padding: 0 0.2rem; }
 
-  .case-showcase {
-    margin: clamp(2rem, 4vw, 3rem) 0;
-    border-radius: var(--radius-card-lg, 18px);
-    overflow: hidden;
-    background-color: rgba(255, 255, 255, 0.4);
-  }
-  .case-showcase img {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-  .case-article {
-    margin: clamp(2rem, 4vw, 3rem) 0;
-    color: var(--color-text-on-light, #143A4F);
-    font-family: var(--font-sans);
-    font-size: 1.0625rem;
-    line-height: 1.7;
-    max-width: 60ch;
-  }
-  .case-article :global(h2),
-  .case-article :global(h3),
-  .case-article :global(h4) {
-    font-family: var(--font-display);
-    color: var(--color-text-on-light, #143A4F);
-    line-height: 1.15;
-    letter-spacing: -0.01em;
-    margin-top: 2rem;
-    margin-bottom: 0.75rem;
-  }
-  .case-article :global(p) {
-    margin-bottom: 1rem;
-  }
-  .case-article :global(a) {
-    color: var(--color-coral, #E15047);
-    text-decoration: underline;
-  }
-  /* Selected visuals: full-bleed grid, no max-width container. */
-  .case-gallery {
-    margin: clamp(2rem, 5vw, 4rem) 0 clamp(2rem, 4vw, 3rem);
-    padding: 0;
-  }
-  .case-gallery__eyebrow {
-    font-family: var(--font-sans);
-    font-size: 0.75rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: rgba(20, 58, 79, 0.55);
-    margin: 0 0 1rem;
-  }
-  .case-gallery__grid {
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-auto-rows: minmax(240px, auto);
-    gap: 0.5rem;
-  }
-  @media (min-width: 768px) {
-    .case-gallery__grid {
-      grid-template-columns: repeat(3, 1fr);
-      grid-auto-rows: minmax(320px, auto);
-      gap: 0.75rem;
-    }
-  }
-  @media (min-width: 1280px) {
-    .case-gallery__grid {
-      grid-template-columns: repeat(4, 1fr);
-      grid-auto-rows: minmax(380px, auto);
-    }
-  }
-  .case-gallery__item {
-    overflow: hidden;
-    border-radius: var(--radius-card-md, 14px);
-    background-color: rgba(255, 255, 255, 0.5);
-  }
-  .case-gallery__item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform 600ms ease;
-  }
-  .case-gallery__item:hover img {
-    transform: scale(1.03);
-  }
-  .case-gallery__item--wide {
-    grid-column: span 2;
-  }
-  .case-gallery__item--tall {
-    grid-row: span 2;
-  }
-  .case-back {
-    margin-top: clamp(3rem, 5vw, 4rem);
-  }
-  .case-back__link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.7rem 1.25rem;
-    border: 1.5px solid rgba(20, 58, 79, 0.2);
-    border-radius: 9999px;
-    color: var(--color-text-on-light, #143A4F);
-    font-family: var(--font-sans);
-    font-weight: 500;
-    text-decoration: none;
-    transition: background 180ms ease, gap 180ms ease;
-  }
-  .case-back__link:hover {
-    background: rgba(20, 58, 79, 0.05);
-    gap: 0.75rem;
-  }
+  /* Feature breaker, framed on a navy band. */
+  .cs-breaker--bleed { background: var(--c-dark); padding-block: clamp(2.5rem, 5vw, 4.5rem); }
+  .cs-breaker--bleed .cs-breaker__media { border-color: var(--c-line-dark); background: var(--c-dark-2); }
+  .cs-breaker--bleed .cs-breaker__cap { color: var(--c-on-dark-soft); }
 
-  /* More work strip (Deuce-style) */
-  .more-work {
-    margin-top: clamp(2rem, 5vw, 4rem);
-    padding-top: clamp(3rem, 5vw, 4rem);
-    padding-bottom: clamp(3rem, 5vw, 4rem);
-    border-top: 1px solid rgba(20, 58, 79, 0.1);
-  }
-  .more-work__head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-bottom: clamp(2rem, 3vw, 2.5rem);
-  }
-  .more-work__eyebrow {
-    font-family: var(--font-display);
-    font-size: clamp(1.75rem, 3vw, 2.5rem);
-    line-height: 1.05;
-    letter-spacing: -0.015em;
-    color: var(--color-text-on-light, #143A4F);
-    margin: 0;
-  }
-  .more-work__index {
-    font-family: var(--font-sans);
-    font-size: 0.95rem;
-    color: var(--color-coral, #E15047);
-    font-weight: 600;
-    text-decoration: none;
-    transition: gap 180ms ease;
-  }
-  .more-work__index:hover {
-    text-decoration: underline;
-  }
-  .more-work__grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-  @media (min-width: 768px) {
-    .more-work__grid {
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem;
-    }
-  }
-  .more-work__card {
-    border-radius: var(--radius-card-md, 14px);
-    overflow: hidden;
-    background-color: rgba(255, 255, 255, 0.4);
-    transition: transform 280ms ease;
-  }
-  .more-work__card:hover {
-    transform: translateY(-4px);
-  }
-  .more-work__link {
-    display: block;
-    color: var(--color-text-on-light, #143A4F);
-    text-decoration: none;
-  }
-  .more-work__banner {
-    position: relative;
-    aspect-ratio: 4 / 3;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-  }
-  .more-work__overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.0) 50%, rgba(0,0,0,0.18) 100%);
-    pointer-events: none;
-  }
-  .more-work__wordmark {
-    position: relative;
-    z-index: 1;
-    max-width: 60%;
-    max-height: 80px;
-    width: auto;
-    height: auto;
-    object-fit: contain;
-    filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.2));
-  }
-  .more-work__meta {
-    padding: 1.125rem 1.25rem 1.375rem;
-  }
-  .more-work__title {
-    font-family: var(--font-display);
-    font-size: 1.25rem;
-    line-height: 1.1;
-    letter-spacing: -0.01em;
-    margin: 0 0 0.375rem;
-    color: var(--color-text-on-light, #143A4F);
-  }
-  .more-work__svcs {
-    font-family: var(--font-sans);
-    font-size: 0.75rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: rgba(20, 58, 79, 0.55);
-    margin: 0;
-  }
+  /* Vertical campaign videos (Mux), shown as a reels grid on a dark band. */
+  .cs-videos { background: var(--c-dark); color: var(--c-on-dark); padding-block: var(--w-section-y); }
+  .cs-videos__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .cs-videos__h { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); line-height: var(--lh-heading); letter-spacing: var(--tracking-display); color: var(--c-on-dark); margin: 0.3rem 0 2.5rem; }
+  .cs-videos__h em { font-style: italic; color: var(--c-accent-2); }
+  .cs-videos__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+  @media (min-width: 640px) { .cs-videos__grid { grid-template-columns: repeat(3, 1fr); gap: 1.25rem; } }
+  @media (min-width: 980px) { .cs-videos__grid { grid-template-columns: repeat(4, 1fr); } }
+  .cs-videos__frame { position: relative; aspect-ratio: 607 / 1080; border-radius: var(--w-radius); overflow: hidden; background: #000; border: 1px solid var(--c-line-dark); }
+  .cs-videos__frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+  .cs-more { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .cs-more__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .cs-more__head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
+  .cs-more__title { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); letter-spacing: var(--tracking-display); margin: 0; }
+  .cs-more__grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 2rem; }
+  @media (min-width: 760px) { .cs-more__grid { grid-template-columns: repeat(3, 1fr); } }
+  .cs-more__grid a { text-decoration: none; color: inherit; display: block; }
+  .cs-more__img { margin: 0; border: 1px solid var(--c-line); border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 4 / 3; background: var(--c-bg-alt); box-shadow: var(--w-shadow-soft); }
+  .cs-more__img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform var(--w-dur) var(--w-ease); }
+  .cs-more__grid a:hover .cs-more__img img { transform: scale(1.04); }
+  .cs-more__name { font-family: var(--w-font-display); font-weight: 600; font-size: 1.25rem; margin: 1rem 0 0; }
+  .cs-more__svcs { font-family: var(--w-font-body); font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--c-ink-soft); margin: 0.3rem 0 0; }
 </style>

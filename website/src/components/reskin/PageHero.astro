@@ -1,0 +1,74 @@
+---
+// S2, Compact page hero (re-skin). Kicker + big H1 + intro + optional CTAs,
+// on a near-black band with an optional faded background image.
+interface Props {
+  kicker?: string;
+  title: string;
+  intro?: string;
+  bg?: string;
+  primary?: { label: string; href: string; external?: boolean };
+  secondary?: { label: string; href: string; external?: boolean };
+}
+import { existsSync } from "node:fs";
+import path from "node:path";
+const { kicker, title, intro, bg, primary, secondary } = Astro.props;
+
+// Prefer a generated WebP for the (heavy) hero background; fall back to original.
+let bgUrl: string | undefined;
+if (bg) {
+  const ext = path.extname(bg).toLowerCase();
+  const webp = [".png", ".jpg", ".jpeg"].includes(ext) ? bg.slice(0, -ext.length) + ".webp" : null;
+  const hasWebp = webp && existsSync(path.join(process.cwd(), "public", webp));
+  bgUrl = `url('${hasWebp ? webp : bg}')`;
+}
+---
+
+<section class="ph" style={bgUrl ? `--ph-bg:${bgUrl}` : undefined} data-has-bg={bg ? "true" : undefined}>
+  <div class="ph__inner">
+    {kicker && <p class="kicker kicker--on-dark kicker--script">{kicker}</p>}
+    <h1 class="ph__title" set:html={title} />
+    {intro && <p class="ph__intro">{intro}</p>}
+    {(primary || secondary) && (
+      <div class="ph__cta">
+        {primary && (
+          <a href={primary.href} class="wbtn wbtn--accent" {...(primary.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
+            {primary.label}{primary.external && <span class="ph__ext" aria-hidden="true">&#8599;</span>}
+          </a>
+        )}
+        {secondary && (
+          <a href={secondary.href} class="wbtn wbtn--ghost ph__ghost" {...(secondary.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
+            {secondary.label}{secondary.external && <span class="ph__ext" aria-hidden="true">&#8599;</span>}
+          </a>
+        )}
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .ph {
+    position: relative; isolation: isolate;
+    background: var(--c-dark); color: var(--c-on-dark);
+    padding-block: clamp(7rem, 14vw, 11rem) var(--w-section-y);
+  }
+  .ph[data-has-bg] {
+    background-image:
+      linear-gradient(rgba(13,32,48,0.82), rgba(13,32,48,0.9)), var(--ph-bg);
+    background-size: cover; background-position: center;
+  }
+  .ph__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .ph__title {
+    font-family: var(--w-font-display); font-weight: 600;
+    font-size: var(--fs-display); line-height: var(--lh-display);
+    letter-spacing: var(--tracking-display); color: var(--c-on-dark);
+    margin: 1.25rem 0 0; max-width: 18ch;
+  }
+  .ph__title :global(em) { font-style: normal; color: var(--c-accent-2-bright); }
+  .ph__intro {
+    font-family: var(--w-font-body); font-size: var(--fs-body); line-height: var(--lh-body);
+    color: var(--c-on-dark-soft); margin: 1.5rem 0 0; max-width: 52ch;
+  }
+  .ph__cta { display: flex; flex-wrap: wrap; gap: 0.85rem; margin-top: 2.25rem; }
+  .ph__ghost { color: var(--c-on-dark); }
+  .ph__ext { margin-left: 0.45rem; font-weight: 700; }
+</style>

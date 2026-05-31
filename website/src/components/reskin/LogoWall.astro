@@ -1,0 +1,62 @@
+---
+// S4, Logo wall / trust bar. Monochrome (white) client logos on a dark band,
+// scrolling as a seamless left-to-right marquee.
+const logos = [
+  { src: "/images/logos/GFP_Rev.svg", alt: "Gourmet Food Parlour" },
+  { src: "/images/logos/ILT_Rev.svg", alt: "Irish Landmark Trust" },
+  { src: "/images/logos/TC-Matthews_Rev.svg", alt: "TC Matthews" },
+  { src: "/images/logos/MIG_Rev.svg", alt: "McCarthy Insurance Group" },
+  { src: "/images/logos/1934_Rev.svg", alt: "The 1933 Furniture Company" },
+  { src: "/images/logos/Shomera_Rev.svg", alt: "Shomera" },
+  { src: "/images/logos/GCJ_Rev.png", alt: "Guinness Cork Jazz" },
+  { src: "/images/logos/Irish-Defence-Forces_Rev.png", alt: "Irish Defence Forces" },
+  { src: "/images/logos/Laya_Rev.png", alt: "Laya Healthcare" },
+  { src: "/images/logos/Elephant-Castle_Rev.png", alt: "Elephant & Castle" },
+  { src: "/images/logos/Captain-Americas_Rev.png", alt: "Captain Americas Cookhouse and Bar" },
+];
+// Repeat into a long track so a single half fills wide viewports; the track is
+// then two identical halves, which lets the -50% → 0 animation loop seamlessly.
+const half = [...logos, ...logos];
+const track = [...half, ...half];
+---
+
+<section class="lw">
+  <div class="lw__inner">
+    <p class="kicker kicker--on-dark">Trusted by ambitious Irish brands</p>
+  </div>
+  <div class="lw__marquee" data-marquee="38" data-marquee-dir="reverse" aria-hidden="false">
+    <ul class="lw__track" role="list">
+      {track.map((l, i) => (
+        <li aria-hidden={i >= half.length ? "true" : "false"}>
+          <img src={l.src} alt={i >= half.length ? "" : l.alt} loading="lazy" decoding="async" />
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .lw { background: var(--c-dark); color: var(--c-on-dark); padding-block: clamp(3rem, 6vw, 5rem); overflow: hidden; }
+  .lw__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .lw__marquee { margin-top: 2.25rem; overflow: hidden; }
+  .lw__track {
+    list-style: none; margin: 0; padding: 0;
+    display: flex; align-items: center; width: max-content;
+  }
+  /* Spacing as per-item margin (not flex gap) so the two halves are exactly equal
+   * width and the -50% loop is seamless (no jump at the wrap). */
+  .lw__track li { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; margin-right: clamp(2.5rem, 5vw, 5rem); }
+  .lw__track img {
+    max-height: 38px; width: auto; height: auto;
+    opacity: 0.7; transition: opacity var(--w-dur-fast) var(--w-ease);
+  }
+  /* The _Rev SVGs are already white; only the colour PNG needs whitening.
+   * (Avoids applying a CSS filter to the SVGs, which can blank them on iOS Safari.) */
+  .lw__track img[src$=".png"] { filter: brightness(0) invert(1); }
+  .lw__track li:hover img { opacity: 1; }
+  /* Reduced motion: the JS leaves the strip static — allow manual swipe instead. */
+  @media (prefers-reduced-motion: reduce) {
+    .lw__marquee { overflow-x: auto; scrollbar-width: none; }
+    .lw__marquee::-webkit-scrollbar { display: none; }
+  }
+</style>

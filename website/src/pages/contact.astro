@@ -1,12 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import Signature from "../components/Signature.astro";
-import PressToTalkRing from "../components/PressToTalkRing.astro";
 
-// URL pre-fill: ?sector=hotels, ?programme=strategic-marketing-review,
-// ?service=seo. We read these server-side from the request URL and use them
-// to pre-populate the hidden routing field. The client-side script then
-// flips them into a friendly subject + opening message.
+// URL pre-fill: ?sector= / ?programme= / ?service= → hidden routing field + a
+// friendly pre-filled subject/message.
 const url = Astro.url;
 const sectorParam = url.searchParams.get("sector") ?? "";
 const programmeParam = url.searchParams.get("programme") ?? "";
@@ -16,29 +12,20 @@ const routingValue = [
   sectorParam && `sector:${sectorParam}`,
   programmeParam && `programme:${programmeParam}`,
   serviceParam && `service:${serviceParam}`,
-]
-  .filter(Boolean)
-  .join("|");
+].filter(Boolean).join("|");
 
 function titleCase(s: string) {
-  return s
-    .split("-")
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(" ");
+  return s.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
 }
 
 let prefillSubject = "";
 let prefillMessage = "";
 if (programmeParam) {
   prefillSubject = `Programme: ${titleCase(programmeParam)}`;
-  prefillMessage = `Hi, I'd like to talk about the ${titleCase(programmeParam)} programme${
-    sectorParam ? ` for our ${titleCase(sectorParam)} business` : ""
-  }.\n\n`;
+  prefillMessage = `Hi, I'd like to talk about the ${titleCase(programmeParam)} programme${sectorParam ? ` for our ${titleCase(sectorParam)} business` : ""}.\n\n`;
 } else if (sectorParam && serviceParam) {
   prefillSubject = `${titleCase(serviceParam)} for ${titleCase(sectorParam)}`;
-  prefillMessage = `Hi, we're looking at ${titleCase(serviceParam)} for our ${titleCase(
-    sectorParam
-  )} business and would like to talk.\n\n`;
+  prefillMessage = `Hi, we're looking at ${titleCase(serviceParam)} for our ${titleCase(sectorParam)} business and would like to talk.\n\n`;
 } else if (sectorParam) {
   prefillSubject = `Marketing for ${titleCase(sectorParam)}`;
   prefillMessage = `Hi, we work in ${titleCase(sectorParam)} and would like to talk about marketing.\n\n`;
@@ -46,99 +33,124 @@ if (programmeParam) {
   prefillSubject = `${titleCase(serviceParam)} enquiry`;
   prefillMessage = `Hi, we're interested in ${titleCase(serviceParam)}.\n\n`;
 }
+
+const mapsQuery = "Rooftop Twenty Two, Claremont Avenue, Glasnevin, Dublin 11";
+const mapEmbed = `https://www.google.com/maps?q=${encodeURIComponent(mapsQuery)}&output=embed`;
+const directions = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(mapsQuery)}`;
 ---
 
-<Layout title="Contact | Rooftop Twenty Two" description="Get in touch with Rooftop Twenty Two, an independent branding and digital design studio in Dublin.">
-  <section id="contact" class="mx-auto max-w-[1440px] px-6 md:px-12 pt-10 md:pt-16 pb-24 md:pb-32">
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16">
-      <div class="md:col-span-7 max-w-2xl">
-        <Signature text="Get in touch!" tone="coral" rotate={-3} />
-        <h1
-          class="mt-6"
-          style="font-family:var(--font-display);font-size:clamp(2rem, 4vw, 3.5rem);color:var(--color-text-on-dark);line-height:1.1;letter-spacing:-0.01em;"
-        >
-          Rooftop Twenty Two is an independent branding and digital design studio that develops brands, strategies, and experiences for exceptional companies.
-        </h1>
+<Layout title="Contact | Marketing Agency Dublin | Rooftop Twenty Two" description="Get in touch with Rooftop Twenty Two, a marketing and design agency in Dublin. Tell us what you're launching, scaling, or rebuilding and we'll be in touch." hideStickyMobileCTA={true}>
+  <section id="contact" class="ct">
+    <div class="ct__inner">
 
-        <div class="mt-8 flex flex-wrap gap-3">
-          <a href="mailto:hey@rooftoptwentytwo.ie" class="btn-pill btn-pill--mint">hey@rooftoptwentytwo.ie</a>
-          <a href="tel:+35316991422" class="btn-pill btn-pill--mint">01 699 1422</a>
+      <!-- Row 1: intro (photo) + form -->
+      <div class="ct__top">
+        <div class="ct__intro" style="--ct-photo:url('/images/office/office-collab-01.jpg')">
+          <div class="ct__intro-inner">
+            <div>
+              <p class="kicker kicker--on-dark kicker--script">Get in touch</p>
+              <h1 class="ct__title">Let&rsquo;s build your <em>growth</em>.</h1>
+              <p class="ct__lead">Tell us what you&rsquo;re scaling, launching, or rebuilding. You&rsquo;ll get a thoughtful reply from a senior, in-house team, and a time to talk it through.</p>
+            </div>
+            <div class="ct__social">
+              <p class="ct__social-label">We&rsquo;re very social</p>
+              <div class="ct__social-links">
+                <a href="https://ie.linkedin.com/company/rooftop-twenty-two" target="_blank" rel="noopener" aria-label="LinkedIn">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.36V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.62 0 4.29 2.38 4.29 5.48v6.26zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zm1.78 13.02H3.55V9h3.57v11.45z" /></svg>
+                </a>
+                <a href="https://www.instagram.com/rooftoptwentytwo/" target="_blank" rel="noopener" aria-label="Instagram">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none" /></svg>
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="mt-4 flex flex-wrap gap-3">
-          <a href="https://www.instagram.com/" class="btn-pill btn-pill--mint">instagram</a>
-          <a href="https://www.linkedin.com/" class="btn-pill btn-pill--mint">linkedin</a>
+
+        <form class="ct__form" action="/api/contact/" method="POST" novalidate data-contact-form>
+          <input type="hidden" name="routing" value={routingValue} />
+          <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" />
+          <p data-form-status role="status" aria-live="polite" class="ct__field--full" style="margin:0;font-family:var(--w-font-body);font-size:0.9rem;"></p>
+          <label class="ct__field"><span>First name</span><input type="text" name="name" required placeholder="Your name" /></label>
+          <label class="ct__field"><span>Email</span><input type="email" name="email" required placeholder="you@company.com" /></label>
+          <label class="ct__field"><span>Phone</span><input type="tel" name="phone" placeholder="Optional" /></label>
+          <label class="ct__field"><span>Company</span><input type="text" name="company" placeholder="Optional" /></label>
+          <label class="ct__field ct__field--full"><span>Subject</span><input type="text" name="subject" placeholder="What's this about?" value={prefillSubject} /></label>
+          <label class="ct__field ct__field--full"><span>Message</span><textarea name="message" required rows="5" placeholder="Tell us a little about your project">{prefillMessage}</textarea></label>
+          <button type="submit" class="wbtn wbtn--accent ct__submit">Send message</button>
+        </form>
+      </div>
+
+      <!-- Row 2: details + map -->
+      <div class="ct__bottom">
+        <div class="ct__details">
+          <figure class="ct__details-photo"><img src="/images/office/office-studio-01.jpg" alt="The Rooftop Twenty Two studio" loading="lazy" decoding="async" /></figure>
+          <div class="ct__details-info">
+            <a class="ct__line" href="tel:+35316991422"><span class="ct__line-ic" aria-hidden="true">&#9742;</span> +353 1 699 1422</a>
+            <a class="ct__line" href="mailto:hey@rooftoptwentytwo.ie"><span class="ct__line-ic" aria-hidden="true">&#9993;</span> hey@rooftoptwentytwo.ie</a>
+            <p class="ct__office-label">Head Office</p>
+            <address class="ct__addr">Rooftop Twenty Two, Claremont Avenue,<br />Glasnevin, Dublin 11, D11 YNR2</address>
+            <p class="ct__office-label">Sandyford Office</p>
+            <address class="ct__addr">Suite 16, Beacon Court, Beacon Mall,<br />Sandyford, Dublin 18, D18 WV72</address>
+            <a class="ct__directions" href={directions} target="_blank" rel="noopener">Get directions &rarr;</a>
+          </div>
+        </div>
+
+        <div class="ct__map">
+          <iframe src={mapEmbed} title="Map to Rooftop Twenty Two" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
         </div>
       </div>
 
-      <div class="md:col-span-5 flex items-start justify-end">
-        <div class="text-[var(--color-mint)]">
-          <PressToTalkRing size={140} />
-        </div>
-      </div>
     </div>
-
-    <form
-      action="/api/contact"
-      method="POST"
-      class="mt-16 md:mt-24 grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-5"
-      novalidate
-      data-contact-form
-    >
-      <input type="hidden" name="routing" value={routingValue} />
-
-      <label class="md:col-span-4 block">
-        <span class="sr-only">Name</span>
-        <input
-          type="text"
-          name="name"
-          required
-          placeholder="Name"
-          class="w-full px-5 py-4"
-          style="background-color:var(--color-navy-700);color:var(--color-text-on-dark);border-radius:var(--radius-input);border:1px solid rgba(255,255,255,0.06);font-family:var(--font-sans);"
-        />
-      </label>
-      <label class="md:col-span-4 block">
-        <span class="sr-only">Email</span>
-        <input
-          type="email"
-          name="email"
-          required
-          placeholder="Email"
-          class="w-full px-5 py-4"
-          style="background-color:var(--color-navy-700);color:var(--color-text-on-dark);border-radius:var(--radius-input);border:1px solid rgba(255,255,255,0.06);font-family:var(--font-sans);"
-        />
-      </label>
-      <label class="md:col-span-4 block">
-        <span class="sr-only">Subject</span>
-        <input
-          type="text"
-          name="subject"
-          placeholder="Subject"
-          value={prefillSubject}
-          class="w-full px-5 py-4"
-          style="background-color:var(--color-navy-700);color:var(--color-text-on-dark);border-radius:var(--radius-input);border:1px solid rgba(255,255,255,0.06);font-family:var(--font-sans);"
-        />
-      </label>
-
-      <label class="md:col-span-8 md:row-span-3 block">
-        <span class="sr-only">Message</span>
-        <textarea
-          name="message"
-          required
-          placeholder="Message"
-          rows="8"
-          class="w-full h-full min-h-[260px] px-5 py-4 resize-none"
-          style="background-color:var(--color-navy-700);color:var(--color-text-on-dark);border-radius:var(--radius-input);border:1px solid rgba(255,255,255,0.06);font-family:var(--font-sans);"
-        >{prefillMessage}</textarea>
-      </label>
-
-      <button
-        type="submit"
-        class="md:col-span-4 md:row-span-3 flex items-center justify-center text-center transition-transform hover:scale-[1.01] active:scale-[0.99]"
-        style={`background-color:var(--color-mint);color:var(--color-navy-900);border-radius:var(--radius-card-lg);font-family:var(--font-sans);font-weight:600;font-size:var(--text-body);min-height:160px;`}
-      >
-        Submit
-      </button>
-    </form>
   </section>
 </Layout>
+
+<style>
+  .ct { background: var(--c-bg); color: var(--c-ink); padding-block: clamp(6rem, 12vw, 9rem) var(--w-section-y); }
+  .ct__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); display: flex; flex-direction: column; gap: 1.5rem; }
+
+  /* Row 1 */
+  .ct__top { display: grid; grid-template-columns: 1fr; gap: 1.5rem; align-items: stretch; }
+  @media (min-width: 940px) { .ct__top { grid-template-columns: 1fr 1.1fr; } }
+
+  .ct__intro { position: relative; overflow: hidden; border-radius: var(--w-radius); background: var(--c-dark); min-height: 420px; }
+  .ct__intro::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(13,32,48,0.72), rgba(13,32,48,0.92)), var(--ct-photo); background-size: cover; background-position: center; }
+  .ct__intro-inner { position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; justify-content: space-between; gap: 2.5rem; padding: clamp(1.75rem, 3vw, 2.75rem); color: var(--c-on-dark); }
+  .ct__title { font-family: var(--w-font-display); font-weight: 600; font-size: clamp(2.25rem, 3.5vw, 3.25rem); line-height: 1.04; letter-spacing: var(--tracking-display); margin: 1rem 0 0; color: var(--c-on-dark); }
+  .ct__title em { font-style: normal; color: var(--c-accent-2); }
+  .ct__lead { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.6; color: var(--c-on-dark-soft); margin: 1.25rem 0 0; max-width: 40ch; }
+  .ct__social-label { font-family: var(--w-font-body); font-weight: 700; font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c-on-dark-soft); margin: 0 0 0.85rem; }
+  .ct__social-links { display: flex; gap: 0.6rem; }
+  .ct__social-links a { display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.25); color: #fff; transition: background-color var(--w-dur-fast) var(--w-ease), border-color var(--w-dur-fast) var(--w-ease); }
+  .ct__social-links a:hover { background: var(--c-accent); border-color: var(--c-accent); }
+
+  .ct__form { background: var(--c-dark); color: var(--c-on-dark); border-radius: var(--w-radius); padding: clamp(1.75rem, 3vw, 2.75rem); display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 1.25rem; align-content: start; }
+  .ct__field { display: flex; flex-direction: column; gap: 0.4rem; }
+  .ct__field--full { grid-column: 1 / -1; }
+  .ct__field span { font-family: var(--w-font-body); font-size: var(--fs-small); color: var(--c-on-dark-soft); }
+  .ct__field input, .ct__field textarea {
+    width: 100%; padding: 0.9rem 1.1rem; border-radius: 14px;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.16);
+    color: var(--c-on-dark); font-family: var(--w-font-body); font-size: 1rem; resize: vertical;
+  }
+  .ct__field input::placeholder, .ct__field textarea::placeholder { color: rgba(255,255,255,0.4); }
+  .ct__field input:focus-visible, .ct__field textarea:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; border-color: transparent; }
+  .ct__submit { grid-column: 1 / -1; justify-self: start; margin-top: 0.25rem; }
+
+  /* Row 2 */
+  .ct__bottom { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+  @media (min-width: 940px) { .ct__bottom { grid-template-columns: 0.85fr 1.15fr; } }
+  .ct__details { background: var(--c-dark); color: var(--c-on-dark); border-radius: var(--w-radius); overflow: hidden; display: flex; flex-direction: column; }
+  .ct__details-photo { margin: 0; aspect-ratio: 16 / 10; }
+  .ct__details-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .ct__details-info { padding: clamp(1.5rem, 3vw, 2rem); display: flex; flex-direction: column; gap: 0.75rem; }
+  .ct__line { display: inline-flex; align-items: center; gap: 0.6rem; font-family: var(--w-font-body); font-weight: 600; color: var(--c-on-dark); text-decoration: none; }
+  .ct__line:hover { color: var(--c-accent-2); }
+  .ct__line-ic { color: var(--c-accent-2); }
+  .ct__office-label { font-family: var(--w-font-body); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--c-accent-2); margin: 1rem 0 0; }
+  .ct__addr { font-style: normal; font-family: var(--w-font-body); color: var(--c-on-dark-soft); line-height: 1.6; margin-top: 0.25rem; }
+  .ct__directions { font-family: var(--w-font-body); font-weight: 600; color: var(--c-accent); text-decoration: none; margin-top: 0.25rem; }
+  .ct__directions:hover { text-decoration: underline; }
+
+  .ct__map { border-radius: var(--w-radius); overflow: hidden; border: 1px solid var(--c-line); min-height: 320px; background: var(--c-bg-alt); }
+  .ct__map iframe { width: 100%; height: 100%; min-height: 320px; border: 0; display: block; filter: grayscale(0.2); }
+</style>

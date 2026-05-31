@@ -1,0 +1,38 @@
+---
+// S12, Impact stats strip. Real aggregate numbers (mirrors the figures already
+// asserted across the site), animated via the Odometer component. Off-white.
+import Odometer from "./Odometer.astro";
+---
+
+<section class="is">
+  <div class="is__wrap">
+    <div class="is__head reveal">
+      <p class="kicker kicker--script">By the numbers</p>
+      <h2 class="is__title">A decade of growth, <em>measured</em>.</h2>
+      <p class="is__lead">Real outcomes for ambitious Irish brands, strategy, creative, web and performance, all under one roof.</p>
+    </div>
+    <div class="is__inner reveal">
+      <Odometer to={8000} suffix="+" label="Projects completed" />
+      <Odometer to={10} suffix="+ yrs" label="Building Irish brands" />
+      <Odometer to={100} suffix="%" label="In-house: creative, web, paid & SEO" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .is { background: var(--c-bg-alt); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .is__wrap { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .is__head { max-width: 46ch; }
+  .is__title {
+    font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2);
+    line-height: var(--lh-heading); letter-spacing: var(--tracking-display); margin: 0.5rem 0 0;
+  }
+  .is__title em { font-style: italic; color: var(--c-accent); }
+  .is__lead { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: var(--lh-body); color: var(--c-ink-soft); margin: 1rem 0 0; }
+  .is__inner {
+    display: grid; grid-template-columns: 1fr; gap: 3rem;
+    margin-top: clamp(2.5rem, 5vw, 4rem); padding-top: clamp(2.5rem, 5vw, 4rem);
+    border-top: 1px solid var(--c-line);
+  }
+  @media (min-width: 760px) { .is__inner { grid-template-columns: repeat(3, 1fr); gap: 2rem; } }
+</style>

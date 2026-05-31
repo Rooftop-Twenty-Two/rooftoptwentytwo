@@ -1,50 +1,63 @@
 ---
+import BrandTicker from "./reskin/BrandTicker.astro";
 const year = new Date().getFullYear();
 ---
 
-<footer style="background-color:var(--color-page-bg);color:var(--color-text-on-dark);" class="pt-20 md:pt-32 pb-8">
+<BrandTicker variant="dark" />
+
+<footer style="background-color:var(--c-dark);color:var(--c-on-dark);" class="pt-20 md:pt-28 pb-8">
   <div class="mx-auto max-w-[1440px] px-6 md:px-12">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
-      <h2
-        class="leading-none"
-        style="font-family:var(--font-display);font-size:clamp(4rem, 12vw, 9rem);letter-spacing:-0.01em;"
-      >
-        Let's chat.
-      </h2>
-      <a href="/contact/" class="btn-filler btn-filler--mint self-start md:self-auto" data-filler>
-        <span aria-hidden="true"></span>Start your Project
-      </a>
+    <div class="footer-news">
+      <div>
+        <p class="kicker kicker--on-dark">Stay in the loop</p>
+        <h2 class="footer-news__title">Ideas from the rooftop, now and then.</h2>
+      </div>
+      <form class="footer-news__form" action="/api/subscribe/" method="POST">
+        <label class="sr-only" for="footer-email">Email address</label>
+        <input id="footer-email" type="email" name="email" required placeholder="you@company.com" class="footer-news__input" />
+        <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" />
+        <button type="submit" class="wbtn wbtn--accent">Subscribe</button>
+      </form>
     </div>
+
+    <hr class="my-12 md:my-16 border-t" style="border-color:rgba(255,255,255,0.10);" />
 
     <div class="mt-16 md:mt-24 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10">
       <div>
         <p class="font-semibold mb-3" style="font-family:var(--font-sans);">Studio</p>
         <nav aria-label="Footer" class="flex flex-col gap-2" style="font-family:var(--font-sans);font-weight:500;font-size:var(--text-body);">
-          <a href="/work/" class="hover:underline">Our Work</a>
-          <a href="/services/" class="hover:underline">Services</a>
-          <a href="/sectors/" class="hover:underline">Sectors</a>
-          <a href="/programmes/" class="hover:underline">EI Programmes</a>
-          <a href="/latest/" class="hover:underline">Latest</a>
-          <a href="/about/" class="hover:underline">About</a>
-          <a href="/contact/" class="hover:underline">Contact</a>
+          <a href="/work/" class="r22-link r22-link--on-dark">Our Work</a>
+          <a href="/services/" class="r22-link r22-link--on-dark">Services</a>
+          <a href="/sectors/" class="r22-link r22-link--on-dark">Sectors</a>
+          <a href="/programmes/" class="r22-link r22-link--on-dark">EI Programmes</a>
+          <a href="/latest/" class="r22-link r22-link--on-dark">Latest</a>
+          <a href="/about/" class="r22-link r22-link--on-dark">About</a>
+          <a href="/careers/" class="r22-link r22-link--on-dark">Careers</a>
+          <a href="/contact/" class="r22-link r22-link--on-dark">Contact</a>
         </nav>
       </div>
 
       <div>
-        <p class="font-semibold mb-3" style="font-family:var(--font-sans);">Services</p>
-        <nav aria-label="Services" class="flex flex-col gap-2" style="font-family:var(--font-sans);font-weight:500;font-size:var(--text-body);">
-          <a href="/services/performance-marketing/" class="hover:underline">Performance Marketing</a>
-          <a href="/services/google-ads/" class="hover:underline">Google Ads</a>
-          <a href="/services/paid-social/" class="hover:underline">Paid Social</a>
-          <a href="/services/seo/" class="hover:underline">SEO</a>
-          <a href="/services/email-marketing/" class="hover:underline">Email Marketing</a>
-          <a href="/services/creative-and-content/" class="hover:underline">Creative &amp; Content</a>
-          <a href="/services/social-media-management/" class="hover:underline">Social Media Management</a>
-          <a href="/services/design/" class="hover:underline">Design</a>
-          <a href="/services/photo-and-video/" class="hover:underline">Photo &amp; Video</a>
-          <a href="/services/web/" class="hover:underline">Web</a>
-          <a href="/services/website-design-and-build/" class="hover:underline">Website Design &amp; Build</a>
-          <a href="/services/website-care/" class="hover:underline">Website Care</a>
+        <p class="font-semibold mb-3" style="font-family:var(--font-sans);"><a href="/services/" class="r22-link r22-link--on-dark">Services</a></p>
+        <nav aria-label="Services" style="display:flex;flex-direction:column;gap:1.25rem;font-family:var(--font-sans);font-weight:500;font-size:var(--text-body);">
+          <div style="display:flex;flex-direction:column;gap:0.35rem;">
+            <a href="/services/creative-and-content/" class="r22-link r22-link--on-dark" style="font-weight:700;">Creative &amp; Content</a>
+            <a href="/services/social-media-management/" class="r22-link r22-link--on-dark">Social Media Management</a>
+            <a href="/services/design/" class="r22-link r22-link--on-dark">Design</a>
+            <a href="/services/photo-and-video/" class="r22-link r22-link--on-dark">Photo &amp; Video</a>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0.35rem;">
+            <a href="/services/web/" class="r22-link r22-link--on-dark" style="font-weight:700;">Web</a>
+            <a href="/services/website-design-and-build/" class="r22-link r22-link--on-dark">Website Design &amp; Build</a>
+            <a href="/services/website-care/" class="r22-link r22-link--on-dark">Website Care</a>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0.35rem;">
+            <a href="/services/performance-marketing/" class="r22-link r22-link--on-dark" style="font-weight:700;">Performance Marketing</a>
+            <a href="/services/google-ads/" class="r22-link r22-link--on-dark">Google Ads</a>
+            <a href="/services/paid-social/" class="r22-link r22-link--on-dark">Paid Social</a>
+            <a href="/services/seo/" class="r22-link r22-link--on-dark">SEO</a>
+            <a href="/services/email-marketing/" class="r22-link r22-link--on-dark">Email Marketing</a>
+          </div>
         </nav>
       </div>
 
@@ -57,23 +70,30 @@ const year = new Date().getFullYear();
           Dublin 11,<br />
           D11 YNR2
         </address>
+        <p class="font-semibold mt-4 mb-3" style="font-family:var(--font-sans);">Sandyford Office</p>
+        <address class="not-italic leading-relaxed" style="font-family:var(--font-sans);">
+          Suite 16, Beacon Court,<br />
+          Beacon Mall, Sandyford,<br />
+          Dublin 18,<br />
+          D18 WV72
+        </address>
         <p class="mt-4" style="font-family:var(--font-sans);">
-          <a href="mailto:hey@rooftoptwentytwo.ie" class="hover:underline">hey@rooftoptwentytwo.ie</a>
+          <a href="mailto:hey@rooftoptwentytwo.ie" class="r22-link r22-link--on-dark">hey@rooftoptwentytwo.ie</a>
         </p>
         <p style="font-family:var(--font-sans);">
-          <a href="tel:+35316991422" class="hover:underline">+353 1 699 1422</a>
+          <a href="tel:+35316991422" class="r22-link r22-link--on-dark">+353 1 699 1422</a>
         </p>
       </div>
 
       <div>
         <p class="font-semibold mb-3" style="font-family:var(--font-sans);">Connect with us</p>
         <div class="flex gap-4">
-          <a href="https://ie.linkedin.com/company/rooftop-twenty-two" target="_blank" rel="noopener" aria-label="LinkedIn" class="hover:text-[var(--color-mint)] transition-colors">
+          <a href="https://ie.linkedin.com/company/rooftop-twenty-two" target="_blank" rel="noopener" aria-label="LinkedIn" class="hover:text-[var(--c-accent-2)] transition-colors">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.36V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.62 0 4.29 2.38 4.29 5.48v6.26zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zm1.78 13.02H3.55V9h3.57v11.45z" />
             </svg>
           </a>
-          <a href="https://www.instagram.com/rooftoptwentytwo/" target="_blank" rel="noopener" aria-label="Instagram" class="hover:text-[var(--color-mint)] transition-colors">
+          <a href="https://www.instagram.com/rooftoptwentytwo/" target="_blank" rel="noopener" aria-label="Instagram" class="hover:text-[var(--c-accent-2)] transition-colors">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
               <rect x="3" y="3" width="18" height="18" rx="5" />
               <circle cx="12" cy="12" r="4" />
@@ -85,8 +105,63 @@ const year = new Date().getFullYear();
     </div>
 
     <hr class="mt-16 border-t" style="border-color:rgba(255,255,255,0.08);" />
+
+    <div class="footer-awards">
+      <p class="footer-awards__label">Award-winning work</p>
+      <ul class="footer-awards__list">
+        <li>
+          <a href="/latest/spider-awards-2026-gold/">
+            <img class="footer-awards__logo" src="/images/spider-awards-rev.png" alt="Spider Awards" loading="lazy" decoding="async" />
+            <span class="footer-awards__txt"><b>Gold</b> · Spider Awards</span>
+          </a>
+        </li>
+        <li>
+          <a href="/latest/digital-media-awards-seo-finalist/">
+            <img class="footer-awards__logo" src="/images/DMA-Generic-Pink-Blue-270x270-1-cutout.png" alt="Digital Media Awards" loading="lazy" decoding="async" />
+            <span class="footer-awards__txt"><b>Finalist</b> · Digital Media Awards</span>
+          </a>
+        </li>
+        <li>
+          <a href="/latest/european-search-awards-two-nominations/">
+            <img class="footer-awards__logo" src="/images/European-Search-Awards-Logo_full_colour-cutout.png" alt="European Search Awards" loading="lazy" decoding="async" />
+            <span class="footer-awards__txt"><b>Finalist</b> · European Search Awards</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <hr class="mt-12 border-t" style="border-color:rgba(255,255,255,0.08);" />
     <p class="mt-6 text-xs" style="color:rgba(255,255,255,0.5);">
       © Rooftop Twenty Two. {year}. All rights reserved.
     </p>
   </div>
 </footer>
+
+<style>
+  .footer-news {
+    display: grid; grid-template-columns: 1fr; gap: 1.5rem; align-items: end;
+  }
+  @media (min-width: 820px) { .footer-news { grid-template-columns: 1fr auto; gap: 3rem; } }
+  .footer-news__title {
+    font-family: var(--w-font-display); font-weight: 600;
+    font-size: clamp(2rem, 4vw, 3.25rem); line-height: 1.05; letter-spacing: var(--tracking-display);
+    margin-top: 0.5rem; color: var(--c-on-dark);
+  }
+  .footer-news__form { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+  .footer-news__input {
+    flex: 1 1 240px; min-width: 0; padding: 0.9rem 1.2rem; border-radius: var(--radius-pill);
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.16);
+    color: var(--c-on-dark); font-family: var(--w-font-body); font-size: 0.95rem;
+  }
+  .footer-news__input::placeholder { color: rgba(255,255,255,0.45); }
+  .footer-news__input:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
+
+  .footer-awards { margin-top: 2.5rem; }
+  .footer-awards__label { font-family: var(--w-font-body); font-weight: 700; font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c-accent-2); margin: 0 0 1.25rem; }
+  .footer-awards__list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 1.5rem 2.5rem; }
+  .footer-awards__list a { display: inline-flex; align-items: center; gap: 0.8rem; text-decoration: none; color: var(--c-on-dark); opacity: 0.82; transition: opacity var(--w-dur-fast) var(--w-ease); }
+  .footer-awards__list a:hover { opacity: 1; }
+  .footer-awards__logo { height: 34px; width: auto; filter: brightness(0) invert(1); }
+  .footer-awards__txt { font-family: var(--w-font-body); font-size: 0.85rem; color: #fff; white-space: nowrap; }
+  .footer-awards__txt b { font-weight: 700; }
+</style>

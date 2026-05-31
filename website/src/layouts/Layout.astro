@@ -44,10 +44,19 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://rooftoptwen
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={new URL(ogImage, Astro.site).toString()} />
     <meta name="twitter:card" content="summary_large_image" />
+    <!-- Genuine R22 brand faces, self-hosted: Butler (display), Mulish (body),
+         Starlit Drive (script signatures). Preloaded, font-display: swap. -->
     <link rel="preload" href="/fonts/butler-bold.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/mulish-variable.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/starlit-drive.woff2" as="font" type="font/woff2" crossorigin />
     <OrganizationSchema />
+    <noscript>
+      <style>
+        .reveal, .reveal--left, .reveal--right, .reveal--scale, .reveal--stagger > * {
+          opacity: 1 !important; transform: none !important;
+        }
+      </style>
+    </noscript>
   </head>
   <body class:list={[theme === "light" ? "theme-light" : "theme-dark"]}>
     <div class="cursor-glow" aria-hidden="true" data-cursor-glow></div>
@@ -63,21 +72,95 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://rooftoptwen
       document.documentElement.classList.add("js-ready");
 
       // ---------- .reveal IntersectionObserver ----------
-      const targets = document.querySelectorAll<HTMLElement>(".reveal");
+      // Catches the base .reveal plus directional/scale/stagger variants.
+      const targets = document.querySelectorAll<HTMLElement>(
+        ".reveal, .reveal--left, .reveal--right, .reveal--scale, .reveal--stagger"
+      );
       if (targets.length) {
-        const io = new IntersectionObserver(
-          (entries) => {
-            for (const e of entries) {
-              if (e.isIntersecting) {
-                e.target.classList.add("is-visible");
-                io.unobserve(e.target);
+        // Auto-stagger: group reveal items by their nearest section so siblings
+        // that enter together cascade in DOM order (the effect everyone liked on
+        // the services list), without tagging each one by hand. .reveal--stagger
+        // handles its own children, so we don't double up on those.
+        const groups = new Map<Element, HTMLElement[]>();
+        targets.forEach((el) => {
+          if (el.classList.contains("reveal--stagger")) return;
+          const key = el.closest("section, footer, main") || document.body;
+          const arr = groups.get(key) || [];
+          arr.push(el);
+          groups.set(key, arr);
+        });
+        groups.forEach((arr) => {
+          arr.forEach((el, i) => {
+            // Cap the cascade so long lists don't drift too far behind.
+            el.style.setProperty("--reveal-delay", `${Math.min(i, 6) * 80}ms`);
+          });
+        });
+
+        if (!("IntersectionObserver" in window)) {
+          targets.forEach((el) => el.classList.add("is-visible"));
+        } else {
+          const io = new IntersectionObserver(
+            (entries) => {
+              for (const e of entries) {
+                if (e.isIntersecting) {
+                  e.target.classList.add("is-visible");
+                  io.unobserve(e.target);
+                }
               }
-            }
-          },
-          { threshold: 0.15 }
-        );
-        targets.forEach((el) => io.observe(el));
+            },
+            { threshold: 0.1, rootMargin: "0px 0px -5% 0px" }
+          );
+          targets.forEach((el) => io.observe(el));
+        }
       }
+
+      // ---------- Marquees (native-scroll driven, no CSS transform) ----------
+      // Auto-scrolls a [data-marquee] container left→right by writing scrollLeft
+      // each frame. Avoids transform/mask (which blank-render on iOS Safari).
+      // The track holds two identical halves so resetting at the boundary is seamless.
+      const marquees = document.querySelectorAll<HTMLElement>("[data-marquee]");
+      const reduceMo = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const canHover = window.matchMedia("(hover: hover)").matches;
+      marquees.forEach((vp) => {
+        const track = vp.firstElementChild as HTMLElement | null;
+        if (!track) return;
+        const durSec = parseFloat(vp.dataset.marquee || "60") || 60;
+        // data-marquee-dir="reverse" scrolls right→left (opposite of default).
+        const reverse = vp.dataset.marqueeDir === "reverse";
+        let half = track.scrollWidth / 2;
+        let paused = false;
+        let last = 0;
+        const measure = () => { half = track.scrollWidth / 2; };
+        const start = () => { measure(); vp.scrollLeft = half; };
+        start();
+        window.addEventListener("resize", measure, { passive: true });
+        // Re-measure once the real fonts swap in (cards reflow wider) and after
+        // full load, so `half` never stays stale — a stale value makes the loop
+        // reset into a blank gap and look "stuck" on some page loads.
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+        window.addEventListener("load", measure, { passive: true });
+        if (canHover) {
+          vp.addEventListener("mouseenter", () => { paused = true; });
+          vp.addEventListener("mouseleave", () => { paused = false; });
+        }
+        if (reduceMo) return; // leave static
+        const tick = (ts: number) => {
+          if (!last) last = ts;
+          const dt = ts - last; last = ts;
+          if (!paused && half > 0) {
+            const step = (half / (durSec * 1000)) * dt;
+            if (reverse) {
+              vp.scrollLeft += step;
+              if (vp.scrollLeft >= half) vp.scrollLeft -= half;
+            } else {
+              vp.scrollLeft -= step;
+              if (vp.scrollLeft <= 0) vp.scrollLeft += half;
+            }
+          }
+          requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      });
 
       // ---------- textRevealOnScroll: drives --reveal-progress 0..100 ----------
       const revealNodes = document.querySelectorAll<HTMLElement>("[data-reveal-scroll]");
@@ -126,6 +209,63 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://rooftoptwen
         f.addEventListener("mouseleave", place);
       }
 
+      // ---------- Form submit enhancement (contact + newsletter) ----------
+      // Progressive enhancement: forms have a real action/method so they work
+      // without JS, but here we POST via fetch to the JSON API and show inline
+      // status instead of navigating away. The events form has its own handler.
+      const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const enhance = (form: HTMLFormElement, endpoint: string, okMsg: string) => {
+        let status = form.querySelector<HTMLElement>("[data-form-status]");
+        if (!status) {
+          status = document.createElement("p");
+          status.setAttribute("data-form-status", "");
+          status.setAttribute("role", "status");
+          status.setAttribute("aria-live", "polite");
+          status.style.cssText = "margin:0.85rem 0 0;font-family:var(--w-font-body);font-size:0.9rem;";
+          form.appendChild(status);
+        }
+        form.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const data = Object.fromEntries(new FormData(form).entries());
+          if ((data._gotcha as string)?.trim()) { form.reset(); return; }
+          const email = String(data.email || "").trim();
+          if (data.email !== undefined && !emailRx.test(email)) {
+            status!.textContent = "Please add a valid email address.";
+            status!.style.color = "#ffb3ad";
+            return;
+          }
+          const btn = form.querySelector<HTMLButtonElement>('[type="submit"]');
+          const label = btn?.textContent;
+          if (btn) { btn.disabled = true; btn.textContent = "Sending..."; }
+          status!.textContent = "";
+          try {
+            const res = await fetch(endpoint, {
+              method: "POST",
+              headers: { "Content-Type": "application/json", Accept: "application/json" },
+              body: JSON.stringify(data),
+            });
+            const out = await res.json().catch(() => ({}));
+            if (res.ok && out.ok) {
+              form.reset();
+              status!.textContent = okMsg;
+              status!.style.color = "var(--c-accent-2, #01ffb2)";
+            } else {
+              status!.textContent = out.error || "Something went wrong. Please email hey@rooftoptwentytwo.ie.";
+              status!.style.color = "#ffb3ad";
+            }
+          } catch {
+            status!.textContent = "Something went wrong. Please email hey@rooftoptwentytwo.ie.";
+            status!.style.color = "#ffb3ad";
+          } finally {
+            if (btn) { btn.disabled = false; btn.textContent = label || "Send"; }
+          }
+        });
+      };
+      document.querySelectorAll<HTMLFormElement>("[data-contact-form]")
+        .forEach((f) => enhance(f, "/api/contact/", "Thanks. We'll come back to you shortly."));
+      document.querySelectorAll<HTMLFormElement>(".footer-news__form")
+        .forEach((f) => enhance(f, "/api/subscribe/", "You're in. Thanks for subscribing."));
+
       // ---------- Theme-switch observer ----------
       // When a [data-theme-switch] section enters the viewport, add
       // body.alternate-theme so the header (and other dark-on-dark elements)
@@ -134,11 +274,33 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://rooftoptwen
       // ---------- Cursor glow (radial blob, transform-only for smoothness) ----------
       const glow = document.querySelector<HTMLElement>("[data-cursor-glow]");
       if (glow && window.matchMedia("(hover: hover)").matches && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        let cx = 0, cy = 0, raf = 0;
+        // Always a teal/mint halo. We only adapt the *opacity* to the surface
+        // under the cursor (a touch stronger on light sections) so the same
+        // brand colour reads on dark *and* light backgrounds.
+        const adapt = () => {
+          raf = 0;
+          const el = document.elementFromPoint(cx, cy); // glow is pointer-events:none
+          let node: HTMLElement | null = el as HTMLElement | null;
+          while (node && node !== document.documentElement) {
+            const bg = getComputedStyle(node).backgroundColor;
+            const m = bg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+            if (m && (m[4] === undefined || parseFloat(m[4]) > 0.5)) {
+              const lum = (0.2126 * +m[1] + 0.7152 * +m[2] + 0.0722 * +m[3]) / 255;
+              glow.style.setProperty("--glow-a", lum < 0.5 ? "0.22" : "0.3");
+              return;
+            }
+            node = node.parentElement;
+          }
+          glow.style.setProperty("--glow-a", "0.22");
+        };
         window.addEventListener(
           "mousemove",
           (e) => {
             glow.classList.add("is-active");
-            glow.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+            cx = e.clientX; cy = e.clientY;
+            glow.style.transform = `translate3d(${cx}px, ${cy}px, 0)`;
+            if (!raf) raf = requestAnimationFrame(adapt);
           },
           { passive: true }
         );

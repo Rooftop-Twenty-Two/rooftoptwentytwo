@@ -1,0 +1,87 @@
+---
+// Odometer stat counter (re-skin). Counts up to `to` when scrolled into view,
+// preserving prefix/suffix and thousands separators. Reduced-motion shows the
+// final value immediately. Colour inherits from --odo-color on the parent.
+interface Props {
+  to: number;
+  prefix?: string;
+  suffix?: string;
+  label: string;
+  decimals?: number;
+}
+const { to, prefix = "", suffix = "", label, decimals = 0 } = Astro.props;
+const fmt = (n: number) =>
+  prefix +
+  n.toLocaleString("en-US", { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) +
+  suffix;
+---
+
+<div class="odo">
+  <div
+    class="odo__value"
+    data-odo
+    data-to={to}
+    data-prefix={prefix}
+    data-suffix={suffix}
+    data-decimals={decimals}
+  >{fmt(to)}</div>
+  <div class="odo__label">{label}</div>
+</div>
+
+<style>
+  .odo__value {
+    font-family: var(--w-font-display);
+    font-weight: 700;
+    font-size: clamp(2.75rem, 5vw, 4.5rem);
+    line-height: 1;
+    letter-spacing: var(--tracking-display);
+    color: var(--odo-color, var(--c-ink));
+    font-variant-numeric: tabular-nums;
+  }
+  .odo__label {
+    font-family: var(--w-font-body);
+    font-size: var(--fs-body);
+    color: var(--odo-label-color, var(--c-ink-soft));
+    margin-top: 0.6rem;
+    max-width: 22ch;
+  }
+</style>
+
+<script>
+  const nodes = document.querySelectorAll<HTMLElement>("[data-odo]");
+  if (nodes.length) {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+    const fmt = (n: number, prefix: string, suffix: string, decimals: number) =>
+      prefix +
+      n.toLocaleString("en-US", { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) +
+      suffix;
+
+    const run = (el: HTMLElement) => {
+      const to = Number(el.dataset.to || 0);
+      const prefix = el.dataset.prefix || "";
+      const suffix = el.dataset.suffix || "";
+      const decimals = Number(el.dataset.decimals || 0);
+      if (reduce) { el.textContent = fmt(to, prefix, suffix, decimals); return; }
+      const dur = 1100;
+      const start = performance.now();
+      const tick = (now: number) => {
+        const p = Math.min(1, (now - start) / dur);
+        el.textContent = fmt(to * ease(p), prefix, suffix, decimals);
+        if (p < 1) requestAnimationFrame(tick);
+        else el.textContent = fmt(to, prefix, suffix, decimals);
+      };
+      requestAnimationFrame(tick);
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) { run(e.target as HTMLElement); io.unobserve(e.target); }
+        }
+      },
+      { threshold: 0.4 }
+    );
+    nodes.forEach((n) => io.observe(n));
+  }
+</script>

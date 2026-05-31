@@ -125,8 +125,8 @@ const primaryHref = queryString ? `/contact/?${queryString}#contact` : "/contact
 <style>
   .page-cta {
     position: relative;
-    background-color: var(--color-page-bg);
-    color: var(--color-text-on-dark);
+    background-color: var(--c-dark);
+    color: var(--c-on-dark);
     border-top: 1px solid rgba(255, 255, 255, 0.06);
   }
   .page-cta__grid {
@@ -146,12 +146,12 @@ const primaryHref = queryString ? `/contact/?${queryString}#contact` : "/contact
     font-size: clamp(2.25rem, 5vw, 4rem);
     line-height: 1.05;
     letter-spacing: -0.015em;
-    color: var(--color-text-on-dark);
+    color: var(--c-on-dark);
   }
   .page-cta__body {
     font-family: var(--font-sans);
     font-size: 1.125rem;
-    color: var(--color-text-on-dark-muted);
+    color: var(--c-on-dark-soft);
     line-height: 1.55;
     max-width: 38rem;
   }
@@ -180,13 +180,13 @@ const primaryHref = queryString ? `/contact/?${queryString}#contact` : "/contact
     font-family: var(--font-display);
     font-size: clamp(1.5rem, 3vw, 2.25rem);
     line-height: 1;
-    color: var(--color-mint);
+    color: var(--c-accent-2);
     letter-spacing: -0.02em;
   }
   .page-cta__stat-label {
     font-family: var(--font-sans);
     font-size: 0.875rem;
-    color: var(--color-text-on-dark-muted);
+    color: var(--c-on-dark-soft);
     margin-top: 0.25rem;
   }
 </style>

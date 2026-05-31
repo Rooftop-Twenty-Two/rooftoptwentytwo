@@ -1,9 +1,9 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
-import Signature from "../../components/Signature.astro";
-import BtnFiller from "../../components/BtnFiller.astro";
-import PageCTA from "../../components/PageCTA.astro";
+import PageHero from "../../components/reskin/PageHero.astro";
+import LogoWall from "../../components/reskin/LogoWall.astro";
+import WCtaBand from "../../components/reskin/WCtaBand.astro";
 import BreadcrumbSchema from "../../components/seo/BreadcrumbSchema.astro";
 
 const all = (await getCollection("services")).sort(
@@ -11,102 +11,91 @@ const all = (await getCollection("services")).sort(
 );
 
 type Cluster = "performance-marketing" | "creative-and-content" | "web";
-
-const clusterMeta: Record<Cluster, { name: string; eyebrow: string; body: string }> = {
+const clusterMeta: Record<Cluster, { name: string; body: string }> = {
   "performance-marketing": {
     name: "Performance Marketing",
-    eyebrow: "Demand capture and demand creation",
     body: "Google Ads, paid social, SEO, and email, built around the conversions that actually move your business.",
   },
   "creative-and-content": {
     name: "Creative & Content",
-    eyebrow: "The creative engine behind every channel",
-    body: "Brand, social, photo, and video, produced in-house at the cadence the channels actually need.",
+    body: "Branding, brand identity, social, photo, and video, produced in-house at the cadence the channels actually need.",
   },
   web: {
     name: "Web",
-    eyebrow: "Sites that earn their keep",
-    body: "Strategy, design, build, and care. Modern stacks chosen against your buyer journey, not our preference.",
+    body: "Strategy, design, build, and care, modern sites chosen against your buyer journey, not our preference.",
   },
 };
-
 const clusters: Cluster[] = ["performance-marketing", "creative-and-content", "web"];
-
-const grouped = clusters.map((cluster) => {
-  const parent = all.find((s) => s.data.cluster === cluster && s.data.isClusterParent);
-  const leaves = all.filter((s) => s.data.cluster === cluster && !s.data.isClusterParent);
-  return { cluster, meta: clusterMeta[cluster], parent, leaves };
-});
+const grouped = clusters.map((cluster) => ({
+  cluster,
+  meta: clusterMeta[cluster],
+  leaves: all.filter((s) => s.data.cluster === cluster && !s.data.isClusterParent),
+}));
 ---
 
 <Layout
-  title="Services | Rooftop Twenty Two"
-  description="Performance marketing, creative & content, and web services for Irish brands. In-house, full-funnel, accountable to commercial outcomes."
+  title="Website Design & Digital Marketing Services, Dublin"
+  description="Performance marketing, creative & content, and web design under one roof. Full-funnel, in-house, and accountable to commercial outcomes for Irish brands."
 >
   <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "Services", url: "/services/" }]} />
 
-  <section class="mx-auto max-w-[1440px] px-6 md:px-12 pt-12 md:pt-20 pb-12 md:pb-16">
-    <Signature text="Services" tone="coral" rotate={-3} />
-    <h1
-      class="mt-4 max-w-4xl"
-      style="font-family:var(--font-display);font-size:clamp(2.75rem, 7vw, 5.5rem);color:var(--color-text-on-dark);letter-spacing:-0.02em;line-height:1.05;"
-    >
-      Full-funnel marketing, under one roof.
-    </h1>
-    <p
-      class="mt-6 max-w-2xl"
-      style="font-family:var(--font-sans);font-size:1.25rem;color:var(--color-text-on-dark-muted);line-height:1.55;"
-    >
-      We run three clusters: performance marketing, creative & content, and web. The same in-house team strategises, produces, and ships across all three, so the work stays joined-up across every surface of your brand.
-    </p>
-    <div class="mt-8 flex flex-wrap gap-3">
-      <BtnFiller href="/contact/#contact" variant="solid-white">Start a conversation</BtnFiller>
-      <BtnFiller href="/work/" variant="on-dark">See selected work</BtnFiller>
-    </div>
-  </section>
+  <PageHero
+    kicker="Our expertise"
+    title="Full-funnel marketing, <em>under one roof</em>."
+    intro="Three clusters, performance marketing, creative & content, and web. The same in-house team strategises, produces, and ships across all three, so the work stays joined-up across every surface of your brand."
+    primary={{ label: "Start a conversation", href: "/contact/#contact" }}
+    secondary={{ label: "See selected work", href: "/work/" }}
+  />
 
-  {grouped.map(({ cluster, meta, parent, leaves }) => (
-    <section class="mx-auto max-w-[1200px] px-6 md:px-12 py-12 md:py-20">
-      <p style="font-family:var(--font-sans);font-size:0.85rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--color-mint);">{meta.eyebrow}</p>
-      <h2
-        class="mt-3 max-w-3xl"
-        style="font-family:var(--font-display);font-size:clamp(2rem, 5vw, 3.5rem);color:var(--color-text-on-dark);line-height:1.05;letter-spacing:-0.015em;"
-      >
-        <a href={`/services/${cluster}/`} class="hover:underline" style="color:inherit;text-decoration:none;">{meta.name}</a>
-      </h2>
-      <p
-        class="mt-4 max-w-2xl"
-        style="font-family:var(--font-sans);font-size:1.125rem;color:var(--color-text-on-dark-muted);line-height:1.6;"
-      >
-        {meta.body}
-      </p>
-      <ul class="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 list-none p-0 m-0">
-        {leaves.map((s) => (
-          <li>
-            <a
-              href={`/services/${s.data.slug}/`}
-              class="block p-6 transition-transform hover:-translate-y-1"
-              style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-card-md);color:var(--color-text-on-dark);text-decoration:none;height:100%;"
-            >
-              <p style="font-family:var(--font-display);font-size:1.5rem;line-height:1.15;letter-spacing:-0.01em;">{s.data.name}</p>
-              <p class="mt-2" style="font-family:var(--font-sans);font-size:0.95rem;color:var(--color-text-on-dark-muted);line-height:1.5;">{s.data.summary}</p>
-              <p class="mt-4" style="font-family:var(--font-sans);font-size:0.875rem;color:var(--color-mint);">Explore →</p>
-            </a>
-          </li>
-        ))}
-      </ul>
-      {parent && (
-        <div class="mt-6">
-          <a
-            href={`/services/${parent.data.slug}/`}
-            style="font-family:var(--font-sans);font-size:0.95rem;color:var(--color-mint);text-decoration:underline;"
-          >
-            Overview: {parent.data.name} →
-          </a>
+  {grouped.map(({ cluster, meta, leaves }, i) => (
+    <section class:list={["sv", i % 2 === 1 ? "sv--alt" : ""]}>
+      <div class="sv__inner">
+        <div class="sv__head reveal">
+          <span class="sv__num">{String(i + 1).padStart(2, "0")}</span>
+          <div>
+            <h2 class="sv__title"><a href={`/services/${cluster}/`}>{meta.name}</a></h2>
+            <p class="sv__body">{meta.body}</p>
+          </div>
         </div>
-      )}
+        <ul class="sv__list">
+          {leaves.map((s) => (
+            <li class="sv__row reveal">
+              <a class="sv__name" href={`/services/${s.data.slug}/`}>{s.data.name}</a>
+              <p class="sv__sum">{s.data.summary}</p>
+              <span class="sv__arrow">Explore &rarr;</span>
+            </li>
+          ))}
+        </ul>
+      </div>
     </section>
   ))}
 
-  <PageCTA variant="default" />
+  <LogoWall />
+  <WCtaBand />
 </Layout>
+
+<style>
+  .sv { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .sv--alt { background: var(--c-bg-alt); }
+  .sv__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .sv__head { display: flex; gap: 1.5rem; align-items: baseline; }
+  .sv__num { font-family: var(--w-font-display); font-weight: 600; color: var(--c-accent); font-size: 1.5rem; }
+  .sv__title { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); line-height: var(--lh-heading); letter-spacing: var(--tracking-display); margin: 0; }
+  .sv__title a { color: inherit; text-decoration: none; }
+  .sv__title a:hover { color: var(--c-ink-soft); }
+  .sv__body { font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-ink-soft); line-height: 1.55; margin: 0.75rem 0 0; max-width: 50ch; }
+  .sv__body a:not(.wbtn) { color: var(--c-accent); text-decoration: none; font-weight: 600; white-space: nowrap; }
+  .sv__body a:hover { text-decoration: underline; }
+  .sv__list { list-style: none; margin: 2.5rem 0 0; padding: 0; border-top: 1px solid var(--c-line); }
+  .sv__row {
+    display: grid; grid-template-columns: 1fr; gap: 0.25rem; padding: 1.5rem 0;
+    border-bottom: 1px solid var(--c-line);
+  }
+  @media (min-width: 860px) { .sv__row { grid-template-columns: 1fr 1.6fr auto; gap: 1.5rem; align-items: center; } }
+  .sv__name { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); line-height: 1.1; color: var(--c-ink); text-decoration: none; }
+  .sv__name:hover { color: var(--c-ink-soft); }
+  .sv__sum { font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-ink-soft); line-height: 1.5; margin: 0; }
+  .sv__arrow { font-family: var(--w-font-body); font-weight: 600; font-size: 0.9rem; color: var(--c-ink-soft); white-space: nowrap; }
+  @media (min-width: 860px) { .sv__arrow { justify-self: end; } }
+  .sv__row:hover .sv__arrow { color: var(--c-ink); }
+</style>

@@ -1,30 +1,31 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import HomeHero from "../components/HomeHero.astro";
-import Marquee from "../components/Marquee.astro";
-import LogoBar from "../components/LogoBar.astro";
-import IntroParagraph from "../components/IntroParagraph.astro";
-import HomeWorkPreview from "../components/HomeWorkPreview.astro";
-import ServicesPanel from "../components/ServicesPanel.astro";
-import Testimonial from "../components/Testimonial.astro";
-import TeamStrip from "../components/TeamStrip.astro";
+import HeroHome from "../components/HeroHome.astro";
+import AboutIntro from "../components/reskin/AboutIntro.astro";
+import LogoWall from "../components/reskin/LogoWall.astro";
+import SelectedWork from "../components/reskin/SelectedWork.astro";
+import ServicesOverview from "../components/reskin/ServicesOverview.astro";
+import FeatureBand from "../components/reskin/FeatureBand.astro";
+import TeamPreview from "../components/reskin/TeamPreview.astro";
+import CareersBand from "../components/reskin/CareersBand.astro";
+import ClientTestimonials from "../components/reskin/ClientTestimonials.astro";
+import LatestInsights from "../components/reskin/LatestInsights.astro";
+import WCtaBand from "../components/reskin/WCtaBand.astro";
 ---
 
-<Layout title="Rooftop Twenty Two, Independent branding and digital design studio">
-  <HomeHero />
-  <LogoBar />
-  <Marquee />
-  <IntroParagraph />
-  <HomeWorkPreview />
-  <ServicesPanel />
-  <Testimonial
-    signatureName="Thanks Conor!"
-    premiumLabel="Availing of our Premium Plan"
-    quote='"Rooftop Twenty Two act as my Digital Marketing function in Nostra. They integrated seamlessly, bringing a wealth of experience and guidance. We achieved far more than expected in a relatively short period and I would highly recommend Rooftop to a company seeking large marketing agency experience with a personal touch."'
-    attribution="Conor O'Brien, Nostra"
-    brandLogo="/images/logos/Nostra.svg"
-    portrait="/images/site/conor-obrien.jpg"
-    portraitAlt="Conor O'Brien, Nostra"
-  />
-  <TeamStrip />
+<Layout
+  title="Website & Digital Marketing Agency Dublin | Rooftop Twenty Two"
+  description="Rooftop Twenty Two is a website and digital marketing agency in Dublin. Web design, SEO, paid media, and content under one roof for ambitious Irish brands."
+>
+  <HeroHome />
+  <AboutIntro />
+  <LogoWall />
+  <SelectedWork />
+  <ServicesOverview />
+  <FeatureBand />
+  <TeamPreview />
+  <CareersBand />
+  <ClientTestimonials />
+  <LatestInsights />
+  <WCtaBand />
 </Layout>

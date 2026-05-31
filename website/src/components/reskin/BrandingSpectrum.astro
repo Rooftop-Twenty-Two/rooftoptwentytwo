@@ -1,0 +1,78 @@
+---
+// Full-service branding section. Communicates that R22 covers the whole branding
+// spectrum, from a single logo to a complete identity system, all in-house.
+interface Props {
+  variant?: "default" | "alt";
+}
+const { variant = "default" } = Astro.props;
+
+const stages = [
+  { n: "01", label: "Logo & wordmark", body: "A single mark, crafted properly." },
+  { n: "02", label: "Visual identity", body: "Colour, type, and art direction." },
+  { n: "03", label: "Brand guidelines", body: "A system your whole team can use." },
+  { n: "04", label: "Messaging & tone", body: "How the brand sounds, not just looks." },
+  { n: "05", label: "Full brand rollout", body: "Across web, social, print, everywhere." },
+];
+---
+
+<section id="branding" class:list={["bspec", variant === "alt" && "bspec--alt"]}>
+  <div class="bspec__inner">
+    <div class="bspec__head reveal">
+      <p class="kicker kicker--script">Branding, end to end</p>
+      <h2 class="bspec__title">From a single logo to a <em>full brand</em>.</h2>
+      <p class="bspec__lead">
+        Need a logo? We&rsquo;ll make a great one. Need the whole identity, 
+        strategy, system, and rollout? We do that too, all in-house. Branding is a
+        spectrum, and we cover the lot.
+      </p>
+      <a href="/contact/?service=branding#contact" class="wbtn wbtn--accent">Talk to us about branding</a>
+    </div>
+
+    <ol class="bspec__track">
+      {stages.map((s) => (
+        <li class="bspec__step reveal">
+          <span class="bspec__n">{s.n}</span>
+          <h3 class="bspec__label">{s.label}</h3>
+          <p class="bspec__body">{s.body}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .bspec { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .bspec--alt { background: var(--c-bg-alt); }
+  .bspec__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+
+  .bspec__head { max-width: 56ch; }
+  .bspec__title {
+    font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2);
+    line-height: var(--lh-heading); letter-spacing: var(--tracking-display); margin: 0.5rem 0 0;
+  }
+  .bspec__title em { font-style: italic; color: var(--c-accent); }
+  .bspec__lead { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: var(--lh-body); color: var(--c-ink-soft); margin: 1.25rem 0 1.75rem; }
+
+  .bspec__track {
+    list-style: none; margin: 3rem 0 0; padding: 0;
+    display: grid; grid-template-columns: 1fr; gap: 1.25rem;
+  }
+  @media (min-width: 720px) { .bspec__track { grid-template-columns: repeat(5, 1fr); gap: 0; } }
+  .bspec__step { position: relative; padding: 1.5rem 1.25rem 0 0; }
+  /* Connecting spectrum line through the numbers (desktop). */
+  @media (min-width: 720px) {
+    .bspec__step::before {
+      content: ""; position: absolute; top: 1.5rem; left: 0; right: 0; height: 2px;
+      background: var(--c-line);
+    }
+    .bspec__step:first-child::before { left: 0.75rem; }
+    .bspec__step:last-child::before { right: auto; width: calc(0.75rem + 1px); }
+  }
+  .bspec__n {
+    position: relative; display: inline-flex; align-items: center; justify-content: center;
+    width: 2.4rem; height: 2.4rem; border-radius: 50%; background: var(--c-accent); color: var(--c-accent-ink);
+    font-family: var(--w-font-display); font-weight: 700; font-size: 0.85rem; margin-bottom: 1rem;
+  }
+  .bspec__label { font-family: var(--w-font-display); font-weight: 600; font-size: 1.15rem; line-height: 1.2; margin: 0; color: var(--c-ink); }
+  .bspec__body { font-family: var(--w-font-body); font-size: 0.95rem; line-height: 1.5; color: var(--c-ink-soft); margin: 0.4rem 0 0; padding-right: 0.75rem; }
+</style>

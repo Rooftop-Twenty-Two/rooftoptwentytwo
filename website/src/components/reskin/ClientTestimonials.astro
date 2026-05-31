@@ -1,0 +1,139 @@
+---
+// Client testimonials — real client reviews (no dates) in a continuous
+// left-to-right marquee (pauses on hover), mirroring the logo/work tickers.
+// company/title left blank where unknown — to be filled in by the client.
+type T = { quote: string; name: string; company?: string; title?: string };
+
+const testimonials: T[] = [
+  {
+    quote: "A huge thank you to all the team at Rooftop Twenty Two for their superb service and assistance in all our digital media and marketing activity. Their knowledge, advice and attention to detail is second to none. We wouldn't be able to showcase what we do at Best4Travel without their skills and expertise.",
+    name: "Ciara Foley", company: "Best4Travel",
+  },
+  {
+    quote: "I've been using Rooftop Twenty Two for over two years. Their creativity, reliability, and attention to detail are first-class, and they match excellent design with a commercial lens that many agencies overlook. I wouldn't hesitate to recommend them.",
+    name: "Joe Wilde", company: "Mac Digital",
+  },
+  {
+    quote: "Irish Landmark Trust have been working with Rooftop Twenty Two for a number of years now and we have loved the experience. A fantastic team of energetic, creative people.",
+    name: "Grace Healy", company: "Irish Landmark Trust",
+  },
+  {
+    quote: "We have had a fantastic experience working with Talia and Rooftop Twenty Two. They have excelled every step of the way, from branding, website development and programming to SEO.",
+    name: "Jonathan Lyne", company: "Heart Rhythm Cardiology",
+  },
+  {
+    quote: "Experts at what they do and very easy to work with. Highly recommend on all things digital!",
+    name: "Matthew", company: "Gourmet Food Parlour",
+  },
+  {
+    quote: "We've worked on several successful projects with Cathal and the team at Rooftop Twenty Two and will continue to do so. Their professionalism and quality of output is always to the high standards we expect, and they're a pleasure to work with.",
+    name: "Brendan Boyle", company: "TAP Creative",
+  },
+  {
+    quote: "It's a pleasure to work with such a creative, innovative and supportive team at Rooftop Twenty Two, from rebuilding and redesigning our company's website to producing amazing video footage that captures the essence of what we do.",
+    name: "Fiona Monahan", company: "Bloomfield Hospital",
+  },
+  {
+    quote: "The team at Rooftop Twenty Two exemplifies true professionalism. They are always available to answer questions and provide assistance, and their support makes our workdays smoother.",
+    name: "Michelle McManus", company: "Best4Travel",
+  },
+  {
+    quote: "Our company have been using Rooftop's services for a few years now. Initially as novices to digital marketing, it was very helpful to have a trusted guide on our learning journey.",
+    name: "David McLoughlin", company: "Ellis and Ellis",
+  },
+  {
+    quote: "Rooftop Twenty Two were brilliant to work with from the very beginning. Cathal and his team could not have done more for us, from developing our vision to the implementation of our style and structure.",
+    name: "Ciaran Mc Bride", company: "Irish Chauffeurs",
+  },
+  {
+    quote: "Always very professional and creative. We love working with this agency and would highly recommend them.",
+    name: "Vanessa Langford", company: "Midlands Park Hotel",
+  },
+  {
+    quote: "Great service, very professional, and innovative ideas. A pleasure to work with.",
+    name: "Shaun Rodgers", company: "Irish Luxury Tours",
+  },
+];
+
+const initials = (n: string) =>
+  n.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
+
+// Two identical halves so the -50% → 0 marquee loops seamlessly.
+const track = [...testimonials, ...testimonials];
+---
+
+<section class="tg">
+  <div class="tg__head reveal">
+    <p class="kicker kicker--script">What clients say</p>
+    <h2 class="tg__title">In <em>their words</em>.</h2>
+  </div>
+
+  <div class="tg__viewport" data-marquee="150">
+    <ul class="tg__track" role="list">
+      {track.map((t, i) => (
+        <li class="tg__card" aria-hidden={i >= testimonials.length ? "true" : "false"}>
+          <span class="tg__mark" aria-hidden="true">&ldquo;</span>
+          <blockquote class="tg__quote">{t.quote}</blockquote>
+          <div class="tg__by">
+            <span class="tg__avatar" aria-hidden="true">{initials(t.name)}</span>
+            <span class="tg__who">
+              <span class="tg__name">{t.name}</span>
+              {(t.title || t.company) && (
+                <span class="tg__co">{[t.title, t.company].filter(Boolean).join(", ")}</span>
+              )}
+            </span>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <div class="tg__cta reveal">
+    <a href="/contact/#contact" class="wbtn wbtn--accent">Get in touch</a>
+  </div>
+</section>
+
+<style>
+  .tg { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); overflow: hidden; }
+  .tg__head { text-align: center; margin: 0 auto 3rem; max-width: var(--w-container); padding-inline: var(--w-gutter); }
+  .tg__head .kicker--script { display: inline-block; }
+  .tg__title {
+    font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2);
+    line-height: var(--lh-heading); letter-spacing: var(--tracking-display); margin: 0.4rem 0 0;
+  }
+  .tg__title em { font-style: italic; color: var(--c-accent); }
+
+  /* Continuous marquee — native-scroll driven (see Layout), pauses on hover.
+   * Natively swipeable (overflow-x:auto, hidden scrollbar) so the cards are
+   * always reachable on touch even if the auto-scroll JS doesn't run. */
+  .tg__viewport { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .tg__viewport::-webkit-scrollbar { display: none; }
+  .tg__track {
+    list-style: none; margin: 0; padding: 0.5rem 0;
+    display: flex; align-items: stretch; width: max-content;
+  }
+
+  .tg__card {
+    flex: 0 0 min(85vw, 380px); margin-right: 1.5rem;
+    display: flex; flex-direction: column; background: var(--c-bg-alt);
+    border: 1px solid var(--c-line); border-radius: var(--w-radius); padding: 2rem;
+  }
+  .tg__mark { font-family: var(--w-font-display); font-weight: 700; font-size: 3rem; line-height: 0.6; color: var(--c-accent); }
+  .tg__quote { font-family: var(--w-font-body); font-size: 1.02rem; line-height: 1.6; color: var(--c-ink); margin: 1rem 0 0; flex: 1 1 auto; }
+  .tg__by { display: flex; align-items: center; gap: 0.85rem; margin-top: 1.75rem; padding-top: 1.5rem; border-top: 1px solid var(--c-line); }
+  .tg__avatar {
+    flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px; border-radius: 50%; background: var(--c-accent); color: var(--c-accent-ink);
+    font-family: var(--w-font-body); font-weight: 700; font-size: 0.95rem;
+  }
+  .tg__who { display: flex; flex-direction: column; }
+  .tg__name { font-family: var(--w-font-body); font-weight: 700; font-size: 1rem; color: var(--c-ink); }
+  .tg__co { font-family: var(--w-font-body); font-size: var(--fs-small); color: var(--c-ink-soft); }
+
+  .tg__cta { text-align: center; margin-top: 3rem; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tg__viewport { overflow-x: auto; scrollbar-width: none; }
+    .tg__viewport::-webkit-scrollbar { display: none; }
+  }
+</style>

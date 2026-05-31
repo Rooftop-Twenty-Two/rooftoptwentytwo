@@ -1,0 +1,326 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Picture from "../components/Picture.astro";
+import BreadcrumbSchema from "../components/seo/BreadcrumbSchema.astro";
+import { existsSync } from "node:fs";
+import path from "node:path";
+
+// Assets render only once present in the repo, so nothing shows broken.
+const hasFile = (p: string) => existsSync(path.join(process.cwd(), "public", p));
+
+// Events are data so the layout is reusable: add another object (in-person or
+// online) and it can drive its own Eventbrite-style page without a rebuild.
+const events = [
+  {
+    id: "diarmuid-mcsweeney-gym-coffee",
+    kicker: "An evening at Rooftop Twenty Two",
+    title: "From nothing to a brand the whole country knows.",
+    speaker: "Diarmuid McSweeney",
+    speakerRole: "Founder, Gym+Coffee",
+    headshot: "/images/events/diarmuid-mcsweeney.jpg",
+    partnerLogo: "/images/events/gym-coffee-logo.png",
+    partnerName: "Gym+Coffee",
+    banner: "/images/office/office-studio-01.jpg",
+    where: "Our Dublin studio",
+    date: null, // null renders a styled "to be confirmed" state
+    time: null,
+    format: "In person. Limited seats.",
+    cost: "Free to attend",
+    recorded: "Recorded, with segments posted online afterwards.",
+    body: [
+      "Diarmuid McSweeney took Gym+Coffee from a standing start to a name people wear up and down the country, and well beyond it. No huge launch budget. Just a clear idea and digital marketing done properly.",
+      "He&rsquo;s coming into our studio to talk through how it actually happened. The bets that paid off, the ones that didn&rsquo;t, and what he&rsquo;d do differently if he were starting again today. It&rsquo;s the kind of conversation we usually only get to have across the table. This time you&rsquo;re in the room for it.",
+      "Spaces are limited. We&rsquo;re keeping the room small on purpose so it stays a proper conversation, so get your name down early.",
+    ],
+    bio: "Diarmuid co-founded Gym+Coffee in 2017 and built it from an online-only idea into one of Ireland&rsquo;s best-known lifestyle brands, with stores here, in the UK and beyond. His background is brand and marketing, and Gym+Coffee&rsquo;s growth came the hard, smart way: a clear idea, a real community, and digital done properly. He knows what it takes to build something people actually care about.",
+    expect: [
+      "A proper sit-down talk, not a sales deck.",
+      "Real questions, real answers.",
+      "Time to meet the rooftop team and the rest of the room.",
+      "Something in your hand to drink, before and after.",
+    ],
+  },
+];
+
+const ev = events[0];
+---
+
+<Layout
+  title="From Nothing to a Brand the Whole Country Knows | Rooftop Events"
+  description="An evening with Gym+Coffee founder Diarmuid McSweeney in our Dublin studio. How Gym+Coffee actually grew, told straight. Limited seats, register your interest."
+  hideStickyMobileCTA={true}
+>
+  <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "Events", url: "/events/" }, { name: ev.speaker, url: "/events/" }]} />
+
+  <!-- Banner -->
+  <section class="eb-banner">
+    {ev.banner && hasFile(ev.banner) && (
+      <div class="eb-banner__media"><Picture src={ev.banner} alt="Rooftop Twenty Two studio, Dublin" loading="eager" decoding="async" /></div>
+    )}
+    <div class="eb-banner__scrim"></div>
+    <div class="eb-banner__inner">
+      <a class="eb-crumb" href="/events/">Rooftop events</a>
+      <p class="eb-banner__kicker">{ev.kicker}</p>
+      <h1 class="eb-banner__title">{ev.title}</h1>
+      <p class="eb-banner__by">With {ev.speaker}, {ev.speakerRole}</p>
+    </div>
+  </section>
+
+  <!-- Eventbrite-style body: description (left) + sticky details/register card (right) -->
+  <section class="eb-main">
+    <div class="eb-main__inner">
+
+      <div class="eb-content">
+        <div class="eb-block reveal">
+          <h2 class="eb-h2">About the speaker</h2>
+          <div class="eb-speaker">
+            {ev.headshot && hasFile(ev.headshot) && (
+              <div class="eb-speaker__photo"><Picture src={ev.headshot} alt={`${ev.speaker}, ${ev.speakerRole}`} loading="lazy" decoding="async" /></div>
+            )}
+            <div>
+              <p class="eb-speaker__name">{ev.speaker}</p>
+              <p class="eb-speaker__role">{ev.speakerRole}</p>
+              <p class="eb-p" set:html={ev.bio} />
+            </div>
+          </div>
+        </div>
+
+        <div class="eb-block reveal">
+          <h2 class="eb-h2">About this event</h2>
+          {ev.body.map((p) => <p class="eb-p" set:html={p} />)}
+        </div>
+
+        <div class="eb-block reveal">
+          <h2 class="eb-h2">What to expect</h2>
+          <p class="eb-p">An hour or so with Diarmuid, in the room, talking straight. He&rsquo;ll walk through how Gym+Coffee actually grew. The early decisions, what worked, what didn&rsquo;t, and the digital marketing that moved the needle.</p>
+          <p class="eb-p">It&rsquo;s a conversation, not a lecture. Bring your questions. He&rsquo;s happy to take them, whether you&rsquo;re building a brand of your own, stuck on a bit of your own marketing, or just want to know how it was really done.</p>
+          <ul class="eb-list">
+            {ev.expect.map((item) => <li>{item}</li>)}
+          </ul>
+        </div>
+      </div>
+
+      <!-- Sticky details / register card -->
+      <aside class="eb-rail">
+        <div class="eb-card">
+          {ev.partnerLogo && hasFile(ev.partnerLogo) && (
+            <div class="eb-card__partner"><img src={ev.partnerLogo} alt={ev.partnerName} loading="lazy" decoding="async" /></div>
+          )}
+          <p class="eb-card__cost">{ev.cost}</p>
+          <p class="eb-card__seats"><span class="eb-dot" aria-hidden="true"></span> Spaces are limited</p>
+          <a href="#register" class="wbtn wbtn--accent eb-card__cta">Register your interest</a>
+          <p class="eb-card__rec">{ev.recorded}</p>
+
+          <dl class="eb-meta">
+            <div class="eb-meta__row">
+              <dt>Date and time</dt>
+              <dd>{ev.date ? `${ev.date}${ev.time ? `, ${ev.time}` : ""}` : <span class="eb-tbc">To be confirmed</span>}</dd>
+            </div>
+            <div class="eb-meta__row">
+              <dt>Location</dt>
+              <dd>{ev.where}</dd>
+            </div>
+            <div class="eb-meta__row">
+              <dt>Format</dt>
+              <dd>{ev.format}</dd>
+            </div>
+          </dl>
+        </div>
+      </aside>
+
+    </div>
+  </section>
+
+  <!-- Register interest -->
+  <section class="eb-reg" id="register">
+    <div class="eb-reg__inner">
+      <div class="eb-reg__head reveal">
+        <p class="kicker kicker--on-dark kicker--script">Save your spot</p>
+        <h2 class="eb-reg__title">Register your interest.</h2>
+        <p class="eb-reg__lead">We can only fit so many people in the room, so this isn&rsquo;t a ticket just yet. Put your name down and we&rsquo;ll be in touch with the date and a seat as soon as it&rsquo;s locked in. First come, first served. We&rsquo;ll let you know either way.</p>
+      </div>
+
+      <form class="eb-form reveal" data-event-form data-endpoint="/api/event-register/" novalidate>
+        <input type="hidden" name="event" value={ev.id} />
+        <div class="eb-form__field">
+          <label class="eb-form__label" for="ev-name">Name</label>
+          <input id="ev-name" type="text" name="name" required autocomplete="name" />
+          <span class="eb-form__err" data-err-for="name" hidden>Please add your name.</span>
+        </div>
+        <div class="eb-form__field">
+          <label class="eb-form__label" for="ev-email">Email</label>
+          <input id="ev-email" type="email" name="email" required autocomplete="email" />
+          <span class="eb-form__err" data-err-for="email" hidden>Please add a valid email.</span>
+        </div>
+        <div class="eb-form__field">
+          <label class="eb-form__label" for="ev-company">Company <span class="eb-form__opt">(optional)</span></label>
+          <input id="ev-company" type="text" name="company" autocomplete="organization" />
+        </div>
+        <div class="eb-form__field">
+          <label class="eb-form__label" for="ev-q">Anything you&rsquo;d like Diarmuid to cover? <span class="eb-form__opt">(optional)</span></label>
+          <textarea id="ev-q" name="question" rows="4"></textarea>
+        </div>
+        <input type="text" name="_gotcha" class="eb-form__hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <button type="submit" class="wbtn wbtn--accent eb-form__submit">Put my name down</button>
+        <p class="eb-form__note">No spam. We&rsquo;ll only email you about this event.</p>
+        <p class="eb-form__status" role="status" aria-live="polite" data-form-status hidden></p>
+      </form>
+
+      <div class="eb-done reveal" data-event-done hidden>
+        <p class="kicker kicker--on-dark kicker--script">You&rsquo;re on the list</p>
+        <h3 class="eb-done__h">Brilliant. We&rsquo;ve got you.</h3>
+        <p class="eb-done__b">We&rsquo;ll be in touch with the date and a seat as soon as it&rsquo;s confirmed. If it fills up, you&rsquo;ll be first to know about the recording.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Future events -->
+  <section class="eb-more">
+    <div class="eb-more__inner reveal">
+      <p class="kicker kicker--script">What&rsquo;s next</p>
+      <h2 class="eb-h2">This is just the start.</h2>
+      <p class="eb-more__body">Diarmuid is our first guest, not our last. We&rsquo;ve got more events lined up, a podcast on the way, and more guests we&rsquo;re getting into the room. Webinars and online sessions too, for the people who can&rsquo;t make it in person. We&rsquo;ll post it all here first, so check back or put your name down to be kept in the loop.</p>
+      <a href="#register" class="wbtn wbtn--primary">Keep me in the loop</a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .eb-h2 { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); line-height: 1.1; color: var(--c-ink); margin: 0 0 1rem; }
+  .eb-p { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.7; color: var(--c-ink-soft); margin: 0 0 1.1rem; max-width: 64ch; }
+
+  /* Banner */
+  .eb-banner { position: relative; isolation: isolate; color: var(--c-on-dark); min-height: clamp(360px, 46vw, 540px); display: flex; align-items: flex-end; }
+  .eb-banner__media { position: absolute; inset: 0; z-index: -2; }
+  .eb-banner__media :global(img) { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .eb-banner__scrim { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(13,32,48,0.45) 0%, rgba(13,32,48,0.72) 55%, rgba(13,32,48,0.94) 100%); }
+  .eb-banner__inner { max-width: var(--w-container); width: 100%; margin: 0 auto; padding: 0 var(--w-gutter) clamp(2.5rem, 5vw, 4rem); }
+  .eb-crumb { display: inline-block; font-family: var(--w-font-body); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c-accent-2); text-decoration: none; }
+  .eb-banner__kicker { font-family: var(--w-font-script); font-size: clamp(2rem, 2.2vw + 1.4rem, 3rem); line-height: 0.95; color: #fff; transform: rotate(-2deg); transform-origin: left; margin: 1rem 0 0; }
+  .eb-banner__title { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h1, clamp(2.25rem, 4vw + 1rem, 4.25rem)); line-height: 1.03; letter-spacing: var(--tracking-display); color: #fff; margin: 0.75rem 0 0; max-width: 20ch; }
+  .eb-banner__by { font-family: var(--w-font-body); font-size: 1.15rem; color: var(--c-on-dark-soft); margin: 1rem 0 0; }
+
+  /* Main two-column */
+  .eb-main { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .eb-main__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); display: grid; grid-template-columns: 1fr; gap: 3rem; }
+  @media (min-width: 960px) { .eb-main__inner { grid-template-columns: 1fr 360px; gap: 4rem; align-items: start; } }
+  .eb-block { margin-bottom: 3rem; }
+  .eb-block:last-child { margin-bottom: 0; }
+  .eb-list { list-style: none; margin: 1.25rem 0 0; padding: 0; display: grid; gap: 0.85rem; }
+  .eb-list li { position: relative; padding-left: 1.6rem; font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-ink); line-height: 1.5; }
+  .eb-list li::before { content: ""; position: absolute; left: 0; top: 0.5em; width: 0.6rem; height: 0.6rem; border-radius: 0 100% 0 0; background: var(--c-accent); }
+
+  .eb-speaker { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+  @media (min-width: 560px) { .eb-speaker { grid-template-columns: 132px 1fr; gap: 1.75rem; align-items: start; } }
+  .eb-speaker__photo { border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 1; background: var(--c-bg-alt); max-width: 132px; }
+  .eb-speaker__photo :global(img) { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .eb-speaker__name { font-family: var(--w-font-display); font-weight: 600; font-size: 1.25rem; color: var(--c-ink); margin: 0; }
+  .eb-speaker__role { font-family: var(--w-font-body); font-size: 0.95rem; color: var(--c-ink-soft); margin: 0.15rem 0 1rem; }
+
+  /* Sticky register card (Eventbrite right rail) */
+  @media (min-width: 960px) { .eb-rail { position: sticky; top: 6rem; } }
+  .eb-card { background: var(--c-bg); border: 1px solid var(--c-line); border-radius: var(--w-radius); box-shadow: var(--w-shadow-soft); padding: clamp(1.5rem, 2.5vw, 2rem); }
+  .eb-card__partner { margin: 0 0 1.25rem; }
+  .eb-card__partner img { height: 40px; width: auto; max-width: 150px; object-fit: contain; filter: brightness(0); opacity: 0.85; }
+  .eb-card__cost { font-family: var(--w-font-display); font-weight: 700; font-size: 1.5rem; color: var(--c-ink); margin: 0; }
+  .eb-card__seats { display: flex; align-items: center; gap: 0.5rem; font-family: var(--w-font-body); font-weight: 700; font-size: 0.9rem; color: var(--c-accent); margin: 0.4rem 0 1.25rem; }
+  .eb-dot { width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--c-accent); display: inline-block; }
+  .eb-card__cta { width: 100%; justify-content: center; }
+  .eb-card__rec { font-family: var(--w-font-body); font-size: 0.85rem; line-height: 1.5; color: var(--c-ink-soft); margin: 0.85rem 0 0; }
+  .eb-meta { margin: 1.5rem 0 0; padding: 1.5rem 0 0; border-top: 1px solid var(--c-line); }
+  .eb-meta__row { display: grid; gap: 0.2rem; padding: 0.7rem 0; }
+  .eb-meta__row dt { font-family: var(--w-font-body); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--c-ink-soft); }
+  .eb-meta__row dd { font-family: var(--w-font-body); font-size: 1rem; color: var(--c-ink); margin: 0; }
+  .eb-tbc { display: inline-block; font-family: var(--w-font-body); font-weight: 600; font-size: 0.85rem; color: var(--c-dark); background: var(--c-accent-2); border-radius: var(--radius-pill); padding: 0.2rem 0.7rem; }
+
+  /* Register */
+  .eb-reg { background: var(--c-dark); color: var(--c-on-dark); padding-block: var(--w-section-y); }
+  .eb-reg__inner { max-width: 720px; margin: 0 auto; padding-inline: var(--w-gutter); }
+  .eb-reg__title { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); letter-spacing: var(--tracking-display); color: var(--c-on-dark); margin: 0.4rem 0 0; }
+  .eb-reg__lead { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.65; color: var(--c-on-dark-soft); margin: 1rem 0 2.5rem; }
+  .eb-form { display: grid; gap: 1.25rem; }
+  .eb-form__field { display: grid; gap: 0.45rem; }
+  .eb-form__label { font-family: var(--w-font-body); font-weight: 600; font-size: 0.85rem; color: var(--c-on-dark); }
+  .eb-form__opt { font-weight: 400; color: var(--c-on-dark-soft); }
+  .eb-form__field input, .eb-form__field textarea {
+    font-family: var(--w-font-body); font-size: 1rem; padding: 0.85rem 1rem;
+    border-radius: 12px; border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.04); color: #fff;
+  }
+  .eb-form__field input:focus, .eb-form__field textarea:focus { outline: 2px solid var(--c-accent-2); outline-offset: 1px; }
+  .eb-form__field textarea { resize: vertical; }
+  .eb-form__field input[aria-invalid="true"] { border-color: var(--c-accent); }
+  .eb-form__err { font-family: var(--w-font-body); font-size: 0.8rem; color: #ffb3ad; }
+  .eb-form__hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+  .eb-form__submit { justify-self: start; margin-top: 0.25rem; }
+  .eb-form__note { font-family: var(--w-font-body); font-size: var(--fs-small); color: var(--c-on-dark-soft); margin: 0; }
+  .eb-form__status { font-family: var(--w-font-body); font-size: var(--fs-small); color: #ffb3ad; margin: 0; }
+
+  .eb-done__h { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); color: var(--c-on-dark); margin: 0.4rem 0 0; }
+  .eb-done__b { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.65; color: var(--c-on-dark-soft); margin: 1rem 0 0; max-width: 52ch; }
+
+  /* Future events */
+  .eb-more { background: var(--c-bg-alt); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .eb-more__inner { max-width: 760px; margin: 0 auto; padding-inline: var(--w-gutter); }
+  .eb-more__body { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.7; color: var(--c-ink-soft); margin: 1.25rem 0 2rem; }
+</style>
+
+<script>
+  // Register-of-interest form: client validation, success swap, real submission
+  // with a mailto fallback so sign-ups are never lost. Drop the live CRM/handler
+  // URL into data-endpoint to POST there.
+  const form = document.querySelector<HTMLFormElement>("[data-event-form]");
+  const done = document.querySelector<HTMLElement>("[data-event-done]");
+  if (form && done) {
+    const status = form.querySelector<HTMLElement>("[data-form-status]");
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    const showErr = (name: string, on: boolean) => {
+      const field = form.querySelector<HTMLElement>(`[data-err-for="${name}"]`);
+      const input = form.querySelector<HTMLInputElement>(`[name="${name}"]`);
+      if (field) field.hidden = !on;
+      if (input) input.setAttribute("aria-invalid", on ? "true" : "false");
+    };
+    const validate = () => {
+      const name = (form.elements.namedItem("name") as HTMLInputElement)?.value.trim();
+      const email = (form.elements.namedItem("email") as HTMLInputElement)?.value.trim();
+      const nameOk = !!name;
+      const emailOk = emailRe.test(email || "");
+      showErr("name", !nameOk);
+      showErr("email", !emailOk);
+      return nameOk && emailOk;
+    };
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (status) status.hidden = true;
+      if ((form.elements.namedItem("_gotcha") as HTMLInputElement)?.value) {
+        form.hidden = true; done.hidden = false; return;
+      }
+      if (!validate()) {
+        form.querySelector<HTMLInputElement>('[aria-invalid="true"]')?.focus();
+        return;
+      }
+      const data = Object.fromEntries(new FormData(form).entries());
+      const endpoint = form.dataset.endpoint;
+      const btn = form.querySelector<HTMLButtonElement>('[type="submit"]');
+      if (btn) { btn.disabled = true; btn.textContent = "Sending..."; }
+      const succeed = () => { form.hidden = true; done.hidden = false; done.scrollIntoView({ behavior: "smooth", block: "center" }); };
+      const fail = (msg: string) => { if (status) { status.textContent = msg; status.hidden = false; } if (btn) { btn.disabled = false; btn.textContent = "Put my name down"; } };
+      try {
+        if (endpoint) {
+          const res = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(data) });
+          if (!res.ok) throw new Error("bad status");
+          succeed();
+        } else {
+          const subject = encodeURIComponent("Event interest: Diarmuid McSweeney, Gym+Coffee");
+          const body = encodeURIComponent(`Name: ${data.name}\nEmail: ${data.email}\nCompany: ${data.company || "-"}\n\nFor Diarmuid: ${data.question || "-"}`);
+          window.location.href = `mailto:hey@rooftoptwentytwo.ie?subject=${subject}&body=${body}`;
+          succeed();
+        }
+      } catch {
+        fail("Something went wrong. Email us at hey@rooftoptwentytwo.ie and we'll add you.");
+      }
+    });
+  }
+</script>

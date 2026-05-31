@@ -1,0 +1,101 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import PageHero from "../../components/reskin/PageHero.astro";
+import WCtaBand from "../../components/reskin/WCtaBand.astro";
+import BreadcrumbSchema from "../../components/seo/BreadcrumbSchema.astro";
+
+export async function getStaticPaths() {
+  const jobs = await getCollection("jobs", ({ data }) => !data.draft);
+  return jobs.map((entry) => ({ params: { slug: entry.data.slug }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const j = entry.data;
+const mailto = `mailto:hey@rooftoptwentytwo.ie?subject=${encodeURIComponent(`Application for ${j.title}`)}`;
+
+const blocks = [
+  { label: "What you'll do", items: j.responsibilities },
+  { label: "What you'll bring", items: j.requirements },
+  { label: "Nice to have", items: j.niceToHave },
+].filter((b) => b.items && b.items.length > 0);
+
+const benefits = [
+  "Hybrid, work from home Wednesdays and Fridays",
+  "Pension contribution",
+  "Private health insurance, paid for",
+  "A company charity day and a personal charity day each year",
+];
+---
+
+<Layout title={`${j.title} Job in Dublin | Rooftop Twenty Two`} description={j.summary}>
+  <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "Careers", url: "/careers/" }, { name: j.title, url: `/careers/${j.slug}/` }]} />
+
+  <PageHero
+    kicker={`${j.type} · ${j.location}`}
+    title={j.title}
+    intro={j.summary}
+    primary={{ label: "Apply now", href: mailto }}
+    secondary={{ label: "All roles", href: "/careers/" }}
+  />
+
+  <section class="jb">
+    <div class="jb__inner">
+      <div class="jb__main">
+        <p class="jb__intro reveal">{j.intro}</p>
+
+        {blocks.map((b) => (
+          <div class="jb__block reveal">
+            <h2 class="jb__h">{b.label}</h2>
+            <ul class="jb__list">
+              {b.items.map((it) => <li>{it}</li>)}
+            </ul>
+          </div>
+        ))}
+
+        <div class="jb__apply reveal">
+          <a href={mailto} class="wbtn wbtn--accent">Apply for this role</a>
+          <p class="jb__apply-note">Send your CV and a few lines about yourself to <a href="mailto:hey@rooftoptwentytwo.ie">hey@rooftoptwentytwo.ie</a>.</p>
+        </div>
+      </div>
+
+      <aside class="jb__aside reveal">
+        <div class="jb__card">
+          <p class="kicker kicker--on-dark">The package</p>
+          <p class="jb__card-h">What we offer</p>
+          <ul class="jb__benefits">
+            {benefits.map((b) => <li>{b}</li>)}
+          </ul>
+          <a href={mailto} class="wbtn wbtn--accent jb__card-cta">Apply now</a>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <WCtaBand heading="Not quite the right role?" body="We're always glad to meet good people. Tell us what you do and what you're looking for." />
+</Layout>
+
+<style>
+  .jb { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .jb__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); display: grid; grid-template-columns: 1fr; gap: 3rem; }
+  @media (min-width: 940px) { .jb__inner { grid-template-columns: 1.6fr 1fr; gap: 4rem; align-items: start; } }
+  .jb__intro { font-family: var(--w-font-body); font-size: 1.2rem; line-height: 1.7; color: var(--c-ink); margin: 0; }
+  .jb__block { margin-top: 2.5rem; }
+  .jb__h { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); color: var(--c-ink); margin: 0 0 1rem; }
+  .jb__list { list-style: none; margin: 0; padding: 0; }
+  .jb__list li { position: relative; padding: 0 0 0 1.6rem; margin: 0 0 0.85rem; font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.55; color: var(--c-ink-soft); }
+  .jb__list li::before { content: ""; position: absolute; left: 0; top: 0.6em; width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--c-accent); }
+  .jb__apply { margin-top: 3rem; }
+  .jb__apply-note { font-family: var(--w-font-body); font-size: var(--fs-small); color: var(--c-ink-soft); margin: 1rem 0 0; }
+  /* Plain text links only, never the .wbtn CTA (which has its own colours). */
+  .jb__apply-note a:not(.wbtn), .jb__card a:not(.wbtn) { color: var(--c-accent); text-decoration: none; font-weight: 600; }
+
+  .jb__aside { }
+  @media (min-width: 940px) { .jb__aside { position: sticky; top: 6rem; } }
+  .jb__card { background: var(--c-dark); color: var(--c-on-dark); border-radius: var(--w-radius); padding: clamp(1.75rem, 3vw, 2.5rem); }
+  .jb__card-h { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); color: var(--c-on-dark); margin: 0.75rem 0 0; }
+  .jb__benefits { list-style: none; margin: 1.25rem 0 0; padding: 0; }
+  .jb__benefits li { position: relative; padding: 0 0 0 1.6rem; margin: 0 0 0.75rem; font-family: var(--w-font-body); font-size: 1rem; line-height: 1.5; color: var(--c-on-dark-soft); }
+  .jb__benefits li::before { content: ""; position: absolute; left: 0; top: 0.55em; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--c-accent-2); }
+  .jb__card-cta { margin-top: 1.75rem; }
+</style>

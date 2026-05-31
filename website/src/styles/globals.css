@@ -27,6 +27,10 @@
 }
 
 @theme {
+  /* NOTE: the canonical brand palette is the --c-* set further down (see the
+   * ":root" block). These @theme tokens exist only so Tailwind generates colour
+   * utility classes and to back the html/body base layer. Keep the two in sync;
+   * --c-* is the source of truth referenced by all components. */
   /* Palette: neutrals */
   --color-navy-900: #0D2030;
   --color-navy-700: #143A4F;
@@ -37,7 +41,7 @@
 
   /* Palette: brand */
   --color-coral: #E15047;
-  --color-mint: #00FFB2;
+  --color-mint: #01FFB2;
   --color-teal-700: #225C5E;
   --color-teal-200: #C2DDDB;
   --color-wine-800: #78233C;
@@ -132,68 +136,50 @@ body {
  * the html element as `.js-ready`. Without JS, content stays visible. */
 .js-ready .reveal {
   opacity: 0;
-  transform: translateY(16px);
+  transform: translateY(20px);
   transition:
-    opacity 400ms var(--ease-out-rooftop),
-    transform 400ms var(--ease-out-rooftop);
+    opacity 600ms var(--ease-out-rooftop),
+    transform 600ms var(--ease-out-rooftop);
 }
 .js-ready .reveal.is-visible {
   opacity: 1;
   transform: none;
+  /* --reveal-delay is set per-item by the observer so siblings in a section
+   * cascade in DOM order. Falls back to 0 when unset. */
+  transition-delay: var(--reveal-delay, 0ms);
 }
+.js-ready .reveal--left.is-visible,
+.js-ready .reveal--right.is-visible,
+.js-ready .reveal--scale.is-visible { transition-delay: var(--reveal-delay, 0ms); }
 
-/* Pill button atom */
-.btn-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  border-radius: var(--radius-pill);
-  font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: var(--text-body-sm);
-  line-height: 1;
-  transition:
-    transform 200ms var(--ease-out-rooftop),
-    background-color 200ms var(--ease-out-rooftop),
-    color 200ms var(--ease-out-rooftop);
-  cursor: pointer;
-}
-.btn-pill:hover { transform: scale(1.04); }
-.btn-pill:active { transform: scale(0.98); }
-.btn-pill:focus-visible {
-  outline: 2px solid var(--color-mint);
-  outline-offset: 2px;
-}
-.btn-pill--mint {
-  background-color: var(--color-mint);
-  color: var(--color-navy-900);
-}
-.btn-pill--mint:focus-visible {
-  outline-color: var(--color-coral);
-}
-.btn-pill--coral {
-  background-color: var(--color-coral);
-  color: #ffffff;
-}
-.btn-pill--ghost-mint {
-  background-color: transparent;
-  color: var(--color-mint);
-  box-shadow: inset 0 0 0 1.5px var(--color-mint);
-}
-.btn-pill--white {
-  background-color: #ffffff;
-  color: var(--color-navy-900);
-}
-.btn-pill--ghost-white {
-  background-color: transparent;
-  color: #ffffff;
-  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.6);
-}
-.btn-pill--ghost-white:hover {
-  box-shadow: inset 0 0 0 1.5px #ffffff;
-}
+/* Reveal variants: directional + scale, for subtle variety between sections. */
+.js-ready .reveal--left { opacity: 0; transform: translateX(-26px); transition: opacity 600ms var(--ease-out-rooftop), transform 600ms var(--ease-out-rooftop); }
+.js-ready .reveal--right { opacity: 0; transform: translateX(26px); transition: opacity 600ms var(--ease-out-rooftop), transform 600ms var(--ease-out-rooftop); }
+.js-ready .reveal--scale { opacity: 0; transform: scale(.965); transition: opacity 600ms var(--ease-out-rooftop), transform 600ms var(--ease-out-rooftop); }
+.js-ready .reveal--left.is-visible,
+.js-ready .reveal--right.is-visible,
+.js-ready .reveal--scale.is-visible { opacity: 1; transform: none; }
+
+/* Per-item delays (use on individual .reveal elements). */
+.reveal--delay-1.is-visible { transition-delay: .08s; }
+.reveal--delay-2.is-visible { transition-delay: .16s; }
+.reveal--delay-3.is-visible { transition-delay: .24s; }
+.reveal--delay-4.is-visible { transition-delay: .32s; }
+
+/* Container stagger: children fade/rise in sequence when the parent enters view.
+ * Add .reveal--stagger to a grid/list wrapper, no per-child classes needed. */
+.js-ready .reveal--stagger > * { opacity: 0; transform: translateY(16px); transition: opacity 550ms var(--ease-out-rooftop), transform 550ms var(--ease-out-rooftop); }
+.js-ready .reveal--stagger.is-visible > * { opacity: 1; transform: none; }
+.js-ready .reveal--stagger.is-visible > *:nth-child(1) { transition-delay: .04s; }
+.js-ready .reveal--stagger.is-visible > *:nth-child(2) { transition-delay: .10s; }
+.js-ready .reveal--stagger.is-visible > *:nth-child(3) { transition-delay: .16s; }
+.js-ready .reveal--stagger.is-visible > *:nth-child(4) { transition-delay: .22s; }
+.js-ready .reveal--stagger.is-visible > *:nth-child(5) { transition-delay: .28s; }
+.js-ready .reveal--stagger.is-visible > *:nth-child(6) { transition-delay: .34s; }
+.js-ready .reveal--stagger.is-visible > *:nth-child(n+7) { transition-delay: .40s; }
+
+/* (Legacy .btn-pill family removed — the live design system uses .wbtn and
+ * .btn-filler. See further down for those.) */
 
 /* Coral duotone treatment used on hero team portraits.
  * Implemented as a 2-layer composite: grayscale base image multiplied by a
@@ -402,10 +388,16 @@ body {
   height: 520px;
   margin-left: -260px;
   margin-top: -260px;
-  background: radial-gradient(circle, rgba(33, 92, 94, 0.65) 0%, rgba(33, 92, 94, 0.32) 30%, rgba(33, 92, 94, 0) 65%);
+  /* Adaptive halo: JS swaps --glow-rgb / --glow-a to match the section under the
+   * cursor (mint on dark surfaces, coral on light), so it reads site-wide. */
+  --glow-rgb: 1 255 178;
+  --glow-a: 0.22;
+  background: radial-gradient(circle, rgb(var(--glow-rgb) / var(--glow-a)) 0%, rgb(var(--glow-rgb) / calc(var(--glow-a) * 0.4)) 40%, rgb(var(--glow-rgb) / 0) 70%);
   pointer-events: none;
-  z-index: 1;
-  mix-blend-mode: screen;
+  /* Must sit ABOVE the page content layer (main is z-index:2) so the halo reads
+   * on every section, not just the header/footer that live outside <main>.
+   * Kept below the sticky header / menu overlay (both z-index:100). */
+  z-index: 90;
   transform: translate3d(-1000px, -1000px, 0);
   transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1), opacity 400ms ease;
   opacity: 0;
@@ -445,3 +437,185 @@ body.alternate-theme [data-header] .header-logo--navy { display: block !importan
   fill: var(--color-page-bg);
 }
 .shape-divider--invert { fill: #ffffff; }
+
+/* ============================================================
+   RE-SKIN, Wolfgang-style design language (Phase 1, additive).
+   New components reference these tokens/utilities; existing pages
+   keep --color-* / Butler until migrated. See design brief §2/§4.
+   ============================================================ */
+:root {
+  /* Colour, Rooftop Twenty Two brand palette (see design/brand-tokens.json).
+   * Happy medium: airy light surfaces (white + warm off-white) with brand
+   * navy reintroduced as the dark accent band tone. */
+  --c-bg: #FFFFFF;            /* primary light surface */
+  --c-bg-alt: #F4F1EC;        /* warm off-white, the third tone (kills bareness) */
+  --c-ink: #0D2030;           /* brand navy, headings / primary text on light */
+  --c-ink-soft: #4A5468;      /* navy-grey, body copy on light (AA on white) */
+  --c-dark: #0D2030;          /* brand navy, dark feature bands */
+  --c-dark-2: #143A4F;        /* secondary navy, layered dark / inputs */
+  --c-on-dark: #FFFFFF;
+  --c-on-dark-soft: #C2DDDB;  /* brand teal_200, muted text on dark */
+  --c-accent: #E15047;        /* Rooftop coral, THE primary accent (actions, emphasis, numbers) */
+  --c-accent-ink: #FFFFFF;    /* text on coral */
+  --c-accent-2: #01FFB2;      /* Rooftop mint, secondary accent (client-preferred) */
+  --c-accent-2-bright: #01FFB2; /* same mint on navy/photo darks */
+  --c-line: #E6E2D9;          /* hairline on warm off-white */
+  --c-line-dark: rgba(255,255,255,0.12); /* hairline on navy */
+
+  /* Type families, genuine R22 brand faces (self-hosted, see brand-tokens.json).
+   * Butler (display serif) · Mulish (body) · Starlit Drive (script signatures). */
+  --w-font-display: "Butler", Georgia, "Times New Roman", serif;
+  --w-font-body: "Mulish", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --w-font-script: "Starlit Drive", "Brush Script MT", cursive;
+
+  /* Fluid type scale */
+  --fs-display: clamp(3rem, 6.8vw + 1rem, 7.75rem);
+  --fs-h2: clamp(2.25rem, 3.4vw + 1rem, 4rem);
+  --fs-h3: clamp(1.5rem, 1.3vw + 1rem, 2rem);
+  --fs-kicker: 0.8125rem;
+  --fs-body: clamp(1rem, 0.3vw + 0.95rem, 1.1875rem);
+  --fs-small: 0.85rem;
+  --lh-display: 0.95;            /* tighter, more confident display leading */
+  --lh-heading: 1.04;
+  --lh-body: 1.6;
+  --tracking-display: -0.022em;  /* big, tight Butler display */
+  --tracking-kicker: 0.14em;
+
+  /* Layout / motion */
+  --w-container: 1320px;
+  --w-gutter: clamp(1.25rem, 4vw, 4rem);
+  --w-section-y: clamp(4.5rem, 9vw, 9rem);
+  --w-radius: 18px;
+  --w-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --w-dur-fast: 240ms;
+  --w-dur: 600ms;
+  --w-dur-slow: 1100ms;
+  --w-shadow-soft: 0 18px 50px -24px rgba(0, 0, 0, 0.28);
+}
+
+/* Kicker label */
+.kicker {
+  display: inline-block;
+  font-family: var(--w-font-body);
+  font-size: var(--fs-kicker);
+  font-weight: 600;
+  letter-spacing: var(--tracking-kicker);
+  text-transform: uppercase;
+  color: var(--c-ink-soft);
+}
+.kicker--on-dark { color: var(--c-accent-2-bright); font-weight: 700; }
+
+/* Handwritten section-intro accent (Starlit Drive script, coral), the original
+ * brand signature voice, used subtly to introduce sections. Overrides the
+ * uppercase label treatment when combined with .kicker. */
+.kicker--script {
+  font-family: var(--w-font-script);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  /* Higher mobile floor: the handwriting face reads small for its point size,
+   * so keep a generous minimum on narrow screens. */
+  font-size: clamp(2.6rem, 3.5vw + 1.6rem, 3.5rem);
+  line-height: 0.95;
+  color: var(--c-accent);
+  margin-bottom: 0.35rem;
+  transform: rotate(-2deg);
+  transform-origin: left center;
+}
+/* Script reads in coral on dark surfaces too; keep coral rather than the on-dark mint. */
+.kicker--on-dark.kicker--script { color: var(--c-accent); }
+
+/* <Picture> wrapper is layout-transparent so existing `.x img` styles still apply. */
+picture { display: contents; }
+
+/* Pill buttons (re-skin design system, distinct from legacy .btn-pill) */
+.wbtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.9rem 1.7rem;
+  border-radius: var(--radius-pill);
+  font-family: var(--w-font-body);
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1;
+  text-decoration: none;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  transition: transform var(--w-dur-fast) var(--w-ease),
+    background-color var(--w-dur-fast) var(--w-ease),
+    color var(--w-dur-fast) var(--w-ease),
+    border-color var(--w-dur-fast) var(--w-ease);
+}
+.wbtn:hover { transform: scale(1.02); }
+.wbtn:active { transform: scale(0.99); }
+.wbtn:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 3px; }
+.wbtn--primary { background: var(--c-ink); color: #fff; }
+.wbtn--primary:hover { background: var(--c-accent); color: var(--c-accent-ink); }
+.wbtn--accent { background: var(--c-accent); color: var(--c-accent-ink); }
+.wbtn--accent:hover { background: var(--c-accent-2); color: var(--c-ink); }
+.wbtn--ghost { background: transparent; color: currentColor; border-color: currentColor; }
+.wbtn--ghost:hover { background: var(--c-on-dark); color: var(--c-ink); }
+
+/* ============================================================
+   R22 SIGNATURE INTERACTION, single, site-wide hover.
+   Extracted from the footer link treatment and enriched into an
+   animated underline-wipe (left→right reveal). Applied to nav,
+   mega-menu links, in-text links, "view all" links and footer
+   links. One signature behaviour, used everywhere. §C of brief.
+   ============================================================ */
+.r22-link {
+  position: relative;
+  text-decoration: none;
+  color: inherit;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: 0% 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 1.5px;
+  transition: background-size var(--w-dur-fast) var(--w-ease), color var(--w-dur-fast) var(--w-ease);
+}
+.r22-link:hover,
+.r22-link:focus-visible {
+  background-size: 100% 1.5px;
+}
+/* On dark surfaces the wipe reads in mint, the brand accent. */
+.r22-link--on-dark:hover,
+.r22-link--on-dark:focus-visible { color: var(--c-accent-2); }
+
+/* Arrow-reveal variant, same idea for "view all / explore" affordances:
+ * the trailing arrow nudges forward on hover. Pair with .r22-link. */
+.r22-arrow { display: inline-flex; align-items: center; gap: 0.4rem; }
+.r22-arrow > .r22-arrow__i {
+  display: inline-block;
+  transition: transform var(--w-dur-fast) var(--w-ease);
+}
+.r22-arrow:hover > .r22-arrow__i,
+.r22-arrow:focus-visible > .r22-arrow__i { transform: translateX(0.25rem); }
+
+/* Card / image-tile signature: subtle lift + image zoom. Wrap the media in
+ * .r22-media and add .r22-card to the interactive ancestor. */
+.r22-card { transition: transform var(--w-dur-fast) var(--w-ease); }
+.r22-card:hover { transform: translateY(-4px); }
+.r22-media { overflow: hidden; }
+.r22-media img { transition: transform var(--w-dur) var(--w-ease); will-change: transform; }
+.r22-card:hover .r22-media img,
+a:hover > .r22-media img { transform: scale(1.04); }
+
+@media (prefers-reduced-motion: reduce) {
+  .r22-link { transition: none; }
+  .r22-link:hover, .r22-link:focus-visible { background-size: 100% 1.5px; }
+  .r22-card:hover { transform: none; }
+  .r22-card:hover .r22-media img, a:hover > .r22-media img { transform: none; }
+  .r22-arrow:hover > .r22-arrow__i { transform: none; }
+}
+
+/* Editorial script signature (Starlit Drive), sparing brand flourish for
+ * section signatures, used alongside kickers. §4 density toolkit. */
+.r22-signature {
+  font-family: var(--w-font-script);
+  font-weight: 400;
+  color: var(--c-accent);
+  line-height: 1;
+  font-size: clamp(1.75rem, 1.5vw + 1.25rem, 2.75rem);
+}
+.r22-signature--on-dark { color: var(--c-accent-2); }

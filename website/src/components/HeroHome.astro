@@ -1,0 +1,193 @@
+---
+// S1, Home hero (re-skin / Wolfgang direction).
+// Near-black canvas, slow-pan (Ken Burns) office photo, kicker, big display
+// H1 with a rotating discipline word, dual pill CTAs. No video asset yet, 
+// structured so a <video> can drop in behind .whero__media later.
+// Default resting word is "growth" (the homepage promise); the rest rotate.
+const rotating = ["growth", "performance", "SEO", "social", "web", "content"];
+const poster = "/images/office/office-studio-01.jpg";
+
+// Recent awards, shown bottom-right of the hero in white. Logos render
+// automatically once the white SVGs are dropped at these paths; until then the
+// text reference shows on its own.
+import { existsSync } from "node:fs";
+import path from "node:path";
+const awardDefs = [
+  { logo: "/images/spider-awards-rev.png", result: "Gold", name: "Spider Awards", href: "/latest/spider-awards-2026-gold/" },
+  { logo: "/images/DMA-Generic-Pink-Blue-270x270-1-cutout.png", result: "Finalist", name: "Digital Media Awards", href: "/latest/digital-media-awards-seo-finalist/" },
+  { logo: "/images/European-Search-Awards-Logo_full_colour-cutout.png", result: "Finalist", name: "European Search Awards", href: "/latest/european-search-awards-two-nominations/" },
+];
+const awards = awardDefs.map((a) => ({ ...a, hasLogo: existsSync(path.join(process.cwd(), "public", a.logo)) }));
+---
+
+<section class="whero">
+  <div class="whero__media" aria-hidden="true">
+    <img src={poster} alt="" fetchpriority="high" />
+    <div class="whero__scrim"></div>
+  </div>
+
+  <div class="whero__inner">
+    <p class="kicker kicker--on-dark kicker--script whero__kicker">Your outsourced growth team</p>
+    <h1 class="whero__title">
+      <span class="whero__lead">We&rsquo;re your partners in</span>
+      <span class="whero__rotator" data-rotator aria-live="polite">
+        {rotating.map((w, i) => (
+          <span class:list={["whero__word", { "is-active": i === 0 }]} data-word>{w}</span>
+        ))}
+      </span>
+    </h1>
+    <p class="whero__sub">
+      Strategy, creative, and performance, all under one roof. A growth team
+      that works like it&rsquo;s part of yours.
+    </p>
+    <div class="whero__cta">
+      <a href="/work/" class="wbtn wbtn--accent">See our work</a>
+      <a href="/contact/" class="wbtn wbtn--ghost">Get in touch</a>
+    </div>
+  </div>
+
+  <ul class="whero__awards" aria-label="Recent awards">
+    {awards.map((a) => (
+      <li class="whero__award">
+        <a href={a.href}>
+          {a.hasLogo && <img class="whero__award-logo" src={a.logo} alt={a.name} loading="lazy" decoding="async" />}
+          <span class="whero__award-txt"><b>{a.result}</b> <span aria-hidden="true">·</span> {a.name}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .whero {
+    position: relative;
+    min-height: clamp(620px, 92vh, 1000px);
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    background: var(--c-dark);
+    padding: var(--w-gutter);
+    padding-bottom: clamp(3rem, 8vh, 6rem);
+  }
+  .whero__media { position: absolute; inset: 0; z-index: 0; }
+  .whero__media img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    transform: scale(1.02);
+    animation: whero-pan 24s ease-in-out infinite alternate;
+  }
+  .whero__scrim {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(to top, rgba(13,32,48,0.94) 0%, rgba(13,32,48,0.42) 45%, rgba(13,32,48,0.6) 100%);
+  }
+  @keyframes whero-pan {
+    from { transform: scale(1.02) translate3d(0, 0, 0); }
+    to   { transform: scale(1.1) translate3d(-1.5%, -1.5%, 0); }
+  }
+
+  .whero__inner {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: var(--w-container);
+    margin: 0 auto;
+  }
+  .whero__kicker { margin-bottom: 1.5rem; }
+
+  .whero__title {
+    font-family: var(--w-font-display);
+    font-weight: 600;
+    font-size: var(--fs-display);
+    line-height: var(--lh-display);
+    letter-spacing: var(--tracking-display);
+    color: var(--c-on-dark);
+    margin: 0;
+  }
+  .whero__lead { display: block; }
+
+  .whero__rotator {
+    position: relative;
+    display: block;
+    height: 1em;
+  }
+  .whero__word {
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--c-accent-2-bright);
+    opacity: 0;
+    transform: translateY(0.45em);
+    transition: opacity 0.55s var(--w-ease), transform 0.55s var(--w-ease);
+    white-space: nowrap;
+  }
+  .whero__word.is-active { opacity: 1; transform: none; }
+  .whero__word.is-leaving { opacity: 0; transform: translateY(-0.45em); }
+
+  .whero__sub {
+    font-family: var(--w-font-body);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    color: var(--c-on-dark-soft);
+    max-width: 40ch;
+    margin: 1.75rem 0 0;
+  }
+  .whero__cta { display: flex; flex-wrap: wrap; gap: 0.85rem; margin-top: 2.25rem; }
+
+  /* Awards cluster — bottom-right of the hero, in white. */
+  .whero__awards {
+    position: absolute; z-index: 1;
+    right: var(--w-gutter); bottom: clamp(3rem, 8vh, 6rem);
+    list-style: none; margin: 0; padding: 0;
+    display: flex; flex-direction: column; align-items: flex-end; gap: 0.7rem;
+    text-align: right;
+  }
+  .whero__award a {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    text-decoration: none; color: var(--c-on-dark);
+    opacity: 0.82; transition: opacity var(--w-dur-fast) var(--w-ease);
+  }
+  .whero__award a:hover { opacity: 1; }
+  .whero__award-logo { height: 30px; width: auto; filter: brightness(0) invert(1); }
+  .whero__award-txt { font-family: var(--w-font-body); font-size: 0.8rem; letter-spacing: 0.02em; color: #fff; white-space: nowrap; }
+  .whero__award-txt b { font-weight: 700; }
+  .whero__award-txt span { color: var(--c-on-dark-soft); padding: 0 0.15rem; }
+  /* On mobile the hero stacks and the awards sit in-flow below the content. */
+  @media (max-width: 880px) {
+    .whero { flex-direction: column; justify-content: flex-end; align-items: stretch; }
+    .whero__awards {
+      position: static; right: auto; bottom: auto; width: 100%;
+      align-items: flex-start; text-align: left; flex-wrap: wrap;
+      flex-direction: row; gap: 1rem 1.75rem;
+      margin-top: 1.75rem; padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.16);
+    }
+    .whero__award-logo { height: 26px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .whero__media img { animation: none; transform: scale(1.02); }
+  }
+</style>
+
+<script>
+  // Rotating discipline word. Honours reduced-motion (stays on first word).
+  const rotator = document.querySelector<HTMLElement>("[data-rotator]");
+  if (rotator) {
+    const words = Array.from(rotator.querySelectorAll<HTMLElement>("[data-word]"));
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!reduce && words.length > 1) {
+      let i = 0;
+      setInterval(() => {
+        const current = words[i];
+        i = (i + 1) % words.length;
+        const next = words[i];
+        current.classList.remove("is-active");
+        current.classList.add("is-leaving");
+        next.classList.remove("is-leaving");
+        next.classList.add("is-active");
+        // clear the leaving marker after the transition so it can re-enter later
+        window.setTimeout(() => current.classList.remove("is-leaving"), 600);
+      }, 2200);
+    }
+  }
+</script>

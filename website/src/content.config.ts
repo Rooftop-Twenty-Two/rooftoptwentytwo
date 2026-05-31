@@ -14,9 +14,14 @@ const portfolio = defineCollection({
     slug: z.string().optional(),
     tagline: z.string().optional(),
     summary: z.string().optional(),
+    // Concise (≤160 char) meta description for search/social. Falls back to
+    // summary/tagline/name when absent. Kept separate from the long on-page summary.
+    metaDescription: z.string().optional(),
     heroImage: z.string().optional(),
     heroCollage: z.array(z.string()).optional(),
     wordmark: z.string().optional(),
+    websiteUrl: z.string().optional(),
+    videos: z.array(z.string()).default([]),
     gallery: z.array(z.string()).default([]),
     order: z.number().default(100),
     featured: z.boolean().default(false),
@@ -28,6 +33,12 @@ const portfolio = defineCollection({
           body: z.string(),
           image: z.string().optional(),
           bullets: z.array(z.string()).default([]),
+          // Optional sub-headed groups of bullets (e.g. "Brand Identity", "Web
+          // Design & Development") so dense Strategy sections read as structured
+          // lists rather than one wall of text.
+          groups: z
+            .array(z.object({ label: z.string(), items: z.array(z.string()).default([]) }))
+            .default([]),
         })
       )
       .default([]),
@@ -169,4 +180,22 @@ const landing = defineCollection({
   }),
 });
 
-export const collections = { portfolio, team, services, sectors, programmes, articles, landing };
+// Open roles for the Careers section.
+const jobs = defineCollection({
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/jobs" }),
+  schema: z.object({
+    title: z.string(),
+    slug: z.string(),
+    summary: z.string(),
+    type: z.string().default("Full-time"),
+    location: z.string().default("Dublin · Hybrid"),
+    order: z.number().default(100),
+    intro: z.string(),
+    responsibilities: z.array(z.string()).default([]),
+    requirements: z.array(z.string()).default([]),
+    niceToHave: z.array(z.string()).default([]),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { portfolio, team, services, sectors, programmes, articles, landing, jobs };

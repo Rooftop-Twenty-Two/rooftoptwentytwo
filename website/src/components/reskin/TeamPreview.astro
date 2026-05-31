@@ -1,0 +1,60 @@
+---
+// Homepage "Meet the team" section. Pulls the team collection (Cathal, Roisin,
+// Padraic first via their order), shows portraits + roles, links to the About page.
+import { getCollection } from "astro:content";
+import Picture from "../Picture.astro";
+import { existsSync } from "node:fs";
+import path from "node:path";
+
+// Only show members whose portrait is in the repo, so a newly-added member
+// without an uploaded photo doesn't leave a broken tile.
+const team = (await getCollection("team"))
+  .filter((m) => existsSync(path.join(process.cwd(), "public", m.data.portrait)))
+  .sort((a, b) => (a.data.order ?? 100) - (b.data.order ?? 100));
+---
+
+<section class="tm">
+  <div class="tm__inner">
+    <div class="tm__head reveal">
+      <p class="kicker kicker--script">Meet the team</p>
+      <h2 class="tm__title">The people <em>behind the work</em>.</h2>
+      <p class="tm__lead">A senior, in-house team that treats your growth like our own, the people who strategise are the people who ship.</p>
+    </div>
+
+    <ul class="tm__grid reveal--stagger">
+      {team.map((m) => (
+        <li class:list={["tm__member", m.data.name === "Justin" && "tm__member--static"]}>
+          <div class="tm__img"><Picture src={m.data.portrait} alt={m.data.name} loading="lazy" decoding="async" /></div>
+          <p class="tm__name">{m.data.name}</p>
+          <p class="tm__role">{m.data.role}</p>
+        </li>
+      ))}
+    </ul>
+
+    <div class="tm__cta reveal">
+      <a href="/about/#team" class="wbtn wbtn--primary">More about us</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .tm { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .tm__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .tm__head { max-width: 60ch; }
+  .tm__title { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); line-height: var(--lh-heading); letter-spacing: var(--tracking-display); margin: 0.4rem 0 0; }
+  .tm__title em { font-style: italic; color: var(--c-accent); }
+  .tm__lead { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: var(--lh-body); color: var(--c-ink-soft); margin: 1.25rem 0 0; }
+
+  .tm__grid { list-style: none; margin: 3rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem 1.25rem; }
+  @media (min-width: 640px) { .tm__grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 900px) { .tm__grid { grid-template-columns: repeat(6, 1fr); gap: 2rem 1.5rem; } }
+  .tm__member { margin: 0; }
+  .tm__img { border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 5 / 6; background: var(--c-bg-alt); }
+  .tm__img :global(img) { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); transition: filter var(--w-dur) var(--w-ease), transform var(--w-dur) var(--w-ease); }
+  .tm__member:hover .tm__img :global(img) { filter: grayscale(0); transform: scale(1.03); }
+  .tm__member--static:hover .tm__img :global(img) { filter: grayscale(1); transform: none; }
+  .tm__name { font-family: var(--w-font-display); font-weight: 600; font-size: 1.05rem; color: var(--c-ink); margin: 0.85rem 0 0; }
+  .tm__role { font-family: var(--w-font-body); font-size: var(--fs-small); color: var(--c-ink-soft); margin: 0.15rem 0 0; }
+
+  .tm__cta { margin-top: 3rem; }
+</style>

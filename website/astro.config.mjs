@@ -3,12 +3,21 @@ import { defineConfig } from 'astro/config';
 import { readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 
-import node from '@astrojs/node';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 
 const SITE = 'https://rooftoptwentytwo.ie';
+
+// Adapter is chosen at build time. Vercel sets the VERCEL env var on its build
+// machines, so preview/production deploys there use the Vercel adapter.
+// Everywhere else (local dev, the Docker image for r22.moveatpace.com) keeps
+// the standalone Node adapter. Imported dynamically so each environment only
+// loads the adapter it actually uses.
+const onVercel = !!process.env.VERCEL;
+const adapter = onVercel
+  ? (await import('@astrojs/vercel')).default()
+  : (await import('@astrojs/node')).default({ mode: 'standalone' });
 
 /** @param {string} collection */
 function collectionSlugs(collection) {
@@ -45,7 +54,7 @@ for (const slug of collectionSlugs('portfolio')) {
 export default defineConfig({
   site: SITE,
   trailingSlash: 'always',
-  adapter: node({ mode: 'standalone' }),
+  adapter,
   redirects: portfolioRedirects,
   integrations: [
     mdx(),

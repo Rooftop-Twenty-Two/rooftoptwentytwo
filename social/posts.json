@@ -1,0 +1,169 @@
+[
+  {
+    "id": "awards-spider-gold",
+    "pillar": "awards",
+    "type": "award",
+    "theme": "navy",
+    "eyebrow": "2026 awards",
+    "headline": "Gold. [[And we're only getting started.]]",
+    "badges": [
+      { "result": "Gold", "name": "Spider Awards 2026" },
+      { "result": "Finalist", "name": "Digital Media Awards" },
+      { "result": "Finalist", "name": "European Search Awards" }
+    ],
+    "formats": ["ig-square", "ig-portrait", "li-square", "li-land", "story"]
+  },
+  {
+    "id": "awards-team-photo",
+    "pillar": "awards",
+    "type": "headline",
+    "theme": "navy",
+    "photo": "./assets/img/awards-team.jpg",
+    "eyebrow": "Spider Awards 2026",
+    "headline": "We won [[Gold]].",
+    "copy": "Some of the team picking up the award for our Breast Cancer Ireland work.",
+    "formats": ["ig-square", "ig-portrait", "story"]
+  },
+  {
+    "id": "case-best4travel",
+    "pillar": "case-study",
+    "type": "stat",
+    "theme": "cream",
+    "photoSplit": "right",
+    "photo": "./assets/img/best4travel.png",
+    "eyebrow": "Client results · Best4Travel",
+    "stat": "30+",
+    "label": "good enquiries a day, from Google Ads, paid social and a site built to convert.",
+    "formats": ["ig-square", "ig-portrait", "li-square", "li-land"]
+  },
+  {
+    "id": "case-idf",
+    "pillar": "case-study",
+    "type": "headline",
+    "theme": "navy",
+    "photo": "./assets/img/idf.png",
+    "eyebrow": "Case study · Irish Defence Forces",
+    "headline": "One campaign. [[Every touchpoint.]]",
+    "copy": "We led the creative for the Defence Forces recruitment campaign, from strategy to paid social to film.",
+    "formats": ["ig-square", "ig-portrait", "li-square", "li-land"]
+  },
+  {
+    "id": "case-midlands",
+    "pillar": "case-study",
+    "type": "headline",
+    "theme": "cream",
+    "photoSplit": "left",
+    "photo": "./assets/img/midlands.png",
+    "eyebrow": "Case study · Midlands Park Hotel",
+    "headline": "A social engine that [[fills rooms]].",
+    "copy": "Paid and organic social built to drive direct bookings, not just likes.",
+    "formats": ["ig-square", "li-square", "ig-portrait"]
+  },
+  {
+    "id": "case-gourmet",
+    "pillar": "case-study",
+    "type": "headline",
+    "theme": "navy",
+    "photo": "./assets/img/gourmet.png",
+    "eyebrow": "Case study · Gourmet Food Parlour",
+    "headline": "Content that [[stops the scroll]].",
+    "copy": "Social, photography, video and Google Ads for one of Ireland's best-loved food brands.",
+    "formats": ["ig-square", "ig-portrait", "li-land"]
+  },
+  {
+    "id": "case-testimonial",
+    "pillar": "case-study",
+    "type": "quote",
+    "theme": "navy",
+    "kicker": "In their words",
+    "quote": "A dream to work with. Would recommend to anyone looking for web design in Dublin.",
+    "attribution": "Ciara Foley, Best4Travel",
+    "size": "headline--md",
+    "formats": ["ig-square", "li-square"]
+  },
+  {
+    "id": "hiring-paid-media",
+    "pillar": "hiring",
+    "type": "hiring",
+    "theme": "mint",
+    "headline": "Senior Paid Media Specialist.",
+    "copy": "Dublin · Hybrid (WFH Wed & Fri). Pension, health insurance, charity days. rooftoptwentytwo.ie/careers",
+    "cta": "We're hiring →",
+    "formats": ["ig-square", "ig-portrait", "li-square", "story"]
+  },
+  {
+    "id": "hiring-culture",
+    "pillar": "hiring",
+    "type": "headline",
+    "theme": "navy",
+    "photo": "./assets/img/office-collab.jpg",
+    "kicker": "Life on the rooftop",
+    "headline": "One team. [[The whole job.]]",
+    "copy": "Strategy, brand, web and performance, all in-house. No silos, no hand-offs.",
+    "formats": ["ig-square", "li-land", "ig-portrait"]
+  },
+  {
+    "id": "tip-web-speed",
+    "pillar": "tips",
+    "type": "tip",
+    "theme": "cream",
+    "eyebrow": "Web tip",
+    "headline": "A slow site is a [[leaky funnel.]]",
+    "copy": "Every extra second of load time costs you conversions. Speed is a growth lever, not a nice-to-have.",
+    "formats": ["ig-square", "li-square", "ig-portrait"]
+  },
+  {
+    "id": "tip-seo",
+    "pillar": "tips",
+    "type": "tip",
+    "theme": "navy",
+    "eyebrow": "SEO tip",
+    "headline": "Rank for what your [[buyer]] actually searches.",
+    "copy": "Not vanity keywords. The commercial terms that bring people ready to buy.",
+    "formats": ["ig-square", "li-land"]
+  },
+  {
+    "id": "carousel-paid-cover",
+    "pillar": "tips",
+    "type": "carousel-cover",
+    "theme": "coral",
+    "eyebrow": "3 paid ads mistakes",
+    "headline": "Burning budget on Meta? [[Read this.]]",
+    "copy": "Three mistakes we see all the time.",
+    "swipe": true,
+    "formats": ["ig-square", "ig-portrait"]
+  },
+  {
+    "id": "carousel-paid-1",
+    "pillar": "tips",
+    "type": "carousel-slide",
+    "theme": "cream",
+    "no": "01",
+    "headline": "Boosting posts.",
+    "copy": "Boosting isn't a strategy. Build proper campaigns with real targeting and objectives.",
+    "swipe": true,
+    "formats": ["ig-square", "ig-portrait"]
+  },
+  {
+    "id": "carousel-paid-2",
+    "pillar": "tips",
+    "type": "carousel-slide",
+    "theme": "cream",
+    "no": "02",
+    "headline": "One ad, one audience.",
+    "copy": "No testing means no learning. Run variants, kill the losers, scale the winners.",
+    "swipe": true,
+    "formats": ["ig-square", "ig-portrait"]
+  },
+  {
+    "id": "carousel-paid-3",
+    "pillar": "tips",
+    "type": "carousel-slide",
+    "theme": "navy",
+    "no": "03",
+    "headline": "Sending clicks to a weak page.",
+    "copy": "Great ads, bad landing page. The whole funnel has to pull its weight.",
+    "cta": "Talk to us →",
+    "formats": ["ig-square", "ig-portrait"]
+  }
+]

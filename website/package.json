@@ -7,6 +7,8 @@
   },
   "scripts": {
     "dev": "astro dev",
+    "images:webp": "node scripts/gen-webp.mjs",
+    "prebuild": "node scripts/gen-webp.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "start": "node ./dist/server/entry.mjs",
@@ -16,8 +18,10 @@
     "@astrojs/mdx": "^5.0.6",
     "@astrojs/node": "^10.1.1",
     "@astrojs/sitemap": "^3.7.3",
+    "@astrojs/vercel": "^10.0.8",
     "astro": "^6.3.8",
     "cheerio": "^1.2.0",
+    "postgres": "^3.4.9",
     "zod": "^4.4.3"
   },
   "devDependencies": {
