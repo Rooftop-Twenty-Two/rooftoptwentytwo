@@ -77,6 +77,25 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://rooftoptwen
         ".reveal, .reveal--left, .reveal--right, .reveal--scale, .reveal--stagger"
       );
       if (targets.length) {
+        // Auto-stagger: group reveal items by their nearest section so siblings
+        // that enter together cascade in DOM order (the effect everyone liked on
+        // the services list), without tagging each one by hand. .reveal--stagger
+        // handles its own children, so we don't double up on those.
+        const groups = new Map<Element, HTMLElement[]>();
+        targets.forEach((el) => {
+          if (el.classList.contains("reveal--stagger")) return;
+          const key = el.closest("section, footer, main") || document.body;
+          const arr = groups.get(key) || [];
+          arr.push(el);
+          groups.set(key, arr);
+        });
+        groups.forEach((arr) => {
+          arr.forEach((el, i) => {
+            // Cap the cascade so long lists don't drift too far behind.
+            el.style.setProperty("--reveal-delay", `${Math.min(i, 6) * 80}ms`);
+          });
+        });
+
         if (!("IntersectionObserver" in window)) {
           targets.forEach((el) => el.classList.add("is-visible"));
         } else {

@@ -132,15 +132,21 @@ body {
  * the html element as `.js-ready`. Without JS, content stays visible. */
 .js-ready .reveal {
   opacity: 0;
-  transform: translateY(16px);
+  transform: translateY(20px);
   transition:
-    opacity 400ms var(--ease-out-rooftop),
-    transform 400ms var(--ease-out-rooftop);
+    opacity 600ms var(--ease-out-rooftop),
+    transform 600ms var(--ease-out-rooftop);
 }
 .js-ready .reveal.is-visible {
   opacity: 1;
   transform: none;
+  /* --reveal-delay is set per-item by the observer so siblings in a section
+   * cascade in DOM order. Falls back to 0 when unset. */
+  transition-delay: var(--reveal-delay, 0ms);
 }
+.js-ready .reveal--left.is-visible,
+.js-ready .reveal--right.is-visible,
+.js-ready .reveal--scale.is-visible { transition-delay: var(--reveal-delay, 0ms); }
 
 /* Reveal variants: directional + scale, for subtle variety between sections. */
 .js-ready .reveal--left { opacity: 0; transform: translateX(-26px); transition: opacity 600ms var(--ease-out-rooftop), transform 600ms var(--ease-out-rooftop); }
