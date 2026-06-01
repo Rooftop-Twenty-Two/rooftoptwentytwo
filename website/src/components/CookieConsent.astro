@@ -15,8 +15,8 @@
   hidden
 >
   <p class="cc__text">
-    We use a few cookies to see what's working and keep making the site better.
-    You choose. <a href="/terms-conditions/" class="cc__link">More on cookies</a>.
+    We use a few cookies to see what's working.
+    <a href="/terms-conditions/" class="cc__link">More on cookies</a>.
   </p>
   <div class="cc__actions">
     <button type="button" class="cc__btn cc__btn--ghost" data-cc-decline>No thanks</button>
@@ -30,13 +30,13 @@
     bottom: 1rem;
     left: 1rem;
     z-index: 95;
-    width: min(360px, calc(100vw - 2rem));
+    width: min(300px, calc(100vw - 1.5rem));
     background: var(--c-bg-alt);
     color: var(--c-ink);
     border: 1px solid var(--c-line);
-    border-radius: var(--w-radius);
-    box-shadow: 0 12px 32px rgba(13, 32, 48, 0.18);
-    padding: 1.1rem 1.2rem;
+    border-radius: 14px;
+    box-shadow: 0 8px 22px rgba(13, 32, 48, 0.14);
+    padding: 0.8rem 0.9rem;
     /* Hidden until the script decides to show it (no flash for returning
      * visitors who already chose). */
     opacity: 0;
@@ -52,20 +52,20 @@
     pointer-events: auto;
   }
   .cc__text {
-    margin: 0 0 0.9rem;
+    margin: 0 0 0.7rem;
     font-family: var(--font-sans);
-    font-size: 0.9rem;
-    line-height: 1.5;
+    font-size: 0.78rem;
+    line-height: 1.4;
     color: var(--c-ink-soft);
   }
   .cc__link { color: var(--c-accent); text-decoration: underline; }
-  .cc__actions { display: flex; gap: 0.6rem; justify-content: flex-end; }
+  .cc__actions { display: flex; gap: 0.45rem; justify-content: flex-end; }
   .cc__btn {
     font-family: var(--font-sans);
     font-weight: 600;
-    font-size: 0.88rem;
+    font-size: 0.78rem;
     border-radius: 9999px;
-    padding: 0.5rem 1.1rem;
+    padding: 0.35rem 0.85rem;
     cursor: pointer;
     border: 1px solid transparent;
     transition: transform 160ms var(--ease-out-rooftop), background-color 160ms;
