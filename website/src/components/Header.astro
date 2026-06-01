@@ -179,6 +179,9 @@ const isActive = (base: string) => path === base || path.startsWith(base);
 
     <div class="hd__right header__item" data-header-item>
       <a href="/contact/" class="wbtn wbtn--accent hd__cta">Get in Touch</a>
+      <a href="/contact/" class="hd__avatar" aria-hidden="true" tabindex="-1">
+        <img src="/images/team/contact-avatar.jpg" alt="" loading="lazy" decoding="async" />
+      </a>
       <button type="button" class="hd__menu" data-menu-open-trigger aria-label="Menu" aria-expanded="false">
         <PressToTalkRing size={52} />
       </button>
@@ -228,6 +231,18 @@ const isActive = (base: string) => path === base || path.startsWith(base);
   @media (max-width: 1023px) { .hd__cta { display: none; } }
   .hd__menu { color: inherit; }
   @media (min-width: 1024px) { .hd__menu { display: none; } }
+
+  /* Round team avatar beside the Get in Touch button (desktop only). */
+  .hd__avatar { display: none; }
+  @media (min-width: 1024px) {
+    .hd__avatar {
+      display: block; width: 44px; height: 44px; border-radius: 50%;
+      overflow: hidden; flex: 0 0 auto; border: 2px solid var(--c-accent-2);
+      transition: transform var(--w-dur-fast) var(--w-ease);
+    }
+    .hd__avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .hd__avatar:hover { transform: scale(1.06); }
+  }
 
   /* Mega panel */
   /* Centered on screen (fixed, below the 80px header bar) rather than anchored
