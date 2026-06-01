@@ -94,9 +94,19 @@
     (window as any).__r22CookieConsent = stored;
 
     if (!stored) {
-      el.hidden = false;
-      // Next frame so the transition runs from the hidden state.
-      requestAnimationFrame(() => el.classList.add("is-open"));
+      // Don't cover the hero CTAs on load. Hold the banner back until the user
+      // scrolls a little, with a timed fallback for people who never scroll.
+      let timer = 0;
+      const open = () => {
+        if (el.classList.contains("is-open")) return;
+        el.hidden = false;
+        requestAnimationFrame(() => el.classList.add("is-open"));
+        window.removeEventListener("scroll", onScroll);
+        clearTimeout(timer);
+      };
+      const onScroll = () => { if (window.scrollY > window.innerHeight * 0.4) open(); };
+      window.addEventListener("scroll", onScroll, { passive: true });
+      timer = window.setTimeout(open, 5000);
     }
 
     const choose = (value: "accepted" | "declined") => {
