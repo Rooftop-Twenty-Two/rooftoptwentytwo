@@ -37,6 +37,8 @@ if (programmeParam) {
 const mapsQuery = "Rooftop Twenty Two, Claremont Avenue, Glasnevin, Dublin 11";
 const mapEmbed = `https://www.google.com/maps?q=${encodeURIComponent(mapsQuery)}&output=embed`;
 const directions = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(mapsQuery)}`;
+const sandyfordQuery = "Rooftop Twenty Two, Suite 16, Beacon Court, Sandyford, Dublin 18, D18 WV72";
+const sandyfordDirections = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(sandyfordQuery)}`;
 ---
 
 <Layout title="Contact | Marketing Agency Dublin | Rooftop Twenty Two" description="Get in touch with Rooftop Twenty Two, a marketing and design agency in Dublin. Tell us what you're launching, scaling, or rebuilding and we'll be in touch." hideStickyMobileCTA={true}>
@@ -89,9 +91,10 @@ const directions = `https://www.google.com/maps/dir/?api=1&destination=${encodeU
             <a class="ct__line" href="mailto:hey@rooftoptwentytwo.ie"><span class="ct__line-ic" aria-hidden="true">&#9993;</span> hey@rooftoptwentytwo.ie</a>
             <p class="ct__office-label">Head Office</p>
             <address class="ct__addr">Rooftop Twenty Two, Claremont Avenue,<br />Glasnevin, Dublin 11, D11 YNR2</address>
+            <a class="ct__directions" href={directions} target="_blank" rel="noopener">Get directions &rarr;</a>
             <p class="ct__office-label">Sandyford Office</p>
             <address class="ct__addr">Suite 16, Beacon Court, Beacon Mall,<br />Sandyford, Dublin 18, D18 WV72</address>
-            <a class="ct__directions" href={directions} target="_blank" rel="noopener">Get directions &rarr;</a>
+            <a class="ct__directions" href={sandyfordDirections} target="_blank" rel="noopener">Get directions &rarr;</a>
           </div>
         </div>
 
