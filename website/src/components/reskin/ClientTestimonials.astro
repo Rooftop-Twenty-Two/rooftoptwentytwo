@@ -103,18 +103,19 @@ const track = [...testimonials, ...testimonials];
   }
   .tg__title em { font-style: italic; color: var(--c-accent); }
 
-  /* Continuous marquee — native-scroll driven (see Layout), pauses on hover.
-   * Natively swipeable (overflow-x:auto, hidden scrollbar) so the cards are
-   * always reachable on touch even if the auto-scroll JS doesn't run. */
-  .tg__viewport { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-  .tg__viewport::-webkit-scrollbar { display: none; }
+  /* Mobile-first: a plain vertical stack in normal document flow. No overflow
+   * scroller, transform, or -webkit-overflow-scrolling — those composite onto a
+   * separate layer that iOS Safari has repeatedly blank-rendered for this strip.
+   * Normal flow always paints. The duplicated second half (which only exists to
+   * make the desktop loop seamless) is hidden here. */
   .tg__track {
     list-style: none; margin: 0; padding: 0.5rem 0;
-    display: flex; align-items: stretch; width: max-content;
+    display: flex; flex-direction: column;
   }
+  .tg__card[aria-hidden="true"] { display: none; }
 
   .tg__card {
-    flex: 0 0 min(85vw, 380px); margin-right: 1.5rem;
+    flex: 0 0 auto; margin: 0 0 1rem;
     display: flex; flex-direction: column; background: var(--c-bg-alt);
     border: 1px solid var(--c-line); border-radius: var(--w-radius); padding: 2rem;
   }
@@ -132,8 +133,14 @@ const track = [...testimonials, ...testimonials];
 
   .tg__cta { text-align: center; margin-top: 3rem; }
 
-  @media (prefers-reduced-motion: reduce) {
-    .tg__viewport { overflow-x: auto; scrollbar-width: none; }
+  /* Desktop: continuous horizontal marquee (native-scroll driven, see Layout),
+   * pauses on hover. The second half makes the -50% loop seamless. Also stays
+   * swipeable (overflow-x:auto) for reduced-motion users where the JS sits idle. */
+  @media (min-width: 760px) {
+    .tg__viewport { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
     .tg__viewport::-webkit-scrollbar { display: none; }
+    .tg__track { flex-direction: row; align-items: stretch; width: max-content; }
+    .tg__card { flex: 0 0 380px; margin: 0 1.5rem 0 0; }
+    .tg__card[aria-hidden="true"] { display: flex; }
   }
 </style>
