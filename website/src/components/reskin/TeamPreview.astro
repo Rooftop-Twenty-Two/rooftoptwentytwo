@@ -50,7 +50,7 @@ const team = (await getCollection("team"))
   @media (min-width: 900px) { .tm__grid { grid-template-columns: repeat(6, 1fr); gap: 2rem 1.5rem; } }
   .tm__member { margin: 0; }
   .tm__img { border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 5 / 6; background: var(--c-bg-alt); }
-  .tm__img :global(img) { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); transition: filter var(--w-dur) var(--w-ease), transform var(--w-dur) var(--w-ease); }
+  .tm__img :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: center 18%; filter: grayscale(1); transition: filter var(--w-dur) var(--w-ease), transform var(--w-dur) var(--w-ease); }
   .tm__member:hover .tm__img :global(img) { filter: grayscale(0); transform: scale(1.03); }
   .tm__member--static:hover .tm__img :global(img) { filter: grayscale(1); transform: none; }
   .tm__name { font-family: var(--w-font-display); font-weight: 600; font-size: 1.05rem; color: var(--c-ink); margin: 0.85rem 0 0; }
