@@ -7,8 +7,9 @@ import path from "node:path";
 import sharp from "sharp";
 
 const ROOT = path.resolve(process.cwd(), "public/images");
-const MAX_EDGE = 1600;      // never upscale; cap the longest edge
-const QUALITY = 80;
+const MAX_EDGE = 2200;      // never upscale; cap the longest edge (retina-friendly)
+const QUALITY = 88;         // higher fidelity; case-study breakers were looking soft
+const EFFORT = 6;           // slower encode, smaller files at a given quality
 const exts = new Set([".png", ".jpg", ".jpeg"]);
 
 let made = 0, skipped = 0, failed = 0;
@@ -31,7 +32,7 @@ async function walk(dir) {
                        height: meta.height > meta.width ? MAX_EDGE : undefined,
                        withoutEnlargement: true })
         : img;
-      await pipeline.webp({ quality: QUALITY }).toFile(out);
+      await pipeline.webp({ quality: QUALITY, effort: EFFORT }).toFile(out);
       made++;
     } catch (e) {
       failed++;
