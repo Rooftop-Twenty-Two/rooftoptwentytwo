@@ -16,12 +16,16 @@ const faq = fields.array(
 );
 
 export default config({
-  // Git-based storage: edits commit to the connected GitHub repo. Run locally
-  // with `storage: { kind: "local" }` if you ever want to test without GitHub.
-  storage: {
-    kind: "github",
-    repo: { owner: "Rooftop-Twenty-Two", name: "rooftoptwentytwo" },
-  },
+  // Keystatic Cloud storage: editors sign in with email/Google (no GitHub
+  // account needed); Keystatic Cloud commits their edits to this repo on its
+  // side, which triggers a Vercel redeploy. No env vars required.
+  //
+  // SETUP: create a team + project at https://keystatic.cloud, connect this
+  // GitHub repo, then set the slug below to "<team>/<project>" exactly as shown
+  // in the Keystatic Cloud dashboard. The placeholder below WILL NOT work until
+  // it matches a real project.
+  storage: { kind: "cloud" },
+  cloud: { project: "rooftop-twenty-two/website" },
 
   ui: {
     brand: { name: "Rooftop Twenty Two" },
