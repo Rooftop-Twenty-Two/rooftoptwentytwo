@@ -36,7 +36,7 @@ const pct = (v: number, max: number) => (max > 0 ? Math.round((v / max) * 100) :
       )}
 
       {bars.length > 0 && (
-        <div class="csr__bars reveal">
+        <div class:list={["csr__bars reveal", bars.length === 1 && "csr__bars--single"]}>
           {bars.map((b) => {
             const max = Math.max(b.before, b.after);
             return (
@@ -91,6 +91,8 @@ const pct = (v: number, max: number) => (max > 0 ? Math.round((v / max) * 100) :
     display: grid; grid-template-columns: 1fr; gap: 2.25rem;
   }
   @media (min-width: 760px) { .csr__bars { grid-template-columns: repeat(2, 1fr); gap: 3rem; } }
+  /* A lone bar spans the full width so it never leaves an empty half-column. */
+  .csr__bars--single { grid-template-columns: 1fr !important; }
   .csr-bar__label {
     font-family: var(--w-font-body); font-weight: 700; font-size: var(--fs-body);
     color: var(--c-ink); margin: 0 0 1rem;
