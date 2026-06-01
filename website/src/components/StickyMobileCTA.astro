@@ -1,18 +1,32 @@
 ---
-// Sticky floating CTA. Bottom-right on mobile + tablet, hidden on desktop
-// (the header CTA + pre-footer CTA cover desktop). Coral pill, high z-index,
-// always visible while scrolling so any page reliably routes to /contact.
+// Sticky floating "Get in touch" CTA, bottom-right. Hidden at the top of the
+// page, slides in once the user scrolls past the hero, and tucks away again
+// near the footer so it never sits on top of the pre-footer contact CTA.
+// Cathal's face sits beside the label to keep it personal. Shown on every
+// page except /contact (where it'd be redundant).
+const portrait = "/images/team/R22-Headshot-updated-11-768x1024.jpg";
+const onContact = Astro.url.pathname.startsWith("/contact");
 ---
 
-<a
-  href="/contact/"
-  class="sticky-cta"
-  data-sticky-cta
-  aria-label="Get in touch with Rooftop Twenty Two"
->
-  <span class="sticky-cta__dot" aria-hidden="true"></span>
-  Get in touch
-</a>
+{!onContact && (
+  <a
+    href="/contact/"
+    class="sticky-cta"
+    data-sticky-cta
+    aria-label="Get in touch with Cathal at Rooftop Twenty Two"
+  >
+    <img
+      class="sticky-cta__face"
+      src={portrait}
+      alt=""
+      width="40"
+      height="40"
+      loading="lazy"
+      decoding="async"
+    />
+    <span class="sticky-cta__label">Get in touch</span>
+  </a>
+)}
 
 <style>
   .sticky-cta {
@@ -22,8 +36,8 @@
     z-index: 90;
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.875rem 1.25rem;
+    gap: 0.6rem;
+    padding: 0.5rem 1.1rem 0.5rem 0.5rem;
     background-color: var(--c-accent);
     color: #ffffff;
     border-radius: 9999px;
@@ -32,27 +46,61 @@
     font-size: 0.95rem;
     text-decoration: none;
     box-shadow: 0 8px 24px rgba(225, 80, 71, 0.32);
-    transition: transform 200ms var(--ease-out-rooftop), box-shadow 200ms var(--ease-out-rooftop);
+    /* Hidden until scrolled: park it off the bottom-right and fade out. */
+    opacity: 0;
+    transform: translateY(140%);
+    pointer-events: none;
+    transition:
+      transform 320ms var(--ease-out-rooftop),
+      opacity 320ms var(--ease-out-rooftop),
+      box-shadow 200ms var(--ease-out-rooftop);
   }
-  .sticky-cta:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(225, 80, 71, 0.42); }
-  .sticky-cta__dot {
-    width: 8px;
-    height: 8px;
+  .sticky-cta.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+  .sticky-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(225, 80, 71, 0.42);
+  }
+  .sticky-cta__face {
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    background: var(--c-accent-2);
-    box-shadow: 0 0 0 4px rgba(0, 255, 178, 0.18);
-    animation: sticky-cta-pulse 2.2s infinite ease-in-out;
-  }
-  @keyframes sticky-cta-pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.25); }
-  }
-  /* Hide on desktop, the header CTA is enough up there */
-  @media (min-width: 1024px) {
-    .sticky-cta { display: none; }
+    object-fit: cover;
+    object-position: 50% 18%;
+    background: #fff;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.9);
+    flex: 0 0 auto;
   }
   @media (prefers-reduced-motion: reduce) {
-    .sticky-cta__dot { animation: none; }
-    .sticky-cta { transition: none; }
+    .sticky-cta { transition: opacity 200ms linear; transform: none; }
+    .sticky-cta:not(.is-visible) { transform: none; }
+    .sticky-cta:hover { transform: none; }
   }
 </style>
+
+<script>
+  const el = document.querySelector<HTMLElement>("[data-sticky-cta]");
+  if (el) {
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      const past = window.scrollY > window.innerHeight * 0.6;
+      // Tuck away near the very bottom so it doesn't overlap the footer CTA.
+      const nearBottom =
+        window.innerHeight + window.scrollY >
+        document.documentElement.scrollHeight - 260;
+      el.classList.toggle("is-visible", past && !nearBottom);
+    };
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+  }
+</script>
