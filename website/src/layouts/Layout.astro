@@ -4,6 +4,7 @@ import SiteFooter from "../components/SiteFooter.astro";
 import MenuOverlay from "../components/MenuOverlay.astro";
 import OrganizationSchema from "../components/seo/OrganizationSchema.astro";
 import StickyMobileCTA from "../components/StickyMobileCTA.astro";
+import CookieConsent from "../components/CookieConsent.astro";
 import "../styles/globals.css";
 
 interface Props {
@@ -66,6 +67,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://rooftoptwen
     {!hideStickyMobileCTA && !isContact && <StickyMobileCTA />}
     <SiteFooter />
     <MenuOverlay />
+    <CookieConsent />
 
     <script>
       // ---------- Progressive-enhancement marker ----------

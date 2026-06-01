@@ -1,0 +1,116 @@
+---
+// Cookie consent banner, bottom-left. Self-contained: remembers the choice in
+// localStorage so it shows once, then stays quiet for returning visitors.
+//
+// There's no analytics/tracking loaded on the site today, so this records the
+// choice and fires a `r22:cookie-consent` event (detail: "accepted"|"declined").
+// When tracking is added later, gate it on window.__r22CookieConsent === "accepted"
+// or listen for that event — see the script below.
+---
+
+<aside
+  class="cc"
+  data-cookie-consent
+  aria-label="Cookie consent"
+  hidden
+>
+  <p class="cc__text">
+    We use a few cookies to see what's working and keep making the site better.
+    You choose. <a href="/terms-conditions/" class="cc__link">More on cookies</a>.
+  </p>
+  <div class="cc__actions">
+    <button type="button" class="cc__btn cc__btn--ghost" data-cc-decline>No thanks</button>
+    <button type="button" class="cc__btn cc__btn--accept" data-cc-accept>Accept</button>
+  </div>
+</aside>
+
+<style>
+  .cc {
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
+    z-index: 95;
+    width: min(360px, calc(100vw - 2rem));
+    background: var(--c-bg-alt);
+    color: var(--c-ink);
+    border: 1px solid var(--c-line);
+    border-radius: var(--w-radius);
+    box-shadow: 0 12px 32px rgba(13, 32, 48, 0.18);
+    padding: 1.1rem 1.2rem;
+    /* Hidden until the script decides to show it (no flash for returning
+     * visitors who already chose). */
+    opacity: 0;
+    transform: translateY(140%);
+    pointer-events: none;
+    transition:
+      transform 320ms var(--ease-out-rooftop),
+      opacity 320ms var(--ease-out-rooftop);
+  }
+  .cc.is-open {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+  .cc__text {
+    margin: 0 0 0.9rem;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--c-ink-soft);
+  }
+  .cc__link { color: var(--c-accent); text-decoration: underline; }
+  .cc__actions { display: flex; gap: 0.6rem; justify-content: flex-end; }
+  .cc__btn {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 0.88rem;
+    border-radius: 9999px;
+    padding: 0.5rem 1.1rem;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: transform 160ms var(--ease-out-rooftop), background-color 160ms;
+  }
+  .cc__btn:hover { transform: scale(1.03); }
+  .cc__btn--accept { background: var(--c-accent); color: var(--c-accent-ink); }
+  .cc__btn--ghost {
+    background: transparent;
+    color: var(--c-ink);
+    border-color: var(--c-line);
+  }
+  .cc__btn--ghost:hover { background: rgba(13, 32, 48, 0.06); }
+  @media (prefers-reduced-motion: reduce) {
+    .cc { transition: opacity 200ms linear; transform: none; }
+    .cc:not(.is-open) { transform: none; }
+    .cc__btn:hover { transform: none; }
+  }
+</style>
+
+<script>
+  const KEY = "r22-cookie-consent";
+  const el = document.querySelector<HTMLElement>("[data-cookie-consent]");
+  if (el) {
+    const stored = localStorage.getItem(KEY);
+    // Expose the current choice for any future tracking to read.
+    (window as any).__r22CookieConsent = stored;
+
+    if (!stored) {
+      el.hidden = false;
+      // Next frame so the transition runs from the hidden state.
+      requestAnimationFrame(() => el.classList.add("is-open"));
+    }
+
+    const choose = (value: "accepted" | "declined") => {
+      localStorage.setItem(KEY, value);
+      (window as any).__r22CookieConsent = value;
+      window.dispatchEvent(new CustomEvent("r22:cookie-consent", { detail: value }));
+      el.classList.remove("is-open");
+      const hide = () => { el.hidden = true; };
+      el.addEventListener("transitionend", hide, { once: true });
+      // Fallback in case the transition is skipped (reduced motion etc.).
+      setTimeout(hide, 400);
+    };
+
+    el.querySelector("[data-cc-accept]")?.addEventListener("click", () => choose("accepted"));
+    el.querySelector("[data-cc-decline]")?.addEventListener("click", () => choose("declined"));
+  }
+</script>
