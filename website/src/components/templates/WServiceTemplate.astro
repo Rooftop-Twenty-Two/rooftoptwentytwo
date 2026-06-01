@@ -11,18 +11,20 @@ import Picture from "../Picture.astro";
 type ProcessStep = { step: string; label: string; body: string };
 type FAQ = { question: string; answer: string };
 interface Props {
-  name: string; slug: string; cluster: string; isClusterParent: boolean;
+  name: string; ctaName?: string; slug: string; cluster: string; isClusterParent: boolean;
   summary: string; metaDescription: string; heroEyebrow?: string;
   heroHeading: string; heroBody: string; whatItIs: string; whatsIncluded: string[];
   process: ProcessStep[]; sectorsThatBuy: string[]; relatedServices: string[];
   relatedProgrammes: string[]; caseStudySlugs: string[]; faq: FAQ[];
 }
 const {
-  name, slug, cluster, isClusterParent, summary, metaDescription, heroEyebrow,
+  name, ctaName, slug, cluster, isClusterParent, summary, metaDescription, heroEyebrow,
   heroHeading, heroBody, whatItIs, whatsIncluded, process, sectorsThatBuy,
   relatedServices, caseStudySlugs, faq,
 } = Astro.props;
 
+// Short term for the "Talk to us about …" CTAs; full name elsewhere.
+const ctaTerm = ctaName ?? name;
 const pageUrl = `/services/${slug}/`;
 const title = `${name} | Rooftop Twenty Two`;
 
@@ -91,7 +93,7 @@ const breadcrumbs = isClusterParent
     title={heroTitle}
     intro={heroBody}
     bg={heroBg}
-    primary={{ label: `Talk to us about ${name}`, href: `/contact/?service=${slug}#contact` }}
+    primary={{ label: `Talk to us about ${ctaTerm}`, href: `/contact/?service=${slug}#contact` }}
     secondary={{ label: "See selected work", href: "/work/" }}
   />
 
@@ -229,7 +231,7 @@ const breadcrumbs = isClusterParent
             <p class="kicker kicker--on-dark">Still have questions?</p>
             <p class="ws-faq__card-h">Talk to the team that does the work.</p>
             <p class="ws-faq__card-b">No account managers passing notes, you speak to the people running your {name}.</p>
-            <a href={`/contact/?service=${slug}#contact`} class="wbtn wbtn--accent">Talk to us about {name}</a>
+            <a href={`/contact/?service=${slug}#contact`} class="wbtn wbtn--accent">Talk to us about {ctaTerm}</a>
           </div>
         </aside>
       </div>

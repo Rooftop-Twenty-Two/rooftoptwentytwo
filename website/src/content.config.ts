@@ -72,6 +72,9 @@ const services = defineCollection({
     isClusterParent: z.boolean().default(false),
     summary: z.string(),
     metaDescription: z.string(),
+    // Short service term for the "Talk to us about …" CTA buttons, when the full
+    // `name` is too long for a button. Falls back to `name` when absent.
+    ctaName: z.string().optional(),
     heroEyebrow: z.string().optional(),
     heroHeading: z.string(),
     heroBody: z.string(),
