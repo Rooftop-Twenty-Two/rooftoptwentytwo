@@ -5,6 +5,8 @@ import { join } from 'node:path';
 
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
+import react from '@astrojs/react';
+import keystatic from '@keystatic/astro';
 import tailwindcss from '@tailwindcss/vite';
 
 const SITE = 'https://rooftoptwentytwo.ie';
@@ -58,6 +60,8 @@ export default defineConfig({
   redirects: portfolioRedirects,
   integrations: [
     mdx(),
+    react(),
+    keystatic(),
     sitemap({
       customPages: [
         ...collectionCustomPages('portfolio', '/work/'),
