@@ -4,8 +4,8 @@ The team can update site content through a visual editor. No code, no markdown.
 
 ## Where
 Go to **`https://rooftoptwentytwo.ie/keystatic`** (or the current deploy URL +
-`/keystatic`). Sign in with **GitHub** the first time — you need write access to
-the `Rooftop-Twenty-Two/rooftoptwentytwo` repo (ask Cathal to add you).
+`/keystatic`). Sign in with your **email or Google account** — Cathal invites you
+to the Keystatic Cloud team first, so use the same email he invited.
 
 ## What you can edit
 - **Case studies** — client name, tagline, summary, hero image, services, and
