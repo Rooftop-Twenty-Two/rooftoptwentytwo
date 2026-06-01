@@ -2,6 +2,7 @@
 import { getCollection, render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import PageHero from "../../components/reskin/PageHero.astro";
+import CaseStudyResults from "../../components/reskin/CaseStudyResults.astro";
 import WContactForm from "../../components/reskin/WContactForm.astro";
 import Picture from "../../components/Picture.astro";
 
@@ -15,7 +16,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
-const { name, tagline, summary, metaDescription, heroImage, sections, services, gallery, websiteUrl, videos } = entry.data;
+const { name, tagline, summary, metaDescription, heroImage, sections, services, gallery, websiteUrl, videos, results } = entry.data;
 
 const allSorted = (await getCollection("portfolio", ({ data }) => !data.needs_review))
   .sort((a, b) => (a.data.order ?? 100) - (b.data.order ?? 100));
@@ -44,6 +45,8 @@ const extraImages = gallery.slice(sections.length);
       ? { label: "Start a similar project", href: "/contact/" }
       : { label: "All work", href: "/work/" }}
   />
+
+  {results && <CaseStudyResults intro={results.intro} stats={results.stats} bars={results.bars} />}
 
   {videos.length > 0 && (
     <section class="cs-videos">

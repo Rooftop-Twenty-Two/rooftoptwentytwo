@@ -79,6 +79,35 @@ export default config({
           fields.image({ label: "Image", directory: "public/images/portfolio", publicPath: "/images/portfolio/" }),
           { label: "Gallery", itemLabel: () => "Image" }
         ),
+        // Headline results — shown as an animated stat band + before/after bars
+        // near the top of the case study. Only add numbers you can stand over.
+        results: fields.object(
+          {
+            intro: fields.text({ label: "Intro line (optional)", multiline: true }),
+            stats: fields.array(
+              fields.object({
+                to: fields.number({ label: "Number (e.g. 1000, 1.28, 68)" }),
+                prefix: fields.text({ label: "Prefix (e.g. €)" }),
+                suffix: fields.text({ label: "Suffix (e.g. %, +, ×)" }),
+                decimals: fields.integer({ label: "Decimal places", defaultValue: 0 }),
+                label: fields.text({ label: "Label" }),
+              }),
+              { label: "Stats (counters)", itemLabel: (p) => p.fields.label.value || "Stat" }
+            ),
+            bars: fields.array(
+              fields.object({
+                label: fields.text({ label: "Bar title" }),
+                before: fields.number({ label: "Before value" }),
+                after: fields.number({ label: "After value" }),
+                beforeLabel: fields.text({ label: "Before label (e.g. Benchmark)" }),
+                afterLabel: fields.text({ label: "After label (e.g. client name)" }),
+                suffix: fields.text({ label: "Suffix (e.g. %, ×)" }),
+              }),
+              { label: "Before/after bars", itemLabel: (p) => p.fields.label.value || "Bar" }
+            ),
+          },
+          { label: "Results" }
+        ),
       },
     }),
 

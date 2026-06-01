@@ -45,6 +45,37 @@ const portfolio = defineCollection({
     services: z.array(z.string()).default([]),
     sectors: z.array(z.string()).default([]),
     year: z.number().optional(),
+    // Headline results, surfaced as an animated stat band + optional before/after
+    // bars near the top of the case study. Only ever real numbers — left absent
+    // when we don't have figures we can stand over.
+    results: z
+      .object({
+        intro: z.string().optional(),
+        stats: z
+          .array(
+            z.object({
+              to: z.number(),
+              prefix: z.string().default(""),
+              suffix: z.string().default(""),
+              decimals: z.number().default(0),
+              label: z.string(),
+            })
+          )
+          .default([]),
+        bars: z
+          .array(
+            z.object({
+              label: z.string(),
+              before: z.number(),
+              after: z.number(),
+              beforeLabel: z.string().optional(),
+              afterLabel: z.string().optional(),
+              suffix: z.string().optional(),
+            })
+          )
+          .default([]),
+      })
+      .optional(),
     needs_review: z.boolean().default(false),
     parse_notes: z.string().optional(),
   }),

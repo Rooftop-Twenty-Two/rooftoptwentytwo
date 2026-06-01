@@ -1,0 +1,124 @@
+---
+// Case study "Results" band. Sits right after the hero so the outcome is the
+// hook. Animated counters (reuse Odometer) + optional before/after bars.
+// Only ever fed real numbers from the case study's `results` field.
+import Odometer from "./Odometer.astro";
+
+interface Stat { to: number; prefix?: string; suffix?: string; decimals?: number; label: string }
+interface Bar {
+  label: string; before: number; after: number;
+  beforeLabel?: string; afterLabel?: string; suffix?: string;
+}
+interface Props { intro?: string; stats?: Stat[]; bars?: Bar[] }
+const { intro, stats = [], bars = [] } = Astro.props;
+
+const fmt = (n: number, suffix = "") =>
+  n.toLocaleString("en-US") + (suffix ?? "");
+// Each bar is scaled against its own larger value, so the comparison reads at a
+// glance (e.g. benchmark 1 vs 3 → a third as long).
+const pct = (v: number, max: number) => (max > 0 ? Math.round((v / max) * 100) : 0);
+---
+
+{(stats.length > 0 || bars.length > 0) && (
+  <section class="csr">
+    <div class="csr__wrap">
+      <div class="csr__head reveal">
+        <p class="kicker kicker--script">The results</p>
+        {intro && <p class="csr__lead">{intro}</p>}
+      </div>
+
+      {stats.length > 0 && (
+        <div class="csr__stats reveal">
+          {stats.map((s) => (
+            <Odometer to={s.to} prefix={s.prefix} suffix={s.suffix} decimals={s.decimals} label={s.label} />
+          ))}
+        </div>
+      )}
+
+      {bars.length > 0 && (
+        <div class="csr__bars reveal">
+          {bars.map((b) => {
+            const max = Math.max(b.before, b.after);
+            return (
+              <div class="csr-bar">
+                <p class="csr-bar__label">{b.label}</p>
+                <div class="csr-bar__row">
+                  <span class="csr-bar__name">{b.beforeLabel ?? "Before"}</span>
+                  <div class="csr-bar__track">
+                    <span class="csr-bar__fill csr-bar__fill--before" style={`--w:${pct(b.before, max)}%`}></span>
+                  </div>
+                  <span class="csr-bar__val">{fmt(b.before, b.suffix)}</span>
+                </div>
+                <div class="csr-bar__row">
+                  <span class="csr-bar__name">{b.afterLabel ?? "After"}</span>
+                  <div class="csr-bar__track">
+                    <span class="csr-bar__fill csr-bar__fill--after" style={`--w:${pct(b.after, max)}%`}></span>
+                  </div>
+                  <span class="csr-bar__val csr-bar__val--after">{fmt(b.after, b.suffix)}</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  </section>
+)}
+
+<style>
+  .csr { background: var(--c-bg-alt); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .csr__wrap { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .csr__head { text-align: center; max-width: 60ch; margin: 0 auto; }
+  .csr__head .kicker--script { display: inline-block; }
+  .csr__lead {
+    font-family: var(--w-font-body); font-size: var(--fs-body); line-height: var(--lh-body);
+    color: var(--c-ink-soft); margin: 0.6rem 0 0;
+  }
+
+  /* Counters */
+  .csr__stats {
+    --odo-color: var(--c-accent);
+    display: grid; grid-template-columns: 1fr; gap: 2.5rem;
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+  }
+  @media (min-width: 560px) { .csr__stats { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 960px) { .csr__stats { grid-template-columns: repeat(4, 1fr); gap: 2rem; } }
+
+  /* Before/after bars */
+  .csr__bars {
+    margin-top: clamp(2.5rem, 5vw, 3.75rem); padding-top: clamp(2.5rem, 5vw, 3.5rem);
+    border-top: 1px solid var(--c-line);
+    display: grid; grid-template-columns: 1fr; gap: 2.25rem;
+  }
+  @media (min-width: 760px) { .csr__bars { grid-template-columns: repeat(2, 1fr); gap: 3rem; } }
+  .csr-bar__label {
+    font-family: var(--w-font-body); font-weight: 700; font-size: var(--fs-body);
+    color: var(--c-ink); margin: 0 0 1rem;
+  }
+  .csr-bar__row {
+    display: grid; grid-template-columns: minmax(6rem, auto) 1fr auto;
+    align-items: center; gap: 0.85rem; margin-top: 0.7rem;
+  }
+  .csr-bar__name { font-family: var(--w-font-body); font-size: var(--fs-small); color: var(--c-ink-soft); }
+  .csr-bar__track { height: 14px; background: rgba(13, 32, 48, 0.07); border-radius: 9999px; overflow: hidden; }
+  /* Default (no JS): bars show at full target width. */
+  .csr-bar__fill {
+    display: block; height: 100%; width: var(--w); border-radius: 9999px;
+  }
+  .csr-bar__fill--before { background: var(--c-ink-soft); opacity: 0.45; }
+  .csr-bar__fill--after { background: var(--c-accent); }
+  .csr-bar__val {
+    font-family: var(--w-font-display); font-weight: 700; font-size: 1.15rem;
+    color: var(--c-ink); font-variant-numeric: tabular-nums; min-width: 3ch; text-align: right;
+  }
+  .csr-bar__val--after { color: var(--c-accent); }
+
+  /* With JS: start collapsed, then grow once the block scrolls into view
+   * (reuses the Layout reveal observer, which adds .is-visible). */
+  .js-ready .csr__bars .csr-bar__fill { width: 0; transition: width 950ms var(--w-ease); }
+  .js-ready .csr__bars.is-visible .csr-bar__fill { width: var(--w); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .js-ready .csr__bars .csr-bar__fill { transition: none; width: var(--w); }
+  }
+</style>
