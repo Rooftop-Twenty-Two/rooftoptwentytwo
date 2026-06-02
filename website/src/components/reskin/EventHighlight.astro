@@ -1,0 +1,68 @@
+---
+// Homepage events highlight. Promotes the current studio event (Diarmuid
+// McSweeney, Gym+Coffee) and links through to /events/. Light band so it sits
+// well after the dark FeatureBand. Image renders only if present, so nothing
+// shows broken.
+import Picture from "../Picture.astro";
+import { existsSync } from "node:fs";
+import path from "node:path";
+
+const headshot = "/images/events/diarmuid-mcsweeney.jpg";
+const logo = "/images/events/gym-coffee-logo.png";
+const hasHeadshot = existsSync(path.join(process.cwd(), "public", headshot));
+const hasLogo = existsSync(path.join(process.cwd(), "public", logo));
+---
+
+<section class="evh" aria-labelledby="evh-title">
+  <div class="evh__inner">
+    {hasHeadshot && (
+      <figure class="evh__media reveal">
+        <Picture src={headshot} alt="Diarmuid McSweeney, founder of Gym+Coffee" loading="lazy" decoding="async" />
+        {hasLogo && <img class="evh__logo" src={logo} alt="Gym+Coffee" loading="lazy" decoding="async" />}
+      </figure>
+    )}
+
+    <div class="evh__body reveal">
+      <p class="kicker kicker--script">On at the rooftop</p>
+      <h2 id="evh-title" class="evh__title">From nothing to a brand the whole country knows.</h2>
+      <p class="evh__by">An evening with Diarmuid McSweeney, founder of Gym+Coffee.</p>
+      <p class="evh__p">
+        Diarmuid took Gym+Coffee from a standing start to a name people wear up and
+        down the country. He&rsquo;s coming into our Dublin studio to talk through how
+        it actually happened. A small room, a proper conversation, and a drink in your
+        hand.
+      </p>
+      <ul class="evh__meta">
+        <li>Our Dublin studio</li>
+        <li>In person</li>
+        <li>Free to attend</li>
+      </ul>
+      <div class="evh__cta">
+        <a href="/events/#register" class="wbtn wbtn--accent">Register your interest</a>
+        <a href="/events/" class="wbtn wbtn--primary">See the event</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .evh { background: var(--c-bg-alt); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .evh__inner {
+    max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter);
+    display: grid; grid-template-columns: 1fr; gap: 2.5rem; align-items: center;
+  }
+  @media (min-width: 900px) { .evh__inner { grid-template-columns: 0.9fr 1.1fr; gap: 4rem; } }
+
+  .evh__media { position: relative; margin: 0; border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 4 / 3; background: var(--c-bg); box-shadow: var(--w-shadow-soft); }
+  .evh__media :global(img) { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .evh__logo { position: absolute; left: 1rem; bottom: 1rem; height: 40px; width: auto; max-width: 150px; padding: 0.5rem 0.7rem; background: #fff; border-radius: 12px; box-shadow: var(--w-shadow-soft); object-fit: contain; }
+
+  .evh__title { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); line-height: var(--lh-heading); letter-spacing: var(--tracking-display); margin: 0.4rem 0 0; }
+  .evh__by { font-family: var(--w-font-body); font-weight: 600; font-size: 1.05rem; color: var(--c-ink); margin: 0.9rem 0 0; }
+  .evh__p { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.7; color: var(--c-ink-soft); margin: 0.85rem 0 0; max-width: 54ch; }
+
+  .evh__meta { list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.5rem 0 0; padding: 0; }
+  .evh__meta li { font-family: var(--w-font-body); font-weight: 600; font-size: 0.8rem; letter-spacing: 0.02em; color: var(--c-ink); background: var(--c-bg); border: 1px solid var(--c-line); border-radius: var(--radius-pill); padding: 0.4rem 0.85rem; }
+
+  .evh__cta { display: flex; flex-wrap: wrap; gap: 0.85rem; margin-top: 2rem; }
+</style>
