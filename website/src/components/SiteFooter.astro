@@ -12,11 +12,20 @@ const year = new Date().getFullYear();
         <p class="kicker kicker--on-dark">Stay in the loop</p>
         <h2 class="footer-news__title">Ideas from the rooftop, now and then.</h2>
       </div>
-      <form class="footer-news__form" action="/api/subscribe/" method="POST">
-        <label class="sr-only" for="footer-email">Email address</label>
-        <input id="footer-email" type="email" name="email" required placeholder="you@company.com" class="footer-news__input" />
-        <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" />
-        <button type="submit" class="wbtn wbtn--accent">Subscribe</button>
+      <form class="footer-news__form" action="https://eu-submit.jotform.com/submit/261525764023050" method="post" accept-charset="utf-8" data-news-form>
+        <input type="hidden" name="formID" value="261525764023050" />
+        <input type="hidden" name="simple_spc" value="261525764023050-261525764023050" />
+        <!-- JotForm honeypot: must stay empty -->
+        <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" />
+        <label class="sr-only" for="news-first">First name</label>
+        <input id="news-first" class="footer-news__input" type="text" name="q2_q2_fullname0[first]" required placeholder="First name" autocomplete="given-name" />
+        <label class="sr-only" for="news-last">Last name</label>
+        <input id="news-last" class="footer-news__input" type="text" name="q2_q2_fullname0[last]" required placeholder="Last name" autocomplete="family-name" />
+        <label class="sr-only" for="news-email">Email</label>
+        <input id="news-email" class="footer-news__input" type="email" name="q5_email" required placeholder="you@company.com" autocomplete="email" />
+        <label class="sr-only" for="news-company">Company</label>
+        <input id="news-company" class="footer-news__input" type="text" name="q3_q3_textbox1" required placeholder="Company" autocomplete="organization" />
+        <button type="submit" class="wbtn wbtn--accent footer-news__btn">Subscribe</button>
       </form>
     </div>
 
@@ -148,9 +157,10 @@ const year = new Date().getFullYear();
     font-size: clamp(2rem, 4vw, 3.25rem); line-height: 1.05; letter-spacing: var(--tracking-display);
     margin-top: 0.5rem; color: var(--c-on-dark);
   }
-  .footer-news__form { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+  .footer-news__form { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; width: min(440px, 100%); }
+  .footer-news__btn { grid-column: 1 / -1; justify-self: start; }
   .footer-news__input {
-    flex: 1 1 240px; min-width: 0; padding: 0.9rem 1.2rem; border-radius: var(--radius-pill);
+    width: 100%; min-width: 0; padding: 0.9rem 1.2rem; border-radius: var(--radius-pill);
     background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.16);
     color: var(--c-on-dark); font-family: var(--w-font-body); font-size: 0.95rem;
   }
@@ -166,3 +176,26 @@ const year = new Date().getFullYear();
   .footer-awards__txt { font-family: var(--w-font-body); font-size: 0.85rem; color: #fff; white-space: nowrap; }
   .footer-awards__txt b { font-weight: 700; }
 </style>
+
+<script>
+  // Footer newsletter: submit to JotForm in the background (no-cors + keepalive
+  // so the request still completes), then send the visitor to /thank-you/.
+  // Falls back to a normal JotForm POST if JS is unavailable.
+  const form = document.querySelector<HTMLFormElement>("[data-news-form]");
+  if (form) {
+    const dest = "/thank-you/";
+    form.addEventListener("submit", (e) => {
+      // Honeypot: if a bot filled it, skip the real submit.
+      const hp = form.querySelector<HTMLInputElement>('input[name="website"]');
+      if (hp && hp.value) { e.preventDefault(); window.location.href = dest; return; }
+      // Let the browser run native required-field validation first.
+      if (!form.checkValidity()) return;
+      e.preventDefault();
+      const btn = form.querySelector<HTMLButtonElement>('[type="submit"]');
+      if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
+      fetch(form.action, { method: "POST", body: new FormData(form), mode: "no-cors", keepalive: true })
+        .catch(() => {})
+        .finally(() => { window.location.href = dest; });
+    });
+  }
+</script>
