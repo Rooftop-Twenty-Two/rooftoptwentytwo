@@ -1,9 +1,41 @@
 ---
 import Layout from "../layouts/Layout.astro";
 
-// The enquiry form is embedded from JotForm (EU). Its jsform script injects a
-// self-resizing iframe in place of the <script> tag in the markup below. Swap
-// the form by changing the ID in the script src.
+// The enquiry form is the site's own markup/styling but posts straight to
+// JotForm (EU), so submissions land in the JotForm inbox. The field names
+// (q2_q2_fullname0[first] etc.) and the action URL are taken verbatim from the
+// JotForm form source and must match exactly. formID + simple_spc are JotForm's
+// required hidden fields; `website` is its honeypot and must stay empty.
+const JOTFORM_ID = "261524373945058";
+const jotformAction = `https://eu-submit.jotform.com/submit/${JOTFORM_ID}`;
+const simpleSpc = `${JOTFORM_ID}-${JOTFORM_ID}`;
+
+// URL pre-fill: ?sector= / ?programme= / ?service= → a friendly pre-filled
+// subject and message, matching the deep-linked CTAs around the site.
+const url = Astro.url;
+const sectorParam = url.searchParams.get("sector") ?? "";
+const programmeParam = url.searchParams.get("programme") ?? "";
+const serviceParam = url.searchParams.get("service") ?? "";
+
+function titleCase(s: string) {
+  return s.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+}
+
+let prefillSubject = "";
+let prefillMessage = "";
+if (programmeParam) {
+  prefillSubject = `Programme: ${titleCase(programmeParam)}`;
+  prefillMessage = `Hi, I'd like to talk about the ${titleCase(programmeParam)} programme${sectorParam ? ` for our ${titleCase(sectorParam)} business` : ""}.\n\n`;
+} else if (sectorParam && serviceParam) {
+  prefillSubject = `${titleCase(serviceParam)} for ${titleCase(sectorParam)}`;
+  prefillMessage = `Hi, we're looking at ${titleCase(serviceParam)} for our ${titleCase(sectorParam)} business and would like to talk.\n\n`;
+} else if (sectorParam) {
+  prefillSubject = `Marketing for ${titleCase(sectorParam)}`;
+  prefillMessage = `Hi, we work in ${titleCase(sectorParam)} and would like to talk about marketing.\n\n`;
+} else if (serviceParam) {
+  prefillSubject = `${titleCase(serviceParam)} enquiry`;
+  prefillMessage = `Hi, we're interested in ${titleCase(serviceParam)}.\n\n`;
+}
 
 const mapsQuery = "Rooftop Twenty Two, Claremont Avenue, Glasnevin, Dublin 11";
 const mapEmbed = `https://www.google.com/maps?q=${encodeURIComponent(mapsQuery)}&output=embed`;
@@ -39,9 +71,19 @@ const sandyfordDirections = `https://www.google.com/maps/dir/?api=1&destination=
           </div>
         </div>
 
-        <div class="ct__form-embed">
-          <script is:inline type="text/javascript" src="https://eu.jotform.com/jsform/261524373945058"></script>
-        </div>
+        <form class="ct__form" action={jotformAction} method="post" accept-charset="utf-8">
+          <input type="hidden" name="formID" value={JOTFORM_ID} />
+          <input type="hidden" name="simple_spc" value={simpleSpc} />
+          <!-- JotForm honeypot: must stay empty -->
+          <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" />
+          <label class="ct__field"><span>First name</span><input type="text" name="q2_q2_fullname0[first]" required placeholder="Your first name" /></label>
+          <label class="ct__field"><span>Last name</span><input type="text" name="q2_q2_fullname0[last]" required placeholder="Your last name" /></label>
+          <label class="ct__field"><span>Email</span><input type="email" name="q3_q3_email1" required placeholder="you@company.com" /></label>
+          <label class="ct__field"><span>Company</span><input type="text" name="q7_company" placeholder="Optional" /></label>
+          <label class="ct__field ct__field--full"><span>Subject</span><input type="text" name="q4_q4_textbox2" required placeholder="What's this about?" value={prefillSubject} /></label>
+          <label class="ct__field ct__field--full"><span>Message</span><textarea name="q5_q5_textarea3" required rows="5" placeholder="Tell us a little about your project">{prefillMessage}</textarea></label>
+          <button type="submit" class="wbtn wbtn--accent ct__submit">Send message</button>
+        </form>
       </div>
 
       <!-- Row 2: details + map -->
@@ -88,11 +130,18 @@ const sandyfordDirections = `https://www.google.com/maps/dir/?api=1&destination=
   .ct__social-links a { display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.25); color: #fff; transition: background-color var(--w-dur-fast) var(--w-ease), border-color var(--w-dur-fast) var(--w-ease); }
   .ct__social-links a:hover { background: var(--c-accent); border-color: var(--c-accent); }
 
-  /* JotForm embed. The injected iframe sizes its own height; the white card
-     keeps the form sitting cleanly with rounded corners, and the min-height
-     avoids a layout jump before the iframe loads. */
-  .ct__form-embed { border-radius: var(--w-radius); overflow: hidden; min-height: 520px; background: #fff; border: 1px solid var(--c-line); box-shadow: var(--w-shadow-soft); }
-  .ct__form-embed :global(iframe) { width: 1px; min-width: 100%; border: 0; display: block; }
+  .ct__form { background: var(--c-dark); color: var(--c-on-dark); border-radius: var(--w-radius); padding: clamp(1.75rem, 3vw, 2.75rem); display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 1.25rem; align-content: start; }
+  .ct__field { display: flex; flex-direction: column; gap: 0.4rem; }
+  .ct__field--full { grid-column: 1 / -1; }
+  .ct__field span { font-family: var(--w-font-body); font-size: var(--fs-small); color: var(--c-on-dark-soft); }
+  .ct__field input, .ct__field textarea {
+    width: 100%; padding: 0.9rem 1.1rem; border-radius: 14px;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.16);
+    color: var(--c-on-dark); font-family: var(--w-font-body); font-size: 1rem; resize: vertical;
+  }
+  .ct__field input::placeholder, .ct__field textarea::placeholder { color: rgba(255,255,255,0.4); }
+  .ct__field input:focus-visible, .ct__field textarea:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; border-color: transparent; }
+  .ct__submit { grid-column: 1 / -1; justify-self: start; margin-top: 0.25rem; }
 
   /* Row 2 */
   .ct__bottom { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }

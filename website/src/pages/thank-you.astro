@@ -1,0 +1,25 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PageHero from "../components/reskin/PageHero.astro";
+
+// Where JotForm redirects after a successful enquiry. Kept out of search
+// (noindex) and free of the pre-footer / sticky CTAs so it reads as a clean
+// confirmation.
+---
+
+<Layout
+  title="Thanks for getting in touch | Rooftop Twenty Two"
+  description="Thanks for your enquiry. We'll come back to you shortly."
+  noindex={true}
+  hidePreFooterCTA={true}
+  hideStickyMobileCTA={true}
+>
+  <PageHero
+    kicker="Message sent"
+    title="Thanks. We&rsquo;ve <em>got it</em>."
+    intro="Your message is with us. You&rsquo;ll get a thoughtful reply from a senior, in-house person, usually within one working day. If it&rsquo;s urgent, give us a call on +353 1 699 1422."
+    bg="/images/office/office-studio-01.jpg"
+    primary={{ label: "See our work", href: "/work/" }}
+    secondary={{ label: "Back to home", href: "/" }}
+  />
+</Layout>
