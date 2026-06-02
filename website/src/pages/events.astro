@@ -167,12 +167,6 @@ const ev = events[0];
         <p class="eb-form__note">No spam. We&rsquo;ll only email you about this event.</p>
         <p class="eb-form__status" role="status" aria-live="polite" data-form-status hidden></p>
       </form>
-
-      <div class="eb-done reveal" data-event-done hidden>
-        <p class="kicker kicker--on-dark kicker--script">You&rsquo;re on the list</p>
-        <h3 class="eb-done__h">Brilliant. We&rsquo;ve got you.</h3>
-        <p class="eb-done__b">We&rsquo;ll be in touch with the date and a seat as soon as it&rsquo;s confirmed. If it fills up, you&rsquo;ll be first to know about the recording.</p>
-      </div>
     </div>
   </section>
 
@@ -260,9 +254,6 @@ const ev = events[0];
   .eb-form__note { font-family: var(--w-font-body); font-size: var(--fs-small); color: var(--c-on-dark-soft); margin: 0; }
   .eb-form__status { font-family: var(--w-font-body); font-size: var(--fs-small); color: #ffb3ad; margin: 0; }
 
-  .eb-done__h { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); color: var(--c-on-dark); margin: 0.4rem 0 0; }
-  .eb-done__b { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.65; color: var(--c-on-dark-soft); margin: 1rem 0 0; max-width: 52ch; }
-
   /* Future events */
   .eb-more { background: var(--c-bg-alt); color: var(--c-ink); padding-block: var(--w-section-y); }
   .eb-more__inner { max-width: 760px; margin: 0 auto; padding-inline: var(--w-gutter); }
@@ -271,16 +262,15 @@ const ev = events[0];
 
 <script>
   // Register-of-interest form. Submits to JotForm in the background (no-cors +
-  // keepalive, so the request still completes), then swaps in the on-page
-  // "you're on the list" state. If JS is unavailable the form posts to JotForm
-  // normally as a fallback.
+  // keepalive, so the request still completes), then sends the visitor to the
+  // /thank-you/ page. If JS is unavailable the form posts to JotForm normally.
   const form = document.querySelector<HTMLFormElement>("[data-event-form]");
-  const done = document.querySelector<HTMLElement>("[data-event-done]");
-  if (form && done) {
+  if (form) {
+    const dest = "/thank-you/";
     form.addEventListener("submit", (e) => {
-      // Honeypot: if a bot filled it, skip the real submit but show success.
+      // Honeypot: if a bot filled it, skip the real submit.
       const hp = form.querySelector<HTMLInputElement>('input[name="website"]');
-      if (hp && hp.value) { e.preventDefault(); form.hidden = true; done.hidden = false; return; }
+      if (hp && hp.value) { e.preventDefault(); window.location.href = dest; return; }
       // Let the browser run native required-field validation first.
       if (!form.checkValidity()) return;
       e.preventDefault();
@@ -288,11 +278,7 @@ const ev = events[0];
       if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
       fetch(form.action, { method: "POST", body: new FormData(form), mode: "no-cors", keepalive: true })
         .catch(() => {})
-        .finally(() => {
-          form.hidden = true;
-          done.hidden = false;
-          done.scrollIntoView({ behavior: "smooth", block: "center" });
-        });
+        .finally(() => { window.location.href = dest; });
     });
   }
 </script>
