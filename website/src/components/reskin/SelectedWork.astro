@@ -1,8 +1,7 @@
 ---
 // S5, Selected work. Case-study cards pulled from the portfolio collection,
-// presented as two marquee rows that scroll in opposite directions (top row
-// left, bottom row right). The rows hold different case studies, so more of the
-// portfolio is on show. Off-white section. No fabricated metrics.
+// presented as a single continuous left-to-right marquee (pauses on hover),
+// mirroring the client logo bar. Off-white section. No fabricated metrics.
 import { getCollection } from "astro:content";
 import Picture from "../Picture.astro";
 
@@ -10,19 +9,13 @@ const all = (await getCollection("portfolio")).sort(
   (a, b) => (a.data.order ?? 100) - (b.data.order ?? 100)
 );
 const withHero = all.filter((p) => p.data.heroImage);
-// Lead with the featured work, then fill by order. Split into two rows that
-// share no case study, so the second row is a chance to show more, not a repeat.
-const pool = [
+// Lead with the featured work, then fill by order.
+const cards = [
   ...withHero.filter((p) => p.data.featured),
   ...withHero.filter((p) => !p.data.featured),
-].slice(0, 12);
-const mid = Math.ceil(pool.length / 2);
-// Each row's track is two identical halves so the -50% → 0 loop is seamless.
-// Row two runs in reverse (right→left).
-const rows = [
-  { cards: pool.slice(0, mid), dir: undefined },
-  { cards: pool.slice(mid), dir: "reverse" },
-];
+].slice(0, 10);
+// Two identical halves so the -50% → 0 animation loops seamlessly.
+const track = [...cards, ...cards];
 ---
 
 <section class="sw">
@@ -34,29 +27,27 @@ const rows = [
     <a href="/work/" class="wbtn wbtn--primary sw__all">View all work</a>
   </div>
 
-  {rows.map((row) => (
-    <div class="sw__viewport" data-marquee="55" data-marquee-dir={row.dir}>
-      <ul class="sw__rail" role="list">
-        {[...row.cards, ...row.cards].map((c, i) => {
-          const dup = i >= row.cards.length;
-          return (
-            <li class="sw__card" aria-hidden={dup ? "true" : "false"}>
-              <a class="r22-card" href={`/work/${c.data.slug}/`} tabindex={dup ? -1 : undefined}>
-                <figure class="sw__img r22-media">
-                  <Picture src={c.data.heroImage} alt={dup ? "" : c.data.name} loading="lazy" decoding="async" />
-                </figure>
-                <div class="sw__meta">
-                  <span class="sw__client">{c.data.name}</span>
-                  <span class="sw__tag">{c.data.tagline}</span>
-                  <span class="sw__cta r22-arrow">View case study <span class="r22-arrow__i" aria-hidden="true">&rarr;</span></span>
-                </div>
-              </a>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  ))}
+  <div class="sw__viewport" data-marquee="55">
+    <ul class="sw__rail" role="list">
+      {track.map((c, i) => {
+        const dup = i >= cards.length;
+        return (
+          <li class="sw__card" aria-hidden={dup ? "true" : "false"}>
+            <a class="r22-card" href={`/work/${c.data.slug}/`} tabindex={dup ? -1 : undefined}>
+              <figure class="sw__img r22-media">
+                <Picture src={c.data.heroImage} alt={dup ? "" : c.data.name} loading="lazy" decoding="async" />
+              </figure>
+              <div class="sw__meta">
+                <span class="sw__client">{c.data.name}</span>
+                <span class="sw__tag">{c.data.tagline}</span>
+                <span class="sw__cta r22-arrow">View case study <span class="r22-arrow__i" aria-hidden="true">&rarr;</span></span>
+              </div>
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+  </div>
 </section>
 
 <style>
@@ -72,11 +63,8 @@ const rows = [
   }
   .sw__title em { font-style: italic; color: var(--c-accent); }
 
-  /* Continuous marquee — native-scroll driven (see Layout), pauses on hover.
-     Two rows scroll in opposite directions; the second sits below the first. */
-  .sw__viewport { overflow: hidden; }
-  .sw__viewport:first-of-type { margin-top: 2.5rem; }
-  .sw__viewport + .sw__viewport { margin-top: 1.5rem; }
+  /* Continuous marquee — native-scroll driven (see Layout), pauses on hover. */
+  .sw__viewport { margin-top: 2.5rem; overflow: hidden; }
   .sw__rail {
     list-style: none; margin: 0; padding: 0.5rem 0 1rem;
     display: flex; width: max-content;
