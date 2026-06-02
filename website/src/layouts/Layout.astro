@@ -14,6 +14,7 @@ interface Props {
   hidePreFooterCTA?: boolean;
   hideStickyMobileCTA?: boolean;
   theme?: "dark" | "light";
+  noindex?: boolean;
 }
 
 const {
@@ -22,6 +23,7 @@ const {
   ogImage = "/og-default.jpg",
   hideStickyMobileCTA = false,
   theme = "dark",
+  noindex = false,
 } = Astro.props;
 
 const path = Astro.url.pathname;
@@ -37,6 +39,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://rooftoptwen
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta property="og:type" content="website" />
