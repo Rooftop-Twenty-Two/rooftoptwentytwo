@@ -4,24 +4,63 @@ import Layout from "../../layouts/Layout.astro";
 import PageHero from "../../components/reskin/PageHero.astro";
 import WCtaBand from "../../components/reskin/WCtaBand.astro";
 import BreadcrumbSchema from "../../components/seo/BreadcrumbSchema.astro";
+import Picture from "../../components/Picture.astro";
 
 const programmes = (await getCollection("programmes")).sort(
   (a, b) => (a.data.order ?? 100) - (b.data.order ?? 100)
 );
+
+// Selected case studies for the "our work" band. Lead with featured work.
+const withHero = (await getCollection("portfolio"))
+  .filter((p) => p.data.heroImage)
+  .sort((a, b) => (a.data.order ?? 100) - (b.data.order ?? 100));
+const work = [
+  ...withHero.filter((p) => p.data.featured),
+  ...withHero.filter((p) => !p.data.featured),
+].slice(0, 3);
+
+// What we deliver under Enterprise Ireland grant funding.
+const services = [
+  { name: "Brand and strategy", body: "Positioning, messaging, and a marketing plan built around where your demand actually is." },
+  { name: "Website design and development", body: "Fast, modern sites that are built to convert and easy for your team to run." },
+  { name: "SEO", body: "Get found for what your customers are searching for, and stay found." },
+  { name: "Paid media", body: "Google and social advertising measured on pipeline and revenue, not clicks." },
+  { name: "Content and social", body: "Content and social that builds an audience and supports the sale." },
+];
+
+// FAQ — also emitted as FAQPage structured data below to help the page rank
+// for Enterprise Ireland grant queries.
+const faqs = [
+  { q: "How much does an Enterprise Ireland grant cover?", a: "Many Enterprise Ireland grants cover up to 50% of eligible costs. The exact rate depends on the instrument and your company, so tell us what you're planning and we'll talk you through it." },
+  { q: "Which Enterprise Ireland grants can fund marketing?", a: "Enterprise Ireland supports marketing and capability building through several grants and innovation instruments. We'll point you to the one that fits the work you have in mind." },
+  { q: "Do you handle the grant paperwork?", a: "We manage the application detail with you, so the funded engagement runs without extra admin on your side." },
+  { q: "Who qualifies for Enterprise Ireland funding?", a: "Funding is aimed at Enterprise Ireland client companies and eligible Irish businesses. If you're not sure where you stand, get in touch and we'll help you find out." },
+];
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    acceptedAnswer: { "@type": "Answer", text: f.a },
+  })),
+};
 ---
 
 <Layout
-  title="Enterprise Ireland Funded Marketing Programmes, Dublin"
-  description="Enterprise Ireland funded marketing programmes for Irish businesses, with up to 50% of eligible costs covered. Find out if your company qualifies."
+  title="Enterprise Ireland Grants for Marketing | Rooftop Twenty Two, Dublin"
+  description="Enterprise Ireland grants can fund your marketing, with up to 50% of eligible costs covered. See what we deliver, work we've done, and how we handle the detail."
 >
-  <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "Programmes", url: "/programmes/" }]} />
+  <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "Enterprise Ireland Grants", url: "/programmes/" }]} />
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
 
   <PageHero
     kicker="Enterprise Ireland"
-    title="Funded engagements, <em>fully handled</em>."
-    intro="We deliver marketing engagements funded by Enterprise Ireland under their innovation and capability instruments. Up to 50% of eligible costs covered, with no extra paperwork on your side."
+    title="Enterprise Ireland grants for <em>marketing that works</em>."
+    intro="Enterprise Ireland grants can fund the marketing your business needs, with up to 50% of eligible costs covered. We deliver the work and handle the grant detail, so there's no extra paperwork on your side."
     primary={{ label: "Talk to us about funding", href: "/contact/#contact" }}
-    secondary={{ label: "See selected work", href: "/work/" }}
+    secondary={{ label: "See our work", href: "/work/" }}
   />
 
   <section class="pr">
@@ -42,15 +81,15 @@ const programmes = (await getCollection("programmes")).sort(
       ) : (
         <div class="pr__intro">
           <p class="kicker kicker--script">How it works</p>
-          <h2 class="pr__h2">Half the cost, none of the paperwork.</h2>
+          <h2 class="pr__h2">Half the cost of an Enterprise Ireland grant, none of the paperwork.</h2>
           <p class="pr__lead">
-            If you&rsquo;re scoping an Enterprise Ireland funded engagement, get in touch and we&rsquo;ll
+            If you&rsquo;re scoping an Enterprise Ireland grant for marketing, get in touch and we&rsquo;ll
             walk you through which instrument fits, what&rsquo;s eligible, and what the next step looks
             like. We handle the application detail so you can focus on the work.
           </p>
           <ul class="pr__points">
             <li><b>Up to 50%</b> of eligible costs covered.</li>
-            <li><b>Innovation &amp; capability</b> instruments we work across.</li>
+            <li><b>Innovation &amp; capability</b> grants we work across.</li>
             <li><b>No extra admin.</b> We manage the paperwork with you.</li>
           </ul>
           <a href="/contact/#contact" class="wbtn wbtn--accent">Talk to us about funding</a>
@@ -59,10 +98,77 @@ const programmes = (await getCollection("programmes")).sort(
     </div>
   </section>
 
-  <WCtaBand heading="Thinking about funded growth?" body="Tell us what you're planning and we'll point you to the right Enterprise Ireland instrument, and handle the detail." />
+  <!-- What we do -->
+  <section class="pr-do" id="what-we-do">
+    <div class="pr-do__inner">
+      <div class="pr-do__head reveal">
+        <p class="kicker kicker--script">What we do</p>
+        <h2 class="pr-h2">The marketing a grant can fund.</h2>
+        <p class="pr-do__lead">An Enterprise Ireland grant can cover the work that actually moves a business. Here&rsquo;s what we deliver, all under one roof.</p>
+      </div>
+      <ul class="pr-do__grid">
+        {services.map((s, i) => (
+          <li class="pr-do__item reveal">
+            <span class="pr-do__n">{String(i + 1).padStart(2, "0")}</span>
+            <h3 class="pr-do__title">{s.name}</h3>
+            <p class="pr-do__body">{s.body}</p>
+          </li>
+        ))}
+      </ul>
+      <a href="/services/" class="wbtn wbtn--primary pr-do__all">See all services</a>
+    </div>
+  </section>
+
+  <!-- Our work -->
+  {work.length > 0 && (
+    <section class="pr-work" id="our-work">
+      <div class="pr-work__inner">
+        <div class="pr-work__head reveal">
+          <p class="kicker kicker--script">Our work</p>
+          <h2 class="pr-h2">Work we&rsquo;re proud of.</h2>
+          <p class="pr-work__lead">A flavour of what we deliver for ambitious Irish businesses.</p>
+        </div>
+        <ul class="pr-work__grid">
+          {work.map((c) => (
+            <li class="reveal">
+              <a class="pr-work__card" href={`/work/${c.data.slug}/`}>
+                <figure class="pr-work__img r22-media">
+                  <Picture src={c.data.heroImage} alt={c.data.name} loading="lazy" decoding="async" />
+                </figure>
+                <span class="pr-work__client">{c.data.name}</span>
+                <span class="pr-work__tag">{c.data.tagline}</span>
+                <span class="pr-work__cta r22-arrow">View case study <span class="r22-arrow__i" aria-hidden="true">&rarr;</span></span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <a href="/work/" class="wbtn wbtn--primary pr-work__all">View all work</a>
+      </div>
+    </section>
+  )}
+
+  <!-- FAQ -->
+  <section class="pr-faq" id="faq">
+    <div class="pr-faq__inner">
+      <p class="kicker kicker--script">Common questions</p>
+      <h2 class="pr-h2 pr-faq__title">Enterprise Ireland grants, in plain English.</h2>
+      <dl class="pr-faq__list">
+        {faqs.map((f) => (
+          <div class="pr-faq__item reveal">
+            <dt class="pr-faq__q">{f.q}</dt>
+            <dd class="pr-faq__a">{f.a}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <WCtaBand heading="Thinking about a grant-funded project?" body="Tell us what you're planning and we'll point you to the right Enterprise Ireland grant, and handle the detail." />
 </Layout>
 
 <style>
+  .pr-h2 { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); line-height: var(--lh-heading); letter-spacing: var(--tracking-display); margin: 0.4rem 0 0; }
+
   .pr { background: var(--c-bg-alt); color: var(--c-ink); padding-block: var(--w-section-y); }
   .pr__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
 
@@ -81,4 +187,41 @@ const programmes = (await getCollection("programmes")).sort(
   .pr__points { list-style: none; margin: 1.75rem 0 2.25rem; padding: 0; }
   .pr__points li { position: relative; padding-left: 1.6rem; margin-bottom: 0.85rem; font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-ink); }
   .pr__points li::before { content: ""; position: absolute; left: 0; top: 0.55em; width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--c-accent); }
+
+  /* What we do */
+  .pr-do { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .pr-do__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .pr-do__lead { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: var(--lh-body); color: var(--c-ink-soft); margin: 1rem 0 0; max-width: 60ch; }
+  .pr-do__grid { list-style: none; margin: 2.5rem 0 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 2rem; }
+  @media (min-width: 680px) { .pr-do__grid { grid-template-columns: 1fr 1fr; gap: 2.5rem; } }
+  @media (min-width: 1000px) { .pr-do__grid { grid-template-columns: repeat(3, 1fr); } }
+  .pr-do__n { font-family: var(--w-font-display); font-weight: 700; font-size: 1.5rem; color: var(--c-accent); }
+  .pr-do__title { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); color: var(--c-ink); margin: 0.5rem 0 0; }
+  .pr-do__body { font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-ink-soft); line-height: 1.55; margin: 0.5rem 0 0; }
+  .pr-do__all { margin-top: 2.75rem; }
+
+  /* Our work */
+  .pr-work { background: var(--c-bg-alt); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .pr-work__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .pr-work__lead { font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-ink-soft); margin: 1rem 0 0; }
+  .pr-work__grid { list-style: none; margin: 2.5rem 0 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 1.75rem; }
+  @media (min-width: 760px) { .pr-work__grid { grid-template-columns: repeat(3, 1fr); } }
+  .pr-work__card { display: block; text-decoration: none; color: inherit; }
+  .pr-work__img { margin: 0; border: 1px solid var(--c-line); border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 4 / 3; background: #fff; box-shadow: var(--w-shadow-soft); }
+  .pr-work__img :global(img) { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform var(--w-dur) var(--w-ease); }
+  .pr-work__card:hover .pr-work__img :global(img) { transform: scale(1.04); }
+  .pr-work__client { display: block; font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); line-height: 1.1; margin-top: 1rem; }
+  .pr-work__tag { display: block; font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-ink-soft); margin-top: 0.3rem; }
+  .pr-work__cta { display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--w-font-body); font-weight: 600; font-size: 0.9rem; color: var(--c-accent); margin-top: 0.5rem; }
+  .pr-work__all { margin-top: 2.75rem; }
+
+  /* FAQ */
+  .pr-faq { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .pr-faq__inner { max-width: 760px; margin: 0 auto; padding-inline: var(--w-gutter); }
+  .pr-faq__title { margin-bottom: 2.5rem; }
+  .pr-faq__list { margin: 0; }
+  .pr-faq__item { padding: 1.5rem 0; border-top: 1px solid var(--c-line); }
+  .pr-faq__item:last-child { border-bottom: 1px solid var(--c-line); }
+  .pr-faq__q { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); color: var(--c-ink); margin: 0; }
+  .pr-faq__a { font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-ink-soft); line-height: 1.6; margin: 0.6rem 0 0; }
 </style>
