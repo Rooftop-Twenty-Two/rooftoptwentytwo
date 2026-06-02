@@ -140,27 +140,29 @@ const ev = events[0];
         <p class="eb-reg__lead">We can only fit so many people in the room, so this isn&rsquo;t a ticket just yet. Put your name down and we&rsquo;ll be in touch with the date and a seat as soon as it&rsquo;s locked in. First come, first served. We&rsquo;ll let you know either way.</p>
       </div>
 
-      <form class="eb-form reveal" data-event-form data-endpoint="/api/event-register/" novalidate>
-        <input type="hidden" name="event" value={ev.id} />
-        <div class="eb-form__field">
-          <label class="eb-form__label" for="ev-name">Name</label>
-          <input id="ev-name" type="text" name="name" required autocomplete="name" />
-          <span class="eb-form__err" data-err-for="name" hidden>Please add your name.</span>
+      <form class="eb-form reveal" action="https://eu-submit.jotform.com/submit/261524935328057" method="post" accept-charset="utf-8" data-event-form>
+        <input type="hidden" name="formID" value="261524935328057" />
+        <input type="hidden" name="simple_spc" value="261524935328057-261524935328057" />
+        <div class="eb-form__row">
+          <div class="eb-form__field">
+            <label class="eb-form__label" for="ev-first">First name</label>
+            <input id="ev-first" type="text" name="q2_q2_fullname0[first]" required autocomplete="given-name" />
+          </div>
+          <div class="eb-form__field">
+            <label class="eb-form__label" for="ev-last">Last name</label>
+            <input id="ev-last" type="text" name="q2_q2_fullname0[last]" required autocomplete="family-name" />
+          </div>
         </div>
         <div class="eb-form__field">
           <label class="eb-form__label" for="ev-email">Email</label>
-          <input id="ev-email" type="email" name="email" required autocomplete="email" />
-          <span class="eb-form__err" data-err-for="email" hidden>Please add a valid email.</span>
+          <input id="ev-email" type="email" name="q3_q3_email1" required autocomplete="email" />
         </div>
         <div class="eb-form__field">
           <label class="eb-form__label" for="ev-company">Company <span class="eb-form__opt">(optional)</span></label>
-          <input id="ev-company" type="text" name="company" autocomplete="organization" />
+          <input id="ev-company" type="text" name="q4_q4_textbox2" autocomplete="organization" />
         </div>
-        <div class="eb-form__field">
-          <label class="eb-form__label" for="ev-q">Anything you&rsquo;d like Diarmuid to cover? <span class="eb-form__opt">(optional)</span></label>
-          <textarea id="ev-q" name="question" rows="4"></textarea>
-        </div>
-        <input type="text" name="_gotcha" class="eb-form__hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <!-- JotForm honeypot: must stay empty -->
+        <input type="text" name="website" class="eb-form__hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
         <button type="submit" class="wbtn wbtn--accent eb-form__submit">Put my name down</button>
         <p class="eb-form__note">No spam. We&rsquo;ll only email you about this event.</p>
         <p class="eb-form__status" role="status" aria-live="polite" data-form-status hidden></p>
@@ -239,6 +241,8 @@ const ev = events[0];
   .eb-reg__title { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); letter-spacing: var(--tracking-display); color: var(--c-on-dark); margin: 0.4rem 0 0; }
   .eb-reg__lead { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.65; color: var(--c-on-dark-soft); margin: 1rem 0 2.5rem; }
   .eb-form { display: grid; gap: 1.25rem; }
+  .eb-form__row { display: grid; gap: 1.25rem; }
+  @media (min-width: 520px) { .eb-form__row { grid-template-columns: 1fr 1fr; } }
   .eb-form__field { display: grid; gap: 0.45rem; }
   .eb-form__label { font-family: var(--w-font-body); font-weight: 600; font-size: 0.85rem; color: var(--c-on-dark); }
   .eb-form__opt { font-weight: 400; color: var(--c-on-dark-soft); }
@@ -266,61 +270,29 @@ const ev = events[0];
 </style>
 
 <script>
-  // Register-of-interest form: client validation, success swap, real submission
-  // with a mailto fallback so sign-ups are never lost. Drop the live CRM/handler
-  // URL into data-endpoint to POST there.
+  // Register-of-interest form. Submits to JotForm in the background (no-cors +
+  // keepalive, so the request still completes), then swaps in the on-page
+  // "you're on the list" state. If JS is unavailable the form posts to JotForm
+  // normally as a fallback.
   const form = document.querySelector<HTMLFormElement>("[data-event-form]");
   const done = document.querySelector<HTMLElement>("[data-event-done]");
   if (form && done) {
-    const status = form.querySelector<HTMLElement>("[data-form-status]");
-    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    const showErr = (name: string, on: boolean) => {
-      const field = form.querySelector<HTMLElement>(`[data-err-for="${name}"]`);
-      const input = form.querySelector<HTMLInputElement>(`[name="${name}"]`);
-      if (field) field.hidden = !on;
-      if (input) input.setAttribute("aria-invalid", on ? "true" : "false");
-    };
-    const validate = () => {
-      const name = (form.elements.namedItem("name") as HTMLInputElement)?.value.trim();
-      const email = (form.elements.namedItem("email") as HTMLInputElement)?.value.trim();
-      const nameOk = !!name;
-      const emailOk = emailRe.test(email || "");
-      showErr("name", !nameOk);
-      showErr("email", !emailOk);
-      return nameOk && emailOk;
-    };
-
-    form.addEventListener("submit", async (e) => {
+    form.addEventListener("submit", (e) => {
+      // Honeypot: if a bot filled it, skip the real submit but show success.
+      const hp = form.querySelector<HTMLInputElement>('input[name="website"]');
+      if (hp && hp.value) { e.preventDefault(); form.hidden = true; done.hidden = false; return; }
+      // Let the browser run native required-field validation first.
+      if (!form.checkValidity()) return;
       e.preventDefault();
-      if (status) status.hidden = true;
-      if ((form.elements.namedItem("_gotcha") as HTMLInputElement)?.value) {
-        form.hidden = true; done.hidden = false; return;
-      }
-      if (!validate()) {
-        form.querySelector<HTMLInputElement>('[aria-invalid="true"]')?.focus();
-        return;
-      }
-      const data = Object.fromEntries(new FormData(form).entries());
-      const endpoint = form.dataset.endpoint;
       const btn = form.querySelector<HTMLButtonElement>('[type="submit"]');
-      if (btn) { btn.disabled = true; btn.textContent = "Sending..."; }
-      const succeed = () => { form.hidden = true; done.hidden = false; done.scrollIntoView({ behavior: "smooth", block: "center" }); };
-      const fail = (msg: string) => { if (status) { status.textContent = msg; status.hidden = false; } if (btn) { btn.disabled = false; btn.textContent = "Put my name down"; } };
-      try {
-        if (endpoint) {
-          const res = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(data) });
-          if (!res.ok) throw new Error("bad status");
-          succeed();
-        } else {
-          const subject = encodeURIComponent("Event interest: Diarmuid McSweeney, Gym+Coffee");
-          const body = encodeURIComponent(`Name: ${data.name}\nEmail: ${data.email}\nCompany: ${data.company || "-"}\n\nFor Diarmuid: ${data.question || "-"}`);
-          window.location.href = `mailto:hey@rooftoptwentytwo.ie?subject=${subject}&body=${body}`;
-          succeed();
-        }
-      } catch {
-        fail("Something went wrong. Email us at hey@rooftoptwentytwo.ie and we'll add you.");
-      }
+      if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
+      fetch(form.action, { method: "POST", body: new FormData(form), mode: "no-cors", keepalive: true })
+        .catch(() => {})
+        .finally(() => {
+          form.hidden = true;
+          done.hidden = false;
+          done.scrollIntoView({ behavior: "smooth", block: "center" });
+        });
     });
   }
 </script>
