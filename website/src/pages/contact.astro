@@ -71,7 +71,7 @@ const sandyfordDirections = `https://www.google.com/maps/dir/?api=1&destination=
           </div>
         </div>
 
-        <form class="ct__form" action={jotformAction} method="post" accept-charset="utf-8">
+        <form class="ct__form" action={jotformAction} method="post" accept-charset="utf-8" data-jotform-redirect="/thank-you/">
           <input type="hidden" name="formID" value={JOTFORM_ID} />
           <input type="hidden" name="simple_spc" value={simpleSpc} />
           <!-- JotForm honeypot: must stay empty -->
@@ -109,6 +109,28 @@ const sandyfordDirections = `https://www.google.com/maps/dir/?api=1&destination=
 
     </div>
   </section>
+
+  <script>
+    // Progressive enhancement: submit the enquiry to JotForm in the background,
+    // then send the visitor to our own /thank-you/ page. If JS is unavailable
+    // the form still posts to JotForm normally (showing JotForm's thank-you).
+    const form = document.querySelector<HTMLFormElement>("form.ct__form[data-jotform-redirect]");
+    if (form) {
+      const dest = form.dataset.jotformRedirect || "/";
+      form.addEventListener("submit", (e) => {
+        // Let the browser run native required-field validation first.
+        if (!form.checkValidity()) return;
+        e.preventDefault();
+        const btn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+        if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
+        // no-cors: the response is opaque, but the submission is still delivered.
+        // keepalive lets the request finish even as we navigate away.
+        fetch(form.action, { method: "POST", body: new FormData(form), mode: "no-cors", keepalive: true })
+          .catch(() => {})
+          .finally(() => { window.location.href = dest; });
+      });
+    }
+  </script>
 </Layout>
 
 <style>
