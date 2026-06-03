@@ -1,0 +1,42 @@
+---
+// Google Analytics 4 — consent-gated.
+//
+// Reads the Measurement ID from the PUBLIC_GA4_ID env var (e.g. G-XXXXXXXXXX).
+// If it's unset, nothing renders, so the build stays safe before the ID is set.
+//
+// Tracking only loads AFTER the visitor accepts cookies. It checks the stored
+// choice on load and otherwise waits for the `r22:cookie-consent` "accepted"
+// event fired by CookieConsent.astro. No pings to Google before consent.
+const GA_ID = import.meta.env.PUBLIC_GA4_ID;
+---
+
+{GA_ID && (
+  <script is:inline define:vars={{ GA_ID }}>
+    (function () {
+      var loaded = false;
+      function loadGA() {
+        if (loaded) return;
+        loaded = true;
+        var s = document.createElement("script");
+        s.async = true;
+        s.src = "https://www.googletagmanager.com/gtag/js?id=" + GA_ID;
+        document.head.appendChild(s);
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { window.dataLayer.push(arguments); }
+        window.gtag = gtag;
+        gtag("js", new Date());
+        gtag("config", GA_ID, { anonymize_ip: true });
+      }
+
+      var stored = null;
+      try { stored = localStorage.getItem("r22-cookie-consent"); } catch (e) {}
+      if (stored === "accepted" || window.__r22CookieConsent === "accepted") {
+        loadGA();
+      } else {
+        window.addEventListener("r22:cookie-consent", function (e) {
+          if (e && e.detail === "accepted") loadGA();
+        });
+      }
+    })();
+  </script>
+)}

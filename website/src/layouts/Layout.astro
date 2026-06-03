@@ -5,6 +5,7 @@ import MenuOverlay from "../components/MenuOverlay.astro";
 import OrganizationSchema from "../components/seo/OrganizationSchema.astro";
 import StickyMobileCTA from "../components/StickyMobileCTA.astro";
 import CookieConsent from "../components/CookieConsent.astro";
+import GoogleAnalytics from "../components/GoogleAnalytics.astro";
 import "../styles/globals.css";
 
 interface Props {
@@ -54,6 +55,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://rooftoptwen
     <link rel="preload" href="/fonts/mulish-variable.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/starlit-drive.woff2" as="font" type="font/woff2" crossorigin />
     <OrganizationSchema />
+    <GoogleAnalytics />
     <noscript>
       <style>
         .reveal, .reveal--left, .reveal--right, .reveal--scale, .reveal--stagger > * {
