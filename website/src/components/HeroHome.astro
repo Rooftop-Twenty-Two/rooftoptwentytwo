@@ -129,12 +129,31 @@ const awards = awardDefs.map((a) => ({ ...a, hasLogo: existsSync(path.join(proce
     top: 0;
     color: var(--c-accent-2-bright);
     opacity: 0;
-    transform: translateY(0.45em);
-    transition: opacity 0.55s var(--w-ease), transform 0.55s var(--w-ease);
+    transform: translateY(0.7em);
+    filter: blur(8px);
+    transition:
+      opacity 0.55s var(--w-ease),
+      transform 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+      filter 0.55s var(--w-ease);
     white-space: nowrap;
+    will-change: opacity, transform, filter;
   }
-  .whero__word.is-active { opacity: 1; transform: none; }
-  .whero__word.is-leaving { opacity: 0; transform: translateY(-0.45em); }
+  /* Incoming word: rise, sharpen, fade in — held back briefly so the outgoing
+     word has lifted clear first, for a clean hand-off rather than a crossfade. */
+  .whero__word.is-active {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+    transition-delay: 0.14s;
+  }
+  /* Outgoing word: lift up and blur away, a touch quicker than the entrance. */
+  .whero__word.is-leaving {
+    opacity: 0;
+    transform: translateY(-0.7em);
+    filter: blur(8px);
+    transition-duration: 0.45s, 0.5s, 0.45s;
+    transition-delay: 0s;
+  }
 
   .whero__sub {
     font-family: var(--w-font-body);
@@ -199,8 +218,8 @@ const awards = awardDefs.map((a) => ({ ...a, hasLogo: existsSync(path.join(proce
         next.classList.remove("is-leaving");
         next.classList.add("is-active");
         // clear the leaving marker after the transition so it can re-enter later
-        window.setTimeout(() => current.classList.remove("is-leaving"), 600);
-      }, 2200);
+        window.setTimeout(() => current.classList.remove("is-leaving"), 750);
+      }, 2600);
     }
   }
 </script>
