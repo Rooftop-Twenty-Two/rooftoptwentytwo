@@ -1,21 +1,27 @@
 ---
-// Reusable inline contact form band (navy). Mirrors the main /contact form and
-// posts to the same endpoint, so it can drop into any page that needs a direct
-// "get in touch" point (e.g. the case-study pages).
+// Reusable inline contact form band (navy). Uses the site's own markup/styling
+// but posts straight to JotForm (EU) — the exact same form as the /contact
+// page (ID + field names taken verbatim from the JotForm source) — so
+// case-study enquiries land in the same JotForm inbox and work reliably.
+// formID + simple_spc are JotForm's required hidden fields; `website` is its
+// honeypot and must stay empty.
 interface Props {
   heading?: string;
   lead?: string;
-  routing?: string;        // hidden routing value, e.g. "project:best4travel"
+  routing?: string;        // accepted for back-compat; folded into the subject
   prefillSubject?: string;
   prefillMessage?: string;
 }
 const {
   heading = "Like what you see? Let's talk.",
   lead = "Tell us what you're scaling, launching, or rebuilding. We'll come back with a thoughtful reply and a time to talk it through.",
-  routing = "",
   prefillSubject = "",
   prefillMessage = "",
 } = Astro.props;
+
+const JOTFORM_ID = "261524373945058";
+const jotformAction = `https://eu-submit.jotform.com/submit/${JOTFORM_ID}`;
+const simpleSpc = `${JOTFORM_ID}-${JOTFORM_ID}`;
 ---
 
 <section class="wcf" id="contact">
@@ -31,34 +37,58 @@ const {
       </div>
     </div>
 
-    <form class="wcf__form" action="/api/contact/" method="POST" novalidate data-contact-form>
-      <input type="hidden" name="routing" value={routing} />
-      <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" />
-      <p data-form-status role="status" aria-live="polite" class="wcf__field--full" style="margin:0;font-family:var(--w-font-body);font-size:0.9rem;"></p>
+    <form class="wcf__form" action={jotformAction} method="post" accept-charset="utf-8" data-jotform-redirect="/thank-you/">
+      <input type="hidden" name="formID" value={JOTFORM_ID} />
+      <input type="hidden" name="simple_spc" value={simpleSpc} />
+      <!-- JotForm honeypot: must stay empty -->
+      <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" />
       <label class="wcf__field">
-        <span>Name</span>
-        <input type="text" name="name" required placeholder="Your name" />
+        <span>First name</span>
+        <input type="text" name="q2_q2_fullname0[first]" required placeholder="Your first name" />
+      </label>
+      <label class="wcf__field">
+        <span>Last name</span>
+        <input type="text" name="q2_q2_fullname0[last]" required placeholder="Your last name" />
       </label>
       <label class="wcf__field">
         <span>Email</span>
-        <input type="email" name="email" required placeholder="you@company.com" />
+        <input type="email" name="q3_q3_email1" required placeholder="you@company.com" />
       </label>
       <label class="wcf__field">
         <span>Company</span>
-        <input type="text" name="company" placeholder="Company (optional)" />
+        <input type="text" name="q7_company" placeholder="Company (optional)" />
       </label>
-      <label class="wcf__field">
+      <label class="wcf__field wcf__field--full">
         <span>Subject</span>
-        <input type="text" name="subject" placeholder="What's this about?" value={prefillSubject} />
+        <input type="text" name="q4_q4_textbox2" required placeholder="What's this about?" value={prefillSubject} />
       </label>
       <label class="wcf__field wcf__field--full">
         <span>Message</span>
-        <textarea name="message" required rows="5" placeholder="Tell us a little about your project">{prefillMessage}</textarea>
+        <textarea name="q5_q5_textarea3" required rows="5" placeholder="Tell us a little about your project">{prefillMessage}</textarea>
       </label>
       <button type="submit" class="wbtn wbtn--accent wcf__submit">Send message</button>
     </form>
   </div>
 </section>
+
+<script>
+  // Submit the enquiry to JotForm in the background, then send the visitor to
+  // our own /thank-you/ page. Without JS the form still posts to JotForm
+  // normally (showing JotForm's thank-you). Mirrors the /contact handler.
+  const form = document.querySelector<HTMLFormElement>("form.wcf__form[data-jotform-redirect]");
+  if (form) {
+    const dest = form.dataset.jotformRedirect || "/";
+    form.addEventListener("submit", (e) => {
+      if (!form.checkValidity()) return;
+      e.preventDefault();
+      const btn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
+      fetch(form.action, { method: "POST", body: new FormData(form), mode: "no-cors", keepalive: true })
+        .catch(() => {})
+        .finally(() => { window.location.href = dest; });
+    });
+  }
+</script>
 
 <style>
   .wcf { background: var(--c-dark); color: var(--c-on-dark); padding-block: var(--w-section-y); }
