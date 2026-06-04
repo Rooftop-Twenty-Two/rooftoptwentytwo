@@ -1,9 +1,10 @@
 ---
 // ────────────────────────────────────────────────────────────────────────────
-// Bespoke proposal deck — Pharmacy Store (R. Keating Pharmacy Group).
-// Standalone 16:9 presentation, no site chrome. The slide CONTENT is AES-256-GCM
-// encrypted at build time and only decrypts in the browser once the correct
-// password is entered, so the page source ships ciphertext, not the pitch.
+// Bespoke proposal deck — Pharmacy Store (website + booking platform).
+// Prepared for Ciaran McNally and Tracey Dunne. Standalone 16:9 presentation,
+// no site chrome. Slide CONTENT is AES-256-GCM encrypted at build time and only
+// decrypts in the browser once the correct password is entered, so the page
+// source ships ciphertext, not the pitch.
 //
 // Change the password below (PASSWORD) and rebuild to rotate it.
 // noindex + excluded from the sitemap (see astro.config sitemap filter).
@@ -23,165 +24,176 @@ const slides: string[] = [
   // 1 — Cover
   slide(
     `<div class="cover">
-       ${eyebrow("Proposal · June 2026")}
-       <h1>Pharmacy Store,<br/>online and growing.</h1>
-       <p class="lead">A plan to grow the online pharmacy and bring more of Limerick and Clare through the door.</p>
-       <p class="cover__by">Prepared for the R. Keating Pharmacy Group<br/>by Rooftop Twenty Two</p>
+       ${eyebrow("Website proposal · June 2026")}
+       <h1>A website built<br/>around booking.</h1>
+       <p class="lead">A pharmacy group website and booking platform, prepared for Ciaran McNally and Tracey Dunne.</p>
+       <p class="cover__by">Rooftop Twenty Two · Web design and digital marketing<br/>Glasnevin and the Beacon, Dublin</p>
      </div>`,
     "slide--cover"
   ),
 
-  // 2 — Who we are
+  // 2 — Introduction
   slide(
-    `${eyebrow("Who you'd be working with")}
-     <h2>A senior team that ships.</h2>
-     <p class="lead">We're Rooftop Twenty Two, a website and digital marketing agency in Dublin. Strategy, design, build, and marketing sit in one team, so the people who plan your growth are the people who deliver it.</p>
-     <p class="lead lead--soft">We work with Irish brands that want real results, not activity.</p>`
+    `${eyebrow("Introduction")}
+     <h2>You've done the hard part with Tap.</h2>
+     <p class="lead">The brand is fresh, the shops are being revamped, and the new photography is in place. The website is the last piece still looking five years old. That's where we come in.</p>
+     <p class="lead lead--soft">Moving off e-commerce to a service and information site is exactly the kind of build where trust and clear booking matter more than selling a product off a shelf. It's the same thinking we apply for our consultant clients every week.</p>`
   ),
 
-  // 3 — We understand pharmacy
+  // 3 — About us
   slide(
-    `${eyebrow("We get your world")}
-     <h2>Five stores. One online shop.<br/>A lot of trust to protect.</h2>
+    `${eyebrow("About us")}
+     <h2>A Dublin web and marketing team of 14.</h2>
      ${bullets([
-       "A group of community pharmacies across Limerick and Clare, from Daarwood in Newcastle West to Ballycasey in Shannon.",
-       "An online shop already shipping across Ireland and the UK, discreetly and on time.",
-       "A regulated, advice-led business where trust and accuracy come first.",
+       "Two offices, Glasnevin and the Beacon, with in-house web design, development, SEO, paid social, video and content.",
+       "We produce 20 to 30 websites a year and move quickly without dropping quality.",
+       "We work closely with brand studios like Tap, carrying their brand work through into a clean, consistent live site.",
      ])}`
   ),
 
-  // 4 — The opportunity
+  // 4 — Awards
   slide(
-    `${eyebrow("Where the growth is")}
-     <h2>You've built the foundation. Now we scale it.</h2>
+    `${eyebrow("Recognised work")}
+     <h2>Award-winning web and search.</h2>
      ${bullets([
-       "More online sales: turn more visits into baskets, and more baskets into repeat orders.",
-       "More local custom: own “pharmacy near me” across all five catchments.",
-       "More repeat scripts: make reordering a prescription the easy choice.",
-       "More loyalty: bring customers back by email, not by chance.",
+       "Gold winners at the Spider Awards for our web design work.",
+       "Finalists at the European Search Awards 2026, with two of our team at the ceremony in Porto.",
+       "A consistent record of award-winning sites across the medical, retail and charity sectors.",
+     ])}
+     <p class="lead lead--soft">Studios bring us in for the extra polish, backed by real development skill. We make it look right and make it work.</p>`
+  ),
+
+  // 5 — Initial thoughts
+  slide(
+    `${eyebrow("Our early read")}
+     <h2>What the new site should do.</h2>
+     ${bullets([
+       "Move from shop to service. The site becomes a tool that works 24/7.",
+       "Put services and booking front and centre, from vaccinations to health checks.",
+       "Position the group as a community health hub, not a product shelf.",
+       "Give each of the five pharmacies its own page, with hours that load instantly.",
+       "Strip the dated, Covid-era content and run the Tap brand throughout.",
+       "Build SEO in from day one, local to each service and location.",
+       "Tell the automation and robotics story as a point of difference.",
      ])}`
   ),
 
-  // 5 — Plan overview (pillars)
+  // 6 — Sitemap
   slide(
-    `${eyebrow("The plan")}
-     <h2>Five moving parts, one joined-up engine.</h2>
-     <div class="pgrid">
-       <div class="pcard"><span class="pnum">01</span><h3>Website &amp; online shop</h3><p>Fast, trusted, easy to reorder from.</p></div>
-       <div class="pcard"><span class="pnum">02</span><h3>Local SEO &amp; Google profiles</h3><p>Win every town you serve.</p></div>
-       <div class="pcard"><span class="pnum">03</span><h3>Performance marketing</h3><p>Ads measured on revenue.</p></div>
-       <div class="pcard"><span class="pnum">04</span><h3>Content &amp; social</h3><p>Helpful, human, on-brand.</p></div>
-       <div class="pcard"><span class="pnum">05</span><h3>Email &amp; retention</h3><p>Bring customers back.</p></div>
+    `${eyebrow("A first-draft structure")}
+     <h2>Potential sitemap.</h2>
+     <div class="smap">
+       <div class="smap__col">
+         <h4>Home</h4>
+         <h4>About</h4>
+         <ul><li>Our story and the brand</li><li>Team and pharmacists</li><li>Innovation and automation</li></ul>
+       </div>
+       <div class="smap__col">
+         <h4>Services</h4>
+         <ul><li>Vaccinations</li><li>Health checks and screening</li><li>Weight management</li><li>Minor ailments</li><li>Smoking cessation</li><li>Prescriptions and repeats</li></ul>
+       </div>
+       <div class="smap__col">
+         <h4>Our pharmacies</h4>
+         <ul><li>A page per location</li><li>Hours, address, services</li><li>Photos and map</li></ul>
+         <h4>Book an appointment</h4>
+       </div>
+       <div class="smap__col">
+         <h4>Health advice and news</h4>
+         <h4>Contact</h4>
+         <h4>Careers</h4>
+       </div>
+     </div>
+     <p class="note">For discussion. We'll confirm the final structure together.</p>`
+  ),
+
+  // 7 — Creative ideas
+  slide(
+    `${eyebrow("Creative ideas")}
+     <h2>How the site comes to life.</h2>
+     ${bullets([
+       "Real photography front and centre, the Tap shots of your shops and teams. No stock.",
+       "A book action that follows you through the site, always one tap away.",
+       "A location finder, so visitors reach their nearest pharmacy fast.",
+       "An innovation section that tells the robotics story in plain terms.",
+       "Pharmacist profiles and trust signals, so people know the team before they walk in.",
+       "A clean, modern look, designed mobile first, because most pharmacy searches happen on a phone.",
+     ])}`
+  ),
+
+  // 8 — Robotics
+  slide(
+    `${eyebrow("A point of difference")}
+     <h2>The robotics and automation angle.</h2>
+     <p class="lead">Robotic dispensing pushes accuracy close to 100% and handles a large share of daily prescriptions in seconds, freeing your team to spend more time with patients.</p>
+     <p class="lead lead--soft">Boots Ireland and others already frame it this way. Giving it a home on the site positions the group as forward-looking and justifies a premium feel across the brand. No other independent group locally will have this.</p>`
+  ),
+
+  // 9 — Booking comparison
+  slide(
+    `${eyebrow("Booking is the heart of it")}
+     <h2>Off the shelf vs bespoke.</h2>
+     <div class="cmp">
+       <div class="cmp__h"></div><div class="cmp__h">Off the shelf</div><div class="cmp__h">Bespoke</div>
+       <div class="cmp__l">What it is</div><div>A proven tool (Acuity, Bookly) styled to your brand.</div><div>Built around your services and five locations.</div>
+       <div class="cmp__l">Speed and cost</div><div>Faster, lower cost. A monthly fee per location.</div><div>Higher upfront, no recurring third-party fee.</div>
+       <div class="cmp__l">Look and feel</div><div>Styled to brand, sits slightly apart.</div><div>Matches the site exactly, one experience.</div>
+       <div class="cmp__l">Flexibility</div><div>Great for standard booking.</div><div>Built around exactly how you work.</div>
+       <div class="cmp__l">Maintenance</div><div>By the provider.</div><div>Owned by you, with our support.</div>
      </div>`
   ),
 
-  // 6 — Website & shop
+  // 10 — Recommendation
   slide(
-    `${eyebrow("01 · Website & online shop")}
-     <h2>A shop that's fast, trusted,<br/>and easy to reorder from.</h2>
+    `${eyebrow("Our recommendation")}
+     <h2>Start off the shelf. Grow into bespoke.</h2>
+     <p class="lead">For launch, a strong off-the-shelf engine styled to your brand gets you live faster and covers vaccines and standard appointments well.</p>
+     <p class="lead lead--soft">If your service range and automation plans grow, we move to a bespoke build later. We'll scope both at the workshop, so you decide with full sight of the costs.</p>`
+  ),
+
+  // 11 — Integrations
+  slide(
+    `${eyebrow("Beyond booking")}
+     <h2>What the site connects to.</h2>
+     <div class="igrid">
+       <div class="icard"><span class="tag tag--core">Core</span><h4>Google Business Profile</h4><p>Locations, hours and reviews, visible in search and maps.</p></div>
+       <div class="icard"><span class="tag tag--core">Core</span><h4>Online reviews</h4><p>Your Google reviews, pulled onto the site.</p></div>
+       <div class="icard"><span class="tag tag--core">Core</span><h4>Maps and location finder</h4><p>Route people to their nearest pharmacy.</p></div>
+       <div class="icard"><span class="tag tag--core">Core</span><h4>Analytics and tracking</h4><p>GA4 and booking conversions, so we improve over time.</p></div>
+       <div class="icard"><span class="tag tag--core">Core</span><h4>Social media</h4><p>Feeds and links across your channels.</p></div>
+       <div class="icard"><span class="tag tag--addon">Add-on</span><h4>Pharmacy management system</h4><p>Repeat prescription requests into your records.</p></div>
+       <div class="icard"><span class="tag tag--addon">Add-on</span><h4>Email marketing</h4><p>Newsletter sign-up and campaigns.</p></div>
+       <div class="icard"><span class="tag tag--addon">Add-on</span><h4>Online payments</h4><p>Only if you take payment at booking.</p></div>
+     </div>`
+  ),
+
+  // 12 — Healthcare proof
+  slide(
+    `${eyebrow("Why us, for healthcare")}
+     <h2>Trust is what we build.</h2>
+     <blockquote class="quote">"It's a pleasure to work with such a creative, innovative and supportive team, from rebuilding our website to producing video that captures what we do."<cite>Fiona Monahan, Bloomfield Health Services</cite></blockquote>
+     <p class="lead lead--soft">We work with consultants, clinics and care organisations across Ireland. A service and information site lives or dies on trust and clear booking, and that's exactly what we do every week.</p>`
+  ),
+
+  // 13 — Next steps
+  slide(
+    `${eyebrow("Next steps")}
+     <h2>How we move this forward.</h2>
      ${bullets([
-       "Quick, mobile-first, and built to convert, with clear categories and search that actually works.",
-       "Reordering and repeat prescriptions made simple, so customers come back without thinking.",
-       "Trust built in: pharmacist advice, secure checkout, and the plain-packaging promise up front.",
+       "We send you live links and examples across medical, retail and innovation.",
+       "We confirm a few details, then put indicative costs together, core build and options set out clearly.",
+       "Once costs are agreed, we bring everyone together for the workshop to lock the detail and final sitemap.",
+       "We get to work. A typical build runs 8 to 10 weeks from the workshop, finished on time.",
      ])}`
   ),
 
-  // 7 — Local SEO
-  slide(
-    `${eyebrow("02 · Found locally")}
-     <h2>Win “pharmacy near me” in every town you serve.</h2>
-     ${bullets([
-       "Five Google Business Profiles, fully optimised and kept current, for Newcastle West, Shannon and beyond.",
-       "Local landing pages and reviews that turn searches into footfall.",
-       "Technical and content SEO so the online shop ranks for what people actually buy.",
-     ])}`
-  ),
-
-  // 8 — Performance
-  slide(
-    `${eyebrow("03 · Turning clicks into baskets")}
-     <h2>Ads that pay for themselves.</h2>
-     ${bullets([
-       "Google Shopping and Search for the products and conditions people look up by name.",
-       "Meta ads to reach local customers and win back people who browsed but didn't buy.",
-       "Measured on revenue and return, not impressions.",
-     ])}`
-  ),
-
-  // 9 — Content & social
-  slide(
-    `${eyebrow("04 · Front of mind")}
-     <h2>Helpful, human, and unmistakably you.</h2>
-     ${bullets([
-       "Seasonal health content that answers real questions and ranks.",
-       "Social that sounds like your pharmacists, not a brochure.",
-       "Photo and video from your stores, produced in-house.",
-     ])}`
-  ),
-
-  // 10 — Email & retention
-  slide(
-    `${eyebrow("05 · Keep them coming back")}
-     <h2>The cheapest sale is the next one.</h2>
-     ${bullets([
-       "Email and loyalty that prompt repeat orders and reviews.",
-       "Win-back flows for customers who've drifted.",
-       "Offers timed to the season, from hayfever to cold and flu.",
-     ])}`
-  ),
-
-  // 11 — Proof
-  slide(
-    `${eyebrow("Proof")}
-     <h2>Work we're proud of.</h2>
-     <blockquote class="quote">“It's a pleasure to work with such a creative, innovative and supportive team, from rebuilding our website to producing video that captures what we do.”<cite>Fiona Monahan, Bloomfield Health Services</cite></blockquote>
-     <p class="lead lead--soft">Health, hospitality, and e-commerce brands across Ireland, including Bloomfield Health Services, Heart Rhythm Cardiology, and Best4Travel, where our work drives 30+ leads a day.</p>`
-  ),
-
-  // 12 — How we work
-  slide(
-    `${eyebrow("How we work")}
-     <h2>One team, accountable to outcomes.</h2>
-     ${bullets([
-       "Senior, in-house people. The strategists ship the work.",
-       "Clear monthly reporting tied to revenue, ranked keywords, and footfall.",
-       "Allergic to overselling. We sell the outcome, never the hours.",
-     ])}`
-  ),
-
-  // 13 — Phased plan
-  slide(
-    `${eyebrow("How we'd start")}
-     <h2>A simple, phased path.</h2>
-     <div class="phases">
-       <div class="phase"><span class="ph">Phase 1</span><span class="pt">Months 1–2</span><p>Foundations. Audit the shop, fix the local profiles, land the quick wins.</p></div>
-       <div class="phase"><span class="ph">Phase 2</span><span class="pt">Months 2–4</span><p>Growth. SEO and ads live, the content cadence begins.</p></div>
-       <div class="phase"><span class="ph">Phase 3</span><span class="pt">Months 4+</span><p>Retention. Email, loyalty, and compounding returns.</p></div>
-     </div>
-     <p class="note">Shaped together after a short discovery call.</p>`
-  ),
-
-  // 14 — Investment
-  slide(
-    `${eyebrow("Investment")}
-     <h2>Built around your priorities.</h2>
-     <p class="lead">We'll firm up the numbers after a short discovery call, once we know what to tackle first. As a guide, engagements are usually structured as:</p>
-     ${bullets([
-       "A foundations project: website and local set-up, one-off.",
-       "A growth retainer: SEO, ads, content, and email, monthly.",
-       "Always honest about what moves the needle first.",
-     ])}
-     <p class="note">Indicative structure. Final figures confirmed after discovery.</p>`
-  ),
-
-  // 15 — Next steps
+  // 14 — Close
   slide(
     `<div class="cover">
-       ${eyebrow("Next steps")}
-       <h2>Let's pick the first win.</h2>
-       <p class="lead">Give us 30 minutes. We'll come back with a focused first phase and clear numbers.</p>
+       ${eyebrow("Talk soon")}
+       <h2>We'd be delighted to build this with you.</h2>
+       <p class="lead">We think it's a strong fit.</p>
        <p class="contact"><a href="mailto:hey@rooftoptwentytwo.ie">hey@rooftoptwentytwo.ie</a> · +353 1 699 1422 · rooftoptwentytwo.ie</p>
-       <p class="cover__by">Thank you.</p>
+       <p class="cover__by">Cathal O'Reilly<br/>Founder and Managing Director, Rooftop Twenty Two</p>
      </div>`,
     "slide--cover"
   ),
@@ -219,7 +231,7 @@ const slideCount = slides.length;
     <div class="deck-gate" id="deck-gate">
       <form class="gate__card" id="gate-form" autocomplete="off">
         <p class="gate__brand">Rooftop Twenty Two</p>
-        <h1 class="gate__title">Proposal for Pharmacy Store</h1>
+        <h1 class="gate__title">Website proposal</h1>
         <p class="gate__sub">Enter the password to view the deck.</p>
         <input class="gate__input" id="gate-input" type="password" placeholder="Password" aria-label="Password" autofocus />
         <button class="gate__btn" type="submit">View proposal</button>
@@ -400,7 +412,7 @@ const slideCount = slides.length;
       .slide {
         position: absolute; inset: 0; container-type: size;
         display: flex; flex-direction: column; justify-content: center;
-        padding: 7.5cqw 8cqw; box-sizing: border-box;
+        padding: 7cqw 8cqw; box-sizing: border-box;
         opacity: 0; visibility: hidden; transform: translateY(1.2cqh);
         transition: opacity 0.45s ease, transform 0.45s ease;
         background:
@@ -409,40 +421,51 @@ const slideCount = slides.length;
       }
       .slide.is-current { opacity: 1; visibility: visible; transform: none; }
 
-      .eyebrow { font-family: var(--w-font-body); font-weight: 700; font-size: 1.65cqw; letter-spacing: 0.26em; text-transform: uppercase; color: var(--c-accent-2); margin: 0 0 2.5cqh; }
-      .slide h2 { font-family: var(--w-font-display); font-weight: 600; font-size: 5.6cqw; line-height: 1.05; letter-spacing: -0.02em; color: #fff; margin: 0; }
+      .eyebrow { font-family: var(--w-font-body); font-weight: 700; font-size: 1.6cqw; letter-spacing: 0.26em; text-transform: uppercase; color: var(--c-accent-2); margin: 0 0 2.2cqh; }
+      .slide h2 { font-family: var(--w-font-display); font-weight: 600; font-size: 5.3cqw; line-height: 1.05; letter-spacing: -0.02em; color: #fff; margin: 0; }
       .slide h3 { font-family: var(--w-font-display); font-weight: 600; font-size: 2.5cqw; line-height: 1.1; color: #fff; margin: 0.4cqh 0 0.6cqh; }
-      .lead { font-family: var(--w-font-body); font-size: 2.35cqw; line-height: 1.5; color: var(--c-on-dark-soft); max-width: 58cqw; margin: 4cqh 0 0; }
-      .lead--soft { color: rgba(194,221,219,0.72); font-size: 2cqw; margin-top: 2.5cqh; }
+      .lead { font-family: var(--w-font-body); font-size: 2.25cqw; line-height: 1.5; color: var(--c-on-dark-soft); max-width: 64cqw; margin: 3.5cqh 0 0; }
+      .lead--soft { color: rgba(194,221,219,0.72); font-size: 1.95cqw; margin-top: 2.4cqh; }
 
-      .blist { list-style: none; margin: 5cqh 0 0; padding: 0; display: flex; flex-direction: column; gap: 2.6cqh; max-width: 74cqw; }
-      .blist li { display: flex; gap: 2cqw; align-items: flex-start; font-size: 2.4cqw; line-height: 1.4; color: #eaf3f2; }
-      .bdot { flex: 0 0 auto; width: 1.1cqw; height: 1.1cqw; margin-top: 1.2cqw; border-radius: 50%; background: var(--c-accent); }
+      .blist { list-style: none; margin: 4cqh 0 0; padding: 0; display: flex; flex-direction: column; gap: 2.1cqh; max-width: 82cqw; }
+      .blist li { display: flex; gap: 2cqw; align-items: flex-start; font-size: 2.05cqw; line-height: 1.38; color: #eaf3f2; }
+      .bdot { flex: 0 0 auto; width: 1cqw; height: 1cqw; margin-top: 1cqw; border-radius: 50%; background: var(--c-accent); }
 
       /* Cover */
       .slide--cover { background: radial-gradient(110% 130% at 85% 10%, rgba(225,80,71,0.18), transparent 55%), radial-gradient(90% 120% at 0% 100%, rgba(1,255,178,0.12), transparent 55%), var(--c-dark); }
-      .cover h1 { font-family: var(--w-font-display); font-weight: 600; font-size: 8.4cqw; line-height: 1.0; letter-spacing: -0.025em; color: #fff; margin: 0; }
-      .cover__by { font-size: 1.9cqw; line-height: 1.5; color: var(--c-on-dark-soft); margin: 6cqh 0 0; }
-      .contact { font-size: 2.1cqw; color: #fff; margin: 4cqh 0 0; }
+      .cover h1 { font-family: var(--w-font-display); font-weight: 600; font-size: 8cqw; line-height: 1.0; letter-spacing: -0.025em; color: #fff; margin: 0; }
+      .cover__by { font-size: 1.85cqw; line-height: 1.5; color: var(--c-on-dark-soft); margin: 5.5cqh 0 0; }
+      .contact { font-size: 2cqw; color: #fff; margin: 3.5cqh 0 0; }
       .contact a { color: var(--c-accent-2); text-decoration: none; }
 
-      /* Pillars grid */
-      .pgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.4cqw; margin-top: 5cqh; max-width: 84cqw; }
-      .pcard { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 2cqw; padding: 3cqh 2.4cqw; }
-      .pnum { font-family: var(--w-font-display); font-weight: 700; font-size: 2.6cqw; color: var(--c-accent-2); }
-      .pcard p { font-size: 1.85cqw; line-height: 1.4; color: var(--c-on-dark-soft); margin: 0; }
+      /* Sitemap */
+      .smap { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2.4cqw; margin-top: 4cqh; max-width: 88cqw; }
+      .smap__col h4 { font-family: var(--w-font-display); font-weight: 600; font-size: 2cqw; color: #fff; margin: 0 0 0.6cqh; }
+      .smap__col h4 ~ h4 { margin-top: 2.2cqh; }
+      .smap__col ul { list-style: none; margin: 0; padding: 0; }
+      .smap__col li { font-size: 1.5cqw; line-height: 1.55; color: var(--c-on-dark-soft); }
+
+      /* Comparison table */
+      .cmp { display: grid; grid-template-columns: 1.05fr 1.55fr 1.55fr; margin-top: 3.5cqh; max-width: 92cqw; border: 1px solid rgba(255,255,255,0.12); border-radius: 1.4cqw; overflow: hidden; }
+      .cmp > div { padding: 1.5cqh 1.5cqw; font-size: 1.5cqw; line-height: 1.32; color: #eaf3f2; border-top: 1px solid rgba(255,255,255,0.08); }
+      .cmp > div:nth-child(-n+3) { border-top: 0; }
+      .cmp__h { font-family: var(--w-font-display); font-weight: 600; font-size: 1.85cqw; color: #fff; background: rgba(255,255,255,0.07); }
+      .cmp__l { font-weight: 700; color: var(--c-accent-2); background: rgba(255,255,255,0.03); }
+
+      /* Integrations grid */
+      .igrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.8cqw 1.8cqw; margin-top: 3.5cqh; max-width: 92cqw; }
+      .icard { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 1.4cqw; padding: 2cqh 1.6cqw; }
+      .icard h4 { font-family: var(--w-font-display); font-weight: 600; font-size: 1.65cqw; color: #fff; margin: 1cqh 0 0.5cqh; line-height: 1.1; }
+      .icard p { font-size: 1.3cqw; line-height: 1.35; color: var(--c-on-dark-soft); margin: 0; }
+      .tag { display: inline-block; font-size: 1.05cqw; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.35cqh 1cqw; border-radius: 9999px; }
+      .tag--core { background: rgba(1,255,178,0.16); color: var(--c-accent-2); }
+      .tag--addon { background: rgba(225,80,71,0.2); color: #ff9b93; }
 
       /* Quote */
-      .quote { margin: 4cqh 0 0; font-family: var(--w-font-display); font-style: italic; font-size: 3cqw; line-height: 1.32; color: #fff; max-width: 80cqw; border: 0; padding: 0; }
-      .quote cite { display: block; font-family: var(--w-font-body); font-style: normal; font-size: 1.7cqw; color: var(--c-accent-2); margin-top: 2.5cqh; }
+      .quote { margin: 3.5cqh 0 0; font-family: var(--w-font-display); font-style: italic; font-size: 2.9cqw; line-height: 1.32; color: #fff; max-width: 84cqw; border: 0; padding: 0; }
+      .quote cite { display: block; font-family: var(--w-font-body); font-style: normal; font-size: 1.65cqw; color: var(--c-accent-2); margin-top: 2.2cqh; }
 
-      /* Phases */
-      .phases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.4cqw; margin-top: 5cqh; max-width: 84cqw; }
-      .phase { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 2cqw; padding: 3cqh 2.4cqw; }
-      .phase .ph { display: block; font-family: var(--w-font-display); font-weight: 600; font-size: 2.4cqw; color: #fff; }
-      .phase .pt { display: block; font-size: 1.55cqw; letter-spacing: 0.04em; color: var(--c-accent-2); margin: 0.6cqh 0 1.4cqh; text-transform: uppercase; }
-      .phase p { font-size: 1.85cqw; line-height: 1.4; color: var(--c-on-dark-soft); margin: 0; }
-      .note { font-size: 1.6cqw; color: rgba(194,221,219,0.65); margin: 4cqh 0 0; }
+      .note { font-size: 1.55cqw; color: rgba(194,221,219,0.65); margin: 3.5cqh 0 0; }
 
       /* ---- Nav ---- */
       .deck-nav {
