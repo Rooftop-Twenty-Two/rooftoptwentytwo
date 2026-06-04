@@ -1,16 +1,19 @@
 ---
 // ────────────────────────────────────────────────────────────────────────────
-// Bespoke proposal deck — Pharmacy Store (website + booking platform).
-// Prepared for Ciaran McNally and Tracey Dunne. Standalone 16:9 presentation
-// that mirrors the website: real photography, the team, client logos, case
-// studies. Slide CONTENT is AES-256-GCM encrypted at build time and only
-// decrypts in the browser once the correct password is entered.
+// Bespoke proposal — Pharmacy Store (PharmacyStore / R. Keating Pharmacy Group).
+// A long-form, PharmacyStore-branded scrolling page (their green palette, heart
+// device and tagline), prepared for Ciaran McNally and Tracey Dunne.
+//
+// The page CONTENT is AES-256-GCM encrypted at build time and only decrypts in
+// the browser once the correct password is entered, so the source ships
+// ciphertext, not the proposal.
 //
 // Change the password below (PASSWORD) and rebuild to rotate it.
 // noindex + excluded from the sitemap (see astro.config sitemap filter).
+// Brand fonts (ITC Souvenir / Avant Garde) are licensed; we approximate with the
+// site's serif/sans and can embed the real fonts if licensed.
 // ────────────────────────────────────────────────────────────────────────────
 import "../../styles/globals.css";
-import { getCollection } from "astro:content";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
@@ -18,40 +21,17 @@ import crypto from "node:crypto";
 const PASSWORD = "rooftop-pharmacy"; // ← change me and rebuild to rotate access
 const has = (p: string) => existsSync(path.join(process.cwd(), "public", p));
 
-// ---- Real assets (guarded so nothing renders broken) ------------------------
-const IMG = {
-  studio: "/images/office/office-studio-01.jpg",
-  collab: "/images/office/office-collab-01.jpg",
-  work: "/images/office/office-work-01.jpg",
-  collab2: "/images/office/office-collab-02.jpg",
-};
-
-const team = (await getCollection("team"))
-  .filter((m) => has(m.data.portrait))
-  .sort((a, b) => (a.data.order ?? 100) - (b.data.order ?? 100))
-  .map((m) => m.data);
-
-const logoFiles = [
-  "/images/logos/Laya_Rev.png",
-  "/images/logos/Irish-Defence-Forces_Rev.png",
-  "/images/logos/ILT_Rev.svg",
-  "/images/logos/GFP_Rev.svg",
-  "/images/logos/GCJ_Rev.png",
-  "/images/logos/1934_Rev.svg",
-  "/images/logos/TC-Matthews_Rev.svg",
-  "/images/logos/Captain-Americas_Rev.png",
-  "/images/logos/Elephant-Castle_Rev.png",
-  "/images/logos/MIG_Rev.svg",
-  "/images/logos/Shomera_Rev.svg",
-].filter(has);
-
-const portfolio = await getCollection("portfolio");
-const pick = (slug: string) => portfolio.find((p) => p.data.slug === slug)?.data;
-const workCardsData = ["antaris-consulting", "breast-cancer-ireland", "gourmet-food-parlour"]
-  .map(pick)
-  .filter((d): d is NonNullable<typeof d> => !!d && !!d.heroImage && has(d.heroImage));
-const bloomfield = pick("bloomfield-health-services");
-const bloomfieldHero = bloomfield && has(bloomfield.heroImage || "") ? bloomfield.heroImage : IMG.work;
+// ---- Assets ----------------------------------------------------------------
+const team = [
+  ["Cathal O'Reilly", "Founder and Managing Director", "/images/team/R22-Headshot-updated-11-768x1024.jpg"],
+  ["Roisin Madden", "Operations Director", "/images/team/Roisin-Madden-Headshot-681x1024.jpg"],
+  ["Padraic Daly", "Customer Success Manager", "/images/team/R22_Headshot_BW_-4-683x1024.jpg"],
+  ["Aidan Murphy", "Production Manager", "/images/team/Aidan-Murphy-Headshot-681x1024.jpg"],
+  ["Niamh Keady", "Senior Account Manager", "/images/team/Niamh-Keady-Headshot-681x1024.jpg"],
+  ["Talia Stotts", "SEO Manager", "/images/team/R22_Headshot_BW_-10-683x1024.jpg"],
+  ["Brandon Huynh", "Digital Designer", "/images/team/R22_Headshot_BW_-2-683x1024.jpg"],
+  ["Mateus De Silva", "Videographer", "/images/team/R22-Headshot-updated-1-768x1024.jpg"],
+].filter((t) => has(t[2]));
 
 const awards = [
   { logo: "/images/spider-awards-rev.png", b: "Gold winners", s: "Spider Awards, for web design" },
@@ -59,709 +39,535 @@ const awards = [
   { logo: "/images/DMA-Generic-Pink-Blue-270x270-1-cutout.png", b: "Award record", s: "Medical, retail and charity" },
 ].filter((a) => has(a.logo));
 
+// Heart graphic device (their core motif). cls lets us tint/scale per use.
+const heart = (cls: string) =>
+  `<svg class="${cls}" viewBox="0 0 32 29.6" aria-hidden="true"><path d="M23.6 0c-3.4 0-6.3 2.7-7.6 5.6C14.7 2.7 11.8 0 8.4 0 3.8 0 0 3.8 0 8.4c0 9.1 9.3 13.6 16 21.2 6.7-7.6 16-12.1 16-21.2C32 3.8 28.2 0 23.6 0z"/></svg>`;
+// Heart + cross mark (logo-style device, brand-aligned, not the official lockup).
+const mark = `<svg class="ps-mark" viewBox="0 0 32 29.6" aria-hidden="true"><path d="M23.6 0c-3.4 0-6.3 2.7-7.6 5.6C14.7 2.7 11.8 0 8.4 0 3.8 0 0 3.8 0 8.4c0 9.1 9.3 13.6 16 21.2 6.7-7.6 16-12.1 16-21.2C32 3.8 28.2 0 23.6 0z" fill="currentColor"/><path d="M14.4 7.6h3.2v3.2h3.2v3.2h-3.2v3.2h-3.2v-3.2h-3.2v-3.2h3.2z" fill="#fff"/></svg>`;
+
 // ---- Authoring helpers ------------------------------------------------------
-const eyebrow = (t: string) => `<p class="eyebrow">${t}</p>`;
-const bullets = (items: string[]) =>
-  `<ul class="blist">${items.map((i) => `<li><span class="bdot"></span><span>${i}</span></li>`).join("")}</ul>`;
-const slide = (inner: string, cls = "") => `<section class="slide${cls ? " " + cls : ""}">${inner}</section>`;
-const photo = (src: string) => `<div class="ph-bg"><img src="${src}" alt=""/></div><div class="ph-scrim"></div>`;
+const kicker = (t: string) => `<p class="ps-kicker">${t}</p>`;
+const list = (items: string[]) =>
+  `<ul class="ps-list">${items.map((i) => `<li>${heart("ps-tick")}<span>${i}</span></li>`).join("")}</ul>`;
 
-const teamGrid = `<div class="tgrid">${team
-  .map((m) => `<figure class="tmem"><img src="${m.portrait}" alt="${m.name}" loading="lazy"/><b>${m.name}</b><span>${m.role}</span></figure>`)
-  .join("")}</div>`;
-const logoGrid = `<div class="lgrid">${logoFiles.map((l) => `<img src="${l}" alt="" loading="lazy"/>`).join("")}</div>`;
-const workCards = `<div class="work3">${workCardsData
-  .map((w) => `<figure class="wcard"><img src="${w.heroImage}" alt="${w.name}" loading="lazy"/><b>${w.name}</b><span>${w.tagline}</span></figure>`)
-  .join("")}</div>`;
-const awardCards = `<div class="awards3">${awards
-  .map((a) => `<div class="acard"><img src="${a.logo}" alt=""/><b>${a.b}</b><span>${a.s}</span></div>`)
+const teamGrid = `<div class="ps-team">${team
+  .map(([n, r, img]) => `<figure class="ps-mem"><img src="${img}" alt="${n}" loading="lazy"/><b>${n}</b><span>${r}</span></figure>`)
   .join("")}</div>`;
 
-const slides: string[] = [
-  // 1 — Cover (full-bleed photo)
-  slide(
-    `${photo(IMG.studio)}
-     <div class="ph-content">
-       ${eyebrow("Website proposal · June 2026")}
-       <h1>A website built<br/>around booking.</h1>
-       <p class="lead">A pharmacy group website and booking platform, prepared for Ciaran McNally and Tracey Dunne.</p>
-       <p class="cover__by">Rooftop Twenty Two · Glasnevin and the Beacon, Dublin</p>
-     </div>`,
-    "slide--photo"
-  ),
+const caseCards = `<div class="ps-cases">${[
+  ["Jonathan Lyon", "Consultant Cardiologist", "A clinical website for a heart rhythm specialist. Clear, reassuring pages around his conditions and services, with a strong path to enquiry and appointment. It reads as current and credible, which is what patients look for. Directly relevant to your move toward a service-led, booking-friendly site."],
+  ["Anna Walsh", "Consultant Urologist", "A consultant website focused on making services easy to understand and act on. Each service is presented clearly, with simple enquiry and appointment options. The same approach works well for pharmacy services like vaccinations, health checks and weight management."],
+  ["Cervino Medical", "Neurology practice", "Website redesign and digital marketing, including Google Ads. The full picture: a strong site backed by SEO and paid activity to bring the right people to it. If you want to grow private service bookings over time, this is the model."],
+  ["One in Four", "Care-sector charity", "Designed and built from the ground up, from interactive wireframes through to the live site. Information-led with clear, prominent actions, exactly the structure a pharmacy site needs. This was the wireframe example we walked you through."],
+]
+  .map(([n, r, d]) => `<article class="ps-case">${mark}<h3>${n}</h3><p class="ps-case__role">${r}</p><p>${d}</p></article>`)
+  .join("")}</div>`;
 
-  // 2 — Introduction (split)
-  slide(
-    `<div class="sp-text">
-       ${eyebrow("Introduction")}
-       <h2>You've done the hard part with Tap.</h2>
-       <p class="lead">The brand is fresh, the shops are being revamped, and the new photography is in place. The website is the last piece still looking five years old. That's where we come in.</p>
-       <p class="lead lead--soft">We work in medical and healthcare every week, where trust and clear booking matter more than selling off a shelf.</p>
-     </div>
-     <div class="sp-media"><img src="${IMG.collab}" alt="The Rooftop Twenty Two team at work" loading="lazy"/></div>`,
-    "slide--split"
-  ),
+const awardCards = `<div class="ps-awards">${awards
+  .map((a) => `<div class="ps-award"><img src="${a.logo}" alt=""/><b>${a.b}</b><span>${a.s}</span></div>`)
+  .join("")}</div>`;
 
-  // 3 — About us (split)
-  slide(
-    `<div class="sp-media"><img src="${IMG.work}" alt="Inside the Rooftop Twenty Two studio" loading="lazy"/></div>
-     <div class="sp-text">
-       ${eyebrow("About us")}
-       <h2>A Dublin web and marketing team of 14.</h2>
-       ${bullets([
-         "Two offices, Glasnevin and the Beacon, with web, SEO, paid social, video and content in-house.",
-         "We produce 20 to 30 websites a year, quickly and without dropping quality.",
-         "We carry brand-studio work like Tap's straight through into the live site.",
-       ])}
-     </div>`,
-    "slide--split"
-  ),
+// ---- The proposal (long-form sections) -------------------------------------
+const content = `
+<section class="ps-hero">
+  ${heart("ps-hero__heart")}
+  <div class="ps-wrap ps-hero__inner">
+    <p class="ps-cobrand">${mark}<span>PharmacyStore &nbsp;×&nbsp; Rooftop Twenty Two</span></p>
+    ${kicker("Website proposal · June 2026")}
+    <h1>Pharmacy group website<br/>and booking platform.</h1>
+    <p class="ps-hero__sub">Prepared for Ciaran McNally and Tracey Dunne.</p>
+    <p class="ps-hero__meta">Rooftop Twenty Two · Web design and digital marketing · Glasnevin and the Beacon, Dublin</p>
+    <span class="ps-tagline">Caring for your wellbeing</span>
+  </div>
+</section>
 
-  // 4 — Meet the team (light grid)
-  slide(
-    `${eyebrow("Meet the team")}
-     <h2>The people behind the work.</h2>
-     ${teamGrid}`,
-    "slide--light"
-  ),
+<section class="ps-sec">
+  <div class="ps-wrap ps-narrow">
+    ${kicker("Introduction")}
+    <h2>You have done the hard part with Tap.</h2>
+    <p>Thank you for taking the time to meet us. The brand is fresh, the shops are being revamped and the new photography is in place. The website is the last piece still looking five years old, and that is where we come in.</p>
+    <p>This sets out who we are, the work we have done in the medical and healthcare space, and our early thinking for your new website. It is a starting point for the conversation rather than the finished plan. The detail gets shaped together at the workshop, once we agree to work together.</p>
+    <p>We work with a lot of medical and healthcare clients, from consultants and clinics to care organisations. That matters here, because moving off e-commerce to a service and information site is exactly the kind of build where trust and clear booking count more than selling a product off a shelf.</p>
+  </div>
+</section>
 
-  // 5 — Clients (logo wall)
-  slide(
-    `${eyebrow("Trusted by")}
-     <h2>Brands that count on us.</h2>
-     ${logoGrid}`
-  ),
+<section class="ps-sec ps-sec--tint">
+  <div class="ps-wrap ps-narrow">
+    ${kicker("About us")}
+    <h2>A calm, capable partner for the build.</h2>
+    <p>Rooftop Twenty Two is a web design and digital marketing agency based in Dublin. We are a team of 14, with offices in Glasnevin and a second office in the Beacon, with in-house teams across web design and development, SEO, paid social, video and content.</p>
+    <p>We produce between 20 and 30 websites a year and we move quickly without dropping quality. We also work closely with brand studios like Tap, carrying their brand work through into websites, so the move from your new brand into the live site will be clean and consistent.</p>
+  </div>
+  <div class="ps-wrap ps-stats">
+    <div class="ps-stat"><b>14</b><span>people in the team</span></div>
+    <div class="ps-stat"><b>20&ndash;30</b><span>websites a year</span></div>
+    <div class="ps-stat"><b>8&ndash;10 wks</b><span>typical build, on time</span></div>
+  </div>
+</section>
 
-  // 6 — Awards
-  slide(
-    `${eyebrow("Recognised work")}
-     <h2>Award-winning web and search.</h2>
-     ${awardCards}
-     <p class="lead lead--soft">Studios bring us in for the extra polish, backed by real development skill. We make it look right and make it work.</p>`
-  ),
+<section class="ps-sec">
+  <div class="ps-wrap">
+    ${kicker("Recognised work")}
+    <h2>Award-winning web and search.</h2>
+    ${awardCards}
+    <p class="ps-soft">Brand studios like Tap bring us in for the extra polish, backed by real development skill, so we can both make it look right and make it work.</p>
+  </div>
+</section>
 
-  // 7 — Healthcare proof (split, real case-study image)
-  slide(
-    `<div class="sp-text">
-       ${eyebrow("Why us, for healthcare")}
-       <h2>Trust is what we build.</h2>
-       <blockquote class="quote">"It's a pleasure to work with such a creative, innovative and supportive team, from rebuilding our website to producing video that captures what we do."<cite>Fiona Monahan, Bloomfield Health Services</cite></blockquote>
-     </div>
-     <div class="sp-media"><img src="${bloomfieldHero}" alt="Bloomfield Health Services" loading="lazy"/></div>`,
-    "slide--split"
-  ),
+<section class="ps-sec ps-sec--tint">
+  <div class="ps-wrap">
+    ${kicker("Our team")}
+    <h2>The people you will work with.</h2>
+    <p class="ps-lead">A dedicated team across strategy, design, build, SEO and account management.</p>
+    ${teamGrid}
+  </div>
+</section>
 
-  // 8 — Selected work (light, real heroes)
-  slide(
-    `${eyebrow("Selected work")}
-     <h2>Work we're proud of.</h2>
-     ${workCards}`,
-    "slide--alt"
-  ),
+<section class="ps-sec">
+  <div class="ps-wrap">
+    ${kicker("Relevant case studies")}
+    <h2>Healthcare work that maps to yours.</h2>
+    <p class="ps-lead">Clear service information, trust, and an easy path to enquiry or booking.</p>
+    ${caseCards}
+    <p class="ps-soft">We can send live links and further examples across retail and innovation alongside this document.</p>
+  </div>
+</section>
 
-  // 9 — Initial thoughts
-  slide(
-    `${eyebrow("Our early read")}
-     <h2>What the new site should do.</h2>
-     ${bullets([
-       "Move from shop to service. The site becomes a tool that works 24/7.",
-       "Put services and booking front and centre, from vaccinations to health checks.",
-       "Position the group as a community health hub, not a product shelf.",
-       "Give each of the five pharmacies its own page, with hours that load instantly.",
-       "Strip the dated, Covid-era content and run the Tap brand throughout.",
-       "Build SEO in from day one, local to each service and location.",
-       "Tell the automation and robotics story as a point of difference.",
-     ])}`
-  ),
+<section class="ps-sec ps-sec--tint">
+  <div class="ps-wrap ps-narrow">
+    ${kicker("Our initial thoughts")}
+    <h2>What the new site should do.</h2>
+    ${list([
+      "Move off e-commerce to a service and information platform. The site becomes a customer service tool that works 24/7.",
+      "Put services and booking front and centre: flu and travel vaccinations, health checks, weight management and minor ailments, each with its own page and a clear way to book.",
+      "Position the group as a community health hub, reflecting the expanding role of the pharmacist, rather than a place to buy products online.",
+      "Present the five pharmacies properly, each with its own page for opening hours, location, services and the new photography. Hours and locations load instantly.",
+      "Strip the dated and Covid-era content, and run the Tap brand and photography throughout so the site finally matches the shops.",
+      "Build SEO in from day one, so each service and location ranks locally for the searches that matter.",
+      "Tell the automation and robotics story as a point of difference.",
+    ])}
+  </div>
+</section>
 
-  // 10 — Sitemap
-  slide(
-    `${eyebrow("A first-draft structure")}
-     <h2>Potential sitemap.</h2>
-     <div class="stree">
-       <div class="stree__home">Home</div>
-       <div class="stree__rail"></div>
-       <div class="stree__row">
-         <div class="snode"><b>About</b><ul><li>Our story &amp; brand</li><li>Team &amp; pharmacists</li><li>Innovation &amp; automation</li></ul></div>
-         <div class="snode"><b>Services</b><ul><li>Vaccinations</li><li>Health checks</li><li>Weight management</li><li>Minor ailments</li><li>Smoking cessation</li><li>Prescriptions</li></ul></div>
-         <div class="snode"><b>Our pharmacies</b><ul><li>A page per location</li><li>Hours &amp; address</li><li>Photos &amp; map</li></ul></div>
-         <div class="snode snode--leaf"><b>Book an appointment</b></div>
-         <div class="snode snode--leaf"><b>Health advice &amp; news</b></div>
-         <div class="snode snode--leaf"><b>Contact</b></div>
-         <div class="snode snode--leaf"><b>Careers</b></div>
-       </div>
-     </div>
-     <p class="note">For discussion. We'll confirm the final structure together.</p>`
-  ),
+<section class="ps-sec">
+  <div class="ps-wrap">
+    ${kicker("Potential sitemap")}
+    <h2>A first-draft structure to react to.</h2>
+    <div class="ps-tree">
+      <div class="ps-tree__home">${mark}<span>Home</span></div>
+      <div class="ps-tree__row">
+        <div class="ps-node"><b>About</b><ul><li>Our story &amp; the brand</li><li>Team &amp; pharmacists</li><li>Innovation &amp; automation</li></ul></div>
+        <div class="ps-node"><b>Services</b><ul><li>Vaccinations</li><li>Health checks &amp; screening</li><li>Weight management</li><li>Minor ailments</li><li>Smoking cessation</li><li>Prescriptions &amp; repeats</li></ul></div>
+        <div class="ps-node"><b>Our pharmacies</b><ul><li>A page per location</li><li>Hours, address, services</li><li>Photos &amp; map</li></ul></div>
+        <div class="ps-node ps-node--leaf"><b>Book an appointment</b></div>
+        <div class="ps-node ps-node--leaf"><b>Health advice &amp; news</b></div>
+        <div class="ps-node ps-node--leaf"><b>Contact</b></div>
+        <div class="ps-node ps-node--leaf"><b>Careers</b></div>
+      </div>
+    </div>
+    <p class="ps-soft">Built around services, locations and booking, with room to grow. We will confirm the final structure together.</p>
+  </div>
+</section>
 
-  // 11 — Creative ideas
-  slide(
-    `${eyebrow("Creative ideas")}
-     <h2>How the site comes to life.</h2>
-     ${bullets([
-       "Real photography front and centre, the Tap shots of your shops and teams. No stock.",
-       "A book action that follows you through the site, always one tap away.",
-       "A location finder, so visitors reach their nearest pharmacy fast.",
-       "An innovation section that tells the robotics story in plain terms.",
-       "Pharmacist profiles and trust signals, so people know the team before they walk in.",
-       "A clean, modern look, designed mobile first, because most pharmacy searches happen on a phone.",
-     ])}`
-  ),
+<section class="ps-sec ps-sec--tint">
+  <div class="ps-wrap ps-narrow">
+    ${kicker("Creative ideas")}
+    <h2>How the site could come to life.</h2>
+    ${list([
+      "Real photography front and centre. We design around the Tap shots of your shops, teams and consultation spaces. No generic stock, which patients see straight through.",
+      "A booking action that follows people through the site, always one tap away, so the path to an appointment is short.",
+      "A location finder, so a visitor lands on their nearest pharmacy fast and sees its hours, services and contact details.",
+      "An innovation section that tells the robotics story in plain terms: greater accuracy, faster dispensing, and more pharmacist time for patient care.",
+      "A health-hub feel, with clear advice content that builds trust and supports SEO.",
+      "Pharmacist profiles and trust signals throughout, so people feel they know the team before they walk in.",
+      "A clean, modern look that matches the new brand, designed mobile first, because most pharmacy searches happen on a phone.",
+    ])}
+  </div>
+</section>
 
-  // 12 — Robotics
-  slide(
-    `${eyebrow("A point of difference")}
-     <h2>The robotics and automation angle.</h2>
-     <p class="lead">Robotic dispensing pushes accuracy close to 100% and handles a large share of daily prescriptions in seconds, freeing your team to spend more time with patients.</p>
-     <p class="lead lead--soft">Boots Ireland and others already frame it this way. Giving it a home on the site positions the group as forward-looking and justifies a premium feel across the brand. No other independent group locally will have this.</p>`
-  ),
+<section class="ps-sec ps-sec--forest ps-robotics">
+  ${heart("ps-robotics__heart")}
+  <div class="ps-wrap ps-narrow">
+    ${kicker("A point of difference")}
+    <h2>The robotics and automation angle.</h2>
+    <p>You mentioned you are building toward automation and innovation. This is a real opportunity, not just a line on a page. Robotic dispensing pushes accuracy close to 100% and handles a large share of daily prescriptions in seconds, which frees your team to spend more time with patients.</p>
+    <p>Boots Ireland and others are already framing it this way. Giving it a home on the site positions the group as forward-looking and helps justify a premium feel across the brand. We would love to know where you are with this so we can plan the content properly.</p>
+  </div>
+</section>
 
-  // 13 — Booking intro
-  slide(
-    `${eyebrow("The booking engine")}
-     <h2>From browsing to booked, in a tap.</h2>
-     <p class="lead">Booking is where this site earns its keep. Private services like vaccinations, health checks, weight management and minor ailments each need a clear, quick path to an appointment.</p>
-     <p class="lead lead--soft">There are two ways to build it. The right choice depends on how much control you want and how booking connects to your other systems. Here's both, plainly.</p>`
-  ),
+<section class="ps-sec">
+  <div class="ps-wrap">
+    ${kicker("Booking engine")}
+    <h2>Bespoke vs off the shelf.</h2>
+    <p class="ps-lead">Booking is the heart of the new site. The right choice depends on how much control you want and how booking connects to your other systems.</p>
+    <div class="ps-tablewrap"><table class="ps-table">
+      <thead><tr><th></th><th>Off the shelf</th><th>Bespoke</th></tr></thead>
+      <tbody>
+        <tr><th>What it is</th><td>A proven booking tool (for example Acuity or Bookly) plugged into the site and styled to your brand.</td><td>A booking system we design and build specifically around your services and your five locations.</td></tr>
+        <tr><th>Speed and cost</th><td>Faster and lower cost to launch. Usually a monthly fee per location or user.</td><td>Higher upfront cost and a little more time to build. No recurring third-party fee.</td></tr>
+        <tr><th>Look and feel</th><td>Styled to the brand, though it sits slightly apart from the rest of the site.</td><td>Matches the site exactly and feels part of one experience.</td></tr>
+        <tr><th>Flexibility</th><td>Great for standard appointment and vaccine booking. Limited if your needs are unusual.</td><td>Built around exactly how you work, and can grow with new services.</td></tr>
+        <tr><th>Integrations</th><td>Connects to common tools out of the box.</td><td>Can connect to your pharmacy systems and other tools as needed.</td></tr>
+        <tr><th>Maintenance</th><td>Maintained by the provider.</td><td>Owned and maintained by you, with our support.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="ps-rec">${mark}<div><b>Our recommendation</b><p>For launch, a strong off-the-shelf engine styled to your brand will get you live faster and cover vaccines and standard appointments well. If your service range and automation plans grow, we can move to a bespoke build later. We will scope both at the workshop so you can decide with full sight of the costs.</p></div></div>
+  </div>
+</section>
 
-  // 14 — Booking option A
-  slide(
-    `${eyebrow("Booking · Option A")}
-     <h2>Off the shelf.</h2>
-     <p class="lead">A proven booking tool such as Acuity or Bookly, plugged into the site and styled to your brand.</p>
-     <div class="twocol">
-       <div class="tcol"><h4>Strengths</h4><ul>
-         <li>Faster and lower cost to launch.</li>
-         <li>Covers vaccines and standard appointments well.</li>
-         <li>Maintained and updated by the provider.</li>
-         <li>Connects to common tools out of the box.</li>
-       </ul></div>
-       <div class="tcol"><h4>Watch-outs</h4><ul>
-         <li>A monthly fee, usually per location or user.</li>
-         <li>Sits slightly apart from the rest of the site.</li>
-         <li>Limited if your needs are unusual.</li>
-       </ul></div>
-     </div>
-     <p class="note">Best for getting live quickly with a clean, branded booking experience.</p>`
-  ),
+<section class="ps-sec ps-sec--tint">
+  <div class="ps-wrap">
+    ${kicker("Other integrations")}
+    <h2>What the site can connect to.</h2>
+    <div class="ps-tablewrap"><table class="ps-table ps-table--int">
+      <thead><tr><th>Integration</th><th>What it does</th><th>Scope</th></tr></thead>
+      <tbody>
+        <tr><th>Google Business Profile</th><td>Keeps the five locations, hours and reviews accurate and visible in search and maps.</td><td><span class="ps-tag ps-tag--core">Core</span></td></tr>
+        <tr><th>Online reviews</th><td>Pulls your Google reviews onto the site to build trust.</td><td><span class="ps-tag ps-tag--core">Core</span></td></tr>
+        <tr><th>Maps and location finder</th><td>Helps people find and route to their nearest pharmacy.</td><td><span class="ps-tag ps-tag--core">Core</span></td></tr>
+        <tr><th>Analytics and tracking</th><td>GA4 and conversion tracking so we can see bookings and improve over time.</td><td><span class="ps-tag ps-tag--core">Core</span></td></tr>
+        <tr><th>Social media</th><td>Links and feeds across your updated channels, pointing people back to the site.</td><td><span class="ps-tag ps-tag--core">Core</span></td></tr>
+        <tr><th>Live chat or enquiry forms</th><td>Quick ways for customers to ask a question or request a service.</td><td><span class="ps-tag ps-tag--core">Core</span></td></tr>
+        <tr><th>Pharmacy management system</th><td>Lets the site talk to your dispensing or records system, for example repeat prescriptions.</td><td><span class="ps-tag ps-tag--addon">Add-on</span></td></tr>
+        <tr><th>Email marketing</th><td>Newsletter sign-up and campaign tools to keep customers informed.</td><td><span class="ps-tag ps-tag--addon">Add-on</span></td></tr>
+        <tr><th>Online payments</th><td>Only needed if you want to take payment for a service at the point of booking.</td><td><span class="ps-tag ps-tag--addon">Add-on</span></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
 
-  // 15 — Booking option B
-  slide(
-    `${eyebrow("Booking · Option B")}
-     <h2>Bespoke.</h2>
-     <p class="lead">A booking system we design and build specifically around your services and your five locations.</p>
-     <div class="twocol">
-       <div class="tcol"><h4>Strengths</h4><ul>
-         <li>Matches the site exactly, part of one experience.</li>
-         <li>Built around precisely how you work.</li>
-         <li>Connects to your pharmacy systems as needed.</li>
-         <li>No recurring third-party fee, and it grows with you.</li>
-       </ul></div>
-       <div class="tcol"><h4>Watch-outs</h4><ul>
-         <li>Higher upfront cost.</li>
-         <li>A little more time to build.</li>
-         <li>Owned by you, with our support to maintain it.</li>
-       </ul></div>
-     </div>
-     <p class="note">Best when your service range and automation plans are set to grow.</p>`
-  ),
+<section class="ps-sec ps-sec--forest">
+  <div class="ps-wrap">
+    ${kicker("How we will build it · 8 to 10 weeks")}
+    <h2>A clear path from strategy to launch.</h2>
+    <div class="ps-timeline">
+      <div class="ps-step"><span class="ps-step__n">01</span><b>Objectives &amp; strategy</b><span class="ps-step__wk">Week 1</span><p>A workshop to agree your goals and online presence.</p></div>
+      <div class="ps-step"><span class="ps-step__n">02</span><b>Wireframe</b><span class="ps-step__wk">Weeks 2&ndash;3</span><p>The structure and layout, agreed before any design.</p></div>
+      <div class="ps-step"><span class="ps-step__n">03</span><b>Homepage &amp; visual design</b><span class="ps-step__wk">Weeks 3&ndash;5</span><p>The look and feel, built on the Tap brand.</p></div>
+      <div class="ps-step"><span class="ps-step__n">04</span><b>Developed staging site</b><span class="ps-step__wk">Weeks 5&ndash;8</span><p>The full site, on a private staging link.</p></div>
+      <div class="ps-step"><span class="ps-step__n">05</span><b>QA &amp; launch</b><span class="ps-step__wk">Weeks 8&ndash;10</span><p>Tested across devices, then live, on time.</p></div>
+    </div>
+    <div class="ps-wf-row">
+      <div class="ps-wf-text">
+        <h3>What is a wireframe?</h3>
+        <p>A wireframe is the blueprint of a page. Grey boxes, no colour or imagery yet, so we agree what goes where, and in what order, before any design starts. It is far quicker to move a box than to redo a finished design, which keeps the whole build on track.</p>
+      </div>
+      <div class="ps-wf">
+        <div class="ps-wf__bar"><span class="ps-wf__logo"></span><span class="ps-wf__nav"></span><span class="ps-wf__nav"></span><span class="ps-wf__btn"></span></div>
+        <div class="ps-wf__hero"><div class="ps-wf__lines"><span></span><span></span><span class="ps-wf__cta"></span></div><div class="ps-wf__img"></div></div>
+        <div class="ps-wf__cards"><span></span><span></span><span></span></div>
+      </div>
+    </div>
+  </div>
+</section>
 
-  // 16 — Booking comparison
-  slide(
-    `${eyebrow("At a glance")}
-     <h2>Off the shelf vs bespoke.</h2>
-     <div class="cmp">
-       <div class="cmp__h"></div><div class="cmp__h">Off the shelf</div><div class="cmp__h">Bespoke</div>
-       <div class="cmp__l">What it is</div><div>A proven tool (Acuity, Bookly) styled to your brand.</div><div>Built around your services and five locations.</div>
-       <div class="cmp__l">Speed and cost</div><div>Faster, lower cost. A monthly fee per location.</div><div>Higher upfront, no recurring third-party fee.</div>
-       <div class="cmp__l">Look and feel</div><div>Styled to brand, sits slightly apart.</div><div>Matches the site exactly, one experience.</div>
-       <div class="cmp__l">Flexibility</div><div>Great for standard booking.</div><div>Built around exactly how you work.</div>
-       <div class="cmp__l">Maintenance</div><div>By the provider.</div><div>Owned by you, with our support.</div>
-     </div>`
-  ),
+<section class="ps-sec ps-sec--tint">
+  <div class="ps-wrap ps-narrow">
+    ${kicker("Next steps")}
+    <h2>How we would move this forward.</h2>
+    ${list([
+      "We send you live links and a few examples across medical, retail and innovation.",
+      "We confirm a few details so we can put indicative costs together, with core build and options set out clearly.",
+      "Once costs are agreed, we bring everyone together for the workshop to lock the detail and the final sitemap.",
+      "We get to work. Our typical build runs 8 to 10 weeks from the workshop, and we pride ourselves on finishing on time.",
+    ])}
+  </div>
+</section>
 
-  // 17 — Recommendation
-  slide(
-    `${eyebrow("Our recommendation")}
-     <h2>Start off the shelf. Grow into bespoke.</h2>
-     <p class="lead">For launch, a strong off-the-shelf engine styled to your brand gets you live faster and covers vaccines and standard appointments well.</p>
-     <p class="lead lead--soft">If your service range and automation plans grow, we move to a bespoke build later. We'll scope both at the workshop, so you decide with full sight of the costs.</p>`
-  ),
+<section class="ps-sec ps-sec--forest ps-close">
+  ${heart("ps-close__heart")}
+  <div class="ps-wrap ps-narrow">
+    ${kicker("Talk soon")}
+    <h2>We would be delighted to build this with you.</h2>
+    <p>We think it is a strong fit.</p>
+    <p class="ps-contact"><a href="mailto:hey@rooftoptwentytwo.ie">hey@rooftoptwentytwo.ie</a> · +353 1 699 1422 · rooftoptwentytwo.ie</p>
+    <p class="ps-sign">Cathal O'Reilly<br/><span>Founder and Managing Director, Rooftop Twenty Two</span></p>
+    <span class="ps-tagline">Caring for your wellbeing</span>
+  </div>
+</section>
 
-  // 15 — Integrations
-  slide(
-    `${eyebrow("Beyond booking")}
-     <h2>What the site connects to.</h2>
-     <div class="igrid">
-       <div class="icard"><span class="tag tag--core">Core</span><h4>Google Business Profile</h4><p>Locations, hours and reviews, visible in search and maps.</p></div>
-       <div class="icard"><span class="tag tag--core">Core</span><h4>Online reviews</h4><p>Your Google reviews, pulled onto the site.</p></div>
-       <div class="icard"><span class="tag tag--core">Core</span><h4>Maps and location finder</h4><p>Route people to their nearest pharmacy.</p></div>
-       <div class="icard"><span class="tag tag--core">Core</span><h4>Analytics and tracking</h4><p>GA4 and booking conversions, so we improve over time.</p></div>
-       <div class="icard"><span class="tag tag--core">Core</span><h4>Social media</h4><p>Feeds and links across your channels.</p></div>
-       <div class="icard"><span class="tag tag--addon">Add-on</span><h4>Pharmacy management system</h4><p>Repeat prescription requests into your records.</p></div>
-       <div class="icard"><span class="tag tag--addon">Add-on</span><h4>Email marketing</h4><p>Newsletter sign-up and campaigns.</p></div>
-       <div class="icard"><span class="tag tag--addon">Add-on</span><h4>Online payments</h4><p>Only if you take payment at booking.</p></div>
-     </div>`
-  ),
+<footer class="ps-foot"><div class="ps-wrap">Private proposal for PharmacyStore · Prepared by Rooftop Twenty Two · June 2026</div></footer>
+`;
 
-  // — How we'll build it (process timeline)
-  slide(
-    `${eyebrow("How we'll build it · 8 to 10 weeks")}
-     <h2>A clear path from strategy to launch.</h2>
-     <div class="tline">
-       <div class="tstep"><span class="tnum">01</span><b>Objectives &amp; strategy</b><span class="twk">Week 1</span><p>A workshop to agree your goals and online presence.</p></div>
-       <div class="tstep"><span class="tnum">02</span><b>Wireframe</b><span class="twk">Weeks 2–3</span><p>The structure and layout, agreed before any design.</p></div>
-       <div class="tstep"><span class="tnum">03</span><b>Homepage &amp; visual design</b><span class="twk">Weeks 3–5</span><p>The look and feel, built on the Tap brand.</p></div>
-       <div class="tstep"><span class="tnum">04</span><b>Developed staging site</b><span class="twk">Weeks 5–8</span><p>The full site, built on a private staging link.</p></div>
-       <div class="tstep"><span class="tnum">05</span><b>QA &amp; launch</b><span class="twk">Weeks 8–10</span><p>Tested across devices, then live, on time.</p></div>
-     </div>`
-  ),
-
-  // — What's a wireframe (visual explainer)
-  slide(
-    `<div class="sp-text">
-       ${eyebrow("Step 02 · The wireframe")}
-       <h2>What's a wireframe?</h2>
-       <p class="lead">A wireframe is the blueprint of a page. Grey boxes, no colour or imagery yet, so we agree what goes where, and in what order, before any design starts.</p>
-       <p class="lead lead--soft">It's far quicker to move a box than to redo a finished design. Sign-off here keeps the whole build on track and on time.</p>
-     </div>
-     <div class="sp-media sp-media--pad">
-       <div class="wf">
-         <div class="wf__bar"><span class="wf__logo"></span><span class="wf__nav"></span><span class="wf__nav"></span><span class="wf__nav"></span><span class="wf__btn"></span></div>
-         <div class="wf__hero"><div class="wf__lines"><span></span><span></span><span class="wf__cta"></span></div><div class="wf__img"></div></div>
-         <div class="wf__cards"><span></span><span></span><span></span></div>
-       </div>
-     </div>`,
-    "slide--split"
-  ),
-
-  // — Next steps
-  slide(
-    `${eyebrow("Next steps")}
-     <h2>How we move this forward.</h2>
-     ${bullets([
-       "We send you live links and examples across medical, retail and innovation.",
-       "We confirm a few details, then put indicative costs together, core build and options set out clearly.",
-       "Once costs are agreed, we bring everyone together for the workshop to lock the detail and final sitemap.",
-       "We get to work. A typical build runs 8 to 10 weeks from the workshop, finished on time.",
-     ])}`
-  ),
-
-  // 17 — Close (full-bleed photo)
-  slide(
-    `${photo(IMG.collab2)}
-     <div class="ph-content">
-       ${eyebrow("Talk soon")}
-       <h2>We'd be delighted to build this with you.</h2>
-       <p class="contact"><a href="mailto:hey@rooftoptwentytwo.ie">hey@rooftoptwentytwo.ie</a> · +353 1 699 1422 · rooftoptwentytwo.ie</p>
-       <p class="cover__by">Cathal O'Reilly, Founder and Managing Director, Rooftop Twenty Two</p>
-     </div>`,
-    "slide--photo"
-  ),
-];
-
-// ---- Encrypt the assembled slides (AES-256-GCM via PBKDF2-derived key) -------
-const slidesHtml = slides.join("");
+// ---- Encrypt (AES-256-GCM via PBKDF2-derived key) ---------------------------
 const salt = crypto.randomBytes(16);
 const iv = crypto.randomBytes(12);
 const key = crypto.pbkdf2Sync(PASSWORD, salt, 150000, 32, "sha256");
 const cipher = crypto.createCipheriv("aes-256-gcm", key, iv);
-const ciphertext = Buffer.concat([cipher.update(slidesHtml, "utf8"), cipher.final()]);
+const ciphertext = Buffer.concat([cipher.update(content, "utf8"), cipher.final()]);
 const tag = cipher.getAuthTag();
-// Browser SubtleCrypto expects the auth tag appended to the ciphertext.
 const payload = JSON.stringify({
   s: salt.toString("base64"),
   i: iv.toString("base64"),
   c: Buffer.concat([ciphertext, tag]).toString("base64"),
 });
-const slideCount = slides.length;
 ---
 
 <!doctype html>
-<html lang="en" class="deck-html">
+<html lang="en" class="ps-html">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex, nofollow" />
-    <title>Proposal — Pharmacy Store</title>
+    <title>Proposal — PharmacyStore</title>
     <link rel="preload" href="/fonts/butler-bold.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/mulish-variable.woff2" as="font" type="font/woff2" crossorigin />
   </head>
-  <body class="deck-body">
+  <body class="ps-body">
     <!-- Password gate -->
-    <div class="deck-gate" id="deck-gate">
-      <form class="gate__card" id="gate-form" autocomplete="off">
-        <p class="gate__brand">Rooftop Twenty Two</p>
-        <h1 class="gate__title">Website proposal</h1>
-        <p class="gate__sub">Enter the password to view the deck.</p>
-        <input class="gate__input" id="gate-input" type="password" placeholder="Password" aria-label="Password" autofocus />
-        <button class="gate__btn" type="submit">View proposal</button>
-        <p class="gate__error" id="gate-error" hidden>That password isn't right. Try again.</p>
+    <div class="ps-gate" id="ps-gate">
+      <form class="ps-gate__card" id="ps-form" autocomplete="off">
+        <p class="ps-gate__mark" set:html={mark + "<span>PharmacyStore</span>"}></p>
+        <h1 class="ps-gate__title">Website proposal</h1>
+        <p class="ps-gate__sub">Enter the password to view the proposal.</p>
+        <input class="ps-gate__input" id="ps-input" type="password" placeholder="Password" aria-label="Password" autofocus />
+        <button class="ps-gate__btn" type="submit">View proposal</button>
+        <p class="ps-gate__err" id="ps-err" hidden>That password isn't right. Try again.</p>
       </form>
     </div>
 
-    <!-- Deck -->
-    <div class="deck-viewport" id="deck-viewport">
-      <div class="deck-stage" id="deck-stage" aria-live="polite"></div>
-    </div>
+    <!-- Top bar (after unlock) -->
+    <header class="ps-top" id="ps-top" hidden>
+      <div class="ps-top__brand" set:html={mark + "<span>PharmacyStore</span>"}></div>
+      <button class="ps-top__pdf" id="ps-pdf" type="button">Download PDF</button>
+    </header>
 
-    <!-- Controls -->
-    <div class="deck-nav" id="deck-nav" hidden>
-      <button class="nbtn" id="nav-prev" aria-label="Previous slide">&larr;</button>
-      <span class="ncount"><span id="nav-cur">1</span> / <span id="nav-total">{slideCount}</span></span>
-      <button class="nbtn" id="nav-next" aria-label="Next slide">&rarr;</button>
-      <button class="nbtn nbtn--text" id="nav-print" aria-label="Download as PDF">PDF</button>
-      <button class="nbtn nbtn--text" id="nav-full" aria-label="Toggle fullscreen">Full</button>
-    </div>
+    <main class="ps-main" id="ps-main"></main>
 
-    <div class="deck-progress" id="deck-progress" hidden><span id="deck-progress-bar"></span></div>
+    <div class="ps-progress" id="ps-progress" hidden><span id="ps-progress-bar"></span></div>
 
-    <script type="application/json" id="deck-data" set:html={payload}></script>
+    <script type="application/json" id="ps-data" set:html={payload}></script>
 
     <script>
-      const dataEl = document.getElementById("deck-data");
+      const dataEl = document.getElementById("ps-data");
       const payload = JSON.parse(dataEl?.textContent || "{}");
-      const gate = document.getElementById("deck-gate");
-      const form = document.getElementById("gate-form") as HTMLFormElement | null;
-      const input = document.getElementById("gate-input") as HTMLInputElement | null;
-      const errEl = document.getElementById("gate-error");
-      const stage = document.getElementById("deck-stage");
-      const nav = document.getElementById("deck-nav");
-      const progress = document.getElementById("deck-progress");
-      const bar = document.getElementById("deck-progress-bar");
-      const SESSION_KEY = "rt22-deck-pharmacy";
+      const gate = document.getElementById("ps-gate");
+      const form = document.getElementById("ps-form") as HTMLFormElement | null;
+      const input = document.getElementById("ps-input") as HTMLInputElement | null;
+      const err = document.getElementById("ps-err");
+      const main = document.getElementById("ps-main");
+      const top = document.getElementById("ps-top");
+      const progress = document.getElementById("ps-progress");
+      const bar = document.getElementById("ps-progress-bar");
+      const KEY = "rt22-deck-pharmacy";
 
-      const b64ToBytes = (s: string) => {
-        const bin = atob(s);
-        const u = new Uint8Array(bin.length);
-        for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
-        return u;
-      };
+      const b64 = (s: string) => { const bin = atob(s); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u; };
 
-      async function decrypt(pw: string): Promise<string> {
-        const enc = new TextEncoder();
-        const baseKey = await crypto.subtle.importKey("raw", enc.encode(pw), "PBKDF2", false, ["deriveKey"]);
-        const key = await crypto.subtle.deriveKey(
-          { name: "PBKDF2", salt: b64ToBytes(payload.s), iterations: 150000, hash: "SHA-256" },
-          baseKey,
-          { name: "AES-GCM", length: 256 },
-          false,
-          ["decrypt"]
-        );
-        const buf = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b64ToBytes(payload.i) }, key, b64ToBytes(payload.c));
+      async function decrypt(pw: string) {
+        const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(pw), "PBKDF2", false, ["deriveKey"]);
+        const key = await crypto.subtle.deriveKey({ name: "PBKDF2", salt: b64(payload.s), iterations: 150000, hash: "SHA-256" }, base, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+        const buf = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b64(payload.i) }, key, b64(payload.c));
         return new TextDecoder().decode(buf);
       }
 
-      let slides: HTMLElement[] = [];
-      let idx = 0;
-
-      function show(n: number) {
-        idx = Math.max(0, Math.min(slides.length - 1, n));
-        slides.forEach((s, i) => s.classList.toggle("is-current", i === idx));
-        const cur = document.getElementById("nav-cur");
-        if (cur) cur.textContent = String(idx + 1);
-        if (bar) bar.style.width = ((idx + 1) / slides.length) * 100 + "%";
-      }
-      const next = () => show(idx + 1);
-      const prev = () => show(idx - 1);
-
-      function initDeck() {
-        slides = Array.from(stage?.querySelectorAll<HTMLElement>(".slide") || []);
-        if (!slides.length) return;
-        nav?.removeAttribute("hidden");
-        progress?.removeAttribute("hidden");
-        show(0);
-        document.getElementById("nav-next")?.addEventListener("click", next);
-        document.getElementById("nav-prev")?.addEventListener("click", prev);
-        document.getElementById("nav-print")?.addEventListener("click", () => window.print());
-        document.getElementById("nav-full")?.addEventListener("click", toggleFull);
-        window.addEventListener("keydown", (e) => {
-          if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") { e.preventDefault(); next(); }
-          else if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); prev(); }
-          else if (e.key.toLowerCase() === "f") toggleFull();
-        });
-        // Swipe on touch devices.
-        let x0 = 0;
-        stage?.addEventListener("touchstart", (e) => { x0 = e.touches[0].clientX; }, { passive: true });
-        stage?.addEventListener("touchend", (e) => {
-          const dx = e.changedTouches[0].clientX - x0;
-          if (Math.abs(dx) > 45) (dx < 0 ? next : prev)();
-        }, { passive: true });
-      }
-
-      function toggleFull() {
-        const el = document.getElementById("deck-viewport");
-        if (!document.fullscreenElement) el?.requestFullscreen?.();
-        else document.exitFullscreen?.();
+      function onScroll() {
+        if (!bar) return;
+        const h = document.documentElement.scrollHeight - window.innerHeight;
+        bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + "%";
       }
 
       async function unlock(pw: string, fromSession = false) {
         try {
           const html = await decrypt(pw);
-          if (stage) stage.innerHTML = html;
+          if (main) main.innerHTML = html;
           gate?.remove();
           document.body.classList.add("is-unlocked");
-          sessionStorage.setItem(SESSION_KEY, pw);
-          initDeck();
+          top?.removeAttribute("hidden");
+          progress?.removeAttribute("hidden");
+          sessionStorage.setItem(KEY, pw);
+          window.addEventListener("scroll", onScroll, { passive: true });
+          onScroll();
         } catch {
-          if (!fromSession) {
-            errEl?.removeAttribute("hidden");
-            input?.focus();
-            input?.select();
-          }
+          if (!fromSession) { err?.removeAttribute("hidden"); input?.focus(); input?.select(); }
         }
       }
 
-      form?.addEventListener("submit", (e) => {
-        e.preventDefault();
-        errEl?.setAttribute("hidden", "");
-        unlock(input?.value || "");
-      });
-
-      const saved = sessionStorage.getItem(SESSION_KEY);
+      form?.addEventListener("submit", (e) => { e.preventDefault(); err?.setAttribute("hidden", ""); unlock(input?.value || ""); });
+      document.getElementById("ps-pdf")?.addEventListener("click", () => window.print());
+      const saved = sessionStorage.getItem(KEY);
       if (saved) unlock(saved, true);
     </script>
 
     <style is:global>
-      :root { --deck-bg: #061018; --deck-ink: #0D2030; --deck-ink-soft: #51626E; }
-      .deck-html, .deck-body { height: 100%; }
-      .deck-body {
-        margin: 0; background: var(--deck-bg); color: var(--c-on-dark);
-        font-family: var(--w-font-body); overflow: hidden;
+      :root {
+        --ps-green: #007F40; --ps-forest: #01592E; --ps-grass: #92C83E; --ps-red: #E1251B;
+        --ps-grey: #556563; --ps-ink: #14342A; --ps-tint: #EAF3EC; --ps-line: #DCE7DF;
+        --ps-serif: "Butler", Georgia, "Times New Roman", serif;
+        --ps-sans: "Mulish", system-ui, -apple-system, "Segoe UI", sans-serif;
       }
+      .ps-html, .ps-body { margin: 0; }
+      .ps-body { background: #fff; color: var(--ps-ink); font-family: var(--ps-sans); overflow-x: hidden; }
+      .ps-body:not(.is-unlocked) { overflow: hidden; height: 100vh; }
+      .ps-wrap { max-width: 1140px; margin: 0 auto; padding-inline: clamp(1.25rem, 5vw, 3.5rem); }
+      .ps-narrow { max-width: 820px; }
 
       /* ---- Gate ---- */
-      .deck-gate {
-        position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center;
-        padding: 1.5rem; background:
-          radial-gradient(120% 90% at 80% 0%, rgba(225,80,71,0.16), transparent 55%),
-          radial-gradient(120% 90% at 0% 100%, rgba(1,255,178,0.12), transparent 55%),
-          var(--deck-bg);
-      }
-      .gate__card {
-        width: min(440px, 100%); text-align: left; background: rgba(255,255,255,0.04);
-        border: 1px solid rgba(255,255,255,0.12); border-radius: 20px; padding: 2.25rem;
-        backdrop-filter: blur(6px); display: flex; flex-direction: column; gap: 0.4rem;
-      }
-      .gate__brand { font-family: var(--w-font-body); font-weight: 700; font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--c-accent-2); margin: 0 0 0.75rem; }
-      .gate__title { font-family: var(--w-font-display); font-weight: 600; font-size: 1.7rem; line-height: 1.1; margin: 0; color: #fff; }
-      .gate__sub { font-size: 0.95rem; color: var(--c-on-dark-soft); margin: 0.4rem 0 1.25rem; }
-      .gate__input {
-        width: 100%; box-sizing: border-box; padding: 0.85rem 1.1rem; border-radius: 12px;
-        background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18);
-        color: #fff; font-family: var(--w-font-body); font-size: 1rem;
-      }
-      .gate__input:focus-visible { outline: 2px solid var(--c-accent-2); outline-offset: 2px; }
-      .gate__btn {
-        margin-top: 0.75rem; padding: 0.85rem 1.1rem; border: 0; border-radius: 9999px; cursor: pointer;
-        background: var(--c-accent); color: #fff; font-family: var(--w-font-body); font-weight: 700; font-size: 0.95rem;
-        transition: transform 0.16s ease, filter 0.16s ease;
-      }
-      .gate__btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
-      .gate__error { color: #ffb3ad; font-size: 0.85rem; margin: 0.75rem 0 0; }
+      .ps-gate { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 1.5rem;
+        background: radial-gradient(120% 90% at 80% 0%, rgba(146,200,62,0.18), transparent 55%), var(--ps-forest); }
+      .ps-gate__card { width: min(440px, 100%); background: #fff; border-radius: 20px; padding: 2.4rem; box-shadow: 0 24px 60px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 0.35rem; }
+      .ps-gate__mark { display: flex; align-items: center; gap: 0.55rem; color: var(--ps-green); font-family: var(--ps-sans); font-weight: 800; font-size: 1.05rem; margin: 0 0 0.9rem; }
+      .ps-gate__mark .ps-mark { width: 30px; height: auto; }
+      .ps-gate__title { font-family: var(--ps-serif); font-weight: 600; font-size: 1.85rem; line-height: 1.05; margin: 0; color: var(--ps-forest); }
+      .ps-gate__sub { font-size: 0.95rem; color: var(--ps-grey); margin: 0.4rem 0 1.2rem; }
+      .ps-gate__input { width: 100%; box-sizing: border-box; padding: 0.85rem 1.1rem; border-radius: 12px; border: 1px solid var(--ps-line); background: #fff; color: var(--ps-ink); font-family: var(--ps-sans); font-size: 1rem; }
+      .ps-gate__input:focus-visible { outline: 2px solid var(--ps-green); outline-offset: 2px; }
+      .ps-gate__btn { margin-top: 0.8rem; padding: 0.85rem 1.1rem; border: 0; border-radius: 9999px; cursor: pointer; background: var(--ps-green); color: #fff; font-family: var(--ps-sans); font-weight: 800; font-size: 0.95rem; transition: filter 0.15s ease, transform 0.15s ease; }
+      .ps-gate__btn:hover { filter: brightness(1.06); transform: translateY(-1px); }
+      .ps-gate__err { color: var(--ps-red); font-size: 0.85rem; margin: 0.7rem 0 0; }
 
-      /* ---- Stage / slides ---- */
-      .deck-viewport {
-        min-height: 100vh; display: flex; align-items: center; justify-content: center;
-        padding: clamp(0.5rem, 2vh, 1.5rem); padding-bottom: 64px; box-sizing: border-box; background: var(--deck-bg);
-      }
-      .deck-stage {
-        position: relative; width: min(100%, calc((100vh - 88px) * 16 / 9)); aspect-ratio: 16 / 9;
-        background: var(--c-dark); border-radius: 8px; overflow: hidden;
-        box-shadow: 0 30px 80px rgba(0,0,0,0.55);
-      }
-      .slide {
-        position: absolute; inset: 0; container-type: size;
-        display: flex; flex-direction: column; justify-content: center;
-        padding: 7cqw 8cqw; box-sizing: border-box; overflow: hidden;
-        opacity: 0; visibility: hidden; transform: translateY(1.2cqh);
-        transition: opacity 0.45s ease, transform 0.45s ease;
-        background:
-          radial-gradient(80% 120% at 100% 0%, rgba(225,80,71,0.10), transparent 50%),
-          radial-gradient(70% 120% at 0% 100%, rgba(1,255,178,0.07), transparent 50%);
-      }
-      .slide.is-current { opacity: 1; visibility: visible; transform: none; }
+      /* ---- Top bar + progress ---- */
+      .ps-top { position: sticky; top: 0; z-index: 40; display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+        padding: 0.7rem clamp(1.25rem, 5vw, 3.5rem); background: rgba(255,255,255,0.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--ps-line); }
+      .ps-top__brand { display: flex; align-items: center; gap: 0.5rem; color: var(--ps-green); font-weight: 800; font-size: 1rem; }
+      .ps-top__brand .ps-mark { width: 26px; height: auto; }
+      .ps-top__pdf { border: 1px solid var(--ps-line); background: #fff; color: var(--ps-forest); font-family: var(--ps-sans); font-weight: 700; font-size: 0.82rem; padding: 0.5rem 1rem; border-radius: 9999px; cursor: pointer; }
+      .ps-top__pdf:hover { background: var(--ps-tint); }
+      .ps-progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 50; background: transparent; }
+      .ps-progress span { display: block; height: 100%; width: 0; background: var(--ps-grass); }
 
-      .eyebrow { font-family: var(--w-font-body); font-weight: 700; font-size: 1.6cqw; letter-spacing: 0.26em; text-transform: uppercase; color: var(--c-accent-2); margin: 0 0 2.2cqh; }
-      .slide h2 { font-family: var(--w-font-display); font-weight: 600; font-size: 5.3cqw; line-height: 1.05; letter-spacing: -0.02em; color: #fff; margin: 0; }
-      .slide h3 { font-family: var(--w-font-display); font-weight: 600; font-size: 2.5cqw; line-height: 1.1; color: #fff; margin: 0.4cqh 0 0.6cqh; }
-      .lead { font-family: var(--w-font-body); font-size: 2.25cqw; line-height: 1.5; color: var(--c-on-dark-soft); max-width: 64cqw; margin: 3.5cqh 0 0; }
-      .lead--soft { color: rgba(194,221,219,0.72); font-size: 1.95cqw; margin-top: 2.4cqh; }
+      /* ---- Type & sections ---- */
+      .ps-mark { color: var(--ps-green); }
+      .ps-kicker { font-family: var(--ps-sans); font-weight: 800; font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ps-green); margin: 0 0 1rem; }
+      .ps-sec { padding-block: clamp(3.25rem, 7vw, 6rem); }
+      .ps-sec--tint { background: var(--ps-tint); }
+      .ps-sec--forest { background: var(--ps-forest); color: #fff; position: relative; overflow: hidden; }
+      .ps-sec h2 { font-family: var(--ps-serif); font-weight: 600; font-size: clamp(1.9rem, 4.2vw, 3rem); line-height: 1.08; letter-spacing: -0.01em; color: var(--ps-forest); margin: 0 0 1.25rem; }
+      .ps-sec--forest h2 { color: #fff; }
+      .ps-sec--forest .ps-kicker { color: var(--ps-grass); }
+      .ps-sec p { font-size: 1.08rem; line-height: 1.65; color: var(--ps-ink); margin: 0 0 1rem; max-width: 70ch; }
+      .ps-sec--forest p { color: rgba(255,255,255,0.86); }
+      .ps-lead { font-size: 1.2rem; color: var(--ps-grey); }
+      .ps-soft { font-size: 0.98rem; color: var(--ps-grey); margin-top: 1.5rem; }
+      .ps-sec--forest .ps-soft { color: rgba(255,255,255,0.7); }
 
-      .blist { list-style: none; margin: 4cqh 0 0; padding: 0; display: flex; flex-direction: column; gap: 2.1cqh; max-width: 82cqw; }
-      .blist li { display: flex; gap: 2cqw; align-items: flex-start; font-size: 2.05cqw; line-height: 1.38; color: #eaf3f2; }
-      .bdot { flex: 0 0 auto; width: 1cqw; height: 1cqw; margin-top: 1cqw; border-radius: 50%; background: var(--c-accent); }
+      /* ---- Hero ---- */
+      .ps-hero { position: relative; background: linear-gradient(160deg, var(--ps-green), var(--ps-forest)); color: #fff; overflow: hidden; padding-block: clamp(4.5rem, 12vw, 9rem); }
+      .ps-hero__heart { position: absolute; right: -6%; top: 50%; transform: translateY(-50%); width: min(60vw, 620px); height: auto; fill: rgba(255,255,255,0.07); }
+      .ps-hero__inner { position: relative; z-index: 1; }
+      .ps-cobrand { display: flex; align-items: center; gap: 0.55rem; font-weight: 800; font-size: 0.9rem; letter-spacing: 0.02em; margin: 0 0 1.75rem; color: #fff; }
+      .ps-cobrand .ps-mark { width: 30px; height: auto; color: #fff; }
+      .ps-hero .ps-kicker { color: var(--ps-grass); }
+      .ps-hero h1 { font-family: var(--ps-serif); font-weight: 600; font-size: clamp(2.4rem, 6.5vw, 4.6rem); line-height: 1.02; letter-spacing: -0.02em; color: #fff; margin: 0; }
+      .ps-hero__sub { font-size: clamp(1.1rem, 2.2vw, 1.4rem); color: #fff; margin: 1.5rem 0 0; }
+      .ps-hero__meta { font-size: 0.95rem; color: rgba(255,255,255,0.75); margin: 0.6rem 0 0; }
+      .ps-tagline { display: inline-block; margin-top: 2rem; font-family: var(--ps-serif); font-style: italic; font-size: 1.3rem; color: var(--ps-grass); }
 
-      /* Cover / photo headings */
-      .cover__by { font-size: 1.85cqw; line-height: 1.5; color: var(--c-on-dark-soft); margin: 5.5cqh 0 0; }
-      .contact { font-size: 2cqw; color: #fff; margin: 3.5cqh 0 0; }
-      .contact a { color: var(--c-accent-2); text-decoration: none; }
+      /* ---- Stats ---- */
+      .ps-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-top: 2.5rem; }
+      .ps-stat { background: var(--ps-forest); color: #fff; border-radius: 16px; padding: 1.75rem 1.5rem; text-align: center; }
+      .ps-stat b { display: block; font-family: var(--ps-serif); font-weight: 600; font-size: clamp(2rem, 5vw, 3rem); color: var(--ps-grass); line-height: 1; }
+      .ps-stat span { display: block; font-size: 0.92rem; color: rgba(255,255,255,0.82); margin-top: 0.5rem; }
+      @media (max-width: 620px) { .ps-stats { grid-template-columns: 1fr; } }
 
-      /* ---- Full-bleed photo slides ---- */
-      .slide--photo { padding: 0; justify-content: flex-end; background: var(--c-dark); }
-      .ph-bg { position: absolute; inset: 0; z-index: 0; }
-      .ph-bg img { width: 100%; height: 100%; object-fit: cover; display: block; }
-      .ph-scrim { position: absolute; inset: 0; z-index: 1; background: linear-gradient(to top, rgba(6,16,24,0.94) 6%, rgba(6,16,24,0.4) 58%, rgba(6,16,24,0.55) 100%); }
-      .ph-content { position: relative; z-index: 2; padding: 7cqw 8cqw 7.5cqw; }
-      .ph-content h1 { font-family: var(--w-font-display); font-weight: 600; font-size: 8cqw; line-height: 1.0; letter-spacing: -0.025em; color: #fff; margin: 0; }
-      .ph-content h2 { font-size: 5cqw; }
+      /* ---- Lists ---- */
+      .ps-list { list-style: none; margin: 1.5rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 1.1rem; }
+      .ps-list li { display: flex; gap: 0.9rem; align-items: flex-start; font-size: 1.06rem; line-height: 1.55; color: var(--ps-ink); }
+      .ps-tick { flex: 0 0 auto; width: 18px; height: 18px; margin-top: 0.2rem; fill: var(--ps-green); }
+      .ps-sec--forest .ps-list li { color: rgba(255,255,255,0.9); }
+      .ps-sec--forest .ps-tick { fill: var(--ps-grass); }
 
-      /* ---- Split slides ---- */
-      .slide--split { flex-direction: row; align-items: stretch; padding: 0; background: var(--c-dark); }
-      .sp-text { flex: 1 1 50%; min-width: 0; padding: 6cqw 5.2cqw; display: flex; flex-direction: column; justify-content: center; box-sizing: border-box; }
-      .sp-media { flex: 1 1 50%; position: relative; overflow: hidden; background: #0a1a26; }
-      .sp-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-      .slide--split h2 { font-size: 4.3cqw; }
-      .slide--split .lead { font-size: 1.95cqw; max-width: none; }
-      .slide--split .blist { margin-top: 3cqh; max-width: none; gap: 1.9cqh; }
-      .slide--split .blist li { font-size: 1.72cqw; gap: 1.4cqw; }
-      .slide--split .bdot { width: 0.8cqw; height: 0.8cqw; margin-top: 0.7cqw; }
-      .slide--split .quote { font-size: 2.4cqw; }
-      .slide--split .quote cite { font-size: 1.5cqw; }
+      /* ---- Awards ---- */
+      .ps-awards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 1.75rem; }
+      .ps-award { text-align: center; background: #fff; border: 1px solid var(--ps-line); border-radius: 16px; padding: 2rem 1.25rem; }
+      .ps-award img { height: 60px; width: auto; max-width: 70%; object-fit: contain; margin: 0 auto 1.1rem; display: block; }
+      .ps-award b { display: block; font-family: var(--ps-serif); font-weight: 600; font-size: 1.2rem; color: var(--ps-forest); }
+      .ps-award span { display: block; font-size: 0.9rem; color: var(--ps-grey); margin-top: 0.3rem; }
+      @media (max-width: 720px) { .ps-awards { grid-template-columns: 1fr; } }
 
-      /* ---- Light / off-white slides (echo the website's light sections) ---- */
-      .slide--light { background: #fff; }
-      .slide--alt { background: #F6F4EF; }
-      .slide--light h2, .slide--alt h2, .slide--light h3, .slide--alt h3 { color: var(--deck-ink); }
-      .slide--light .lead, .slide--alt .lead { color: var(--deck-ink-soft); }
-      .slide--light .eyebrow, .slide--alt .eyebrow { color: var(--c-accent); }
-      .slide--light .blist li, .slide--alt .blist li { color: var(--deck-ink); }
+      /* ---- Team ---- */
+      .ps-team { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-top: 1.75rem; }
+      .ps-mem { margin: 0; }
+      .ps-mem img { width: 100%; aspect-ratio: 4/5; object-fit: cover; object-position: center 14%; border-radius: 14px; background: var(--ps-tint); display: block; }
+      .ps-mem b { display: block; font-family: var(--ps-serif); font-weight: 600; font-size: 1.1rem; color: var(--ps-forest); margin-top: 0.7rem; }
+      .ps-mem span { display: block; font-size: 0.88rem; color: var(--ps-grey); }
+      @media (max-width: 820px) { .ps-team { grid-template-columns: repeat(2, 1fr); } }
 
-      /* Team grid */
-      .tgrid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 1.5cqw; margin-top: 3.2cqh; max-width: 96cqw; }
-      .tmem { margin: 0; }
-      .tmem img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; object-position: center 12%; border-radius: 1cqw; filter: grayscale(1); display: block; background: #e9e5dc; }
-      .tmem b { display: block; font-family: var(--w-font-display); font-weight: 600; font-size: 1.3cqw; color: var(--deck-ink); margin-top: 0.7cqh; line-height: 1.1; }
-      .tmem span { display: block; font-size: 1.02cqw; color: #6a7884; line-height: 1.2; }
+      /* ---- Case studies ---- */
+      .ps-cases { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 1.75rem; }
+      .ps-case { background: #fff; border: 1px solid var(--ps-line); border-radius: 16px; padding: 1.9rem; }
+      .ps-case .ps-mark { width: 34px; height: auto; margin-bottom: 1rem; }
+      .ps-case h3 { font-family: var(--ps-serif); font-weight: 600; font-size: 1.35rem; color: var(--ps-forest); margin: 0; }
+      .ps-case__role { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ps-green); margin: 0.3rem 0 0.9rem; }
+      .ps-case p { font-size: 1rem; line-height: 1.6; color: var(--ps-ink); margin: 0; }
+      @media (max-width: 720px) { .ps-cases { grid-template-columns: 1fr; } }
 
-      /* Logo wall */
-      .lgrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4.5cqh 4cqw; margin-top: 4.5cqh; max-width: 82cqw; align-items: center; justify-items: center; }
-      .lgrid img { max-height: 6.5cqh; max-width: 78%; width: auto; object-fit: contain; opacity: 0.92; }
+      /* ---- Sitemap tree ---- */
+      .ps-tree { margin: 2rem 0 0; }
+      .ps-tree__home { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--ps-green); color: #fff; font-family: var(--ps-serif); font-weight: 600; font-size: 1.25rem; padding: 0.6rem 1.4rem; border-radius: 12px; }
+      .ps-tree__home .ps-mark { width: 24px; height: auto; color: #fff; }
+      .ps-tree__row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 1.5rem; }
+      .ps-node { background: var(--ps-tint); border: 1px solid var(--ps-line); border-radius: 12px; padding: 1.1rem 1.2rem; }
+      .ps-node b { display: block; font-family: var(--ps-serif); font-weight: 600; font-size: 1.1rem; color: var(--ps-forest); margin-bottom: 0.5rem; }
+      .ps-node--leaf b { margin-bottom: 0; }
+      .ps-node ul { list-style: none; margin: 0; padding: 0; }
+      .ps-node li { font-size: 0.92rem; line-height: 1.6; color: var(--ps-grey); }
+      @media (max-width: 820px) { .ps-tree__row { grid-template-columns: repeat(2, 1fr); } }
 
-      /* Awards */
-      .awards3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3cqw; margin-top: 3.5cqh; max-width: 84cqw; }
-      .acard { text-align: center; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 1.6cqw; padding: 3.5cqh 2cqw; }
-      .acard img { height: 8.5cqh; width: auto; max-width: 72%; object-fit: contain; margin: 0 auto 2cqh; display: block; }
-      .acard b { display: block; font-family: var(--w-font-display); font-weight: 600; font-size: 2cqw; color: #fff; }
-      .acard span { display: block; font-size: 1.35cqw; color: var(--c-on-dark-soft); margin-top: 0.6cqh; }
+      /* ---- Robotics ---- */
+      .ps-robotics__heart { position: absolute; right: -4%; bottom: -20%; width: min(40vw, 380px); height: auto; fill: rgba(255,255,255,0.06); }
 
-      /* Selected work cards */
-      .work3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.2cqw; margin-top: 3.8cqh; max-width: 90cqw; }
-      .wcard { margin: 0; }
-      .wcard img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 1.2cqw; display: block; box-shadow: 0 6px 20px rgba(13,32,48,0.14); background: #e9e5dc; }
-      .wcard b { display: block; font-family: var(--w-font-display); font-weight: 600; font-size: 1.7cqw; color: var(--deck-ink); margin-top: 1.4cqh; }
-      .wcard span { display: block; font-size: 1.32cqw; color: #6a7884; line-height: 1.3; margin-top: 0.3cqh; }
+      /* ---- Tables ---- */
+      .ps-tablewrap { margin-top: 1.75rem; overflow-x: auto; border: 1px solid var(--ps-line); border-radius: 16px; }
+      .ps-table { width: 100%; border-collapse: collapse; min-width: 640px; background: #fff; }
+      .ps-table th, .ps-table td { text-align: left; padding: 1rem 1.15rem; vertical-align: top; font-size: 0.98rem; line-height: 1.45; border-top: 1px solid var(--ps-line); }
+      .ps-table thead th { background: var(--ps-forest); color: #fff; font-family: var(--ps-sans); font-weight: 800; font-size: 0.9rem; border: 0; }
+      .ps-table tbody th { color: var(--ps-green); font-weight: 800; width: 22%; }
+      .ps-table td { color: var(--ps-ink); }
+      .ps-table--int tbody th { width: 26%; color: var(--ps-forest); font-family: var(--ps-serif); font-weight: 600; font-size: 1.02rem; }
+      .ps-tag { display: inline-block; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.25rem 0.7rem; border-radius: 9999px; white-space: nowrap; }
+      .ps-tag--core { background: rgba(0,127,64,0.12); color: var(--ps-green); }
+      .ps-tag--addon { background: rgba(225,37,27,0.12); color: var(--ps-red); }
 
-      /* Sitemap */
-      .smap { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2.4cqw; margin-top: 4cqh; max-width: 88cqw; }
-      .smap__col h4 { font-family: var(--w-font-display); font-weight: 600; font-size: 2cqw; color: #fff; margin: 0 0 0.6cqh; }
-      .smap__col h4 ~ h4 { margin-top: 2.2cqh; }
-      .smap__col ul { list-style: none; margin: 0; padding: 0; }
-      .smap__col li { font-size: 1.5cqw; line-height: 1.55; color: var(--c-on-dark-soft); }
+      .ps-rec { display: flex; gap: 1.1rem; margin-top: 1.75rem; background: var(--ps-tint); border-radius: 16px; padding: 1.6rem 1.75rem; }
+      .ps-rec .ps-mark { flex: 0 0 auto; width: 34px; height: auto; margin-top: 0.2rem; }
+      .ps-rec b { display: block; font-family: var(--ps-serif); font-weight: 600; font-size: 1.2rem; color: var(--ps-forest); margin-bottom: 0.4rem; }
+      .ps-rec p { margin: 0; }
 
-      /* Comparison table */
-      .cmp { display: grid; grid-template-columns: 1.05fr 1.55fr 1.55fr; margin-top: 3.5cqh; max-width: 92cqw; border: 1px solid rgba(255,255,255,0.12); border-radius: 1.4cqw; overflow: hidden; }
-      .cmp > div { padding: 1.5cqh 1.5cqw; font-size: 1.5cqw; line-height: 1.32; color: #eaf3f2; border-top: 1px solid rgba(255,255,255,0.08); }
-      .cmp > div:nth-child(-n+3) { border-top: 0; }
-      .cmp__h { font-family: var(--w-font-display); font-weight: 600; font-size: 1.85cqw; color: #fff; background: rgba(255,255,255,0.07); }
-      .cmp__l { font-weight: 700; color: var(--c-accent-2); background: rgba(255,255,255,0.03); }
+      /* ---- Timeline ---- */
+      .ps-timeline { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.25rem; margin: 2rem 0 0; position: relative; }
+      .ps-timeline::before { content: ""; position: absolute; top: 22px; left: 10%; right: 10%; height: 2px; background: rgba(255,255,255,0.2); }
+      .ps-step { text-align: center; position: relative; }
+      .ps-step__n { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: var(--ps-grass); color: var(--ps-forest); font-family: var(--ps-serif); font-weight: 700; font-size: 1.1rem; position: relative; z-index: 1; }
+      .ps-step b { display: block; font-family: var(--ps-serif); font-weight: 600; font-size: 1.05rem; color: #fff; margin-top: 0.9rem; line-height: 1.15; }
+      .ps-step__wk { display: block; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ps-grass); margin: 0.4rem 0; }
+      .ps-step p { font-size: 0.9rem; line-height: 1.4; color: rgba(255,255,255,0.8); margin: 0; }
+      @media (max-width: 820px) { .ps-timeline { grid-template-columns: 1fr 1fr; gap: 1.75rem; } .ps-timeline::before { display: none; } }
 
-      /* Integrations grid */
-      .igrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.8cqw; margin-top: 3.5cqh; max-width: 92cqw; }
-      .icard { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 1.4cqw; padding: 2cqh 1.6cqw; }
-      .icard h4 { font-family: var(--w-font-display); font-weight: 600; font-size: 1.65cqw; color: #fff; margin: 1cqh 0 0.5cqh; line-height: 1.1; }
-      .icard p { font-size: 1.3cqw; line-height: 1.35; color: var(--c-on-dark-soft); margin: 0; }
-      .tag { display: inline-block; font-size: 1.05cqw; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.35cqh 1cqw; border-radius: 9999px; }
-      .tag--core { background: rgba(1,255,178,0.16); color: var(--c-accent-2); }
-      .tag--addon { background: rgba(225,80,71,0.2); color: #ff9b93; }
+      /* ---- Wireframe explainer ---- */
+      .ps-wf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: center; margin-top: 3rem; }
+      .ps-wf-text h3 { font-family: var(--ps-serif); font-weight: 600; font-size: 1.6rem; color: #fff; margin: 0 0 0.8rem; }
+      .ps-wf { background: #fff; border-radius: 14px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.85rem; box-shadow: 0 16px 40px rgba(0,0,0,0.25); }
+      .ps-wf__bar { display: flex; align-items: center; gap: 0.6rem; }
+      .ps-wf__logo, .ps-wf__nav, .ps-wf__btn, .ps-wf__img, .ps-wf__cta, .ps-wf__lines span, .ps-wf__cards span { background: #d9dde1; border-radius: 5px; display: block; }
+      .ps-wf__logo { width: 84px; height: 20px; }
+      .ps-wf__nav { width: 48px; height: 12px; }
+      .ps-wf__btn { width: 60px; height: 22px; margin-left: auto; background: #c2c8ce; }
+      .ps-wf__hero { display: flex; gap: 1rem; }
+      .ps-wf__lines { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 0.6rem; }
+      .ps-wf__lines span { height: 14px; }
+      .ps-wf__lines span:nth-child(1) { width: 90%; }
+      .ps-wf__lines span:nth-child(2) { width: 65%; }
+      .ps-wf__cta { width: 100px; height: 26px; margin-top: 0.5rem; background: var(--ps-green); }
+      .ps-wf__img { width: 42%; min-height: 110px; }
+      .ps-wf__cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.7rem; }
+      .ps-wf__cards span { height: 56px; }
+      @media (max-width: 820px) { .ps-wf-row { grid-template-columns: 1fr; gap: 1.5rem; } }
 
-      /* Quote */
-      .quote { margin: 3.5cqh 0 0; font-family: var(--w-font-display); font-style: italic; font-size: 2.9cqw; line-height: 1.32; color: #fff; max-width: 84cqw; border: 0; padding: 0; }
-      .quote cite { display: block; font-family: var(--w-font-body); font-style: normal; font-size: 1.65cqw; color: var(--c-accent-2); margin-top: 2.2cqh; }
+      /* ---- Close ---- */
+      .ps-close__heart { position: absolute; left: -4%; bottom: -25%; width: min(48vw, 460px); height: auto; fill: rgba(255,255,255,0.06); }
+      .ps-contact { margin-top: 1.5rem; }
+      .ps-contact a { color: var(--ps-grass); text-decoration: none; }
+      .ps-sign { font-family: var(--ps-serif); font-size: 1.2rem; color: #fff; margin-top: 1.75rem; }
+      .ps-sign span { font-family: var(--ps-sans); font-size: 0.95rem; color: rgba(255,255,255,0.75); }
 
-      .note { font-size: 1.55cqw; color: rgba(194,221,219,0.65); margin: 3.5cqh 0 0; }
+      .ps-foot { background: #06281a; color: rgba(255,255,255,0.6); font-size: 0.82rem; padding: 1.5rem 0; text-align: center; }
 
-      /* ---- Visual sitemap tree ---- */
-      .stree { margin-top: 3cqh; display: flex; flex-direction: column; align-items: center; width: 96cqw; }
-      .stree__home { font-family: var(--w-font-display); font-weight: 600; font-size: 2.1cqw; color: #fff; background: var(--c-accent); padding: 1.2cqh 3cqw; border-radius: 1cqw; }
-      .stree__rail { position: relative; width: 84cqw; height: 0; border-top: 2px solid rgba(255,255,255,0.18); margin-top: 2.4cqh; }
-      .stree__rail::before { content: ""; position: absolute; left: 50%; top: -2.4cqh; width: 2px; height: 2.4cqh; background: rgba(255,255,255,0.18); }
-      .stree__row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1.3cqw; width: 96cqw; margin-top: 2.4cqh; align-items: start; }
-      .snode { position: relative; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.14); border-radius: 1cqw; padding: 1.5cqh 1cqw; }
-      .snode::before { content: ""; position: absolute; top: -2.4cqh; left: 50%; width: 2px; height: 2.4cqh; background: rgba(255,255,255,0.18); }
-      .snode b { display: block; font-family: var(--w-font-display); font-weight: 600; font-size: 1.45cqw; color: #fff; line-height: 1.12; margin-bottom: 0.8cqh; }
-      .snode--leaf b { margin-bottom: 0; }
-      .snode ul { list-style: none; margin: 0; padding: 0; }
-      .snode li { font-size: 1.15cqw; line-height: 1.5; color: var(--c-on-dark-soft); }
-
-      /* ---- Two-column option lists (booking options) ---- */
-      .twocol { display: grid; grid-template-columns: 1fr 1fr; gap: 3cqw; margin-top: 3.2cqh; max-width: 84cqw; }
-      .tcol h4 { font-family: var(--w-font-display); font-weight: 600; font-size: 2cqw; color: var(--c-accent-2); margin: 0 0 1.4cqh; }
-      .tcol ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1.3cqh; }
-      .tcol li { position: relative; padding-left: 2.2cqw; font-size: 1.62cqw; line-height: 1.34; color: #eaf3f2; }
-      .tcol li::before { content: ""; position: absolute; left: 0; top: 0.6cqw; width: 0.8cqw; height: 0.8cqw; border-radius: 50%; background: var(--c-accent); }
-
-      /* ---- Process timeline ---- */
-      .tline { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.6cqw; margin-top: 4.5cqh; max-width: 94cqw; position: relative; }
-      .tline::before { content: ""; position: absolute; top: 2.4cqw; left: 9%; right: 9%; height: 2px; background: rgba(255,255,255,0.18); }
-      .tstep { position: relative; text-align: center; }
-      .tnum { display: inline-flex; align-items: center; justify-content: center; width: 4.8cqw; height: 4.8cqw; border-radius: 50%; background: var(--c-accent); color: #fff; font-family: var(--w-font-display); font-weight: 700; font-size: 1.9cqw; position: relative; z-index: 1; }
-      .tstep b { display: block; font-family: var(--w-font-display); font-weight: 600; font-size: 1.62cqw; color: #fff; margin-top: 1.6cqh; line-height: 1.12; }
-      .twk { display: block; font-size: 1.15cqw; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--c-accent-2); margin: 0.7cqh 0; }
-      .tstep p { font-size: 1.28cqw; line-height: 1.35; color: var(--c-on-dark-soft); margin: 0; }
-
-      /* ---- Wireframe mockup ---- */
-      .sp-media--pad { display: flex; align-items: center; justify-content: center; padding: 5cqw; background: #0a1a26; }
-      .wf { width: 100%; background: #fff; border-radius: 1.2cqw; padding: 2cqw; box-shadow: 0 12px 32px rgba(0,0,0,0.35); display: flex; flex-direction: column; gap: 1.8cqh; }
-      .wf__bar { display: flex; align-items: center; gap: 1cqw; }
-      .wf__logo, .wf__nav, .wf__btn, .wf__img, .wf__cta, .wf__lines span, .wf__cards span { background: #d9dde1; border-radius: 0.5cqw; display: block; }
-      .wf__logo { width: 6cqw; height: 2cqw; }
-      .wf__nav { width: 3.6cqw; height: 1.2cqw; }
-      .wf__btn { width: 5cqw; height: 2cqw; margin-left: auto; background: #c2c8ce; }
-      .wf__hero { display: flex; gap: 2cqw; align-items: stretch; }
-      .wf__lines { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 1.3cqh; }
-      .wf__lines span { height: 1.6cqw; }
-      .wf__lines span:nth-child(1) { width: 92%; }
-      .wf__lines span:nth-child(2) { width: 68%; }
-      .wf__cta { width: 9cqw; height: 2.6cqw; margin-top: 1.2cqh; background: var(--c-accent); }
-      .wf__img { width: 42%; min-height: 13cqh; }
-      .wf__cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4cqw; }
-      .wf__cards span { height: 7.5cqh; }
-
-      /* ---- Nav ---- */
-      .deck-nav {
-        position: fixed; left: 0; right: 0; bottom: 0; height: 56px; z-index: 40;
-        display: flex; align-items: center; justify-content: center; gap: 0.9rem;
-        background: rgba(6,16,24,0.82); backdrop-filter: blur(10px); border-top: 1px solid rgba(255,255,255,0.08);
-      }
-      .nbtn {
-        min-width: 40px; height: 36px; padding: 0 0.7rem; border-radius: 9999px; cursor: pointer;
-        background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); color: #fff;
-        font-family: var(--w-font-body); font-size: 1rem; line-height: 1; transition: background 0.16s ease;
-      }
-      .nbtn:hover { background: rgba(255,255,255,0.18); }
-      .nbtn--text { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.04em; }
-      .ncount { font-family: var(--w-font-body); font-size: 0.85rem; color: var(--c-on-dark-soft); min-width: 56px; text-align: center; }
-
-      .deck-progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 41; background: rgba(255,255,255,0.08); }
-      .deck-progress span { display: block; height: 100%; width: 0; background: var(--c-accent); transition: width 0.4s ease; }
-
-      @media (prefers-reduced-motion: reduce) {
-        .slide { transition: opacity 0.2s linear; transform: none; }
-      }
-
-      /* ---- Print → PDF: one landscape page per slide ---- */
       @media print {
-        @page { size: 1280px 720px; margin: 0; }
-        .deck-body { overflow: visible; background: #fff; }
-        .deck-gate, .deck-nav, .deck-progress { display: none !important; }
-        .deck-viewport { display: block; min-height: 0; padding: 0; }
-        .deck-stage { display: contents; box-shadow: none; }
-        .slide {
-          position: relative; inset: auto; width: 1280px; height: 720px;
-          opacity: 1 !important; visibility: visible !important; transform: none !important;
-          break-after: page; page-break-after: always;
-        }
+        @page { margin: 14mm; }
+        .ps-gate, .ps-top, .ps-progress { display: none !important; }
+        .ps-body { overflow: visible; }
+        .ps-sec, .ps-hero { break-inside: avoid; }
+        .ps-sec--forest, .ps-hero, .ps-stat { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       }
     </style>
   </body>
