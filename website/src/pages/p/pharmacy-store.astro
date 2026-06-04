@@ -1,17 +1,14 @@
 ---
 // ────────────────────────────────────────────────────────────────────────────
-// Bespoke proposal — Pharmacy Store (PharmacyStore / R. Keating Pharmacy Group).
-// A long-form, PharmacyStore-branded scrolling page (their green palette, heart
-// device and tagline), prepared for Ciaran McNally and Tracey Dunne.
+// Bespoke proposal — Pharmacy Store, prepared for Ciaran McNally & Tracey Dunne.
+// Long-form, scrolling web page. PRIMARY brand is Rooftop Twenty Two (this is
+// R22's proposal); PharmacyStore appears as co-branding ("for PharmacyStore")
+// and as brand touches inside the MOCKUPS (a homepage concept in their green +
+// heart device, and a PS-green CTA in the wireframe).
 //
-// The page CONTENT is AES-256-GCM encrypted at build time and only decrypts in
-// the browser once the correct password is entered, so the source ships
-// ciphertext, not the proposal.
-//
-// Change the password below (PASSWORD) and rebuild to rotate it.
-// noindex + excluded from the sitemap (see astro.config sitemap filter).
-// Brand fonts (ITC Souvenir / Avant Garde) are licensed; we approximate with the
-// site's serif/sans and can embed the real fonts if licensed.
+// Page CONTENT is AES-256-GCM encrypted at build time and only decrypts in the
+// browser on the correct password, so the source ships ciphertext.
+// Change PASSWORD and rebuild to rotate. noindex + excluded from the sitemap.
 // ────────────────────────────────────────────────────────────────────────────
 import "../../styles/globals.css";
 import { existsSync } from "node:fs";
@@ -21,7 +18,6 @@ import crypto from "node:crypto";
 const PASSWORD = "rooftop-pharmacy"; // ← change me and rebuild to rotate access
 const has = (p: string) => existsSync(path.join(process.cwd(), "public", p));
 
-// ---- Assets ----------------------------------------------------------------
 const team = [
   ["Cathal O'Reilly", "Founder and Managing Director", "/images/team/R22-Headshot-updated-11-768x1024.jpg"],
   ["Roisin Madden", "Operations Director", "/images/team/Roisin-Madden-Headshot-681x1024.jpg"],
@@ -39,50 +35,62 @@ const awards = [
   { logo: "/images/DMA-Generic-Pink-Blue-270x270-1-cutout.png", b: "Award record", s: "Medical, retail and charity" },
 ].filter((a) => has(a.logo));
 
-// Heart graphic device (their core motif). cls lets us tint/scale per use.
+// PharmacyStore heart device (used only for co-brand touches + mockups).
 const heart = (cls: string) =>
   `<svg class="${cls}" viewBox="0 0 32 29.6" aria-hidden="true"><path d="M23.6 0c-3.4 0-6.3 2.7-7.6 5.6C14.7 2.7 11.8 0 8.4 0 3.8 0 0 3.8 0 8.4c0 9.1 9.3 13.6 16 21.2 6.7-7.6 16-12.1 16-21.2C32 3.8 28.2 0 23.6 0z"/></svg>`;
-// Heart + cross mark (logo-style device, brand-aligned, not the official lockup).
-const mark = `<svg class="ps-mark" viewBox="0 0 32 29.6" aria-hidden="true"><path d="M23.6 0c-3.4 0-6.3 2.7-7.6 5.6C14.7 2.7 11.8 0 8.4 0 3.8 0 0 3.8 0 8.4c0 9.1 9.3 13.6 16 21.2 6.7-7.6 16-12.1 16-21.2C32 3.8 28.2 0 23.6 0z" fill="currentColor"/><path d="M14.4 7.6h3.2v3.2h3.2v3.2h-3.2v3.2h-3.2v-3.2h-3.2v-3.2h3.2z" fill="#fff"/></svg>`;
+const psMark = `<svg class="ps-mark" viewBox="0 0 32 29.6" aria-hidden="true"><path d="M23.6 0c-3.4 0-6.3 2.7-7.6 5.6C14.7 2.7 11.8 0 8.4 0 3.8 0 0 3.8 0 8.4c0 9.1 9.3 13.6 16 21.2 6.7-7.6 16-12.1 16-21.2C32 3.8 28.2 0 23.6 0z" fill="currentColor"/><path d="M14.4 7.6h3.2v3.2h3.2v3.2h-3.2v3.2h-3.2v-3.2h-3.2v-3.2h3.2z" fill="#fff"/></svg>`;
 
-// ---- Authoring helpers ------------------------------------------------------
-const kicker = (t: string) => `<p class="ps-kicker">${t}</p>`;
-const list = (items: string[]) =>
-  `<ul class="ps-list">${items.map((i) => `<li>${heart("ps-tick")}<span>${i}</span></li>`).join("")}</ul>`;
+const kicker = (t: string) => `<p class="pr-kicker">${t}</p>`;
+const list = (items: string[]) => `<ul class="pr-list">${items.map((i) => `<li><span class="pr-tick"></span><span>${i}</span></li>`).join("")}</ul>`;
 
-const teamGrid = `<div class="ps-team">${team
-  .map(([n, r, img]) => `<figure class="ps-mem"><img src="${img}" alt="${n}" loading="lazy"/><b>${n}</b><span>${r}</span></figure>`)
+const teamGrid = `<div class="pr-team">${team
+  .map(([n, r, img]) => `<figure class="pr-mem"><img src="${img}" alt="${n}" loading="lazy"/><b>${n}</b><span>${r}</span></figure>`)
   .join("")}</div>`;
-
-const caseCards = `<div class="ps-cases">${[
+const caseCards = `<div class="pr-cases">${[
   ["Jonathan Lyon", "Consultant Cardiologist", "A clinical website for a heart rhythm specialist. Clear, reassuring pages around his conditions and services, with a strong path to enquiry and appointment. It reads as current and credible, which is what patients look for. Directly relevant to your move toward a service-led, booking-friendly site."],
   ["Anna Walsh", "Consultant Urologist", "A consultant website focused on making services easy to understand and act on. Each service is presented clearly, with simple enquiry and appointment options. The same approach works well for pharmacy services like vaccinations, health checks and weight management."],
   ["Cervino Medical", "Neurology practice", "Website redesign and digital marketing, including Google Ads. The full picture: a strong site backed by SEO and paid activity to bring the right people to it. If you want to grow private service bookings over time, this is the model."],
   ["One in Four", "Care-sector charity", "Designed and built from the ground up, from interactive wireframes through to the live site. Information-led with clear, prominent actions, exactly the structure a pharmacy site needs. This was the wireframe example we walked you through."],
 ]
-  .map(([n, r, d]) => `<article class="ps-case">${mark}<h3>${n}</h3><p class="ps-case__role">${r}</p><p>${d}</p></article>`)
+  .map(([n, r, d]) => `<article class="pr-case"><h3>${n}</h3><p class="pr-case__role">${r}</p><p>${d}</p></article>`)
+  .join("")}</div>`;
+const awardCards = `<div class="pr-awards">${awards
+  .map((a) => `<div class="pr-award"><img src="${a.logo}" alt=""/><b>${a.b}</b><span>${a.s}</span></div>`)
   .join("")}</div>`;
 
-const awardCards = `<div class="ps-awards">${awards
-  .map((a) => `<div class="ps-award"><img src="${a.logo}" alt=""/><b>${a.b}</b><span>${a.s}</span></div>`)
-  .join("")}</div>`;
+// PharmacyStore-branded homepage concept mockup (their green + heart + tagline).
+const homepageMock = `
+  <div class="mock">
+    <div class="mock__bar"><span class="mock__dot"></span><span class="mock__dot"></span><span class="mock__dot"></span><span class="mock__url">pharmacystore.ie</span></div>
+    <div class="mock__screen">
+      <div class="mock__nav"><span class="mock__logo">${psMark}<b>PharmacyStore</b></span><span class="mock__links">Services · Pharmacies · Book</span></div>
+      <div class="mock__hero">
+        ${heart("mock__heart")}
+        <div class="mock__herotext">
+          <p class="mock__tag">Caring for your wellbeing</p>
+          <h4>Health checks that fit around your day.</h4>
+          <span class="mock__btn">Book an appointment</span>
+        </div>
+      </div>
+      <div class="mock__tiles">
+        <span>Vaccinations</span><span>Health checks</span><span>Weight management</span>
+      </div>
+    </div>
+  </div>`;
 
-// ---- The proposal (long-form sections) -------------------------------------
 const content = `
-<section class="ps-hero">
-  ${heart("ps-hero__heart")}
-  <div class="ps-wrap ps-hero__inner">
-    <p class="ps-cobrand">${mark}<span>PharmacyStore &nbsp;×&nbsp; Rooftop Twenty Two</span></p>
+<section class="pr-hero">
+  <div class="pr-wrap pr-hero__inner">
+    <p class="pr-cobrand"><span class="pr-cobrand__a">Rooftop Twenty Two</span><span class="pr-cobrand__sep">for</span><span class="pr-cobrand__b">${psMark}PharmacyStore</span></p>
     ${kicker("Website proposal · June 2026")}
     <h1>Pharmacy group website<br/>and booking platform.</h1>
-    <p class="ps-hero__sub">Prepared for Ciaran McNally and Tracey Dunne.</p>
-    <p class="ps-hero__meta">Rooftop Twenty Two · Web design and digital marketing · Glasnevin and the Beacon, Dublin</p>
-    <span class="ps-tagline">Caring for your wellbeing</span>
+    <p class="pr-hero__sub">Prepared for Ciaran McNally and Tracey Dunne.</p>
+    <p class="pr-hero__meta">Rooftop Twenty Two · Web design and digital marketing · Glasnevin and the Beacon, Dublin</p>
   </div>
 </section>
 
-<section class="ps-sec">
-  <div class="ps-wrap ps-narrow">
+<section class="pr-sec">
+  <div class="pr-wrap pr-narrow">
     ${kicker("Introduction")}
     <h2>You have done the hard part with Tap.</h2>
     <p>Thank you for taking the time to meet us. The brand is fresh, the shops are being revamped and the new photography is in place. The website is the last piece still looking five years old, and that is where we come in.</p>
@@ -91,50 +99,50 @@ const content = `
   </div>
 </section>
 
-<section class="ps-sec ps-sec--tint">
-  <div class="ps-wrap ps-narrow">
+<section class="pr-sec pr-sec--alt">
+  <div class="pr-wrap pr-narrow">
     ${kicker("About us")}
-    <h2>A calm, capable partner for the build.</h2>
+    <h2>A senior team that ships.</h2>
     <p>Rooftop Twenty Two is a web design and digital marketing agency based in Dublin. We are a team of 14, with offices in Glasnevin and a second office in the Beacon, with in-house teams across web design and development, SEO, paid social, video and content.</p>
     <p>We produce between 20 and 30 websites a year and we move quickly without dropping quality. We also work closely with brand studios like Tap, carrying their brand work through into websites, so the move from your new brand into the live site will be clean and consistent.</p>
   </div>
-  <div class="ps-wrap ps-stats">
-    <div class="ps-stat"><b>14</b><span>people in the team</span></div>
-    <div class="ps-stat"><b>20&ndash;30</b><span>websites a year</span></div>
-    <div class="ps-stat"><b>8&ndash;10 wks</b><span>typical build, on time</span></div>
+  <div class="pr-wrap pr-stats">
+    <div class="pr-stat"><b>14</b><span>people in the team</span></div>
+    <div class="pr-stat"><b>20&ndash;30</b><span>websites a year</span></div>
+    <div class="pr-stat"><b>8&ndash;10 wks</b><span>typical build, on time</span></div>
   </div>
 </section>
 
-<section class="ps-sec">
-  <div class="ps-wrap">
+<section class="pr-sec">
+  <div class="pr-wrap">
     ${kicker("Recognised work")}
     <h2>Award-winning web and search.</h2>
     ${awardCards}
-    <p class="ps-soft">Brand studios like Tap bring us in for the extra polish, backed by real development skill, so we can both make it look right and make it work.</p>
+    <p class="pr-soft">Brand studios like Tap bring us in for the extra polish, backed by real development skill, so we can both make it look right and make it work.</p>
   </div>
 </section>
 
-<section class="ps-sec ps-sec--tint">
-  <div class="ps-wrap">
+<section class="pr-sec pr-sec--alt">
+  <div class="pr-wrap">
     ${kicker("Our team")}
     <h2>The people you will work with.</h2>
-    <p class="ps-lead">A dedicated team across strategy, design, build, SEO and account management.</p>
+    <p class="pr-lead">A dedicated team across strategy, design, build, SEO and account management.</p>
     ${teamGrid}
   </div>
 </section>
 
-<section class="ps-sec">
-  <div class="ps-wrap">
+<section class="pr-sec">
+  <div class="pr-wrap">
     ${kicker("Relevant case studies")}
     <h2>Healthcare work that maps to yours.</h2>
-    <p class="ps-lead">Clear service information, trust, and an easy path to enquiry or booking.</p>
+    <p class="pr-lead">Clear service information, trust, and an easy path to enquiry or booking.</p>
     ${caseCards}
-    <p class="ps-soft">We can send live links and further examples across retail and innovation alongside this document.</p>
+    <p class="pr-soft">We can send live links and further examples across retail and innovation alongside this document.</p>
   </div>
 </section>
 
-<section class="ps-sec ps-sec--tint">
-  <div class="ps-wrap ps-narrow">
+<section class="pr-sec pr-sec--alt">
+  <div class="pr-wrap pr-narrow">
     ${kicker("Our initial thoughts")}
     <h2>What the new site should do.</h2>
     ${list([
@@ -149,28 +157,28 @@ const content = `
   </div>
 </section>
 
-<section class="ps-sec">
-  <div class="ps-wrap">
+<section class="pr-sec pr-sec--dark">
+  <div class="pr-wrap">
     ${kicker("Potential sitemap")}
     <h2>A first-draft structure to react to.</h2>
-    <div class="ps-tree">
-      <div class="ps-tree__home">${mark}<span>Home</span></div>
-      <div class="ps-tree__row">
-        <div class="ps-node"><b>About</b><ul><li>Our story &amp; the brand</li><li>Team &amp; pharmacists</li><li>Innovation &amp; automation</li></ul></div>
-        <div class="ps-node"><b>Services</b><ul><li>Vaccinations</li><li>Health checks &amp; screening</li><li>Weight management</li><li>Minor ailments</li><li>Smoking cessation</li><li>Prescriptions &amp; repeats</li></ul></div>
-        <div class="ps-node"><b>Our pharmacies</b><ul><li>A page per location</li><li>Hours, address, services</li><li>Photos &amp; map</li></ul></div>
-        <div class="ps-node ps-node--leaf"><b>Book an appointment</b></div>
-        <div class="ps-node ps-node--leaf"><b>Health advice &amp; news</b></div>
-        <div class="ps-node ps-node--leaf"><b>Contact</b></div>
-        <div class="ps-node ps-node--leaf"><b>Careers</b></div>
+    <div class="pr-tree">
+      <div class="pr-tree__home">Home</div>
+      <div class="pr-tree__row">
+        <div class="pr-node"><b>About</b><ul><li>Our story &amp; the brand</li><li>Team &amp; pharmacists</li><li>Innovation &amp; automation</li></ul></div>
+        <div class="pr-node"><b>Services</b><ul><li>Vaccinations</li><li>Health checks &amp; screening</li><li>Weight management</li><li>Minor ailments</li><li>Smoking cessation</li><li>Prescriptions &amp; repeats</li></ul></div>
+        <div class="pr-node"><b>Our pharmacies</b><ul><li>A page per location</li><li>Hours, address, services</li><li>Photos &amp; map</li></ul></div>
+        <div class="pr-node pr-node--leaf"><b>Book an appointment</b></div>
+        <div class="pr-node pr-node--leaf"><b>Health advice &amp; news</b></div>
+        <div class="pr-node pr-node--leaf"><b>Contact</b></div>
+        <div class="pr-node pr-node--leaf"><b>Careers</b></div>
       </div>
     </div>
-    <p class="ps-soft">Built around services, locations and booking, with room to grow. We will confirm the final structure together.</p>
+    <p class="pr-soft">Built around services, locations and booking, with room to grow. We will confirm the final structure together.</p>
   </div>
 </section>
 
-<section class="ps-sec ps-sec--tint">
-  <div class="ps-wrap ps-narrow">
+<section class="pr-sec">
+  <div class="pr-wrap pr-narrow">
     ${kicker("Creative ideas")}
     <h2>How the site could come to life.</h2>
     ${list([
@@ -180,14 +188,25 @@ const content = `
       "An innovation section that tells the robotics story in plain terms: greater accuracy, faster dispensing, and more pharmacist time for patient care.",
       "A health-hub feel, with clear advice content that builds trust and supports SEO.",
       "Pharmacist profiles and trust signals throughout, so people feel they know the team before they walk in.",
-      "A clean, modern look that matches the new brand, designed mobile first, because most pharmacy searches happen on a phone.",
+      "A clean, modern look that matches the new brand, designed mobile first.",
     ])}
   </div>
 </section>
 
-<section class="ps-sec ps-sec--forest ps-robotics">
-  ${heart("ps-robotics__heart")}
-  <div class="ps-wrap ps-narrow">
+<section class="pr-sec pr-sec--alt">
+  <div class="pr-wrap pr-firstlook">
+    <div class="pr-firstlook__text">
+      ${kicker("A first look")}
+      <h2>Your brand, brought online.</h2>
+      <p>An early, illustrative concept, not a finished design. It shows how we carry the Tap brand straight through: your green, the heart device, the warmth of "caring for your wellbeing", and booking right where people look first.</p>
+      <p class="pr-soft">We design the real thing together, from wireframe to launch.</p>
+    </div>
+    <div class="pr-firstlook__mock">${homepageMock}</div>
+  </div>
+</section>
+
+<section class="pr-sec pr-sec--dark pr-robotics">
+  <div class="pr-wrap pr-narrow">
     ${kicker("A point of difference")}
     <h2>The robotics and automation angle.</h2>
     <p>You mentioned you are building toward automation and innovation. This is a real opportunity, not just a line on a page. Robotic dispensing pushes accuracy close to 100% and handles a large share of daily prescriptions in seconds, which frees your team to spend more time with patients.</p>
@@ -195,12 +214,12 @@ const content = `
   </div>
 </section>
 
-<section class="ps-sec">
-  <div class="ps-wrap">
+<section class="pr-sec">
+  <div class="pr-wrap">
     ${kicker("Booking engine")}
     <h2>Bespoke vs off the shelf.</h2>
-    <p class="ps-lead">Booking is the heart of the new site. The right choice depends on how much control you want and how booking connects to your other systems.</p>
-    <div class="ps-tablewrap"><table class="ps-table">
+    <p class="pr-lead">Booking is the heart of the new site. The right choice depends on how much control you want and how booking connects to your other systems.</p>
+    <div class="pr-tablewrap"><table class="pr-table">
       <thead><tr><th></th><th>Off the shelf</th><th>Bespoke</th></tr></thead>
       <tbody>
         <tr><th>What it is</th><td>A proven booking tool (for example Acuity or Bookly) plugged into the site and styled to your brand.</td><td>A booking system we design and build specifically around your services and your five locations.</td></tr>
@@ -211,58 +230,88 @@ const content = `
         <tr><th>Maintenance</th><td>Maintained by the provider.</td><td>Owned and maintained by you, with our support.</td></tr>
       </tbody>
     </table></div>
-    <div class="ps-rec">${mark}<div><b>Our recommendation</b><p>For launch, a strong off-the-shelf engine styled to your brand will get you live faster and cover vaccines and standard appointments well. If your service range and automation plans grow, we can move to a bespoke build later. We will scope both at the workshop so you can decide with full sight of the costs.</p></div></div>
+    <div class="pr-rec"><b>Our recommendation</b><p>For launch, a strong off-the-shelf engine styled to your brand will get you live faster and cover vaccines and standard appointments well. If your service range and automation plans grow, we can move to a bespoke build later. We will scope both at the workshop so you can decide with full sight of the costs.</p></div>
   </div>
 </section>
 
-<section class="ps-sec ps-sec--tint">
-  <div class="ps-wrap">
+<section class="pr-sec pr-sec--alt">
+  <div class="pr-wrap">
     ${kicker("Other integrations")}
     <h2>What the site can connect to.</h2>
-    <div class="ps-tablewrap"><table class="ps-table ps-table--int">
+    <div class="pr-tablewrap"><table class="pr-table pr-table--int">
       <thead><tr><th>Integration</th><th>What it does</th><th>Scope</th></tr></thead>
       <tbody>
-        <tr><th>Google Business Profile</th><td>Keeps the five locations, hours and reviews accurate and visible in search and maps.</td><td><span class="ps-tag ps-tag--core">Core</span></td></tr>
-        <tr><th>Online reviews</th><td>Pulls your Google reviews onto the site to build trust.</td><td><span class="ps-tag ps-tag--core">Core</span></td></tr>
-        <tr><th>Maps and location finder</th><td>Helps people find and route to their nearest pharmacy.</td><td><span class="ps-tag ps-tag--core">Core</span></td></tr>
-        <tr><th>Analytics and tracking</th><td>GA4 and conversion tracking so we can see bookings and improve over time.</td><td><span class="ps-tag ps-tag--core">Core</span></td></tr>
-        <tr><th>Social media</th><td>Links and feeds across your updated channels, pointing people back to the site.</td><td><span class="ps-tag ps-tag--core">Core</span></td></tr>
-        <tr><th>Live chat or enquiry forms</th><td>Quick ways for customers to ask a question or request a service.</td><td><span class="ps-tag ps-tag--core">Core</span></td></tr>
-        <tr><th>Pharmacy management system</th><td>Lets the site talk to your dispensing or records system, for example repeat prescriptions.</td><td><span class="ps-tag ps-tag--addon">Add-on</span></td></tr>
-        <tr><th>Email marketing</th><td>Newsletter sign-up and campaign tools to keep customers informed.</td><td><span class="ps-tag ps-tag--addon">Add-on</span></td></tr>
-        <tr><th>Online payments</th><td>Only needed if you want to take payment for a service at the point of booking.</td><td><span class="ps-tag ps-tag--addon">Add-on</span></td></tr>
+        <tr><th>Google Business Profile</th><td>Keeps the five locations, hours and reviews accurate and visible in search and maps.</td><td><span class="pr-tag pr-tag--core">Core</span></td></tr>
+        <tr><th>Online reviews</th><td>Pulls your Google reviews onto the site to build trust.</td><td><span class="pr-tag pr-tag--core">Core</span></td></tr>
+        <tr><th>Maps and location finder</th><td>Helps people find and route to their nearest pharmacy.</td><td><span class="pr-tag pr-tag--core">Core</span></td></tr>
+        <tr><th>Analytics and tracking</th><td>GA4 and conversion tracking so we can see bookings and improve over time.</td><td><span class="pr-tag pr-tag--core">Core</span></td></tr>
+        <tr><th>Social media</th><td>Links and feeds across your updated channels, pointing people back to the site.</td><td><span class="pr-tag pr-tag--core">Core</span></td></tr>
+        <tr><th>Live chat or enquiry forms</th><td>Quick ways for customers to ask a question or request a service.</td><td><span class="pr-tag pr-tag--core">Core</span></td></tr>
+        <tr><th>Pharmacy management system</th><td>Lets the site talk to your dispensing or records system, for example repeat prescriptions.</td><td><span class="pr-tag pr-tag--addon">Add-on</span></td></tr>
+        <tr><th>Email marketing</th><td>Newsletter sign-up and campaign tools to keep customers informed.</td><td><span class="pr-tag pr-tag--addon">Add-on</span></td></tr>
+        <tr><th>Online payments</th><td>Only needed if you want to take payment for a service at the point of booking.</td><td><span class="pr-tag pr-tag--addon">Add-on</span></td></tr>
       </tbody>
     </table></div>
   </div>
 </section>
 
-<section class="ps-sec ps-sec--forest">
-  <div class="ps-wrap">
-    ${kicker("How we will build it · 8 to 10 weeks")}
-    <h2>A clear path from strategy to launch.</h2>
-    <div class="ps-timeline">
-      <div class="ps-step"><span class="ps-step__n">01</span><b>Objectives &amp; strategy</b><span class="ps-step__wk">Week 1</span><p>A workshop to agree your goals and online presence.</p></div>
-      <div class="ps-step"><span class="ps-step__n">02</span><b>Wireframe</b><span class="ps-step__wk">Weeks 2&ndash;3</span><p>The structure and layout, agreed before any design.</p></div>
-      <div class="ps-step"><span class="ps-step__n">03</span><b>Homepage &amp; visual design</b><span class="ps-step__wk">Weeks 3&ndash;5</span><p>The look and feel, built on the Tap brand.</p></div>
-      <div class="ps-step"><span class="ps-step__n">04</span><b>Developed staging site</b><span class="ps-step__wk">Weeks 5&ndash;8</span><p>The full site, on a private staging link.</p></div>
-      <div class="ps-step"><span class="ps-step__n">05</span><b>QA &amp; launch</b><span class="ps-step__wk">Weeks 8&ndash;10</span><p>Tested across devices, then live, on time.</p></div>
-    </div>
-    <div class="ps-wf-row">
-      <div class="ps-wf-text">
-        <h3>What is a wireframe?</h3>
-        <p>A wireframe is the blueprint of a page. Grey boxes, no colour or imagery yet, so we agree what goes where, and in what order, before any design starts. It is far quicker to move a box than to redo a finished design, which keeps the whole build on track.</p>
+<section class="pr-sec pr-sec--dark">
+  <div class="pr-wrap">
+    ${kicker("What to expect · 8 to 10 weeks")}
+    <h2>Your journey to launch.</h2>
+    <p class="pr-jlead">No surprises. Here is exactly how we will work together, step by step.</p>
+    <div class="pr-journey">
+
+      <div class="pr-jstep">
+        <div class="pr-jrail"><span class="pr-jnum">1</span><span class="pr-jline"></span></div>
+        <div class="pr-jbody">
+          <span class="pr-jweek">Week 1</span>
+          <h3>Discovery workshop</h3>
+          <p>We sit down together at our Rooftop Twenty Two offices in Dublin and get into your business objectives. Then we show you what leading pharmacies around the world are doing online: how their sites work, how they function, and what is genuinely possible for Pharmacy Store.</p>
+        </div>
       </div>
-      <div class="ps-wf">
-        <div class="ps-wf__bar"><span class="ps-wf__logo"></span><span class="ps-wf__nav"></span><span class="ps-wf__nav"></span><span class="ps-wf__btn"></span></div>
-        <div class="ps-wf__hero"><div class="ps-wf__lines"><span></span><span></span><span class="ps-wf__cta"></span></div><div class="ps-wf__img"></div></div>
-        <div class="ps-wf__cards"><span></span><span></span><span></span></div>
+
+      <div class="pr-jstep">
+        <div class="pr-jrail"><span class="pr-jnum">2</span><span class="pr-jline"></span></div>
+        <div class="pr-jbody">
+          <span class="pr-jweek">Weeks 2&ndash;3</span>
+          <h3>Wireframe</h3>
+          <p>Our team brings you through a full wireframe of the site. You will see how it functions and how it interacts, and click through the booking engine yourself, so you understand exactly how it works before any design begins. Nothing moves forward until you are happy and sign it off.</p>
+          <div class="pr-jwire">
+            <div class="pr-wf">
+              <div class="pr-wf__bar"><span class="pr-wf__logo"></span><span class="pr-wf__nav"></span><span class="pr-wf__nav"></span><span class="pr-wf__btn"></span></div>
+              <div class="pr-wf__hero"><div class="pr-wf__lines"><span></span><span></span><span class="pr-wf__cta"></span></div><div class="pr-wf__img"></div></div>
+              <div class="pr-wf__cards"><span></span><span></span><span></span></div>
+            </div>
+            <p class="pr-jwire__cap"><b>What a wireframe is:</b> the blueprint of a page. Grey boxes, no colour or imagery yet, so we agree what goes where, and in what order, before any design. It is far quicker to move a box than to redo a finished design.</p>
+          </div>
+        </div>
       </div>
+
+      <div class="pr-jstep">
+        <div class="pr-jrail"><span class="pr-jnum">3</span><span class="pr-jline"></span></div>
+        <div class="pr-jbody">
+          <span class="pr-jweek">Weeks 3&ndash;8</span>
+          <h3>Bringing the brand to life</h3>
+          <p>On sign-off, we bring the new brand to life through video, branding and imagery, carrying the Tap work through every page until the site feels unmistakably yours.</p>
+        </div>
+      </div>
+
+      <div class="pr-jstep">
+        <div class="pr-jrail"><span class="pr-jnum">4</span></div>
+        <div class="pr-jbody">
+          <span class="pr-jweek">Weeks 8&ndash;10</span>
+          <h3>QA and launch</h3>
+          <p>A smooth, well-drilled process we have perfected over hundreds of builds. We test across every device, fix anything that needs it, then launch. We move quickly, because a happy client and a site that lands on time is the whole point.</p>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
 
-<section class="ps-sec ps-sec--tint">
-  <div class="ps-wrap ps-narrow">
+<section class="pr-sec pr-sec--alt">
+  <div class="pr-wrap pr-narrow">
     ${kicker("Next steps")}
     <h2>How we would move this forward.</h2>
     ${list([
@@ -274,83 +323,75 @@ const content = `
   </div>
 </section>
 
-<section class="ps-sec ps-sec--forest ps-close">
-  ${heart("ps-close__heart")}
-  <div class="ps-wrap ps-narrow">
+<section class="pr-sec pr-sec--dark pr-close">
+  <div class="pr-wrap pr-narrow">
     ${kicker("Talk soon")}
     <h2>We would be delighted to build this with you.</h2>
     <p>We think it is a strong fit.</p>
-    <p class="ps-contact"><a href="mailto:hey@rooftoptwentytwo.ie">hey@rooftoptwentytwo.ie</a> · +353 1 699 1422 · rooftoptwentytwo.ie</p>
-    <p class="ps-sign">Cathal O'Reilly<br/><span>Founder and Managing Director, Rooftop Twenty Two</span></p>
-    <span class="ps-tagline">Caring for your wellbeing</span>
+    <p class="pr-contact"><a href="mailto:hey@rooftoptwentytwo.ie">hey@rooftoptwentytwo.ie</a> · +353 1 699 1422 · rooftoptwentytwo.ie</p>
+    <p class="pr-sign">Cathal O'Reilly<br/><span>Founder and Managing Director, Rooftop Twenty Two</span></p>
+    <p class="pr-forclient">${psMark}<span>Prepared for PharmacyStore · Caring for your wellbeing</span></p>
   </div>
 </section>
 
-<footer class="ps-foot"><div class="ps-wrap">Private proposal for PharmacyStore · Prepared by Rooftop Twenty Two · June 2026</div></footer>
+<footer class="pr-foot"><div class="pr-wrap">Private proposal for PharmacyStore · Prepared by Rooftop Twenty Two · June 2026</div></footer>
 `;
 
-// ---- Encrypt (AES-256-GCM via PBKDF2-derived key) ---------------------------
+// ---- Encrypt ----------------------------------------------------------------
 const salt = crypto.randomBytes(16);
 const iv = crypto.randomBytes(12);
 const key = crypto.pbkdf2Sync(PASSWORD, salt, 150000, 32, "sha256");
 const cipher = crypto.createCipheriv("aes-256-gcm", key, iv);
 const ciphertext = Buffer.concat([cipher.update(content, "utf8"), cipher.final()]);
 const tag = cipher.getAuthTag();
-const payload = JSON.stringify({
-  s: salt.toString("base64"),
-  i: iv.toString("base64"),
-  c: Buffer.concat([ciphertext, tag]).toString("base64"),
-});
+const payload = JSON.stringify({ s: salt.toString("base64"), i: iv.toString("base64"), c: Buffer.concat([ciphertext, tag]).toString("base64") });
 ---
 
 <!doctype html>
-<html lang="en" class="ps-html">
+<html lang="en" class="pr-html">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex, nofollow" />
-    <title>Proposal — PharmacyStore</title>
+    <title>Proposal — Rooftop Twenty Two for PharmacyStore</title>
     <link rel="preload" href="/fonts/butler-bold.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/mulish-variable.woff2" as="font" type="font/woff2" crossorigin />
   </head>
-  <body class="ps-body">
-    <!-- Password gate -->
-    <div class="ps-gate" id="ps-gate">
-      <form class="ps-gate__card" id="ps-form" autocomplete="off">
-        <p class="ps-gate__mark" set:html={mark + "<span>PharmacyStore</span>"}></p>
-        <h1 class="ps-gate__title">Website proposal</h1>
-        <p class="ps-gate__sub">Enter the password to view the proposal.</p>
-        <input class="ps-gate__input" id="ps-input" type="password" placeholder="Password" aria-label="Password" autofocus />
-        <button class="ps-gate__btn" type="submit">View proposal</button>
-        <p class="ps-gate__err" id="ps-err" hidden>That password isn't right. Try again.</p>
+  <body class="pr-body">
+    <div class="pr-gate" id="pr-gate">
+      <form class="pr-gate__card" id="pr-form" autocomplete="off">
+        <p class="pr-gate__brand">Rooftop Twenty Two</p>
+        <h1 class="pr-gate__title">Website proposal</h1>
+        <p class="pr-gate__sub">Prepared for PharmacyStore. Enter the password to view.</p>
+        <input class="pr-gate__input" id="pr-input" type="password" placeholder="Password" aria-label="Password" autofocus />
+        <button class="pr-gate__btn" type="submit">View proposal</button>
+        <p class="pr-gate__err" id="pr-err" hidden>That password isn't right. Try again.</p>
       </form>
     </div>
 
-    <!-- Top bar (after unlock) -->
-    <header class="ps-top" id="ps-top" hidden>
-      <div class="ps-top__brand" set:html={mark + "<span>PharmacyStore</span>"}></div>
-      <button class="ps-top__pdf" id="ps-pdf" type="button">Download PDF</button>
+    <header class="pr-top" id="pr-top" hidden>
+      <div class="pr-top__brand">Rooftop Twenty Two <em class="pr-top__for" set:html={"for " + psMark + "PharmacyStore"}></em></div>
+      <button class="pr-top__pdf" id="pr-pdf" type="button">Download PDF</button>
     </header>
 
-    <main class="ps-main" id="ps-main"></main>
+    <main class="pr-main" id="pr-main"></main>
 
-    <div class="ps-progress" id="ps-progress" hidden><span id="ps-progress-bar"></span></div>
+    <div class="pr-progress" id="pr-progress" hidden><span id="pr-progress-bar"></span></div>
 
-    <script type="application/json" id="ps-data" set:html={payload}></script>
+    <script type="application/json" id="pr-data" set:html={payload}></script>
 
     <script>
-      const dataEl = document.getElementById("ps-data");
+      const dataEl = document.getElementById("pr-data");
       const payload = JSON.parse(dataEl?.textContent || "{}");
-      const gate = document.getElementById("ps-gate");
-      const form = document.getElementById("ps-form") as HTMLFormElement | null;
-      const input = document.getElementById("ps-input") as HTMLInputElement | null;
-      const err = document.getElementById("ps-err");
-      const main = document.getElementById("ps-main");
-      const top = document.getElementById("ps-top");
-      const progress = document.getElementById("ps-progress");
-      const bar = document.getElementById("ps-progress-bar");
+      const gate = document.getElementById("pr-gate");
+      const form = document.getElementById("pr-form") as HTMLFormElement | null;
+      const input = document.getElementById("pr-input") as HTMLInputElement | null;
+      const err = document.getElementById("pr-err");
+      const main = document.getElementById("pr-main");
+      const top = document.getElementById("pr-top");
+      const progress = document.getElementById("pr-progress");
+      const bar = document.getElementById("pr-progress-bar");
       const KEY = "rt22-deck-pharmacy";
-
       const b64 = (s: string) => { const bin = atob(s); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u; };
 
       async function decrypt(pw: string) {
@@ -359,13 +400,7 @@ const payload = JSON.stringify({
         const buf = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b64(payload.i) }, key, b64(payload.c));
         return new TextDecoder().decode(buf);
       }
-
-      function onScroll() {
-        if (!bar) return;
-        const h = document.documentElement.scrollHeight - window.innerHeight;
-        bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + "%";
-      }
-
+      function onScroll() { if (!bar) return; const h = document.documentElement.scrollHeight - window.innerHeight; bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + "%"; }
       async function unlock(pw: string, fromSession = false) {
         try {
           const html = await decrypt(pw);
@@ -377,197 +412,229 @@ const payload = JSON.stringify({
           sessionStorage.setItem(KEY, pw);
           window.addEventListener("scroll", onScroll, { passive: true });
           onScroll();
-        } catch {
-          if (!fromSession) { err?.removeAttribute("hidden"); input?.focus(); input?.select(); }
-        }
+        } catch { if (!fromSession) { err?.removeAttribute("hidden"); input?.focus(); input?.select(); } }
       }
-
       form?.addEventListener("submit", (e) => { e.preventDefault(); err?.setAttribute("hidden", ""); unlock(input?.value || ""); });
-      document.getElementById("ps-pdf")?.addEventListener("click", () => window.print());
+      document.getElementById("pr-pdf")?.addEventListener("click", () => window.print());
       const saved = sessionStorage.getItem(KEY);
       if (saved) unlock(saved, true);
     </script>
 
     <style is:global>
       :root {
-        --ps-green: #007F40; --ps-forest: #01592E; --ps-grass: #92C83E; --ps-red: #E1251B;
-        --ps-grey: #556563; --ps-ink: #14342A; --ps-tint: #EAF3EC; --ps-line: #DCE7DF;
-        --ps-serif: "Butler", Georgia, "Times New Roman", serif;
-        --ps-sans: "Mulish", system-ui, -apple-system, "Segoe UI", sans-serif;
+        --navy: #0D2030; --ink: #0D2030; --ink-soft: #51626E; --bg: #fff; --alt: #F6F4EF; --line: #E6E2D9;
+        --r-accent: #E15047; --r-green: #01FFB2; --on-dark: #fff; --on-dark-soft: #C2DDDB;
+        --serif: "Butler", Georgia, "Times New Roman", serif;
+        --sans: "Mulish", system-ui, -apple-system, "Segoe UI", sans-serif;
+        /* PharmacyStore — co-brand touches + mockups only */
+        --ps-green: #007F40; --ps-forest: #01592E; --ps-grass: #92C83E;
       }
-      .ps-html, .ps-body { margin: 0; }
-      .ps-body { background: #fff; color: var(--ps-ink); font-family: var(--ps-sans); overflow-x: hidden; }
-      .ps-body:not(.is-unlocked) { overflow: hidden; height: 100vh; }
-      .ps-wrap { max-width: 1140px; margin: 0 auto; padding-inline: clamp(1.25rem, 5vw, 3.5rem); }
-      .ps-narrow { max-width: 820px; }
+      .pr-html, .pr-body { margin: 0; }
+      .pr-body { background: #fff; color: var(--ink); font-family: var(--sans); overflow-x: hidden; }
+      .pr-body:not(.is-unlocked) { overflow: hidden; height: 100vh; }
+      .pr-wrap { max-width: 1140px; margin: 0 auto; padding-inline: clamp(1.25rem, 5vw, 3.5rem); }
+      .pr-narrow { max-width: 820px; }
+      .ps-mark { color: var(--ps-green); width: 1em; height: auto; vertical-align: -0.15em; }
 
-      /* ---- Gate ---- */
-      .ps-gate { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 1.5rem;
-        background: radial-gradient(120% 90% at 80% 0%, rgba(146,200,62,0.18), transparent 55%), var(--ps-forest); }
-      .ps-gate__card { width: min(440px, 100%); background: #fff; border-radius: 20px; padding: 2.4rem; box-shadow: 0 24px 60px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 0.35rem; }
-      .ps-gate__mark { display: flex; align-items: center; gap: 0.55rem; color: var(--ps-green); font-family: var(--ps-sans); font-weight: 800; font-size: 1.05rem; margin: 0 0 0.9rem; }
-      .ps-gate__mark .ps-mark { width: 30px; height: auto; }
-      .ps-gate__title { font-family: var(--ps-serif); font-weight: 600; font-size: 1.85rem; line-height: 1.05; margin: 0; color: var(--ps-forest); }
-      .ps-gate__sub { font-size: 0.95rem; color: var(--ps-grey); margin: 0.4rem 0 1.2rem; }
-      .ps-gate__input { width: 100%; box-sizing: border-box; padding: 0.85rem 1.1rem; border-radius: 12px; border: 1px solid var(--ps-line); background: #fff; color: var(--ps-ink); font-family: var(--ps-sans); font-size: 1rem; }
-      .ps-gate__input:focus-visible { outline: 2px solid var(--ps-green); outline-offset: 2px; }
-      .ps-gate__btn { margin-top: 0.8rem; padding: 0.85rem 1.1rem; border: 0; border-radius: 9999px; cursor: pointer; background: var(--ps-green); color: #fff; font-family: var(--ps-sans); font-weight: 800; font-size: 0.95rem; transition: filter 0.15s ease, transform 0.15s ease; }
-      .ps-gate__btn:hover { filter: brightness(1.06); transform: translateY(-1px); }
-      .ps-gate__err { color: var(--ps-red); font-size: 0.85rem; margin: 0.7rem 0 0; }
+      /* Gate */
+      .pr-gate { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 1.5rem;
+        background: radial-gradient(120% 90% at 80% 0%, rgba(1,255,178,0.12), transparent 55%), radial-gradient(120% 90% at 0% 100%, rgba(225,80,71,0.14), transparent 55%), var(--navy); }
+      .pr-gate__card { width: min(440px, 100%); background: #fff; border-radius: 20px; padding: 2.4rem; box-shadow: 0 24px 60px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 0.35rem; }
+      .pr-gate__brand { font-family: var(--sans); font-weight: 800; font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--r-accent); margin: 0 0 0.8rem; }
+      .pr-gate__title { font-family: var(--serif); font-weight: 600; font-size: 1.85rem; line-height: 1.05; margin: 0; color: var(--navy); }
+      .pr-gate__sub { font-size: 0.95rem; color: var(--ink-soft); margin: 0.4rem 0 1.2rem; }
+      .pr-gate__input { width: 100%; box-sizing: border-box; padding: 0.85rem 1.1rem; border-radius: 12px; border: 1px solid var(--line); font-family: var(--sans); font-size: 1rem; color: var(--ink); }
+      .pr-gate__input:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
+      .pr-gate__btn { margin-top: 0.8rem; padding: 0.85rem 1.1rem; border: 0; border-radius: 9999px; cursor: pointer; background: var(--navy); color: #fff; font-family: var(--sans); font-weight: 800; font-size: 0.95rem; }
+      .pr-gate__btn:hover { filter: brightness(1.12); }
+      .pr-gate__err { color: var(--r-accent); font-size: 0.85rem; margin: 0.7rem 0 0; }
 
-      /* ---- Top bar + progress ---- */
-      .ps-top { position: sticky; top: 0; z-index: 40; display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-        padding: 0.7rem clamp(1.25rem, 5vw, 3.5rem); background: rgba(255,255,255,0.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--ps-line); }
-      .ps-top__brand { display: flex; align-items: center; gap: 0.5rem; color: var(--ps-green); font-weight: 800; font-size: 1rem; }
-      .ps-top__brand .ps-mark { width: 26px; height: auto; }
-      .ps-top__pdf { border: 1px solid var(--ps-line); background: #fff; color: var(--ps-forest); font-family: var(--ps-sans); font-weight: 700; font-size: 0.82rem; padding: 0.5rem 1rem; border-radius: 9999px; cursor: pointer; }
-      .ps-top__pdf:hover { background: var(--ps-tint); }
-      .ps-progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 50; background: transparent; }
-      .ps-progress span { display: block; height: 100%; width: 0; background: var(--ps-grass); }
+      /* Top bar + progress */
+      .pr-top { position: sticky; top: 0; z-index: 40; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.7rem clamp(1.25rem, 5vw, 3.5rem); background: rgba(13,32,48,0.96); color: #fff; }
+      .pr-top__brand { font-family: var(--serif); font-weight: 600; font-size: 1.05rem; display: flex; align-items: center; gap: 0.5rem; }
+      .pr-top__for { font-family: var(--sans); font-style: normal; font-weight: 700; font-size: 0.8rem; color: var(--on-dark-soft); display: inline-flex; align-items: center; gap: 0.3rem; }
+      .pr-top__for .ps-mark { color: var(--ps-grass); }
+      .pr-top__pdf { border: 1px solid rgba(255,255,255,0.25); background: transparent; color: #fff; font-family: var(--sans); font-weight: 700; font-size: 0.82rem; padding: 0.5rem 1rem; border-radius: 9999px; cursor: pointer; }
+      .pr-top__pdf:hover { background: rgba(255,255,255,0.1); }
+      .pr-progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 50; }
+      .pr-progress span { display: block; height: 100%; width: 0; background: var(--r-green); }
 
-      /* ---- Type & sections ---- */
-      .ps-mark { color: var(--ps-green); }
-      .ps-kicker { font-family: var(--ps-sans); font-weight: 800; font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ps-green); margin: 0 0 1rem; }
-      .ps-sec { padding-block: clamp(3.25rem, 7vw, 6rem); }
-      .ps-sec--tint { background: var(--ps-tint); }
-      .ps-sec--forest { background: var(--ps-forest); color: #fff; position: relative; overflow: hidden; }
-      .ps-sec h2 { font-family: var(--ps-serif); font-weight: 600; font-size: clamp(1.9rem, 4.2vw, 3rem); line-height: 1.08; letter-spacing: -0.01em; color: var(--ps-forest); margin: 0 0 1.25rem; }
-      .ps-sec--forest h2 { color: #fff; }
-      .ps-sec--forest .ps-kicker { color: var(--ps-grass); }
-      .ps-sec p { font-size: 1.08rem; line-height: 1.65; color: var(--ps-ink); margin: 0 0 1rem; max-width: 70ch; }
-      .ps-sec--forest p { color: rgba(255,255,255,0.86); }
-      .ps-lead { font-size: 1.2rem; color: var(--ps-grey); }
-      .ps-soft { font-size: 0.98rem; color: var(--ps-grey); margin-top: 1.5rem; }
-      .ps-sec--forest .ps-soft { color: rgba(255,255,255,0.7); }
+      /* Type + sections */
+      .pr-kicker { font-family: var(--sans); font-weight: 800; font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--r-accent); margin: 0 0 1rem; }
+      .pr-sec { padding-block: clamp(3.25rem, 7vw, 6rem); background: #fff; }
+      .pr-sec--alt { background: var(--alt); }
+      .pr-sec--dark { background: var(--navy); color: #fff; }
+      .pr-sec h2 { font-family: var(--serif); font-weight: 600; font-size: clamp(1.9rem, 4.2vw, 3rem); line-height: 1.08; letter-spacing: -0.01em; color: var(--navy); margin: 0 0 1.25rem; }
+      .pr-sec--dark h2 { color: #fff; }
+      .pr-sec--dark .pr-kicker { color: var(--r-green); }
+      .pr-sec p { font-size: 1.08rem; line-height: 1.65; color: var(--ink); margin: 0 0 1rem; max-width: 70ch; }
+      .pr-sec--dark p { color: var(--on-dark-soft); }
+      .pr-lead { font-size: 1.2rem; color: var(--ink-soft); }
+      .pr-soft { font-size: 0.98rem; color: var(--ink-soft); margin-top: 1.5rem; }
+      .pr-sec--dark .pr-soft { color: rgba(255,255,255,0.7); }
 
-      /* ---- Hero ---- */
-      .ps-hero { position: relative; background: linear-gradient(160deg, var(--ps-green), var(--ps-forest)); color: #fff; overflow: hidden; padding-block: clamp(4.5rem, 12vw, 9rem); }
-      .ps-hero__heart { position: absolute; right: -6%; top: 50%; transform: translateY(-50%); width: min(60vw, 620px); height: auto; fill: rgba(255,255,255,0.07); }
-      .ps-hero__inner { position: relative; z-index: 1; }
-      .ps-cobrand { display: flex; align-items: center; gap: 0.55rem; font-weight: 800; font-size: 0.9rem; letter-spacing: 0.02em; margin: 0 0 1.75rem; color: #fff; }
-      .ps-cobrand .ps-mark { width: 30px; height: auto; color: #fff; }
-      .ps-hero .ps-kicker { color: var(--ps-grass); }
-      .ps-hero h1 { font-family: var(--ps-serif); font-weight: 600; font-size: clamp(2.4rem, 6.5vw, 4.6rem); line-height: 1.02; letter-spacing: -0.02em; color: #fff; margin: 0; }
-      .ps-hero__sub { font-size: clamp(1.1rem, 2.2vw, 1.4rem); color: #fff; margin: 1.5rem 0 0; }
-      .ps-hero__meta { font-size: 0.95rem; color: rgba(255,255,255,0.75); margin: 0.6rem 0 0; }
-      .ps-tagline { display: inline-block; margin-top: 2rem; font-family: var(--ps-serif); font-style: italic; font-size: 1.3rem; color: var(--ps-grass); }
+      /* Hero */
+      .pr-hero { position: relative; overflow: hidden; color: #fff; padding-block: clamp(4.5rem, 12vw, 9rem);
+        background: radial-gradient(110% 120% at 85% 0%, rgba(1,255,178,0.12), transparent 55%), radial-gradient(90% 120% at 0% 100%, rgba(225,80,71,0.14), transparent 55%), linear-gradient(160deg, #12283a, var(--navy)); }
+      .pr-cobrand { display: flex; align-items: center; flex-wrap: wrap; gap: 0.6rem; margin: 0 0 1.75rem; font-weight: 800; }
+      .pr-cobrand__a { color: #fff; font-size: 0.95rem; letter-spacing: 0.02em; }
+      .pr-cobrand__sep { color: var(--on-dark-soft); font-weight: 600; font-size: 0.85rem; }
+      .pr-cobrand__b { display: inline-flex; align-items: center; gap: 0.35rem; color: #fff; font-size: 0.95rem; }
+      .pr-cobrand__b .ps-mark { color: var(--ps-grass); width: 1.15em; }
+      .pr-hero .pr-kicker { color: var(--r-green); }
+      .pr-hero h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(2.4rem, 6.5vw, 4.6rem); line-height: 1.02; letter-spacing: -0.02em; color: #fff; margin: 0; }
+      .pr-hero__sub { font-size: clamp(1.1rem, 2.2vw, 1.4rem); color: #fff; margin: 1.5rem 0 0; }
+      .pr-hero__meta { font-size: 0.95rem; color: rgba(255,255,255,0.72); margin: 0.6rem 0 0; }
 
-      /* ---- Stats ---- */
-      .ps-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-top: 2.5rem; }
-      .ps-stat { background: var(--ps-forest); color: #fff; border-radius: 16px; padding: 1.75rem 1.5rem; text-align: center; }
-      .ps-stat b { display: block; font-family: var(--ps-serif); font-weight: 600; font-size: clamp(2rem, 5vw, 3rem); color: var(--ps-grass); line-height: 1; }
-      .ps-stat span { display: block; font-size: 0.92rem; color: rgba(255,255,255,0.82); margin-top: 0.5rem; }
-      @media (max-width: 620px) { .ps-stats { grid-template-columns: 1fr; } }
+      /* Stats */
+      .pr-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-top: 2.5rem; }
+      .pr-stat { background: var(--navy); color: #fff; border-radius: 16px; padding: 1.75rem 1.5rem; text-align: center; }
+      .pr-stat b { display: block; font-family: var(--serif); font-weight: 600; font-size: clamp(2rem, 5vw, 3rem); color: var(--r-green); line-height: 1; }
+      .pr-stat span { display: block; font-size: 0.92rem; color: rgba(255,255,255,0.82); margin-top: 0.5rem; }
+      @media (max-width: 620px) { .pr-stats { grid-template-columns: 1fr; } }
 
-      /* ---- Lists ---- */
-      .ps-list { list-style: none; margin: 1.5rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 1.1rem; }
-      .ps-list li { display: flex; gap: 0.9rem; align-items: flex-start; font-size: 1.06rem; line-height: 1.55; color: var(--ps-ink); }
-      .ps-tick { flex: 0 0 auto; width: 18px; height: 18px; margin-top: 0.2rem; fill: var(--ps-green); }
-      .ps-sec--forest .ps-list li { color: rgba(255,255,255,0.9); }
-      .ps-sec--forest .ps-tick { fill: var(--ps-grass); }
+      /* Lists */
+      .pr-list { list-style: none; margin: 1.5rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 1.1rem; }
+      .pr-list li { display: flex; gap: 0.9rem; align-items: flex-start; font-size: 1.06rem; line-height: 1.55; color: var(--ink); }
+      .pr-tick { flex: 0 0 auto; width: 0.55rem; height: 0.55rem; margin-top: 0.55rem; border-radius: 50%; background: var(--r-accent); }
+      .pr-sec--dark .pr-list li { color: rgba(255,255,255,0.9); }
+      .pr-sec--dark .pr-tick { background: var(--r-green); }
 
-      /* ---- Awards ---- */
-      .ps-awards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 1.75rem; }
-      .ps-award { text-align: center; background: #fff; border: 1px solid var(--ps-line); border-radius: 16px; padding: 2rem 1.25rem; }
-      .ps-award img { height: 60px; width: auto; max-width: 70%; object-fit: contain; margin: 0 auto 1.1rem; display: block; }
-      .ps-award b { display: block; font-family: var(--ps-serif); font-weight: 600; font-size: 1.2rem; color: var(--ps-forest); }
-      .ps-award span { display: block; font-size: 0.9rem; color: var(--ps-grey); margin-top: 0.3rem; }
-      @media (max-width: 720px) { .ps-awards { grid-template-columns: 1fr; } }
+      /* Awards */
+      .pr-awards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 1.75rem; }
+      .pr-award { text-align: center; background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 2rem 1.25rem; }
+      .pr-award img { height: 58px; width: auto; max-width: 70%; object-fit: contain; margin: 0 auto 1.1rem; display: block; }
+      .pr-award b { display: block; font-family: var(--serif); font-weight: 600; font-size: 1.2rem; color: var(--navy); }
+      .pr-award span { display: block; font-size: 0.9rem; color: var(--ink-soft); margin-top: 0.3rem; }
+      @media (max-width: 720px) { .pr-awards { grid-template-columns: 1fr; } }
 
-      /* ---- Team ---- */
-      .ps-team { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-top: 1.75rem; }
-      .ps-mem { margin: 0; }
-      .ps-mem img { width: 100%; aspect-ratio: 4/5; object-fit: cover; object-position: center 14%; border-radius: 14px; background: var(--ps-tint); display: block; }
-      .ps-mem b { display: block; font-family: var(--ps-serif); font-weight: 600; font-size: 1.1rem; color: var(--ps-forest); margin-top: 0.7rem; }
-      .ps-mem span { display: block; font-size: 0.88rem; color: var(--ps-grey); }
-      @media (max-width: 820px) { .ps-team { grid-template-columns: repeat(2, 1fr); } }
+      /* Team */
+      .pr-team { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-top: 1.75rem; }
+      .pr-mem img { width: 100%; aspect-ratio: 4/5; object-fit: cover; object-position: center 14%; border-radius: 14px; background: var(--alt); display: block; filter: grayscale(1); }
+      .pr-mem b { display: block; font-family: var(--serif); font-weight: 600; font-size: 1.1rem; color: var(--navy); margin-top: 0.7rem; }
+      .pr-mem span { display: block; font-size: 0.88rem; color: var(--ink-soft); }
+      @media (max-width: 820px) { .pr-team { grid-template-columns: repeat(2, 1fr); } }
 
-      /* ---- Case studies ---- */
-      .ps-cases { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 1.75rem; }
-      .ps-case { background: #fff; border: 1px solid var(--ps-line); border-radius: 16px; padding: 1.9rem; }
-      .ps-case .ps-mark { width: 34px; height: auto; margin-bottom: 1rem; }
-      .ps-case h3 { font-family: var(--ps-serif); font-weight: 600; font-size: 1.35rem; color: var(--ps-forest); margin: 0; }
-      .ps-case__role { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ps-green); margin: 0.3rem 0 0.9rem; }
-      .ps-case p { font-size: 1rem; line-height: 1.6; color: var(--ps-ink); margin: 0; }
-      @media (max-width: 720px) { .ps-cases { grid-template-columns: 1fr; } }
+      /* Cases */
+      .pr-cases { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 1.75rem; }
+      .pr-case { background: var(--alt); border: 1px solid var(--line); border-radius: 16px; padding: 1.9rem; }
+      .pr-case h3 { font-family: var(--serif); font-weight: 600; font-size: 1.35rem; color: var(--navy); margin: 0; }
+      .pr-case__role { font-size: 0.85rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; color: var(--r-accent); margin: 0.3rem 0 0.9rem; }
+      .pr-case p { font-size: 1rem; line-height: 1.6; color: var(--ink); margin: 0; }
+      @media (max-width: 720px) { .pr-cases { grid-template-columns: 1fr; } }
 
-      /* ---- Sitemap tree ---- */
-      .ps-tree { margin: 2rem 0 0; }
-      .ps-tree__home { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--ps-green); color: #fff; font-family: var(--ps-serif); font-weight: 600; font-size: 1.25rem; padding: 0.6rem 1.4rem; border-radius: 12px; }
-      .ps-tree__home .ps-mark { width: 24px; height: auto; color: #fff; }
-      .ps-tree__row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 1.5rem; }
-      .ps-node { background: var(--ps-tint); border: 1px solid var(--ps-line); border-radius: 12px; padding: 1.1rem 1.2rem; }
-      .ps-node b { display: block; font-family: var(--ps-serif); font-weight: 600; font-size: 1.1rem; color: var(--ps-forest); margin-bottom: 0.5rem; }
-      .ps-node--leaf b { margin-bottom: 0; }
-      .ps-node ul { list-style: none; margin: 0; padding: 0; }
-      .ps-node li { font-size: 0.92rem; line-height: 1.6; color: var(--ps-grey); }
-      @media (max-width: 820px) { .ps-tree__row { grid-template-columns: repeat(2, 1fr); } }
+      /* Sitemap tree */
+      .pr-tree { margin: 2rem 0 0; }
+      .pr-tree__home { display: inline-block; background: var(--r-accent); color: #fff; font-family: var(--serif); font-weight: 600; font-size: 1.25rem; padding: 0.55rem 1.6rem; border-radius: 12px; }
+      .pr-tree__row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 1.5rem; }
+      .pr-node { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); border-radius: 12px; padding: 1.1rem 1.2rem; }
+      .pr-node b { display: block; font-family: var(--serif); font-weight: 600; font-size: 1.1rem; color: #fff; margin-bottom: 0.5rem; }
+      .pr-node--leaf b { margin-bottom: 0; }
+      .pr-node ul { list-style: none; margin: 0; padding: 0; }
+      .pr-node li { font-size: 0.92rem; line-height: 1.6; color: var(--on-dark-soft); }
+      @media (max-width: 820px) { .pr-tree__row { grid-template-columns: repeat(2, 1fr); } }
 
-      /* ---- Robotics ---- */
-      .ps-robotics__heart { position: absolute; right: -4%; bottom: -20%; width: min(40vw, 380px); height: auto; fill: rgba(255,255,255,0.06); }
+      /* First look (PharmacyStore-branded mockup) */
+      .pr-firstlook { display: grid; grid-template-columns: 1fr 1.1fr; gap: 2.5rem; align-items: center; }
+      @media (max-width: 860px) { .pr-firstlook { grid-template-columns: 1fr; } }
+      .mock { border-radius: 14px; overflow: hidden; box-shadow: 0 24px 60px rgba(13,32,48,0.18); border: 1px solid var(--line); background: #fff; }
+      .mock__bar { display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 0.9rem; background: #e9eef0; }
+      .mock__dot { width: 10px; height: 10px; border-radius: 50%; background: #c4cdd2; }
+      .mock__url { margin-left: 0.75rem; font-size: 0.72rem; color: #6a7884; background: #fff; border-radius: 6px; padding: 0.25rem 0.8rem; }
+      .mock__nav { display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1.2rem; background: #fff; }
+      .mock__logo { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--ps-green); font-weight: 800; font-size: 0.95rem; }
+      .mock__logo .ps-mark { width: 1.3em; }
+      .mock__links { font-size: 0.78rem; color: var(--ps-forest); font-weight: 600; }
+      .mock__hero { position: relative; overflow: hidden; background: linear-gradient(150deg, var(--ps-green), var(--ps-forest)); color: #fff; padding: 2.4rem 1.6rem 2.6rem; }
+      .mock__heart { position: absolute; right: -8%; bottom: -30%; width: 55%; height: auto; fill: rgba(255,255,255,0.1); }
+      .mock__herotext { position: relative; z-index: 1; }
+      .mock__tag { font-family: var(--serif); font-style: italic; color: var(--ps-grass); font-size: 0.95rem; margin: 0 0 0.5rem; }
+      .mock__hero h4 { font-family: var(--serif); font-weight: 600; font-size: clamp(1.3rem, 3vw, 1.9rem); line-height: 1.1; margin: 0 0 1.1rem; color: #fff; max-width: 16ch; }
+      .mock__btn { display: inline-block; background: #fff; color: var(--ps-forest); font-weight: 800; font-size: 0.8rem; padding: 0.6rem 1.2rem; border-radius: 9999px; }
+      .mock__tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; padding: 1rem; background: #fff; }
+      .mock__tiles span { background: #EAF3EC; color: var(--ps-forest); font-weight: 700; font-size: 0.78rem; text-align: center; padding: 0.9rem 0.4rem; border-radius: 10px; border: 1px solid #d7e7dc; }
 
-      /* ---- Tables ---- */
-      .ps-tablewrap { margin-top: 1.75rem; overflow-x: auto; border: 1px solid var(--ps-line); border-radius: 16px; }
-      .ps-table { width: 100%; border-collapse: collapse; min-width: 640px; background: #fff; }
-      .ps-table th, .ps-table td { text-align: left; padding: 1rem 1.15rem; vertical-align: top; font-size: 0.98rem; line-height: 1.45; border-top: 1px solid var(--ps-line); }
-      .ps-table thead th { background: var(--ps-forest); color: #fff; font-family: var(--ps-sans); font-weight: 800; font-size: 0.9rem; border: 0; }
-      .ps-table tbody th { color: var(--ps-green); font-weight: 800; width: 22%; }
-      .ps-table td { color: var(--ps-ink); }
-      .ps-table--int tbody th { width: 26%; color: var(--ps-forest); font-family: var(--ps-serif); font-weight: 600; font-size: 1.02rem; }
-      .ps-tag { display: inline-block; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.25rem 0.7rem; border-radius: 9999px; white-space: nowrap; }
-      .ps-tag--core { background: rgba(0,127,64,0.12); color: var(--ps-green); }
-      .ps-tag--addon { background: rgba(225,37,27,0.12); color: var(--ps-red); }
+      /* Robotics */
+      .pr-robotics { position: relative; }
 
-      .ps-rec { display: flex; gap: 1.1rem; margin-top: 1.75rem; background: var(--ps-tint); border-radius: 16px; padding: 1.6rem 1.75rem; }
-      .ps-rec .ps-mark { flex: 0 0 auto; width: 34px; height: auto; margin-top: 0.2rem; }
-      .ps-rec b { display: block; font-family: var(--ps-serif); font-weight: 600; font-size: 1.2rem; color: var(--ps-forest); margin-bottom: 0.4rem; }
-      .ps-rec p { margin: 0; }
+      /* Tables */
+      .pr-tablewrap { margin-top: 1.75rem; overflow-x: auto; border: 1px solid var(--line); border-radius: 16px; }
+      .pr-table { width: 100%; border-collapse: collapse; min-width: 640px; background: #fff; }
+      .pr-table th, .pr-table td { text-align: left; padding: 1rem 1.15rem; vertical-align: top; font-size: 0.98rem; line-height: 1.45; border-top: 1px solid var(--line); }
+      .pr-table thead th { background: var(--navy); color: #fff; font-weight: 800; font-size: 0.9rem; border: 0; }
+      .pr-table tbody th { color: var(--r-accent); font-weight: 800; width: 22%; }
+      .pr-table td { color: var(--ink); }
+      .pr-table--int tbody th { width: 26%; color: var(--navy); font-family: var(--serif); font-weight: 600; font-size: 1.02rem; }
+      .pr-tag { display: inline-block; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.25rem 0.7rem; border-radius: 9999px; white-space: nowrap; }
+      .pr-tag--core { background: rgba(1,255,178,0.18); color: #0a7d59; }
+      .pr-tag--addon { background: rgba(225,80,71,0.14); color: var(--r-accent); }
+      .pr-rec { margin-top: 1.75rem; background: var(--alt); border-left: 4px solid var(--r-green); border-radius: 12px; padding: 1.5rem 1.75rem; }
+      .pr-rec b { display: block; font-family: var(--serif); font-weight: 600; font-size: 1.2rem; color: var(--navy); margin-bottom: 0.4rem; }
+      .pr-rec p { margin: 0; }
 
-      /* ---- Timeline ---- */
-      .ps-timeline { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.25rem; margin: 2rem 0 0; position: relative; }
-      .ps-timeline::before { content: ""; position: absolute; top: 22px; left: 10%; right: 10%; height: 2px; background: rgba(255,255,255,0.2); }
-      .ps-step { text-align: center; position: relative; }
-      .ps-step__n { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: var(--ps-grass); color: var(--ps-forest); font-family: var(--ps-serif); font-weight: 700; font-size: 1.1rem; position: relative; z-index: 1; }
-      .ps-step b { display: block; font-family: var(--ps-serif); font-weight: 600; font-size: 1.05rem; color: #fff; margin-top: 0.9rem; line-height: 1.15; }
-      .ps-step__wk { display: block; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ps-grass); margin: 0.4rem 0; }
-      .ps-step p { font-size: 0.9rem; line-height: 1.4; color: rgba(255,255,255,0.8); margin: 0; }
-      @media (max-width: 820px) { .ps-timeline { grid-template-columns: 1fr 1fr; gap: 1.75rem; } .ps-timeline::before { display: none; } }
+      /* Timeline */
+      .pr-timeline { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.25rem; margin: 2rem 0 0; position: relative; }
+      .pr-timeline::before { content: ""; position: absolute; top: 22px; left: 10%; right: 10%; height: 2px; background: rgba(255,255,255,0.2); }
+      .pr-step { text-align: center; position: relative; }
+      .pr-step__n { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: var(--r-green); color: var(--navy); font-family: var(--serif); font-weight: 700; font-size: 1.1rem; position: relative; z-index: 1; }
+      .pr-step b { display: block; font-family: var(--serif); font-weight: 600; font-size: 1.05rem; color: #fff; margin-top: 0.9rem; line-height: 1.15; }
+      .pr-step__wk { display: block; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; color: var(--r-green); margin: 0.4rem 0; }
+      .pr-step p { font-size: 0.9rem; line-height: 1.4; color: rgba(255,255,255,0.8); margin: 0; }
+      @media (max-width: 820px) { .pr-timeline { grid-template-columns: 1fr 1fr; gap: 1.75rem; } .pr-timeline::before { display: none; } }
 
-      /* ---- Wireframe explainer ---- */
-      .ps-wf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: center; margin-top: 3rem; }
-      .ps-wf-text h3 { font-family: var(--ps-serif); font-weight: 600; font-size: 1.6rem; color: #fff; margin: 0 0 0.8rem; }
-      .ps-wf { background: #fff; border-radius: 14px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.85rem; box-shadow: 0 16px 40px rgba(0,0,0,0.25); }
-      .ps-wf__bar { display: flex; align-items: center; gap: 0.6rem; }
-      .ps-wf__logo, .ps-wf__nav, .ps-wf__btn, .ps-wf__img, .ps-wf__cta, .ps-wf__lines span, .ps-wf__cards span { background: #d9dde1; border-radius: 5px; display: block; }
-      .ps-wf__logo { width: 84px; height: 20px; }
-      .ps-wf__nav { width: 48px; height: 12px; }
-      .ps-wf__btn { width: 60px; height: 22px; margin-left: auto; background: #c2c8ce; }
-      .ps-wf__hero { display: flex; gap: 1rem; }
-      .ps-wf__lines { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 0.6rem; }
-      .ps-wf__lines span { height: 14px; }
-      .ps-wf__lines span:nth-child(1) { width: 90%; }
-      .ps-wf__lines span:nth-child(2) { width: 65%; }
-      .ps-wf__cta { width: 100px; height: 26px; margin-top: 0.5rem; background: var(--ps-green); }
-      .ps-wf__img { width: 42%; min-height: 110px; }
-      .ps-wf__cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.7rem; }
-      .ps-wf__cards span { height: 56px; }
-      @media (max-width: 820px) { .ps-wf-row { grid-template-columns: 1fr; gap: 1.5rem; } }
+      /* Journey (what to expect) */
+      .pr-jlead { font-size: 1.15rem; color: var(--on-dark-soft); margin-top: 0.4rem; }
+      .pr-journey { margin-top: 2.75rem; }
+      .pr-jstep { display: grid; grid-template-columns: 48px 1fr; gap: 1.5rem; }
+      .pr-jrail { display: flex; flex-direction: column; align-items: center; }
+      .pr-jnum { flex: 0 0 auto; width: 48px; height: 48px; border-radius: 50%; background: var(--r-green); color: var(--navy); font-family: var(--serif); font-weight: 700; font-size: 1.25rem; display: flex; align-items: center; justify-content: center; }
+      .pr-jline { width: 2px; flex: 1 1 auto; background: rgba(255,255,255,0.18); margin: 0.4rem 0; min-height: 1.5rem; }
+      .pr-jbody { padding-bottom: 2.75rem; }
+      .pr-jstep:last-child .pr-jbody { padding-bottom: 0; }
+      .pr-jweek { display: inline-block; font-size: 0.74rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--r-green); background: rgba(1,255,178,0.12); padding: 0.25rem 0.75rem; border-radius: 9999px; }
+      .pr-jbody h3 { font-family: var(--serif); font-weight: 600; font-size: clamp(1.4rem, 3vw, 1.95rem); color: #fff; margin: 0.7rem 0 0.6rem; line-height: 1.1; }
+      .pr-jbody p { color: rgba(255,255,255,0.82); max-width: 64ch; }
+      .pr-jwire { display: grid; grid-template-columns: 1.15fr 1fr; gap: 1.5rem; align-items: center; margin-top: 1.5rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 1.4rem; }
+      .pr-jwire__cap { font-size: 0.92rem; color: rgba(255,255,255,0.78); margin: 0; max-width: none; }
+      .pr-jwire__cap b { color: #fff; }
+      @media (max-width: 720px) { .pr-jwire { grid-template-columns: 1fr; } }
 
-      /* ---- Close ---- */
-      .ps-close__heart { position: absolute; left: -4%; bottom: -25%; width: min(48vw, 460px); height: auto; fill: rgba(255,255,255,0.06); }
-      .ps-contact { margin-top: 1.5rem; }
-      .ps-contact a { color: var(--ps-grass); text-decoration: none; }
-      .ps-sign { font-family: var(--ps-serif); font-size: 1.2rem; color: #fff; margin-top: 1.75rem; }
-      .ps-sign span { font-family: var(--ps-sans); font-size: 0.95rem; color: rgba(255,255,255,0.75); }
+      /* Wireframe (PS-green CTA as a touch) */
+      .pr-wf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: center; margin-top: 3rem; }
+      .pr-wf-text h3 { font-family: var(--serif); font-weight: 600; font-size: 1.6rem; color: #fff; margin: 0 0 0.8rem; }
+      .pr-wf { background: #fff; border-radius: 14px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.85rem; box-shadow: 0 16px 40px rgba(0,0,0,0.25); }
+      .pr-wf__bar { display: flex; align-items: center; gap: 0.6rem; }
+      .pr-wf__logo, .pr-wf__nav, .pr-wf__btn, .pr-wf__img, .pr-wf__cta, .pr-wf__lines span, .pr-wf__cards span { background: #d9dde1; border-radius: 5px; display: block; }
+      .pr-wf__logo { width: 84px; height: 20px; }
+      .pr-wf__nav { width: 48px; height: 12px; }
+      .pr-wf__btn { width: 60px; height: 22px; margin-left: auto; background: #c2c8ce; }
+      .pr-wf__hero { display: flex; gap: 1rem; }
+      .pr-wf__lines { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 0.6rem; }
+      .pr-wf__lines span { height: 14px; }
+      .pr-wf__lines span:nth-child(1) { width: 90%; }
+      .pr-wf__lines span:nth-child(2) { width: 65%; }
+      .pr-wf__cta { width: 100px; height: 26px; margin-top: 0.5rem; background: var(--ps-green); }
+      .pr-wf__img { width: 42%; min-height: 110px; }
+      .pr-wf__cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.7rem; }
+      .pr-wf__cards span { height: 56px; }
+      @media (max-width: 820px) { .pr-wf-row { grid-template-columns: 1fr; gap: 1.5rem; } }
 
-      .ps-foot { background: #06281a; color: rgba(255,255,255,0.6); font-size: 0.82rem; padding: 1.5rem 0; text-align: center; }
+      /* Close */
+      .pr-contact { margin-top: 1.5rem; }
+      .pr-contact a { color: var(--r-green); text-decoration: none; }
+      .pr-sign { font-family: var(--serif); font-size: 1.2rem; color: #fff; margin-top: 1.75rem; }
+      .pr-sign span { font-family: var(--sans); font-size: 0.95rem; color: rgba(255,255,255,0.75); }
+      .pr-forclient { display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 2rem; font-size: 0.9rem; color: var(--on-dark-soft); }
+      .pr-forclient .ps-mark { color: var(--ps-grass); width: 1.3em; }
+
+      .pr-foot { background: #081521; color: rgba(255,255,255,0.6); font-size: 0.82rem; padding: 1.5rem 0; text-align: center; }
 
       @media print {
         @page { margin: 14mm; }
-        .ps-gate, .ps-top, .ps-progress { display: none !important; }
-        .ps-body { overflow: visible; }
-        .ps-sec, .ps-hero { break-inside: avoid; }
-        .ps-sec--forest, .ps-hero, .ps-stat { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .pr-gate, .pr-top, .pr-progress { display: none !important; }
+        .pr-body { overflow: visible; }
+        .pr-sec, .pr-hero { break-inside: avoid; }
+        .pr-sec--dark, .pr-hero, .pr-stat, .mock__hero { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       }
     </style>
   </body>
