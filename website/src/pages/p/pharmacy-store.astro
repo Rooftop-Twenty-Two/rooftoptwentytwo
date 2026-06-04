@@ -93,16 +93,16 @@ const homepageMock = `<div class="mock">
   </div></div>`;
 
 const journey = [
-  { wk: "Week 1", t: "Discovery &amp; strategy", p: "We sit down together at our Dublin offices and get into your business objectives. We agree goals, audience and the shape of your online presence.",
-    inv: ["A working session on your goals, audience and priorities", "A look at how leading pharmacies worldwide present services and booking", "A review of your current content, stripping the dated and Covid-era pages", "Agreement on the shape of the site and a first-draft sitemap"], d: "a clear brief and project plan." },
-  { wk: "Weeks 2&ndash;3", t: "Wireframe", p: "We walk you through a full, interactive wireframe. You click through the structure and functionality yourself, including the booking engine, so you understand exactly how the site works before any design. Nothing proceeds until you sign it off.",
+  { wk: "Week 1", t: "Discovery &amp; strategy", p: "We meet at our Dublin offices to understand your business objectives in depth. Together we agree your goals, your audience and the shape of your online presence.",
+    inv: ["A working session on your goals, audience and commercial priorities", "Industry and market research: the Irish pharmacy landscape, the demand for private services such as vaccinations, health checks and weight management, and where the strongest booking opportunities sit", "Competitor and best-practice benchmarking, including how leading pharmacy groups in Ireland and abroad present services and convert visitors into bookings", "A review of your current content, removing the dated and Covid-era pages", "Agreement on the shape of the site and a first-draft sitemap"], d: "a research-informed brief and project plan." },
+  { wk: "Weeks 2&ndash;3", t: "Wireframe", p: "We walk you through a full, interactive wireframe. You click through the structure and functionality yourself, including the booking engine, so you understand exactly how the site works before any design begins. Nothing proceeds until you have signed it off.",
     inv: ["A clickable wireframe of every key page", "The booking journey mapped out, so you can test it", "Structure for services, the five locations and health advice", "Your feedback built in, then sign-off before any design"], d: "a signed-off interactive wireframe.", wire: true },
-  { wk: "Weeks 3&ndash;5", t: "Visual design", p: "We bring the new brand to life through design, video and imagery, starting with the homepage and working through the key templates.",
-    inv: ["The Tap brand carried through every template", "Homepage and key page designs", "Direction for photography and video from your shops and team", "Pharmacist profiles and trust signals designed in"], d: "signed-off designs across key templates." },
+  { wk: "Weeks 3&ndash;5", t: "Visual design", p: "We bring the new brand to life through design, video and imagery, beginning with the homepage and working through the key templates.",
+    inv: ["The Tap brand carried through every template", "Homepage and key page designs", "Direction for photography and video from your shops and team", "Pharmacist profiles and trust signals designed in"], d: "signed-off designs across the key templates." },
   { wk: "Weeks 5&ndash;8", t: "Build &amp; staging", p: "We build the full site on a private staging link, so you can watch it come together and try it for yourself.",
-    inv: ["The full site built on a private staging link", "A simple CMS so your team can update hours, services and offers", "The booking engine connected and working", "SEO foundations per service and location, plus core integrations"], d: "the complete site, ready to review." },
-  { wk: "Weeks 8&ndash;10", t: "QA &amp; launch", p: "A smooth, well-drilled process we have perfected. We test, fix anything that needs it, then launch, moving quickly to land on time.",
-    inv: ["Testing across phones, tablets and browsers", "Accessibility and performance checks, so hours and locations load instantly", "A final content pass and a short training session for your team", "A planned go-live, then we stay close after launch"], d: "a live site, training, and our support." },
+    inv: ["The full site built on a private staging link", "A straightforward CMS, so your team can update hours, services and offers", "The booking engine connected and working", "SEO foundations per service and location, plus the core integrations"], d: "the complete site, ready to review." },
+  { wk: "Weeks 8&ndash;10", t: "QA &amp; launch", p: "A smooth, well-drilled process we have refined over many launches. We test, resolve anything that needs it, then launch, moving quickly to land on time.",
+    inv: ["Testing across phones, tablets and browsers", "Accessibility and performance checks, so hours and locations load instantly", "A final content pass and a short training session for your team", "A planned go-live, with close support after launch"], d: "a live site, training, and our ongoing support." },
 ];
 const WIRE_HTML = '<div class="pr-jwire"><div class="pr-wf"><div class="pr-wf__bar"><span class="pr-wf__logo"></span><span class="pr-wf__nav"></span><span class="pr-wf__nav"></span><span class="pr-wf__btn"></span></div><div class="pr-wf__hero"><div class="pr-wf__lines"><span></span><span></span><span class="pr-wf__cta"></span></div><div class="pr-wf__img"></div></div><div class="pr-wf__cards"><span></span><span></span><span></span></div></div><p class="pr-jwire__cap"><b>What a wireframe is:</b> the blueprint of a page. Grey boxes, no colour yet, so we agree what goes where before any design. Quicker to move a box than redo a finished design.</p></div>';
 const jStep = (s: any, i: number) => {
@@ -133,9 +133,9 @@ const content = `
 <section class="pr-sec">
   <div class="pr-wrap pr-narrow">
     ${kicker("Introduction")}
-    <h2>You have done the hard part with Tap.</h2>
-    <p>The brand is fresh, the shops are being revamped and the new photography is in place. The website is the last piece still looking five years old, and that is where we come in.</p>
-    <p>We work with a lot of medical and healthcare clients, from consultants and clinics to care organisations. That matters here, because moving off e-commerce to a service and information site is exactly the kind of build where trust and clear booking count more than selling a product off a shelf.</p>
+    <h2>The brand is ready. The website is the last piece.</h2>
+    <p>You have done the difficult part with Tap. The brand is fresh, the shops are being revamped and the new photography is in place. The website is the one element still looking five years old, and that is where we come in.</p>
+    <p>We work extensively with medical and healthcare clients, from consultants and clinics to care organisations. That experience matters here. Moving off e-commerce to a service and information site is precisely the kind of build where trust and a clear path to booking count for far more than selling a product off a shelf.</p>
   </div>
   <div class="pr-wrap"><figure class="pr-photo"><img src="/images/office/office-collab-01.jpg" alt="The Rooftop Twenty Two team at work" loading="lazy"/></figure></div>
 </section>
@@ -144,9 +144,9 @@ const content = `
 <section class="pr-sec pr-sec--alt">
   <div class="pr-wrap pr-narrow">
     ${kicker("About us")}
-    <h2>A senior, in-house team that ships.</h2>
-    <p>Rooftop Twenty Two is a web design and digital marketing agency in Dublin. We are a team of 14, with offices in Glasnevin and a second at the Beacon, and in-house teams across web design and development, SEO, paid social, video and content. We produce 20 to 30 websites a year and finish on time.</p>
-    <p>We also work closely with brand studios like Tap, carrying their work through into the live site, so the move from your new brand into the website will be clean and consistent.</p>
+    <h2>An experienced in-house team, accountable from strategy to launch.</h2>
+    <p>Rooftop Twenty Two is a web design and digital marketing agency in Dublin. We are a team of 14, with offices in Glasnevin and a second at the Beacon, and in-house teams across web design and development, SEO, paid social, video and content. We produce 20 to 30 websites a year, and we deliver on time.</p>
+    <p>We also work closely with brand studios such as Tap, carrying their work through into the live site. The move from your new brand into the finished website will be clean and consistent.</p>
   </div>
   <div class="pr-wrap pr-stats">
     <div class="pr-stat"><b>14</b><span>people in the team</span></div>
@@ -160,15 +160,15 @@ const content = `
 <section class="pr-sec">
   <div class="pr-wrap">
     ${kicker("Our expertise")}
-    <h2>Built for a service-led pharmacy site.</h2>
+    <h2>Capability built for a service-led pharmacy site.</h2>
     <div class="pr-exp">
-      <div class="pr-expcard"><span class="pr-expnum">01</span><h3>Website design &amp; development</h3><p>Strategy, design and build of fast, modern sites, with the Tap brand carried through every page.</p></div>
-      <div class="pr-expcard"><span class="pr-expnum">02</span><h3>Booking &amp; service platforms</h3><p>Clear, simple booking for vaccinations, health checks, weight management and more, off the shelf or bespoke.</p></div>
-      <div class="pr-expcard"><span class="pr-expnum">03</span><h3>Local SEO, content &amp; video</h3><p>Ranking each service and location locally, with photo and video from your shops, produced in-house.</p></div>
+      <div class="pr-expcard"><span class="pr-expnum">01</span><h3>Website design &amp; development</h3><p>Strategy, design and build of fast, modern websites, with the Tap brand carried through every page.</p></div>
+      <div class="pr-expcard"><span class="pr-expnum">02</span><h3>Booking &amp; service platforms</h3><p>Clear, straightforward booking for vaccinations, health checks, weight management and more, off the shelf or bespoke.</p></div>
+      <div class="pr-expcard"><span class="pr-expnum">03</span><h3>Local SEO, content &amp; video</h3><p>Ranking each service and location locally, supported by photography and video from your shops, produced in-house.</p></div>
     </div>
     <div class="pr-spec">
-      <div class="pr-spec__col"><h4>Industry specialism</h4><p>Healthcare &amp; medical, from consultants and clinics to care organisations, alongside retail, hospitality and charity.</p></div>
-      <div class="pr-spec__col"><h4>How we work</h4><p>Award-winning design and development in-house, certified across Google and Meta's platforms. The people who strategise are the people who ship.</p></div>
+      <div class="pr-spec__col"><h4>Industry specialism</h4><p>Healthcare and medical, from consultants and clinics to care organisations, alongside retail, hospitality and charity.</p></div>
+      <div class="pr-spec__col"><h4>How we work</h4><p>Award-winning design and development, all in-house, and certified across Google and Meta's platforms. The people who set the strategy are the people who deliver it.</p></div>
     </div>
   </div>
 </section>
@@ -179,15 +179,15 @@ const content = `
 <section class="pr-sec pr-sec--alt">
   <div class="pr-wrap pr-narrow">
     ${kicker("Our thinking for your site")}
-    <h2>What the new site should do.</h2>
+    <h2>Our recommendations for the new site.</h2>
     ${list([
-      "Move off e-commerce to a service and information platform. The site becomes a customer service tool that works 24/7.",
-      "Put services and booking front and centre: vaccinations, health checks, weight management and minor ailments, each with its own page and a clear way to book.",
+      "Move off e-commerce to a service and information platform. The site becomes a customer service tool that works around the clock.",
+      "Put services and booking front and centre: vaccinations, health checks, weight management and minor ailments, each with its own page and a clear route to book.",
       "Position the group as a community health hub, reflecting the expanding role of the pharmacist.",
-      "Present the five pharmacies properly, each with its own page. Hours and locations load instantly.",
-      "Strip the dated, Covid-era content and run the Tap brand and photography throughout.",
+      "Present the five pharmacies properly, each with its own page. Opening hours and locations load instantly.",
+      "Remove the dated, Covid-era content and carry the Tap brand and photography throughout.",
       "Build SEO in from day one, so each service and location ranks locally.",
-      "Tell the automation and robotics story as a point of difference.",
+      "Tell the automation and robotics story as a clear point of difference.",
     ])}
   </div>
 </section>
@@ -196,7 +196,7 @@ const content = `
 <section class="pr-sec pr-sec--dark">
   <div class="pr-wrap">
     ${kicker("Potential sitemap")}
-    <h2>A first-draft structure to react to.</h2>
+    <h2>A first-draft structure for discussion.</h2>
     <div class="pr-tree">
       <div class="pr-tree__home">Home</div>
       <div class="pr-tree__row">
@@ -217,19 +217,19 @@ const content = `
 <section class="pr-sec">
   <div class="pr-wrap">
     ${kicker("The booking engine")}
-    <h2>Bespoke vs off the shelf.</h2>
-    <p class="pr-lead">Booking is the heart of the new site. The right choice depends on how much control you want and how it connects to your other systems.</p>
+    <h2>Choosing the booking engine: bespoke or off the shelf.</h2>
+    <p class="pr-lead">Booking is the heart of the new site. The right choice depends on how much control you want, and on how booking needs to connect to your other systems.</p>
     <div class="pr-tablewrap"><table class="pr-table">
       <thead><tr><th></th><th>Off the shelf</th><th>Bespoke</th></tr></thead>
       <tbody>
         <tr><th>What it is</th><td>A proven tool (Acuity or Bookly) styled to your brand.</td><td>A system we build around your services and five locations.</td></tr>
-        <tr><th>Speed &amp; cost</th><td>Faster, lower cost. A monthly fee per location.</td><td>Higher upfront, no recurring third-party fee.</td></tr>
-        <tr><th>Look &amp; feel</th><td>Styled to brand, sits slightly apart.</td><td>Matches the site exactly, one experience.</td></tr>
-        <tr><th>Flexibility</th><td>Great for standard booking.</td><td>Built around exactly how you work.</td></tr>
-        <tr><th>Maintenance</th><td>By the provider.</td><td>Owned by you, with our support.</td></tr>
+        <tr><th>Speed &amp; cost</th><td>Faster, lower cost. A monthly fee per location.</td><td>Higher upfront, with no recurring third-party fee.</td></tr>
+        <tr><th>Look &amp; feel</th><td>Styled to brand, though it sits slightly apart.</td><td>Matches the site exactly, as one experience.</td></tr>
+        <tr><th>Flexibility</th><td>Well suited to standard booking.</td><td>Built around exactly how you work.</td></tr>
+        <tr><th>Maintenance</th><td>Managed by the provider.</td><td>Owned by you, with our support.</td></tr>
       </tbody>
     </table></div>
-    <div class="pr-rec"><b>Our recommendation</b><p>For launch, a strong off-the-shelf engine styled to your brand gets you live faster and covers vaccines and standard appointments well. As your services and automation grow, we can move to a bespoke build. We will scope both at the workshop.</p></div>
+    <div class="pr-rec"><b>Our recommendation</b><p>For launch, a strong off-the-shelf engine styled to your brand gets you live faster and covers vaccinations and standard appointments well. As your services and automation grow, we can move to a bespoke build. We will scope both at the discovery workshop.</p></div>
   </div>
 </section>
 
@@ -238,9 +238,9 @@ const content = `
   <div class="pr-wrap pr-firstlook">
     <div class="pr-firstlook__text">
       ${kicker("A first look")}
-      <h2>Your brand, brought online.</h2>
-      <p>An early, illustrative concept, not a finished design. It shows how we carry the Tap brand straight through: your green, the heart device, the warmth of "caring for your wellbeing", and booking right where people look first.</p>
-      <p class="pr-soft">We design the real thing together, from wireframe to launch.</p>
+      <h2>Your brand, carried online.</h2>
+      <p>An early, illustrative concept, not a finished design. It shows how we carry the Tap brand straight through: your green, the heart device, the warmth of "caring for your wellbeing", and booking placed exactly where people look first.</p>
+      <p class="pr-soft">We design the finished site together, from wireframe to launch.</p>
     </div>
     <div class="pr-firstlook__mock">${homepageMock}</div>
   </div>
@@ -257,7 +257,7 @@ const content = `
         <tr><th>Google Business Profile</th><td>Keeps the five locations, hours and reviews accurate in search and maps.</td><td><span class="pr-tag pr-tag--core">Core</span></td></tr>
         <tr><th>Online reviews</th><td>Pulls your Google reviews onto the site to build trust.</td><td><span class="pr-tag pr-tag--core">Core</span></td></tr>
         <tr><th>Maps &amp; location finder</th><td>Helps people find and route to their nearest pharmacy.</td><td><span class="pr-tag pr-tag--core">Core</span></td></tr>
-        <tr><th>Analytics &amp; tracking</th><td>GA4 and conversion tracking, so we see bookings and improve.</td><td><span class="pr-tag pr-tag--core">Core</span></td></tr>
+        <tr><th>Analytics &amp; tracking</th><td>GA4 and conversion tracking, so we can see bookings and improve.</td><td><span class="pr-tag pr-tag--core">Core</span></td></tr>
         <tr><th>Social media</th><td>Links and feeds across your channels.</td><td><span class="pr-tag pr-tag--core">Core</span></td></tr>
         <tr><th>Pharmacy management system</th><td>Repeat prescription requests into your records.</td><td><span class="pr-tag pr-tag--addon">Add-on</span></td></tr>
         <tr><th>Email marketing</th><td>Newsletter sign-up and campaigns.</td><td><span class="pr-tag pr-tag--addon">Add-on</span></td></tr>
@@ -273,7 +273,7 @@ const content = `
     ${kicker("A point of difference")}
     <h2>The robotics and automation angle.</h2>
     <p>You mentioned you are building toward automation and innovation. Robotic dispensing pushes accuracy close to 100% and handles a large share of daily prescriptions in seconds, which frees your team to spend more time with patients.</p>
-    <p>Boots Ireland and others are already framing it this way. Giving it a home on the site positions the group as forward-looking and helps justify a premium feel. We would love to know where you are with this so we can plan the content properly.</p>
+    <p>Boots Ireland and others are already framing it this way. Giving it a home on the site positions the group as forward-looking and helps justify a premium feel. We would welcome a conversation about where you are with this, so we can plan the content properly.</p>
   </div>
 </section>
 
@@ -281,8 +281,8 @@ const content = `
 <section class="pr-sec pr-sec--dark" style="padding-top:0">
   <div class="pr-wrap">
     ${kicker("Our process · 8 to 10 weeks")}
-    <h2>What to expect, step by step.</h2>
-    <p class="pr-jlead">No surprises. Here is exactly how we work together, and what you get at each stage.</p>
+    <h2>Our process, step by step.</h2>
+    <p class="pr-jlead">A clear, well-drilled process. Here is how we work together, and what you receive at each stage.</p>
     ${journeyHtml}
   </div>
 </section>
@@ -292,7 +292,7 @@ const content = `
   <div class="pr-wrap">
     ${kicker("Relevant case studies")}
     <h2>Healthcare work that maps to yours.</h2>
-    <p class="pr-lead">Clear service information, trust, and an easy path to booking. Tap any project to read more.</p>
+    <p class="pr-lead">Clear service information, trust, and an easy path to booking. Select any project to read more.</p>
     ${caseGrid}
     <div class="cs-store">${caseDetails}</div>
   </div>
@@ -312,14 +312,14 @@ const content = `
 
 <!-- 14 · Team highlights -->
 <section class="pr-sec pr-sec--alt">
-  <div class="pr-wrap">${kicker("Team highlights")}<h2>The people behind the work.</h2><p class="pr-lead">A senior leadership team with decades of combined experience across design, development, marketing and operations.</p>${leaderCards}</div>
+  <div class="pr-wrap">${kicker("Team highlights")}<h2>The team behind the work.</h2><p class="pr-lead">A senior leadership team with decades of combined experience across design, development, marketing and operations.</p>${leaderCards}</div>
 </section>
 
 <!-- 15 · Pricing & packages -->
 <section class="pr-sec">
   <div class="pr-wrap">
     ${kicker("Pricing & packages")}
-    <h2>Options built around your priorities.</h2>
+    <h2>Investment, built around your priorities.</h2>
     <div class="pr-pricing">
       <div class="pr-tier"><h3>Website project</h3><p class="pr-tier__price">From €X,000</p><p class="pr-tier__desc">The new service &amp; information site, design to launch.</p><ul><li>Discovery workshop</li><li>Interactive wireframe</li><li>Design, build &amp; QA</li><li>Five location pages</li><li>Launch &amp; training</li></ul></div>
       <div class="pr-tier pr-tier--feature"><span class="pr-tier__badge">Recommended</span><h3>Website + booking</h3><p class="pr-tier__price">From €X,000</p><p class="pr-tier__desc">The site, plus an off-the-shelf booking engine styled to your brand.</p><ul><li>Everything in Website project</li><li>Booking engine, set up &amp; styled</li><li>Core integrations (GBP, reviews, maps, GA4)</li><li>SEO foundations per service</li></ul></div>
@@ -333,12 +333,12 @@ const content = `
 <section class="pr-sec pr-sec--dark pr-close">
   <div class="pr-wrap pr-narrow">
     ${kicker("Next steps")}
-    <h2>We would be delighted to build this with you.</h2>
+    <h2>We would be glad to build this with you.</h2>
     ${list([
       "We send live links and a few examples across medical, retail and innovation.",
-      "We confirm a few details, then put indicative costs together, core build and options set out clearly.",
-      "Once costs are agreed, we bring everyone together for the discovery workshop to lock the detail and final sitemap.",
-      "We get to work. Our typical build runs 8 to 10 weeks, finished on time.",
+      "We confirm a few details, then put indicative costs together, with the core build and options set out clearly.",
+      "Once costs are agreed, we bring everyone together for the discovery workshop to lock the detail and the final sitemap.",
+      "We get to work. Our typical build runs 8 to 10 weeks, delivered on time.",
     ])}
     <p class="pr-contact"><a href="mailto:hey@rooftoptwentytwo.ie">hey@rooftoptwentytwo.ie</a> · +353 1 699 1422 · rooftoptwentytwo.ie</p>
     <p class="pr-sign">Cathal O'Reilly<br/><span>Founder and Managing Director, Rooftop Twenty Two</span></p>
