@@ -8,7 +8,9 @@ import Picture from "../Picture.astro";
 const all = (await getCollection("portfolio")).sort(
   (a, b) => (a.data.order ?? 100) - (b.data.order ?? 100)
 );
-const withHero = all.filter((p) => p.data.heroImage);
+// Kept off the homepage marquee (still live on /work/ and elsewhere).
+const HOMEPAGE_EXCLUDE = new Set(["best4travel", "antaris-consulting"]);
+const withHero = all.filter((p) => p.data.heroImage && !HOMEPAGE_EXCLUDE.has(p.data.slug));
 // Lead with the featured work, then fill by order.
 const cards = [
   ...withHero.filter((p) => p.data.featured),
