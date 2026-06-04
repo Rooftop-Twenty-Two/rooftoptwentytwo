@@ -1,0 +1,484 @@
+---
+// ────────────────────────────────────────────────────────────────────────────
+// Bespoke proposal deck — Pharmacy Store (R. Keating Pharmacy Group).
+// Standalone 16:9 presentation, no site chrome. The slide CONTENT is AES-256-GCM
+// encrypted at build time and only decrypts in the browser once the correct
+// password is entered, so the page source ships ciphertext, not the pitch.
+//
+// Change the password below (PASSWORD) and rebuild to rotate it.
+// noindex + excluded from the sitemap (see astro.config sitemap filter).
+// ────────────────────────────────────────────────────────────────────────────
+import "../../styles/globals.css";
+import crypto from "node:crypto";
+
+const PASSWORD = "rooftop-pharmacy"; // ← change me and rebuild to rotate access
+
+// ---- Slide authoring helpers ----------------------------------------------
+const eyebrow = (t: string) => `<p class="eyebrow">${t}</p>`;
+const bullets = (items: string[]) =>
+  `<ul class="blist">${items.map((i) => `<li><span class="bdot"></span><span>${i}</span></li>`).join("")}</ul>`;
+const slide = (inner: string, cls = "") => `<section class="slide${cls ? " " + cls : ""}">${inner}</section>`;
+
+const slides: string[] = [
+  // 1 — Cover
+  slide(
+    `<div class="cover">
+       ${eyebrow("Proposal · June 2026")}
+       <h1>Pharmacy Store,<br/>online and growing.</h1>
+       <p class="lead">A plan to grow the online pharmacy and bring more of Limerick and Clare through the door.</p>
+       <p class="cover__by">Prepared for the R. Keating Pharmacy Group<br/>by Rooftop Twenty Two</p>
+     </div>`,
+    "slide--cover"
+  ),
+
+  // 2 — Who we are
+  slide(
+    `${eyebrow("Who you'd be working with")}
+     <h2>A senior team that ships.</h2>
+     <p class="lead">We're Rooftop Twenty Two, a website and digital marketing agency in Dublin. Strategy, design, build, and marketing sit in one team, so the people who plan your growth are the people who deliver it.</p>
+     <p class="lead lead--soft">We work with Irish brands that want real results, not activity.</p>`
+  ),
+
+  // 3 — We understand pharmacy
+  slide(
+    `${eyebrow("We get your world")}
+     <h2>Five stores. One online shop.<br/>A lot of trust to protect.</h2>
+     ${bullets([
+       "A group of community pharmacies across Limerick and Clare, from Daarwood in Newcastle West to Ballycasey in Shannon.",
+       "An online shop already shipping across Ireland and the UK, discreetly and on time.",
+       "A regulated, advice-led business where trust and accuracy come first.",
+     ])}`
+  ),
+
+  // 4 — The opportunity
+  slide(
+    `${eyebrow("Where the growth is")}
+     <h2>You've built the foundation. Now we scale it.</h2>
+     ${bullets([
+       "More online sales: turn more visits into baskets, and more baskets into repeat orders.",
+       "More local custom: own “pharmacy near me” across all five catchments.",
+       "More repeat scripts: make reordering a prescription the easy choice.",
+       "More loyalty: bring customers back by email, not by chance.",
+     ])}`
+  ),
+
+  // 5 — Plan overview (pillars)
+  slide(
+    `${eyebrow("The plan")}
+     <h2>Five moving parts, one joined-up engine.</h2>
+     <div class="pgrid">
+       <div class="pcard"><span class="pnum">01</span><h3>Website &amp; online shop</h3><p>Fast, trusted, easy to reorder from.</p></div>
+       <div class="pcard"><span class="pnum">02</span><h3>Local SEO &amp; Google profiles</h3><p>Win every town you serve.</p></div>
+       <div class="pcard"><span class="pnum">03</span><h3>Performance marketing</h3><p>Ads measured on revenue.</p></div>
+       <div class="pcard"><span class="pnum">04</span><h3>Content &amp; social</h3><p>Helpful, human, on-brand.</p></div>
+       <div class="pcard"><span class="pnum">05</span><h3>Email &amp; retention</h3><p>Bring customers back.</p></div>
+     </div>`
+  ),
+
+  // 6 — Website & shop
+  slide(
+    `${eyebrow("01 · Website & online shop")}
+     <h2>A shop that's fast, trusted,<br/>and easy to reorder from.</h2>
+     ${bullets([
+       "Quick, mobile-first, and built to convert, with clear categories and search that actually works.",
+       "Reordering and repeat prescriptions made simple, so customers come back without thinking.",
+       "Trust built in: pharmacist advice, secure checkout, and the plain-packaging promise up front.",
+     ])}`
+  ),
+
+  // 7 — Local SEO
+  slide(
+    `${eyebrow("02 · Found locally")}
+     <h2>Win “pharmacy near me” in every town you serve.</h2>
+     ${bullets([
+       "Five Google Business Profiles, fully optimised and kept current, for Newcastle West, Shannon and beyond.",
+       "Local landing pages and reviews that turn searches into footfall.",
+       "Technical and content SEO so the online shop ranks for what people actually buy.",
+     ])}`
+  ),
+
+  // 8 — Performance
+  slide(
+    `${eyebrow("03 · Turning clicks into baskets")}
+     <h2>Ads that pay for themselves.</h2>
+     ${bullets([
+       "Google Shopping and Search for the products and conditions people look up by name.",
+       "Meta ads to reach local customers and win back people who browsed but didn't buy.",
+       "Measured on revenue and return, not impressions.",
+     ])}`
+  ),
+
+  // 9 — Content & social
+  slide(
+    `${eyebrow("04 · Front of mind")}
+     <h2>Helpful, human, and unmistakably you.</h2>
+     ${bullets([
+       "Seasonal health content that answers real questions and ranks.",
+       "Social that sounds like your pharmacists, not a brochure.",
+       "Photo and video from your stores, produced in-house.",
+     ])}`
+  ),
+
+  // 10 — Email & retention
+  slide(
+    `${eyebrow("05 · Keep them coming back")}
+     <h2>The cheapest sale is the next one.</h2>
+     ${bullets([
+       "Email and loyalty that prompt repeat orders and reviews.",
+       "Win-back flows for customers who've drifted.",
+       "Offers timed to the season, from hayfever to cold and flu.",
+     ])}`
+  ),
+
+  // 11 — Proof
+  slide(
+    `${eyebrow("Proof")}
+     <h2>Work we're proud of.</h2>
+     <blockquote class="quote">“It's a pleasure to work with such a creative, innovative and supportive team, from rebuilding our website to producing video that captures what we do.”<cite>Fiona Monahan, Bloomfield Health Services</cite></blockquote>
+     <p class="lead lead--soft">Health, hospitality, and e-commerce brands across Ireland, including Bloomfield Health Services, Heart Rhythm Cardiology, and Best4Travel, where our work drives 30+ leads a day.</p>`
+  ),
+
+  // 12 — How we work
+  slide(
+    `${eyebrow("How we work")}
+     <h2>One team, accountable to outcomes.</h2>
+     ${bullets([
+       "Senior, in-house people. The strategists ship the work.",
+       "Clear monthly reporting tied to revenue, ranked keywords, and footfall.",
+       "Allergic to overselling. We sell the outcome, never the hours.",
+     ])}`
+  ),
+
+  // 13 — Phased plan
+  slide(
+    `${eyebrow("How we'd start")}
+     <h2>A simple, phased path.</h2>
+     <div class="phases">
+       <div class="phase"><span class="ph">Phase 1</span><span class="pt">Months 1–2</span><p>Foundations. Audit the shop, fix the local profiles, land the quick wins.</p></div>
+       <div class="phase"><span class="ph">Phase 2</span><span class="pt">Months 2–4</span><p>Growth. SEO and ads live, the content cadence begins.</p></div>
+       <div class="phase"><span class="ph">Phase 3</span><span class="pt">Months 4+</span><p>Retention. Email, loyalty, and compounding returns.</p></div>
+     </div>
+     <p class="note">Shaped together after a short discovery call.</p>`
+  ),
+
+  // 14 — Investment
+  slide(
+    `${eyebrow("Investment")}
+     <h2>Built around your priorities.</h2>
+     <p class="lead">We'll firm up the numbers after a short discovery call, once we know what to tackle first. As a guide, engagements are usually structured as:</p>
+     ${bullets([
+       "A foundations project: website and local set-up, one-off.",
+       "A growth retainer: SEO, ads, content, and email, monthly.",
+       "Always honest about what moves the needle first.",
+     ])}
+     <p class="note">Indicative structure. Final figures confirmed after discovery.</p>`
+  ),
+
+  // 15 — Next steps
+  slide(
+    `<div class="cover">
+       ${eyebrow("Next steps")}
+       <h2>Let's pick the first win.</h2>
+       <p class="lead">Give us 30 minutes. We'll come back with a focused first phase and clear numbers.</p>
+       <p class="contact"><a href="mailto:hey@rooftoptwentytwo.ie">hey@rooftoptwentytwo.ie</a> · +353 1 699 1422 · rooftoptwentytwo.ie</p>
+       <p class="cover__by">Thank you.</p>
+     </div>`,
+    "slide--cover"
+  ),
+];
+
+// ---- Encrypt the assembled slides (AES-256-GCM via PBKDF2-derived key) -------
+const slidesHtml = slides.join("");
+const salt = crypto.randomBytes(16);
+const iv = crypto.randomBytes(12);
+const key = crypto.pbkdf2Sync(PASSWORD, salt, 150000, 32, "sha256");
+const cipher = crypto.createCipheriv("aes-256-gcm", key, iv);
+const ciphertext = Buffer.concat([cipher.update(slidesHtml, "utf8"), cipher.final()]);
+const tag = cipher.getAuthTag();
+// Browser SubtleCrypto expects the auth tag appended to the ciphertext.
+const payload = JSON.stringify({
+  s: salt.toString("base64"),
+  i: iv.toString("base64"),
+  c: Buffer.concat([ciphertext, tag]).toString("base64"),
+});
+const slideCount = slides.length;
+---
+
+<!doctype html>
+<html lang="en" class="deck-html">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Proposal — Pharmacy Store</title>
+    <link rel="preload" href="/fonts/butler-bold.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/mulish-variable.woff2" as="font" type="font/woff2" crossorigin />
+  </head>
+  <body class="deck-body">
+    <!-- Password gate -->
+    <div class="deck-gate" id="deck-gate">
+      <form class="gate__card" id="gate-form" autocomplete="off">
+        <p class="gate__brand">Rooftop Twenty Two</p>
+        <h1 class="gate__title">Proposal for Pharmacy Store</h1>
+        <p class="gate__sub">Enter the password to view the deck.</p>
+        <input class="gate__input" id="gate-input" type="password" placeholder="Password" aria-label="Password" autofocus />
+        <button class="gate__btn" type="submit">View proposal</button>
+        <p class="gate__error" id="gate-error" hidden>That password isn't right. Try again.</p>
+      </form>
+    </div>
+
+    <!-- Deck -->
+    <div class="deck-viewport" id="deck-viewport">
+      <div class="deck-stage" id="deck-stage" aria-live="polite"></div>
+    </div>
+
+    <!-- Controls -->
+    <div class="deck-nav" id="deck-nav" hidden>
+      <button class="nbtn" id="nav-prev" aria-label="Previous slide">&larr;</button>
+      <span class="ncount"><span id="nav-cur">1</span> / <span id="nav-total">{slideCount}</span></span>
+      <button class="nbtn" id="nav-next" aria-label="Next slide">&rarr;</button>
+      <button class="nbtn nbtn--text" id="nav-print" aria-label="Download as PDF">PDF</button>
+      <button class="nbtn nbtn--text" id="nav-full" aria-label="Toggle fullscreen">Full</button>
+    </div>
+
+    <div class="deck-progress" id="deck-progress" hidden><span id="deck-progress-bar"></span></div>
+
+    <script type="application/json" id="deck-data" set:html={payload}></script>
+
+    <script>
+      const dataEl = document.getElementById("deck-data");
+      const payload = JSON.parse(dataEl?.textContent || "{}");
+      const gate = document.getElementById("deck-gate");
+      const form = document.getElementById("gate-form") as HTMLFormElement | null;
+      const input = document.getElementById("gate-input") as HTMLInputElement | null;
+      const errEl = document.getElementById("gate-error");
+      const stage = document.getElementById("deck-stage");
+      const nav = document.getElementById("deck-nav");
+      const progress = document.getElementById("deck-progress");
+      const bar = document.getElementById("deck-progress-bar");
+      const SESSION_KEY = "rt22-deck-pharmacy";
+
+      const b64ToBytes = (s: string) => {
+        const bin = atob(s);
+        const u = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+        return u;
+      };
+
+      async function decrypt(pw: string): Promise<string> {
+        const enc = new TextEncoder();
+        const baseKey = await crypto.subtle.importKey("raw", enc.encode(pw), "PBKDF2", false, ["deriveKey"]);
+        const key = await crypto.subtle.deriveKey(
+          { name: "PBKDF2", salt: b64ToBytes(payload.s), iterations: 150000, hash: "SHA-256" },
+          baseKey,
+          { name: "AES-GCM", length: 256 },
+          false,
+          ["decrypt"]
+        );
+        const buf = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b64ToBytes(payload.i) }, key, b64ToBytes(payload.c));
+        return new TextDecoder().decode(buf);
+      }
+
+      let slides: HTMLElement[] = [];
+      let idx = 0;
+
+      function show(n: number) {
+        idx = Math.max(0, Math.min(slides.length - 1, n));
+        slides.forEach((s, i) => s.classList.toggle("is-current", i === idx));
+        const cur = document.getElementById("nav-cur");
+        if (cur) cur.textContent = String(idx + 1);
+        if (bar) bar.style.width = ((idx + 1) / slides.length) * 100 + "%";
+      }
+      const next = () => show(idx + 1);
+      const prev = () => show(idx - 1);
+
+      function initDeck() {
+        slides = Array.from(stage?.querySelectorAll<HTMLElement>(".slide") || []);
+        if (!slides.length) return;
+        nav?.removeAttribute("hidden");
+        progress?.removeAttribute("hidden");
+        show(0);
+        document.getElementById("nav-next")?.addEventListener("click", next);
+        document.getElementById("nav-prev")?.addEventListener("click", prev);
+        document.getElementById("nav-print")?.addEventListener("click", () => window.print());
+        document.getElementById("nav-full")?.addEventListener("click", toggleFull);
+        window.addEventListener("keydown", (e) => {
+          if (e.key === "ArrowRight" || e.key === "PageDown" || e.key === " ") { e.preventDefault(); next(); }
+          else if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); prev(); }
+          else if (e.key.toLowerCase() === "f") toggleFull();
+        });
+        // Swipe on touch devices.
+        let x0 = 0;
+        stage?.addEventListener("touchstart", (e) => { x0 = e.touches[0].clientX; }, { passive: true });
+        stage?.addEventListener("touchend", (e) => {
+          const dx = e.changedTouches[0].clientX - x0;
+          if (Math.abs(dx) > 45) (dx < 0 ? next : prev)();
+        }, { passive: true });
+      }
+
+      function toggleFull() {
+        const el = document.getElementById("deck-viewport");
+        if (!document.fullscreenElement) el?.requestFullscreen?.();
+        else document.exitFullscreen?.();
+      }
+
+      async function unlock(pw: string, fromSession = false) {
+        try {
+          const html = await decrypt(pw);
+          if (stage) stage.innerHTML = html;
+          gate?.remove();
+          document.body.classList.add("is-unlocked");
+          sessionStorage.setItem(SESSION_KEY, pw);
+          initDeck();
+        } catch {
+          if (!fromSession) {
+            errEl?.removeAttribute("hidden");
+            input?.focus();
+            input?.select();
+          }
+        }
+      }
+
+      form?.addEventListener("submit", (e) => {
+        e.preventDefault();
+        errEl?.setAttribute("hidden", "");
+        unlock(input?.value || "");
+      });
+
+      const saved = sessionStorage.getItem(SESSION_KEY);
+      if (saved) unlock(saved, true);
+    </script>
+
+    <style is:global>
+      :root { --deck-bg: #061018; }
+      .deck-html, .deck-body { height: 100%; }
+      .deck-body {
+        margin: 0; background: var(--deck-bg); color: var(--c-on-dark);
+        font-family: var(--w-font-body); overflow: hidden;
+      }
+
+      /* ---- Gate ---- */
+      .deck-gate {
+        position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center;
+        padding: 1.5rem; background:
+          radial-gradient(120% 90% at 80% 0%, rgba(225,80,71,0.16), transparent 55%),
+          radial-gradient(120% 90% at 0% 100%, rgba(1,255,178,0.12), transparent 55%),
+          var(--deck-bg);
+      }
+      .gate__card {
+        width: min(440px, 100%); text-align: left; background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.12); border-radius: 20px; padding: 2.25rem;
+        backdrop-filter: blur(6px); display: flex; flex-direction: column; gap: 0.4rem;
+      }
+      .gate__brand { font-family: var(--w-font-body); font-weight: 700; font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--c-accent-2); margin: 0 0 0.75rem; }
+      .gate__title { font-family: var(--w-font-display); font-weight: 600; font-size: 1.7rem; line-height: 1.1; margin: 0; color: #fff; }
+      .gate__sub { font-size: 0.95rem; color: var(--c-on-dark-soft); margin: 0.4rem 0 1.25rem; }
+      .gate__input {
+        width: 100%; box-sizing: border-box; padding: 0.85rem 1.1rem; border-radius: 12px;
+        background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18);
+        color: #fff; font-family: var(--w-font-body); font-size: 1rem;
+      }
+      .gate__input:focus-visible { outline: 2px solid var(--c-accent-2); outline-offset: 2px; }
+      .gate__btn {
+        margin-top: 0.75rem; padding: 0.85rem 1.1rem; border: 0; border-radius: 9999px; cursor: pointer;
+        background: var(--c-accent); color: #fff; font-family: var(--w-font-body); font-weight: 700; font-size: 0.95rem;
+        transition: transform 0.16s ease, filter 0.16s ease;
+      }
+      .gate__btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
+      .gate__error { color: #ffb3ad; font-size: 0.85rem; margin: 0.75rem 0 0; }
+
+      /* ---- Stage / slides ---- */
+      .deck-viewport {
+        min-height: 100vh; display: flex; align-items: center; justify-content: center;
+        padding: clamp(0.5rem, 2vh, 1.5rem); padding-bottom: 64px; box-sizing: border-box; background: var(--deck-bg);
+      }
+      .deck-stage {
+        position: relative; width: min(100%, calc((100vh - 88px) * 16 / 9)); aspect-ratio: 16 / 9;
+        background: var(--c-dark); border-radius: 8px; overflow: hidden;
+        box-shadow: 0 30px 80px rgba(0,0,0,0.55);
+      }
+      .slide {
+        position: absolute; inset: 0; container-type: size;
+        display: flex; flex-direction: column; justify-content: center;
+        padding: 7.5cqw 8cqw; box-sizing: border-box;
+        opacity: 0; visibility: hidden; transform: translateY(1.2cqh);
+        transition: opacity 0.45s ease, transform 0.45s ease;
+        background:
+          radial-gradient(80% 120% at 100% 0%, rgba(225,80,71,0.10), transparent 50%),
+          radial-gradient(70% 120% at 0% 100%, rgba(1,255,178,0.07), transparent 50%);
+      }
+      .slide.is-current { opacity: 1; visibility: visible; transform: none; }
+
+      .eyebrow { font-family: var(--w-font-body); font-weight: 700; font-size: 1.65cqw; letter-spacing: 0.26em; text-transform: uppercase; color: var(--c-accent-2); margin: 0 0 2.5cqh; }
+      .slide h2 { font-family: var(--w-font-display); font-weight: 600; font-size: 5.6cqw; line-height: 1.05; letter-spacing: -0.02em; color: #fff; margin: 0; }
+      .slide h3 { font-family: var(--w-font-display); font-weight: 600; font-size: 2.5cqw; line-height: 1.1; color: #fff; margin: 0.4cqh 0 0.6cqh; }
+      .lead { font-family: var(--w-font-body); font-size: 2.35cqw; line-height: 1.5; color: var(--c-on-dark-soft); max-width: 58cqw; margin: 4cqh 0 0; }
+      .lead--soft { color: rgba(194,221,219,0.72); font-size: 2cqw; margin-top: 2.5cqh; }
+
+      .blist { list-style: none; margin: 5cqh 0 0; padding: 0; display: flex; flex-direction: column; gap: 2.6cqh; max-width: 74cqw; }
+      .blist li { display: flex; gap: 2cqw; align-items: flex-start; font-size: 2.4cqw; line-height: 1.4; color: #eaf3f2; }
+      .bdot { flex: 0 0 auto; width: 1.1cqw; height: 1.1cqw; margin-top: 1.2cqw; border-radius: 50%; background: var(--c-accent); }
+
+      /* Cover */
+      .slide--cover { background: radial-gradient(110% 130% at 85% 10%, rgba(225,80,71,0.18), transparent 55%), radial-gradient(90% 120% at 0% 100%, rgba(1,255,178,0.12), transparent 55%), var(--c-dark); }
+      .cover h1 { font-family: var(--w-font-display); font-weight: 600; font-size: 8.4cqw; line-height: 1.0; letter-spacing: -0.025em; color: #fff; margin: 0; }
+      .cover__by { font-size: 1.9cqw; line-height: 1.5; color: var(--c-on-dark-soft); margin: 6cqh 0 0; }
+      .contact { font-size: 2.1cqw; color: #fff; margin: 4cqh 0 0; }
+      .contact a { color: var(--c-accent-2); text-decoration: none; }
+
+      /* Pillars grid */
+      .pgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.4cqw; margin-top: 5cqh; max-width: 84cqw; }
+      .pcard { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 2cqw; padding: 3cqh 2.4cqw; }
+      .pnum { font-family: var(--w-font-display); font-weight: 700; font-size: 2.6cqw; color: var(--c-accent-2); }
+      .pcard p { font-size: 1.85cqw; line-height: 1.4; color: var(--c-on-dark-soft); margin: 0; }
+
+      /* Quote */
+      .quote { margin: 4cqh 0 0; font-family: var(--w-font-display); font-style: italic; font-size: 3cqw; line-height: 1.32; color: #fff; max-width: 80cqw; border: 0; padding: 0; }
+      .quote cite { display: block; font-family: var(--w-font-body); font-style: normal; font-size: 1.7cqw; color: var(--c-accent-2); margin-top: 2.5cqh; }
+
+      /* Phases */
+      .phases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.4cqw; margin-top: 5cqh; max-width: 84cqw; }
+      .phase { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 2cqw; padding: 3cqh 2.4cqw; }
+      .phase .ph { display: block; font-family: var(--w-font-display); font-weight: 600; font-size: 2.4cqw; color: #fff; }
+      .phase .pt { display: block; font-size: 1.55cqw; letter-spacing: 0.04em; color: var(--c-accent-2); margin: 0.6cqh 0 1.4cqh; text-transform: uppercase; }
+      .phase p { font-size: 1.85cqw; line-height: 1.4; color: var(--c-on-dark-soft); margin: 0; }
+      .note { font-size: 1.6cqw; color: rgba(194,221,219,0.65); margin: 4cqh 0 0; }
+
+      /* ---- Nav ---- */
+      .deck-nav {
+        position: fixed; left: 0; right: 0; bottom: 0; height: 56px; z-index: 40;
+        display: flex; align-items: center; justify-content: center; gap: 0.9rem;
+        background: rgba(6,16,24,0.82); backdrop-filter: blur(10px); border-top: 1px solid rgba(255,255,255,0.08);
+      }
+      .nbtn {
+        min-width: 40px; height: 36px; padding: 0 0.7rem; border-radius: 9999px; cursor: pointer;
+        background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); color: #fff;
+        font-family: var(--w-font-body); font-size: 1rem; line-height: 1; transition: background 0.16s ease;
+      }
+      .nbtn:hover { background: rgba(255,255,255,0.18); }
+      .nbtn--text { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.04em; }
+      .ncount { font-family: var(--w-font-body); font-size: 0.85rem; color: var(--c-on-dark-soft); min-width: 56px; text-align: center; }
+
+      .deck-progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 41; background: rgba(255,255,255,0.08); }
+      .deck-progress span { display: block; height: 100%; width: 0; background: var(--c-accent); transition: width 0.4s ease; }
+
+      @media (prefers-reduced-motion: reduce) {
+        .slide { transition: opacity 0.2s linear; transform: none; }
+      }
+
+      /* ---- Print → PDF: one landscape page per slide ---- */
+      @media print {
+        @page { size: 1280px 720px; margin: 0; }
+        .deck-body { overflow: visible; background: #fff; }
+        .deck-gate, .deck-nav, .deck-progress { display: none !important; }
+        .deck-viewport { display: block; min-height: 0; padding: 0; }
+        .deck-stage { display: contents; box-shadow: none; }
+        .slide {
+          position: relative; inset: auto; width: 1280px; height: 720px;
+          opacity: 1 !important; visibility: visible !important; transform: none !important;
+          break-after: page; page-break-after: always;
+        }
+      }
+    </style>
+  </body>
+</html>
