@@ -1,69 +1,165 @@
 ---
 // ────────────────────────────────────────────────────────────────────────────
 // Bespoke proposal deck — Pharmacy Store (website + booking platform).
-// Prepared for Ciaran McNally and Tracey Dunne. Standalone 16:9 presentation,
-// no site chrome. Slide CONTENT is AES-256-GCM encrypted at build time and only
-// decrypts in the browser once the correct password is entered, so the page
-// source ships ciphertext, not the pitch.
+// Prepared for Ciaran McNally and Tracey Dunne. Standalone 16:9 presentation
+// that mirrors the website: real photography, the team, client logos, case
+// studies. Slide CONTENT is AES-256-GCM encrypted at build time and only
+// decrypts in the browser once the correct password is entered.
 //
 // Change the password below (PASSWORD) and rebuild to rotate it.
 // noindex + excluded from the sitemap (see astro.config sitemap filter).
 // ────────────────────────────────────────────────────────────────────────────
 import "../../styles/globals.css";
+import { getCollection } from "astro:content";
+import { existsSync } from "node:fs";
+import path from "node:path";
 import crypto from "node:crypto";
 
 const PASSWORD = "rooftop-pharmacy"; // ← change me and rebuild to rotate access
+const has = (p: string) => existsSync(path.join(process.cwd(), "public", p));
 
-// ---- Slide authoring helpers ----------------------------------------------
+// ---- Real assets (guarded so nothing renders broken) ------------------------
+const IMG = {
+  studio: "/images/office/office-studio-01.jpg",
+  collab: "/images/office/office-collab-01.jpg",
+  work: "/images/office/office-work-01.jpg",
+  collab2: "/images/office/office-collab-02.jpg",
+};
+
+const team = (await getCollection("team"))
+  .filter((m) => has(m.data.portrait))
+  .sort((a, b) => (a.data.order ?? 100) - (b.data.order ?? 100))
+  .map((m) => m.data);
+
+const logoFiles = [
+  "/images/logos/Laya_Rev.png",
+  "/images/logos/Irish-Defence-Forces_Rev.png",
+  "/images/logos/ILT_Rev.svg",
+  "/images/logos/GFP_Rev.svg",
+  "/images/logos/GCJ_Rev.png",
+  "/images/logos/1934_Rev.svg",
+  "/images/logos/TC-Matthews_Rev.svg",
+  "/images/logos/Captain-Americas_Rev.png",
+  "/images/logos/Elephant-Castle_Rev.png",
+  "/images/logos/MIG_Rev.svg",
+  "/images/logos/Shomera_Rev.svg",
+].filter(has);
+
+const portfolio = await getCollection("portfolio");
+const pick = (slug: string) => portfolio.find((p) => p.data.slug === slug)?.data;
+const workCardsData = ["antaris-consulting", "breast-cancer-ireland", "gourmet-food-parlour"]
+  .map(pick)
+  .filter((d): d is NonNullable<typeof d> => !!d && !!d.heroImage && has(d.heroImage));
+const bloomfield = pick("bloomfield-health-services");
+const bloomfieldHero = bloomfield && has(bloomfield.heroImage || "") ? bloomfield.heroImage : IMG.work;
+
+const awards = [
+  { logo: "/images/spider-awards-rev.png", b: "Gold winners", s: "Spider Awards, for web design" },
+  { logo: "/images/European-Search-Awards-Logo_full_colour-cutout.png", b: "Finalists 2026", s: "European Search Awards, Porto" },
+  { logo: "/images/DMA-Generic-Pink-Blue-270x270-1-cutout.png", b: "Award record", s: "Medical, retail and charity" },
+].filter((a) => has(a.logo));
+
+// ---- Authoring helpers ------------------------------------------------------
 const eyebrow = (t: string) => `<p class="eyebrow">${t}</p>`;
 const bullets = (items: string[]) =>
   `<ul class="blist">${items.map((i) => `<li><span class="bdot"></span><span>${i}</span></li>`).join("")}</ul>`;
 const slide = (inner: string, cls = "") => `<section class="slide${cls ? " " + cls : ""}">${inner}</section>`;
+const photo = (src: string) => `<div class="ph-bg"><img src="${src}" alt=""/></div><div class="ph-scrim"></div>`;
+
+const teamGrid = `<div class="tgrid">${team
+  .map((m) => `<figure class="tmem"><img src="${m.portrait}" alt="${m.name}" loading="lazy"/><b>${m.name}</b><span>${m.role}</span></figure>`)
+  .join("")}</div>`;
+const logoGrid = `<div class="lgrid">${logoFiles.map((l) => `<img src="${l}" alt="" loading="lazy"/>`).join("")}</div>`;
+const workCards = `<div class="work3">${workCardsData
+  .map((w) => `<figure class="wcard"><img src="${w.heroImage}" alt="${w.name}" loading="lazy"/><b>${w.name}</b><span>${w.tagline}</span></figure>`)
+  .join("")}</div>`;
+const awardCards = `<div class="awards3">${awards
+  .map((a) => `<div class="acard"><img src="${a.logo}" alt=""/><b>${a.b}</b><span>${a.s}</span></div>`)
+  .join("")}</div>`;
 
 const slides: string[] = [
-  // 1 — Cover
+  // 1 — Cover (full-bleed photo)
   slide(
-    `<div class="cover">
+    `${photo(IMG.studio)}
+     <div class="ph-content">
        ${eyebrow("Website proposal · June 2026")}
        <h1>A website built<br/>around booking.</h1>
        <p class="lead">A pharmacy group website and booking platform, prepared for Ciaran McNally and Tracey Dunne.</p>
-       <p class="cover__by">Rooftop Twenty Two · Web design and digital marketing<br/>Glasnevin and the Beacon, Dublin</p>
+       <p class="cover__by">Rooftop Twenty Two · Glasnevin and the Beacon, Dublin</p>
      </div>`,
-    "slide--cover"
+    "slide--photo"
   ),
 
-  // 2 — Introduction
+  // 2 — Introduction (split)
   slide(
-    `${eyebrow("Introduction")}
-     <h2>You've done the hard part with Tap.</h2>
-     <p class="lead">The brand is fresh, the shops are being revamped, and the new photography is in place. The website is the last piece still looking five years old. That's where we come in.</p>
-     <p class="lead lead--soft">Moving off e-commerce to a service and information site is exactly the kind of build where trust and clear booking matter more than selling a product off a shelf. It's the same thinking we apply for our consultant clients every week.</p>`
+    `<div class="sp-text">
+       ${eyebrow("Introduction")}
+       <h2>You've done the hard part with Tap.</h2>
+       <p class="lead">The brand is fresh, the shops are being revamped, and the new photography is in place. The website is the last piece still looking five years old. That's where we come in.</p>
+       <p class="lead lead--soft">We work in medical and healthcare every week, where trust and clear booking matter more than selling off a shelf.</p>
+     </div>
+     <div class="sp-media"><img src="${IMG.collab}" alt="The Rooftop Twenty Two team at work" loading="lazy"/></div>`,
+    "slide--split"
   ),
 
-  // 3 — About us
+  // 3 — About us (split)
   slide(
-    `${eyebrow("About us")}
-     <h2>A Dublin web and marketing team of 14.</h2>
-     ${bullets([
-       "Two offices, Glasnevin and the Beacon, with in-house web design, development, SEO, paid social, video and content.",
-       "We produce 20 to 30 websites a year and move quickly without dropping quality.",
-       "We work closely with brand studios like Tap, carrying their brand work through into a clean, consistent live site.",
-     ])}`
+    `<div class="sp-media"><img src="${IMG.work}" alt="Inside the Rooftop Twenty Two studio" loading="lazy"/></div>
+     <div class="sp-text">
+       ${eyebrow("About us")}
+       <h2>A Dublin web and marketing team of 14.</h2>
+       ${bullets([
+         "Two offices, Glasnevin and the Beacon, with web, SEO, paid social, video and content in-house.",
+         "We produce 20 to 30 websites a year, quickly and without dropping quality.",
+         "We carry brand-studio work like Tap's straight through into the live site.",
+       ])}
+     </div>`,
+    "slide--split"
   ),
 
-  // 4 — Awards
+  // 4 — Meet the team (light grid)
+  slide(
+    `${eyebrow("Meet the team")}
+     <h2>The people behind the work.</h2>
+     ${teamGrid}`,
+    "slide--light"
+  ),
+
+  // 5 — Clients (logo wall)
+  slide(
+    `${eyebrow("Trusted by")}
+     <h2>Brands that count on us.</h2>
+     ${logoGrid}`
+  ),
+
+  // 6 — Awards
   slide(
     `${eyebrow("Recognised work")}
      <h2>Award-winning web and search.</h2>
-     ${bullets([
-       "Gold winners at the Spider Awards for our web design work.",
-       "Finalists at the European Search Awards 2026, with two of our team at the ceremony in Porto.",
-       "A consistent record of award-winning sites across the medical, retail and charity sectors.",
-     ])}
+     ${awardCards}
      <p class="lead lead--soft">Studios bring us in for the extra polish, backed by real development skill. We make it look right and make it work.</p>`
   ),
 
-  // 5 — Initial thoughts
+  // 7 — Healthcare proof (split, real case-study image)
+  slide(
+    `<div class="sp-text">
+       ${eyebrow("Why us, for healthcare")}
+       <h2>Trust is what we build.</h2>
+       <blockquote class="quote">"It's a pleasure to work with such a creative, innovative and supportive team, from rebuilding our website to producing video that captures what we do."<cite>Fiona Monahan, Bloomfield Health Services</cite></blockquote>
+     </div>
+     <div class="sp-media"><img src="${bloomfieldHero}" alt="Bloomfield Health Services" loading="lazy"/></div>`,
+    "slide--split"
+  ),
+
+  // 8 — Selected work (light, real heroes)
+  slide(
+    `${eyebrow("Selected work")}
+     <h2>Work we're proud of.</h2>
+     ${workCards}`,
+    "slide--alt"
+  ),
+
+  // 9 — Initial thoughts
   slide(
     `${eyebrow("Our early read")}
      <h2>What the new site should do.</h2>
@@ -78,35 +174,27 @@ const slides: string[] = [
      ])}`
   ),
 
-  // 6 — Sitemap
+  // 10 — Sitemap
   slide(
     `${eyebrow("A first-draft structure")}
      <h2>Potential sitemap.</h2>
-     <div class="smap">
-       <div class="smap__col">
-         <h4>Home</h4>
-         <h4>About</h4>
-         <ul><li>Our story and the brand</li><li>Team and pharmacists</li><li>Innovation and automation</li></ul>
-       </div>
-       <div class="smap__col">
-         <h4>Services</h4>
-         <ul><li>Vaccinations</li><li>Health checks and screening</li><li>Weight management</li><li>Minor ailments</li><li>Smoking cessation</li><li>Prescriptions and repeats</li></ul>
-       </div>
-       <div class="smap__col">
-         <h4>Our pharmacies</h4>
-         <ul><li>A page per location</li><li>Hours, address, services</li><li>Photos and map</li></ul>
-         <h4>Book an appointment</h4>
-       </div>
-       <div class="smap__col">
-         <h4>Health advice and news</h4>
-         <h4>Contact</h4>
-         <h4>Careers</h4>
+     <div class="stree">
+       <div class="stree__home">Home</div>
+       <div class="stree__rail"></div>
+       <div class="stree__row">
+         <div class="snode"><b>About</b><ul><li>Our story &amp; brand</li><li>Team &amp; pharmacists</li><li>Innovation &amp; automation</li></ul></div>
+         <div class="snode"><b>Services</b><ul><li>Vaccinations</li><li>Health checks</li><li>Weight management</li><li>Minor ailments</li><li>Smoking cessation</li><li>Prescriptions</li></ul></div>
+         <div class="snode"><b>Our pharmacies</b><ul><li>A page per location</li><li>Hours &amp; address</li><li>Photos &amp; map</li></ul></div>
+         <div class="snode snode--leaf"><b>Book an appointment</b></div>
+         <div class="snode snode--leaf"><b>Health advice &amp; news</b></div>
+         <div class="snode snode--leaf"><b>Contact</b></div>
+         <div class="snode snode--leaf"><b>Careers</b></div>
        </div>
      </div>
      <p class="note">For discussion. We'll confirm the final structure together.</p>`
   ),
 
-  // 7 — Creative ideas
+  // 11 — Creative ideas
   slide(
     `${eyebrow("Creative ideas")}
      <h2>How the site comes to life.</h2>
@@ -120,7 +208,7 @@ const slides: string[] = [
      ])}`
   ),
 
-  // 8 — Robotics
+  // 12 — Robotics
   slide(
     `${eyebrow("A point of difference")}
      <h2>The robotics and automation angle.</h2>
@@ -128,9 +216,59 @@ const slides: string[] = [
      <p class="lead lead--soft">Boots Ireland and others already frame it this way. Giving it a home on the site positions the group as forward-looking and justifies a premium feel across the brand. No other independent group locally will have this.</p>`
   ),
 
-  // 9 — Booking comparison
+  // 13 — Booking intro
   slide(
-    `${eyebrow("Booking is the heart of it")}
+    `${eyebrow("The booking engine")}
+     <h2>From browsing to booked, in a tap.</h2>
+     <p class="lead">Booking is where this site earns its keep. Private services like vaccinations, health checks, weight management and minor ailments each need a clear, quick path to an appointment.</p>
+     <p class="lead lead--soft">There are two ways to build it. The right choice depends on how much control you want and how booking connects to your other systems. Here's both, plainly.</p>`
+  ),
+
+  // 14 — Booking option A
+  slide(
+    `${eyebrow("Booking · Option A")}
+     <h2>Off the shelf.</h2>
+     <p class="lead">A proven booking tool such as Acuity or Bookly, plugged into the site and styled to your brand.</p>
+     <div class="twocol">
+       <div class="tcol"><h4>Strengths</h4><ul>
+         <li>Faster and lower cost to launch.</li>
+         <li>Covers vaccines and standard appointments well.</li>
+         <li>Maintained and updated by the provider.</li>
+         <li>Connects to common tools out of the box.</li>
+       </ul></div>
+       <div class="tcol"><h4>Watch-outs</h4><ul>
+         <li>A monthly fee, usually per location or user.</li>
+         <li>Sits slightly apart from the rest of the site.</li>
+         <li>Limited if your needs are unusual.</li>
+       </ul></div>
+     </div>
+     <p class="note">Best for getting live quickly with a clean, branded booking experience.</p>`
+  ),
+
+  // 15 — Booking option B
+  slide(
+    `${eyebrow("Booking · Option B")}
+     <h2>Bespoke.</h2>
+     <p class="lead">A booking system we design and build specifically around your services and your five locations.</p>
+     <div class="twocol">
+       <div class="tcol"><h4>Strengths</h4><ul>
+         <li>Matches the site exactly, part of one experience.</li>
+         <li>Built around precisely how you work.</li>
+         <li>Connects to your pharmacy systems as needed.</li>
+         <li>No recurring third-party fee, and it grows with you.</li>
+       </ul></div>
+       <div class="tcol"><h4>Watch-outs</h4><ul>
+         <li>Higher upfront cost.</li>
+         <li>A little more time to build.</li>
+         <li>Owned by you, with our support to maintain it.</li>
+       </ul></div>
+     </div>
+     <p class="note">Best when your service range and automation plans are set to grow.</p>`
+  ),
+
+  // 16 — Booking comparison
+  slide(
+    `${eyebrow("At a glance")}
      <h2>Off the shelf vs bespoke.</h2>
      <div class="cmp">
        <div class="cmp__h"></div><div class="cmp__h">Off the shelf</div><div class="cmp__h">Bespoke</div>
@@ -142,7 +280,7 @@ const slides: string[] = [
      </div>`
   ),
 
-  // 10 — Recommendation
+  // 17 — Recommendation
   slide(
     `${eyebrow("Our recommendation")}
      <h2>Start off the shelf. Grow into bespoke.</h2>
@@ -150,7 +288,7 @@ const slides: string[] = [
      <p class="lead lead--soft">If your service range and automation plans grow, we move to a bespoke build later. We'll scope both at the workshop, so you decide with full sight of the costs.</p>`
   ),
 
-  // 11 — Integrations
+  // 15 — Integrations
   slide(
     `${eyebrow("Beyond booking")}
      <h2>What the site connects to.</h2>
@@ -166,15 +304,38 @@ const slides: string[] = [
      </div>`
   ),
 
-  // 12 — Healthcare proof
+  // — How we'll build it (process timeline)
   slide(
-    `${eyebrow("Why us, for healthcare")}
-     <h2>Trust is what we build.</h2>
-     <blockquote class="quote">"It's a pleasure to work with such a creative, innovative and supportive team, from rebuilding our website to producing video that captures what we do."<cite>Fiona Monahan, Bloomfield Health Services</cite></blockquote>
-     <p class="lead lead--soft">We work with consultants, clinics and care organisations across Ireland. A service and information site lives or dies on trust and clear booking, and that's exactly what we do every week.</p>`
+    `${eyebrow("How we'll build it · 8 to 10 weeks")}
+     <h2>A clear path from strategy to launch.</h2>
+     <div class="tline">
+       <div class="tstep"><span class="tnum">01</span><b>Objectives &amp; strategy</b><span class="twk">Week 1</span><p>A workshop to agree your goals and online presence.</p></div>
+       <div class="tstep"><span class="tnum">02</span><b>Wireframe</b><span class="twk">Weeks 2–3</span><p>The structure and layout, agreed before any design.</p></div>
+       <div class="tstep"><span class="tnum">03</span><b>Homepage &amp; visual design</b><span class="twk">Weeks 3–5</span><p>The look and feel, built on the Tap brand.</p></div>
+       <div class="tstep"><span class="tnum">04</span><b>Developed staging site</b><span class="twk">Weeks 5–8</span><p>The full site, built on a private staging link.</p></div>
+       <div class="tstep"><span class="tnum">05</span><b>QA &amp; launch</b><span class="twk">Weeks 8–10</span><p>Tested across devices, then live, on time.</p></div>
+     </div>`
   ),
 
-  // 13 — Next steps
+  // — What's a wireframe (visual explainer)
+  slide(
+    `<div class="sp-text">
+       ${eyebrow("Step 02 · The wireframe")}
+       <h2>What's a wireframe?</h2>
+       <p class="lead">A wireframe is the blueprint of a page. Grey boxes, no colour or imagery yet, so we agree what goes where, and in what order, before any design starts.</p>
+       <p class="lead lead--soft">It's far quicker to move a box than to redo a finished design. Sign-off here keeps the whole build on track and on time.</p>
+     </div>
+     <div class="sp-media sp-media--pad">
+       <div class="wf">
+         <div class="wf__bar"><span class="wf__logo"></span><span class="wf__nav"></span><span class="wf__nav"></span><span class="wf__nav"></span><span class="wf__btn"></span></div>
+         <div class="wf__hero"><div class="wf__lines"><span></span><span></span><span class="wf__cta"></span></div><div class="wf__img"></div></div>
+         <div class="wf__cards"><span></span><span></span><span></span></div>
+       </div>
+     </div>`,
+    "slide--split"
+  ),
+
+  // — Next steps
   slide(
     `${eyebrow("Next steps")}
      <h2>How we move this forward.</h2>
@@ -186,16 +347,16 @@ const slides: string[] = [
      ])}`
   ),
 
-  // 14 — Close
+  // 17 — Close (full-bleed photo)
   slide(
-    `<div class="cover">
+    `${photo(IMG.collab2)}
+     <div class="ph-content">
        ${eyebrow("Talk soon")}
        <h2>We'd be delighted to build this with you.</h2>
-       <p class="lead">We think it's a strong fit.</p>
        <p class="contact"><a href="mailto:hey@rooftoptwentytwo.ie">hey@rooftoptwentytwo.ie</a> · +353 1 699 1422 · rooftoptwentytwo.ie</p>
-       <p class="cover__by">Cathal O'Reilly<br/>Founder and Managing Director, Rooftop Twenty Two</p>
+       <p class="cover__by">Cathal O'Reilly, Founder and Managing Director, Rooftop Twenty Two</p>
      </div>`,
-    "slide--cover"
+    "slide--photo"
   ),
 ];
 
@@ -362,7 +523,7 @@ const slideCount = slides.length;
     </script>
 
     <style is:global>
-      :root { --deck-bg: #061018; }
+      :root { --deck-bg: #061018; --deck-ink: #0D2030; --deck-ink-soft: #51626E; }
       .deck-html, .deck-body { height: 100%; }
       .deck-body {
         margin: 0; background: var(--deck-bg); color: var(--c-on-dark);
@@ -412,7 +573,7 @@ const slideCount = slides.length;
       .slide {
         position: absolute; inset: 0; container-type: size;
         display: flex; flex-direction: column; justify-content: center;
-        padding: 7cqw 8cqw; box-sizing: border-box;
+        padding: 7cqw 8cqw; box-sizing: border-box; overflow: hidden;
         opacity: 0; visibility: hidden; transform: translateY(1.2cqh);
         transition: opacity 0.45s ease, transform 0.45s ease;
         background:
@@ -431,12 +592,65 @@ const slideCount = slides.length;
       .blist li { display: flex; gap: 2cqw; align-items: flex-start; font-size: 2.05cqw; line-height: 1.38; color: #eaf3f2; }
       .bdot { flex: 0 0 auto; width: 1cqw; height: 1cqw; margin-top: 1cqw; border-radius: 50%; background: var(--c-accent); }
 
-      /* Cover */
-      .slide--cover { background: radial-gradient(110% 130% at 85% 10%, rgba(225,80,71,0.18), transparent 55%), radial-gradient(90% 120% at 0% 100%, rgba(1,255,178,0.12), transparent 55%), var(--c-dark); }
-      .cover h1 { font-family: var(--w-font-display); font-weight: 600; font-size: 8cqw; line-height: 1.0; letter-spacing: -0.025em; color: #fff; margin: 0; }
+      /* Cover / photo headings */
       .cover__by { font-size: 1.85cqw; line-height: 1.5; color: var(--c-on-dark-soft); margin: 5.5cqh 0 0; }
       .contact { font-size: 2cqw; color: #fff; margin: 3.5cqh 0 0; }
       .contact a { color: var(--c-accent-2); text-decoration: none; }
+
+      /* ---- Full-bleed photo slides ---- */
+      .slide--photo { padding: 0; justify-content: flex-end; background: var(--c-dark); }
+      .ph-bg { position: absolute; inset: 0; z-index: 0; }
+      .ph-bg img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .ph-scrim { position: absolute; inset: 0; z-index: 1; background: linear-gradient(to top, rgba(6,16,24,0.94) 6%, rgba(6,16,24,0.4) 58%, rgba(6,16,24,0.55) 100%); }
+      .ph-content { position: relative; z-index: 2; padding: 7cqw 8cqw 7.5cqw; }
+      .ph-content h1 { font-family: var(--w-font-display); font-weight: 600; font-size: 8cqw; line-height: 1.0; letter-spacing: -0.025em; color: #fff; margin: 0; }
+      .ph-content h2 { font-size: 5cqw; }
+
+      /* ---- Split slides ---- */
+      .slide--split { flex-direction: row; align-items: stretch; padding: 0; background: var(--c-dark); }
+      .sp-text { flex: 1 1 50%; min-width: 0; padding: 6cqw 5.2cqw; display: flex; flex-direction: column; justify-content: center; box-sizing: border-box; }
+      .sp-media { flex: 1 1 50%; position: relative; overflow: hidden; background: #0a1a26; }
+      .sp-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+      .slide--split h2 { font-size: 4.3cqw; }
+      .slide--split .lead { font-size: 1.95cqw; max-width: none; }
+      .slide--split .blist { margin-top: 3cqh; max-width: none; gap: 1.9cqh; }
+      .slide--split .blist li { font-size: 1.72cqw; gap: 1.4cqw; }
+      .slide--split .bdot { width: 0.8cqw; height: 0.8cqw; margin-top: 0.7cqw; }
+      .slide--split .quote { font-size: 2.4cqw; }
+      .slide--split .quote cite { font-size: 1.5cqw; }
+
+      /* ---- Light / off-white slides (echo the website's light sections) ---- */
+      .slide--light { background: #fff; }
+      .slide--alt { background: #F6F4EF; }
+      .slide--light h2, .slide--alt h2, .slide--light h3, .slide--alt h3 { color: var(--deck-ink); }
+      .slide--light .lead, .slide--alt .lead { color: var(--deck-ink-soft); }
+      .slide--light .eyebrow, .slide--alt .eyebrow { color: var(--c-accent); }
+      .slide--light .blist li, .slide--alt .blist li { color: var(--deck-ink); }
+
+      /* Team grid */
+      .tgrid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 1.5cqw; margin-top: 3.2cqh; max-width: 96cqw; }
+      .tmem { margin: 0; }
+      .tmem img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; object-position: center 12%; border-radius: 1cqw; filter: grayscale(1); display: block; background: #e9e5dc; }
+      .tmem b { display: block; font-family: var(--w-font-display); font-weight: 600; font-size: 1.3cqw; color: var(--deck-ink); margin-top: 0.7cqh; line-height: 1.1; }
+      .tmem span { display: block; font-size: 1.02cqw; color: #6a7884; line-height: 1.2; }
+
+      /* Logo wall */
+      .lgrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4.5cqh 4cqw; margin-top: 4.5cqh; max-width: 82cqw; align-items: center; justify-items: center; }
+      .lgrid img { max-height: 6.5cqh; max-width: 78%; width: auto; object-fit: contain; opacity: 0.92; }
+
+      /* Awards */
+      .awards3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3cqw; margin-top: 3.5cqh; max-width: 84cqw; }
+      .acard { text-align: center; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 1.6cqw; padding: 3.5cqh 2cqw; }
+      .acard img { height: 8.5cqh; width: auto; max-width: 72%; object-fit: contain; margin: 0 auto 2cqh; display: block; }
+      .acard b { display: block; font-family: var(--w-font-display); font-weight: 600; font-size: 2cqw; color: #fff; }
+      .acard span { display: block; font-size: 1.35cqw; color: var(--c-on-dark-soft); margin-top: 0.6cqh; }
+
+      /* Selected work cards */
+      .work3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.2cqw; margin-top: 3.8cqh; max-width: 90cqw; }
+      .wcard { margin: 0; }
+      .wcard img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 1.2cqw; display: block; box-shadow: 0 6px 20px rgba(13,32,48,0.14); background: #e9e5dc; }
+      .wcard b { display: block; font-family: var(--w-font-display); font-weight: 600; font-size: 1.7cqw; color: var(--deck-ink); margin-top: 1.4cqh; }
+      .wcard span { display: block; font-size: 1.32cqw; color: #6a7884; line-height: 1.3; margin-top: 0.3cqh; }
 
       /* Sitemap */
       .smap { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2.4cqw; margin-top: 4cqh; max-width: 88cqw; }
@@ -453,7 +667,7 @@ const slideCount = slides.length;
       .cmp__l { font-weight: 700; color: var(--c-accent-2); background: rgba(255,255,255,0.03); }
 
       /* Integrations grid */
-      .igrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.8cqw 1.8cqw; margin-top: 3.5cqh; max-width: 92cqw; }
+      .igrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.8cqw; margin-top: 3.5cqh; max-width: 92cqw; }
       .icard { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 1.4cqw; padding: 2cqh 1.6cqw; }
       .icard h4 { font-family: var(--w-font-display); font-weight: 600; font-size: 1.65cqw; color: #fff; margin: 1cqh 0 0.5cqh; line-height: 1.1; }
       .icard p { font-size: 1.3cqw; line-height: 1.35; color: var(--c-on-dark-soft); margin: 0; }
@@ -466,6 +680,53 @@ const slideCount = slides.length;
       .quote cite { display: block; font-family: var(--w-font-body); font-style: normal; font-size: 1.65cqw; color: var(--c-accent-2); margin-top: 2.2cqh; }
 
       .note { font-size: 1.55cqw; color: rgba(194,221,219,0.65); margin: 3.5cqh 0 0; }
+
+      /* ---- Visual sitemap tree ---- */
+      .stree { margin-top: 3cqh; display: flex; flex-direction: column; align-items: center; width: 96cqw; }
+      .stree__home { font-family: var(--w-font-display); font-weight: 600; font-size: 2.1cqw; color: #fff; background: var(--c-accent); padding: 1.2cqh 3cqw; border-radius: 1cqw; }
+      .stree__rail { position: relative; width: 84cqw; height: 0; border-top: 2px solid rgba(255,255,255,0.18); margin-top: 2.4cqh; }
+      .stree__rail::before { content: ""; position: absolute; left: 50%; top: -2.4cqh; width: 2px; height: 2.4cqh; background: rgba(255,255,255,0.18); }
+      .stree__row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1.3cqw; width: 96cqw; margin-top: 2.4cqh; align-items: start; }
+      .snode { position: relative; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.14); border-radius: 1cqw; padding: 1.5cqh 1cqw; }
+      .snode::before { content: ""; position: absolute; top: -2.4cqh; left: 50%; width: 2px; height: 2.4cqh; background: rgba(255,255,255,0.18); }
+      .snode b { display: block; font-family: var(--w-font-display); font-weight: 600; font-size: 1.45cqw; color: #fff; line-height: 1.12; margin-bottom: 0.8cqh; }
+      .snode--leaf b { margin-bottom: 0; }
+      .snode ul { list-style: none; margin: 0; padding: 0; }
+      .snode li { font-size: 1.15cqw; line-height: 1.5; color: var(--c-on-dark-soft); }
+
+      /* ---- Two-column option lists (booking options) ---- */
+      .twocol { display: grid; grid-template-columns: 1fr 1fr; gap: 3cqw; margin-top: 3.2cqh; max-width: 84cqw; }
+      .tcol h4 { font-family: var(--w-font-display); font-weight: 600; font-size: 2cqw; color: var(--c-accent-2); margin: 0 0 1.4cqh; }
+      .tcol ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1.3cqh; }
+      .tcol li { position: relative; padding-left: 2.2cqw; font-size: 1.62cqw; line-height: 1.34; color: #eaf3f2; }
+      .tcol li::before { content: ""; position: absolute; left: 0; top: 0.6cqw; width: 0.8cqw; height: 0.8cqw; border-radius: 50%; background: var(--c-accent); }
+
+      /* ---- Process timeline ---- */
+      .tline { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.6cqw; margin-top: 4.5cqh; max-width: 94cqw; position: relative; }
+      .tline::before { content: ""; position: absolute; top: 2.4cqw; left: 9%; right: 9%; height: 2px; background: rgba(255,255,255,0.18); }
+      .tstep { position: relative; text-align: center; }
+      .tnum { display: inline-flex; align-items: center; justify-content: center; width: 4.8cqw; height: 4.8cqw; border-radius: 50%; background: var(--c-accent); color: #fff; font-family: var(--w-font-display); font-weight: 700; font-size: 1.9cqw; position: relative; z-index: 1; }
+      .tstep b { display: block; font-family: var(--w-font-display); font-weight: 600; font-size: 1.62cqw; color: #fff; margin-top: 1.6cqh; line-height: 1.12; }
+      .twk { display: block; font-size: 1.15cqw; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--c-accent-2); margin: 0.7cqh 0; }
+      .tstep p { font-size: 1.28cqw; line-height: 1.35; color: var(--c-on-dark-soft); margin: 0; }
+
+      /* ---- Wireframe mockup ---- */
+      .sp-media--pad { display: flex; align-items: center; justify-content: center; padding: 5cqw; background: #0a1a26; }
+      .wf { width: 100%; background: #fff; border-radius: 1.2cqw; padding: 2cqw; box-shadow: 0 12px 32px rgba(0,0,0,0.35); display: flex; flex-direction: column; gap: 1.8cqh; }
+      .wf__bar { display: flex; align-items: center; gap: 1cqw; }
+      .wf__logo, .wf__nav, .wf__btn, .wf__img, .wf__cta, .wf__lines span, .wf__cards span { background: #d9dde1; border-radius: 0.5cqw; display: block; }
+      .wf__logo { width: 6cqw; height: 2cqw; }
+      .wf__nav { width: 3.6cqw; height: 1.2cqw; }
+      .wf__btn { width: 5cqw; height: 2cqw; margin-left: auto; background: #c2c8ce; }
+      .wf__hero { display: flex; gap: 2cqw; align-items: stretch; }
+      .wf__lines { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 1.3cqh; }
+      .wf__lines span { height: 1.6cqw; }
+      .wf__lines span:nth-child(1) { width: 92%; }
+      .wf__lines span:nth-child(2) { width: 68%; }
+      .wf__cta { width: 9cqw; height: 2.6cqw; margin-top: 1.2cqh; background: var(--c-accent); }
+      .wf__img { width: 42%; min-height: 13cqh; }
+      .wf__cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4cqw; }
+      .wf__cards span { height: 7.5cqh; }
 
       /* ---- Nav ---- */
       .deck-nav {
