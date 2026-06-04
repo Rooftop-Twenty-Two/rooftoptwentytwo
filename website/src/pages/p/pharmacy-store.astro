@@ -1,14 +1,13 @@
 ---
 // ────────────────────────────────────────────────────────────────────────────
-// Bespoke proposal — Pharmacy Store, prepared for Ciaran McNally & Tracey Dunne.
-// Long-form, scrolling web page. PRIMARY brand is Rooftop Twenty Two (this is
-// R22's proposal); PharmacyStore appears as co-branding ("for PharmacyStore")
-// and as brand touches inside the MOCKUPS (a homepage concept in their green +
-// heart device, and a PS-green CTA in the wireframe).
+// Rooftop Twenty Two — pitch deck (long-form, scrolling page).
+// Nine sections: Title, About + team, Expertise, Process, Case studies (with
+// click-to-open detail popups), Client portfolio, Team highlights, Pricing,
+// Next steps. R22 brand throughout.
 //
-// Page CONTENT is AES-256-GCM encrypted at build time and only decrypts in the
-// browser on the correct password, so the source ships ciphertext.
-// Change PASSWORD and rebuild to rotate. noindex + excluded from the sitemap.
+// CONTENT is AES-256-GCM encrypted at build and only decrypts in the browser on
+// the correct password. Change PASSWORD and rebuild to rotate.
+// noindex + excluded from the sitemap.
 // ────────────────────────────────────────────────────────────────────────────
 import "../../styles/globals.css";
 import { getCollection } from "astro:content";
@@ -19,352 +18,248 @@ import crypto from "node:crypto";
 const PASSWORD = "rooftop-pharmacy"; // ← change me and rebuild to rotate access
 const has = (p: string) => existsSync(path.join(process.cwd(), "public", p));
 
-// The full Rooftop Twenty Two team (everyone with a portrait in the repo),
-// ordered the same way as the website's team section.
+// Full team (everyone with a portrait), ordered like the website.
 const team = (await getCollection("team"))
   .filter((m) => has(m.data.portrait))
   .sort((a, b) => (a.data.order ?? 100) - (b.data.order ?? 100))
-  .map((m) => [m.data.name, m.data.role, m.data.portrait] as [string, string, string]);
+  .map((m) => ({ name: m.data.name, role: m.data.role, portrait: m.data.portrait }));
+// Leadership for the Team Highlights section.
+const leadNames = ["Cathal", "Roisin", "Justin", "Padraic"];
+const leaders = leadNames.map((n) => team.find((t) => t.name === n)).filter(Boolean) as typeof team;
+
+// Case studies (up to 10) — featured first, then by order.
+const caseStudies = (await getCollection("portfolio"))
+  .filter((p) => p.data.heroImage && has(p.data.heroImage!) && p.data.summary)
+  .sort((a, b) => (b.data.featured ? 1 : 0) - (a.data.featured ? 1 : 0) || (a.data.order ?? 100) - (b.data.order ?? 100))
+  .slice(0, 10)
+  .map((p) => p.data);
+
+const logoFiles = [
+  "/images/logos/Laya_Rev.png", "/images/logos/Irish-Defence-Forces_Rev.png", "/images/logos/ILT_Rev.svg",
+  "/images/logos/GFP_Rev.svg", "/images/logos/GCJ_Rev.png", "/images/logos/1934_Rev.svg",
+  "/images/logos/TC-Matthews_Rev.svg", "/images/logos/Captain-Americas_Rev.png", "/images/logos/Elephant-Castle_Rev.png",
+  "/images/logos/Josesph-May_Rev.svg", "/images/logos/MIG_Rev.svg", "/images/logos/Shomera_Rev.svg",
+].filter(has);
 
 const awards = [
-  { logo: "/images/spider-awards-rev.png", b: "Gold winners", s: "Spider Awards, for web design" },
+  { logo: "/images/spider-awards-rev.png", b: "Gold winners", s: "Spider Awards, web design" },
   { logo: "/images/European-Search-Awards-Logo_full_colour-cutout.png", b: "Finalists 2026", s: "European Search Awards, Porto" },
   { logo: "/images/DMA-Generic-Pink-Blue-270x270-1-cutout.png", b: "Award record", s: "Medical, retail and charity" },
 ].filter((a) => has(a.logo));
 
-// PharmacyStore heart device (used only for co-brand touches + mockups).
-const heart = (cls: string) =>
-  `<svg class="${cls}" viewBox="0 0 32 29.6" aria-hidden="true"><path d="M23.6 0c-3.4 0-6.3 2.7-7.6 5.6C14.7 2.7 11.8 0 8.4 0 3.8 0 0 3.8 0 8.4c0 9.1 9.3 13.6 16 21.2 6.7-7.6 16-12.1 16-21.2C32 3.8 28.2 0 23.6 0z"/></svg>`;
-const psMark = `<svg class="ps-mark" viewBox="0 0 32 29.6" aria-hidden="true"><path d="M23.6 0c-3.4 0-6.3 2.7-7.6 5.6C14.7 2.7 11.8 0 8.4 0 3.8 0 0 3.8 0 8.4c0 9.1 9.3 13.6 16 21.2 6.7-7.6 16-12.1 16-21.2C32 3.8 28.2 0 23.6 0z" fill="currentColor"/><path d="M14.4 7.6h3.2v3.2h3.2v3.2h-3.2v3.2h-3.2v-3.2h-3.2v-3.2h3.2z" fill="#fff"/></svg>`;
+const testimonials = [
+  { q: "A huge thank you to all the team at Rooftop Twenty Two for their superb service and assistance in all our digital media and marketing activity. Their knowledge, advice and attention to detail is second to none.", n: "Ciara Foley", c: "Best4Travel" },
+  { q: "Their creativity, reliability, and attention to detail are first-class, and they match excellent design with a commercial lens that many agencies overlook.", n: "Joe Wilde", c: "Mac Digital" },
+  { q: "Irish Landmark Trust have been working with Rooftop Twenty Two for a number of years now and we have loved the experience. A fantastic team of energetic, creative people.", n: "Grace Healy", c: "Irish Landmark Trust" },
+  { q: "They have excelled every step of the way, from branding, website development and programming to SEO.", n: "Jonathan Lyne", c: "Heart Rhythm Cardiology" },
+  { q: "It's a pleasure to work with such a creative, innovative and supportive team, from rebuilding our website to producing amazing video footage that captures the essence of what we do.", n: "Fiona Monahan", c: "Bloomfield Health Services" },
+  { q: "We've worked on several successful projects with Cathal and the team and will continue to do so. Their professionalism and quality of output is always to the high standards we expect.", n: "Brendan Boyle", c: "TAP Creative" },
+  { q: "Cathal and his team could not have done more for us, from developing our vision to the implementation of our style and structure.", n: "Ciaran Mc Bride", c: "Irish Chauffeurs" },
+  { q: "Always very professional and creative. We love working with this agency and would highly recommend them.", n: "Vanessa Langford", c: "Midlands Park Hotel" },
+];
 
+// ---- Builders ---------------------------------------------------------------
 const kicker = (t: string) => `<p class="pr-kicker">${t}</p>`;
 const list = (items: string[]) => `<ul class="pr-list">${items.map((i) => `<li><span class="pr-tick"></span><span>${i}</span></li>`).join("")}</ul>`;
+const initials = (n: string) => n.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
 
 const teamGrid = `<div class="pr-team">${team
-  .map(([n, r, img]) => `<figure class="pr-mem"><img src="${img}" alt="${n}" loading="lazy"/><b>${n}</b><span>${r}</span></figure>`)
+  .map((m) => `<figure class="pr-mem"><img src="${m.portrait}" alt="${m.name}" loading="lazy"/><b>${m.name}</b><span>${m.role}</span></figure>`)
   .join("")}</div>`;
-const caseCards = `<div class="pr-cases">${[
-  ["Jonathan Lyon", "Consultant Cardiologist", "A clinical website for a heart rhythm specialist. Clear, reassuring pages around his conditions and services, with a strong path to enquiry and appointment. It reads as current and credible, which is what patients look for. Directly relevant to your move toward a service-led, booking-friendly site."],
-  ["Anna Walsh", "Consultant Urologist", "A consultant website focused on making services easy to understand and act on. Each service is presented clearly, with simple enquiry and appointment options. The same approach works well for pharmacy services like vaccinations, health checks and weight management."],
-  ["Cervino Medical", "Neurology practice", "Website redesign and digital marketing, including Google Ads. The full picture: a strong site backed by SEO and paid activity to bring the right people to it. If you want to grow private service bookings over time, this is the model."],
-  ["One in Four", "Care-sector charity", "Designed and built from the ground up, from interactive wireframes through to the live site. Information-led with clear, prominent actions, exactly the structure a pharmacy site needs. This was the wireframe example we walked you through."],
-]
-  .map(([n, r, d]) => `<article class="pr-case"><h3>${n}</h3><p class="pr-case__role">${r}</p><p>${d}</p></article>`)
+
+const statBlock = (r: any) =>
+  r && r.stats && r.stats.length
+    ? `<div class="cs-stats">${r.stats.map((s: any) => `<div><b>${s.prefix || ""}${s.to}${s.suffix || ""}</b><span>${s.label}</span></div>`).join("")}</div>`
+    : "";
+
+const caseGrid = `<div class="cs-grid">${caseStudies
+  .map((c, i) => `<button class="cs-card" data-cs="${i}" type="button"><span class="cs-card__img"><img src="${c.heroImage}" alt="${c.name}" loading="lazy"/></span><span class="cs-card__meta"><b>${c.name}</b><span class="cs-card__tag">${c.tagline || ""}</span><em class="cs-card__cta">View case study &rarr;</em></span></button>`)
   .join("")}</div>`;
+const caseDetails = caseStudies
+  .map((c, i) => `<div class="cs-full" data-cs="${i}" hidden><div class="cs-full__img"><img src="${c.heroImage}" alt="${c.name}"/></div><h3>${c.name}</h3><p class="cs-full__tag">${c.tagline || ""}</p><p class="cs-full__body">${c.summary || ""}</p>${statBlock(c.results)}<a class="cs-full__link" href="/work/${c.slug}/" target="_blank" rel="noopener">Open full case study &rarr;</a></div>`)
+  .join("");
+
+const logoMarquee = `<div class="pr-lviewport" data-marquee="60"><ul class="pr-ltrack" role="list">${[...logoFiles, ...logoFiles]
+  .map((l) => `<li class="pr-litem"><img src="${l}" alt="" loading="lazy"/></li>`)
+  .join("")}</ul></div>`;
+
 const awardCards = `<div class="pr-awards">${awards
   .map((a) => `<div class="pr-award"><img src="${a.logo}" alt=""/><b>${a.b}</b><span>${a.s}</span></div>`)
   .join("")}</div>`;
 
-// PharmacyStore-branded homepage concept mockup (their green + heart + tagline).
-const homepageMock = `
-  <div class="mock">
-    <div class="mock__bar"><span class="mock__dot"></span><span class="mock__dot"></span><span class="mock__dot"></span><span class="mock__url">pharmacystore.ie</span></div>
-    <div class="mock__screen">
-      <div class="mock__nav"><span class="mock__logo">${psMark}<b>PharmacyStore</b></span><span class="mock__links">Services · Pharmacies · Book</span></div>
-      <div class="mock__hero">
-        ${heart("mock__heart")}
-        <div class="mock__herotext">
-          <p class="mock__tag">Caring for your wellbeing</p>
-          <h4>Health checks that fit around your day.</h4>
-          <span class="mock__btn">Book an appointment</span>
-        </div>
-      </div>
-      <div class="mock__tiles">
-        <span>Vaccinations</span><span>Health checks</span><span>Weight management</span>
-      </div>
-    </div>
-  </div>`;
+const leaderCards = `<div class="pr-leaders">${leaders
+  .map((m) => `<figure class="pr-leader"><img src="${m.portrait}" alt="${m.name}" loading="lazy"/><figcaption><b>${m.name}</b><span>${m.role}</span></figcaption></figure>`)
+  .join("")}</div>`;
 
-// Client testimonials — same set and style as the homepage, as a marquee.
-const testimonials = [
-  { q: "A huge thank you to all the team at Rooftop Twenty Two for their superb service and assistance in all our digital media and marketing activity. Their knowledge, advice and attention to detail is second to none.", n: "Ciara Foley", c: "Best4Travel" },
-  { q: "I've been using Rooftop Twenty Two for over two years. Their creativity, reliability, and attention to detail are first-class, and they match excellent design with a commercial lens that many agencies overlook.", n: "Joe Wilde", c: "Mac Digital" },
-  { q: "Irish Landmark Trust have been working with Rooftop Twenty Two for a number of years now and we have loved the experience. A fantastic team of energetic, creative people.", n: "Grace Healy", c: "Irish Landmark Trust" },
-  { q: "We have had a fantastic experience working with Talia and Rooftop Twenty Two. They have excelled every step of the way, from branding, website development and programming to SEO.", n: "Jonathan Lyne", c: "Heart Rhythm Cardiology" },
-  { q: "Experts at what they do and very easy to work with. Highly recommend on all things digital.", n: "Matthew", c: "Gourmet Food Parlour" },
-  { q: "We've worked on several successful projects with Cathal and the team at Rooftop Twenty Two and will continue to do so. Their professionalism and quality of output is always to the high standards we expect.", n: "Brendan Boyle", c: "TAP Creative" },
-  { q: "It's a pleasure to work with such a creative, innovative and supportive team at Rooftop Twenty Two, from rebuilding our website to producing amazing video footage that captures the essence of what we do.", n: "Fiona Monahan", c: "Bloomfield Health Services" },
-  { q: "The team at Rooftop Twenty Two exemplifies true professionalism. They are always available to answer questions and provide assistance, and their support makes our workdays smoother.", n: "Michelle McManus", c: "Best4Travel" },
-  { q: "Our company have been using Rooftop's services for a few years now. Initially as novices to digital marketing, it was very helpful to have a trusted guide on our learning journey.", n: "David McLoughlin", c: "Ellis and Ellis" },
-  { q: "Rooftop Twenty Two were brilliant to work with from the very beginning. Cathal and his team could not have done more for us, from developing our vision to the implementation of our style and structure.", n: "Ciaran Mc Bride", c: "Irish Chauffeurs" },
-  { q: "Always very professional and creative. We love working with this agency and would highly recommend them.", n: "Vanessa Langford", c: "Midlands Park Hotel" },
-  { q: "Great service, very professional, and innovative ideas. A pleasure to work with.", n: "Shaun Rodgers", c: "Irish Luxury Tours" },
-];
-const initials = (n: string) => n.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
 const tTrack = [...testimonials, ...testimonials];
 const tCards = tTrack
   .map((t, i) => `<li class="pr-tcard" aria-hidden="${i >= testimonials.length ? "true" : "false"}"><span class="pr-tmark">&ldquo;</span><blockquote class="pr-tquote">${t.q}</blockquote><div class="pr-tby"><span class="pr-tavatar" aria-hidden="true">${initials(t.n)}</span><span class="pr-twho"><span class="pr-tname">${t.n}</span><span class="pr-tco">${t.c}</span></span></div></li>`)
   .join("");
-const testimonialSection = `
-<section class="pr-sec pr-tsection">
-  <div class="pr-thead">
-    ${kicker("What clients say")}
-    <h2>In <em>their words</em>.</h2>
-  </div>
-  <div class="pr-tviewport" data-marquee="150">
-    <ul class="pr-ttrack" role="list">${tCards}</ul>
-  </div>
-</section>`;
 
 const content = `
+<!-- 1 · Title -->
 <section class="pr-hero">
   <div class="pr-wrap pr-hero__inner">
-    <p class="pr-cobrand"><span class="pr-cobrand__a">Rooftop Twenty Two</span><span class="pr-cobrand__sep">for</span><span class="pr-cobrand__b">${psMark}PharmacyStore</span></p>
-    ${kicker("Website proposal · June 2026")}
-    <h1>Pharmacy group website<br/>and booking platform.</h1>
-    <p class="pr-hero__sub">Prepared for Ciaran McNally and Tracey Dunne.</p>
-    <p class="pr-hero__meta">Rooftop Twenty Two · Web design and digital marketing · Glasnevin and the Beacon, Dublin</p>
+    <p class="pr-cobrand"><span class="pr-cobrand__a">Rooftop Twenty Two</span></p>
+    ${kicker("Web design & digital marketing · Dublin")}
+    <h1>Websites and marketing<br/>that grow your business.</h1>
+    <p class="pr-hero__sub">Strategy, creative, performance. One team, under one roof, working like part of yours.</p>
+    <p class="pr-hero__meta">rooftoptwentytwo.ie · hey@rooftoptwentytwo.ie · +353 1 699 1422 · Glasnevin &amp; the Beacon, Dublin</p>
   </div>
 </section>
 
+<!-- 2 · About us + meet the team -->
 <section class="pr-sec">
   <div class="pr-wrap pr-narrow">
-    ${kicker("Introduction")}
-    <h2>You have done the hard part with Tap.</h2>
-    <p>Thank you for taking the time to meet us. The brand is fresh, the shops are being revamped and the new photography is in place. The website is the last piece still looking five years old, and that is where we come in.</p>
-    <p>This sets out who we are, the work we have done in the medical and healthcare space, and our early thinking for your new website. It is a starting point for the conversation rather than the finished plan. The detail gets shaped together at the workshop, once we agree to work together.</p>
-    <p>We work with a lot of medical and healthcare clients, from consultants and clinics to care organisations. That matters here, because moving off e-commerce to a service and information site is exactly the kind of build where trust and clear booking count more than selling a product off a shelf.</p>
-  </div>
-</section>
-
-<section class="pr-sec pr-sec--alt">
-  <div class="pr-wrap pr-narrow">
     ${kicker("About us")}
-    <h2>A senior team that ships.</h2>
-    <p>Rooftop Twenty Two is a web design and digital marketing agency based in Dublin. We are a team of 14, with offices in Glasnevin and a second office in the Beacon, with in-house teams across web design and development, SEO, paid social, video and content.</p>
-    <p>We produce between 20 and 30 websites a year and we move quickly without dropping quality. We also work closely with brand studios like Tap, carrying their brand work through into websites, so the move from your new brand into the live site will be clean and consistent.</p>
+    <h2>A senior, in-house team that ships.</h2>
+    <p>Rooftop Twenty Two is an independent web design and digital marketing agency in Dublin. We are a team of 14, with offices in Glasnevin and a second at the Beacon, and in-house teams across web design and development, SEO, paid social, video and content.</p>
+    <p>Our mission is simple: build websites and run marketing that move real commercial numbers, not vanity metrics. We produce 20 to 30 websites a year and finish on time.</p>
+  </div>
+  <div class="pr-wrap pr-values">
+    <div class="pr-value"><b>Under one roof</b><span>The people who strategise are the people who ship.</span></div>
+    <div class="pr-value"><b>Results, not activity</b><span>We sell the outcome, never the hours.</span></div>
+    <div class="pr-value"><b>Honest and clear</b><span>Plain advice, no jargon, no overselling.</span></div>
   </div>
   <div class="pr-wrap pr-stats">
     <div class="pr-stat"><b>14</b><span>people in the team</span></div>
     <div class="pr-stat"><b>20&ndash;30</b><span>websites a year</span></div>
     <div class="pr-stat"><b>8&ndash;10 wks</b><span>typical build, on time</span></div>
   </div>
-</section>
-
-<section class="pr-sec">
-  <div class="pr-wrap">
-    ${kicker("Recognised work")}
-    <h2>Award-winning web and search.</h2>
-    ${awardCards}
-    <p class="pr-soft">Brand studios like Tap bring us in for the extra polish, backed by real development skill, so we can both make it look right and make it work.</p>
-  </div>
-</section>
-
-<section class="pr-sec pr-sec--alt">
-  <div class="pr-wrap">
-    ${kicker("Our team")}
-    <h2>The people you will work with.</h2>
-    <p class="pr-lead">A dedicated team across strategy, design, build, SEO and account management.</p>
+  <div class="pr-wrap" style="margin-top:3rem">
+    <h3 class="pr-subh">Meet the team</h3>
     ${teamGrid}
   </div>
 </section>
 
-<section class="pr-sec">
-  <div class="pr-wrap">
-    ${kicker("Relevant case studies")}
-    <h2>Healthcare work that maps to yours.</h2>
-    <p class="pr-lead">Clear service information, trust, and an easy path to enquiry or booking.</p>
-    ${caseCards}
-    <p class="pr-soft">We can send live links and further examples across retail and innovation alongside this document.</p>
-  </div>
-</section>
-
+<!-- 3 · Our expertise -->
 <section class="pr-sec pr-sec--alt">
-  <div class="pr-wrap pr-narrow">
-    ${kicker("Our initial thoughts")}
-    <h2>What the new site should do.</h2>
-    ${list([
-      "Move off e-commerce to a service and information platform. The site becomes a customer service tool that works 24/7.",
-      "Put services and booking front and centre: flu and travel vaccinations, health checks, weight management and minor ailments, each with its own page and a clear way to book.",
-      "Position the group as a community health hub, reflecting the expanding role of the pharmacist, rather than a place to buy products online.",
-      "Present the five pharmacies properly, each with its own page for opening hours, location, services and the new photography. Hours and locations load instantly.",
-      "Strip the dated and Covid-era content, and run the Tap brand and photography throughout so the site finally matches the shops.",
-      "Build SEO in from day one, so each service and location ranks locally for the searches that matter.",
-      "Tell the automation and robotics story as a point of difference.",
-    ])}
-  </div>
-</section>
-
-<section class="pr-sec pr-sec--dark">
   <div class="pr-wrap">
-    ${kicker("Potential sitemap")}
-    <h2>A first-draft structure to react to.</h2>
-    <div class="pr-tree">
-      <div class="pr-tree__home">Home</div>
-      <div class="pr-tree__row">
-        <div class="pr-node"><b>About</b><ul><li>Our story &amp; the brand</li><li>Team &amp; pharmacists</li><li>Innovation &amp; automation</li></ul></div>
-        <div class="pr-node"><b>Services</b><ul><li>Vaccinations</li><li>Health checks &amp; screening</li><li>Weight management</li><li>Minor ailments</li><li>Smoking cessation</li><li>Prescriptions &amp; repeats</li></ul></div>
-        <div class="pr-node"><b>Our pharmacies</b><ul><li>A page per location</li><li>Hours, address, services</li><li>Photos &amp; map</li></ul></div>
-        <div class="pr-node pr-node--leaf"><b>Book an appointment</b></div>
-        <div class="pr-node pr-node--leaf"><b>Health advice &amp; news</b></div>
-        <div class="pr-node pr-node--leaf"><b>Contact</b></div>
-        <div class="pr-node pr-node--leaf"><b>Careers</b></div>
+    ${kicker("Our expertise")}
+    <h2>Everything you need to grow. One team.</h2>
+    <div class="pr-exp">
+      <div class="pr-expcard"><span class="pr-expnum">01</span><h3>Creative &amp; content</h3><p>Branding, brand identity, social, photo and video, produced in-house at the cadence the channels actually need.</p></div>
+      <div class="pr-expcard"><span class="pr-expnum">02</span><h3>Website design &amp; development</h3><p>Strategy, design, build and care. Modern, fast sites chosen against your buyer journey, not our preference.</p></div>
+      <div class="pr-expcard"><span class="pr-expnum">03</span><h3>Performance marketing</h3><p>Google Ads, paid social, SEO and email, built around the conversions that move your business.</p></div>
+    </div>
+    <div class="pr-spec">
+      <div class="pr-spec__col">
+        <h4>Industry specialisms</h4>
+        <p>Healthcare &amp; medical · Hospitality · Retail &amp; e-commerce · Charity &amp; non-profit · Professional services.</p>
+      </div>
+      <div class="pr-spec__col">
+        <h4>How we work</h4>
+        <p>Our under-one-roof method: every build starts with your commercial goals and ends with measurable outcomes. A team certified across Google and Meta's platforms, with award-winning design and development in-house.</p>
       </div>
     </div>
-    <p class="pr-soft">Built around services, locations and booking, with room to grow. We will confirm the final structure together.</p>
   </div>
 </section>
 
-<section class="pr-sec">
-  <div class="pr-wrap pr-narrow">
-    ${kicker("Creative ideas")}
-    <h2>How the site could come to life.</h2>
-    ${list([
-      "Real photography front and centre. We design around the Tap shots of your shops, teams and consultation spaces. No generic stock, which patients see straight through.",
-      "A booking action that follows people through the site, always one tap away, so the path to an appointment is short.",
-      "A location finder, so a visitor lands on their nearest pharmacy fast and sees its hours, services and contact details.",
-      "An innovation section that tells the robotics story in plain terms: greater accuracy, faster dispensing, and more pharmacist time for patient care.",
-      "A health-hub feel, with clear advice content that builds trust and supports SEO.",
-      "Pharmacist profiles and trust signals throughout, so people feel they know the team before they walk in.",
-      "A clean, modern look that matches the new brand, designed mobile first.",
-    ])}
-  </div>
-</section>
-
-<section class="pr-sec pr-sec--alt">
-  <div class="pr-wrap pr-firstlook">
-    <div class="pr-firstlook__text">
-      ${kicker("A first look")}
-      <h2>Your brand, brought online.</h2>
-      <p>An early, illustrative concept, not a finished design. It shows how we carry the Tap brand straight through: your green, the heart device, the warmth of "caring for your wellbeing", and booking right where people look first.</p>
-      <p class="pr-soft">We design the real thing together, from wireframe to launch.</p>
-    </div>
-    <div class="pr-firstlook__mock">${homepageMock}</div>
-  </div>
-</section>
-
-<section class="pr-sec pr-sec--dark pr-robotics">
-  <div class="pr-wrap pr-narrow">
-    ${kicker("A point of difference")}
-    <h2>The robotics and automation angle.</h2>
-    <p>You mentioned you are building toward automation and innovation. This is a real opportunity, not just a line on a page. Robotic dispensing pushes accuracy close to 100% and handles a large share of daily prescriptions in seconds, which frees your team to spend more time with patients.</p>
-    <p>Boots Ireland and others are already framing it this way. Giving it a home on the site positions the group as forward-looking and helps justify a premium feel across the brand. We would love to know where you are with this so we can plan the content properly.</p>
-  </div>
-</section>
-
-<section class="pr-sec">
-  <div class="pr-wrap">
-    ${kicker("Booking engine")}
-    <h2>Bespoke vs off the shelf.</h2>
-    <p class="pr-lead">Booking is the heart of the new site. The right choice depends on how much control you want and how booking connects to your other systems.</p>
-    <div class="pr-tablewrap"><table class="pr-table">
-      <thead><tr><th></th><th>Off the shelf</th><th>Bespoke</th></tr></thead>
-      <tbody>
-        <tr><th>What it is</th><td>A proven booking tool (for example Acuity or Bookly) plugged into the site and styled to your brand.</td><td>A booking system we design and build specifically around your services and your five locations.</td></tr>
-        <tr><th>Speed and cost</th><td>Faster and lower cost to launch. Usually a monthly fee per location or user.</td><td>Higher upfront cost and a little more time to build. No recurring third-party fee.</td></tr>
-        <tr><th>Look and feel</th><td>Styled to the brand, though it sits slightly apart from the rest of the site.</td><td>Matches the site exactly and feels part of one experience.</td></tr>
-        <tr><th>Flexibility</th><td>Great for standard appointment and vaccine booking. Limited if your needs are unusual.</td><td>Built around exactly how you work, and can grow with new services.</td></tr>
-        <tr><th>Integrations</th><td>Connects to common tools out of the box.</td><td>Can connect to your pharmacy systems and other tools as needed.</td></tr>
-        <tr><th>Maintenance</th><td>Maintained by the provider.</td><td>Owned and maintained by you, with our support.</td></tr>
-      </tbody>
-    </table></div>
-    <div class="pr-rec"><b>Our recommendation</b><p>For launch, a strong off-the-shelf engine styled to your brand will get you live faster and cover vaccines and standard appointments well. If your service range and automation plans grow, we can move to a bespoke build later. We will scope both at the workshop so you can decide with full sight of the costs.</p></div>
-  </div>
-</section>
-
-<section class="pr-sec pr-sec--alt">
-  <div class="pr-wrap">
-    ${kicker("Other integrations")}
-    <h2>What the site can connect to.</h2>
-    <div class="pr-tablewrap"><table class="pr-table pr-table--int">
-      <thead><tr><th>Integration</th><th>What it does</th><th>Scope</th></tr></thead>
-      <tbody>
-        <tr><th>Google Business Profile</th><td>Keeps the five locations, hours and reviews accurate and visible in search and maps.</td><td><span class="pr-tag pr-tag--core">Core</span></td></tr>
-        <tr><th>Online reviews</th><td>Pulls your Google reviews onto the site to build trust.</td><td><span class="pr-tag pr-tag--core">Core</span></td></tr>
-        <tr><th>Maps and location finder</th><td>Helps people find and route to their nearest pharmacy.</td><td><span class="pr-tag pr-tag--core">Core</span></td></tr>
-        <tr><th>Analytics and tracking</th><td>GA4 and conversion tracking so we can see bookings and improve over time.</td><td><span class="pr-tag pr-tag--core">Core</span></td></tr>
-        <tr><th>Social media</th><td>Links and feeds across your updated channels, pointing people back to the site.</td><td><span class="pr-tag pr-tag--core">Core</span></td></tr>
-        <tr><th>Live chat or enquiry forms</th><td>Quick ways for customers to ask a question or request a service.</td><td><span class="pr-tag pr-tag--core">Core</span></td></tr>
-        <tr><th>Pharmacy management system</th><td>Lets the site talk to your dispensing or records system, for example repeat prescriptions.</td><td><span class="pr-tag pr-tag--addon">Add-on</span></td></tr>
-        <tr><th>Email marketing</th><td>Newsletter sign-up and campaign tools to keep customers informed.</td><td><span class="pr-tag pr-tag--addon">Add-on</span></td></tr>
-        <tr><th>Online payments</th><td>Only needed if you want to take payment for a service at the point of booking.</td><td><span class="pr-tag pr-tag--addon">Add-on</span></td></tr>
-      </tbody>
-    </table></div>
-  </div>
-</section>
-
+<!-- 4 · Our process -->
 <section class="pr-sec pr-sec--dark">
   <div class="pr-wrap">
-    ${kicker("What to expect · 8 to 10 weeks")}
-    <h2>Your journey to launch.</h2>
-    <p class="pr-jlead">No surprises. Here is exactly how we will work together, step by step.</p>
+    ${kicker("Our process · 8 to 10 weeks")}
+    <h2>How we turn ideas into a live site.</h2>
+    <p class="pr-jlead">No surprises. Here is exactly how we work together, step by step.</p>
     <div class="pr-journey">
-
-      <div class="pr-jstep">
-        <div class="pr-jrail"><span class="pr-jnum">1</span><span class="pr-jline"></span></div>
-        <div class="pr-jbody">
-          <span class="pr-jweek">Week 1</span>
-          <h3>Discovery workshop</h3>
-          <p>We sit down together at our Rooftop Twenty Two offices in Dublin and get into your business objectives. Then we show you what leading pharmacies around the world are doing online: how their sites work, how they function, and what is genuinely possible for Pharmacy Store.</p>
+      <div class="pr-jstep"><div class="pr-jrail"><span class="pr-jnum">1</span><span class="pr-jline"></span></div><div class="pr-jbody"><span class="pr-jweek">Week 1</span><h3>Discovery &amp; strategy</h3><p>We sit down together at our Dublin offices and get into your business objectives. We agree goals, audience and the shape of your online presence. <b>Deliverable:</b> a clear brief and project plan.</p></div></div>
+      <div class="pr-jstep"><div class="pr-jrail"><span class="pr-jnum">2</span><span class="pr-jline"></span></div><div class="pr-jbody"><span class="pr-jweek">Weeks 2&ndash;3</span><h3>Wireframe</h3><p>We walk you through a full, interactive wireframe. You click through the structure and functionality yourself, so you understand exactly how the site works before any design. Nothing proceeds until you sign it off.</p>
+        <div class="pr-jwire">
+          <div class="pr-wf"><div class="pr-wf__bar"><span class="pr-wf__logo"></span><span class="pr-wf__nav"></span><span class="pr-wf__nav"></span><span class="pr-wf__btn"></span></div><div class="pr-wf__hero"><div class="pr-wf__lines"><span></span><span></span><span class="pr-wf__cta"></span></div><div class="pr-wf__img"></div></div><div class="pr-wf__cards"><span></span><span></span><span></span></div></div>
+          <p class="pr-jwire__cap"><b>What a wireframe is:</b> the blueprint of a page. Grey boxes, no colour yet, so we agree what goes where before any design. Quicker to move a box than redo a finished design.</p>
         </div>
-      </div>
-
-      <div class="pr-jstep">
-        <div class="pr-jrail"><span class="pr-jnum">2</span><span class="pr-jline"></span></div>
-        <div class="pr-jbody">
-          <span class="pr-jweek">Weeks 2&ndash;3</span>
-          <h3>Wireframe</h3>
-          <p>Our team brings you through a full wireframe of the site. You will see how it functions and how it interacts, and click through the booking engine yourself, so you understand exactly how it works before any design begins. Nothing moves forward until you are happy and sign it off.</p>
-          <div class="pr-jwire">
-            <div class="pr-wf">
-              <div class="pr-wf__bar"><span class="pr-wf__logo"></span><span class="pr-wf__nav"></span><span class="pr-wf__nav"></span><span class="pr-wf__btn"></span></div>
-              <div class="pr-wf__hero"><div class="pr-wf__lines"><span></span><span></span><span class="pr-wf__cta"></span></div><div class="pr-wf__img"></div></div>
-              <div class="pr-wf__cards"><span></span><span></span><span></span></div>
-            </div>
-            <p class="pr-jwire__cap"><b>What a wireframe is:</b> the blueprint of a page. Grey boxes, no colour or imagery yet, so we agree what goes where, and in what order, before any design. It is far quicker to move a box than to redo a finished design.</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="pr-jstep">
-        <div class="pr-jrail"><span class="pr-jnum">3</span><span class="pr-jline"></span></div>
-        <div class="pr-jbody">
-          <span class="pr-jweek">Weeks 3&ndash;8</span>
-          <h3>Bringing the brand to life</h3>
-          <p>On sign-off, we bring the new brand to life through video, branding and imagery, carrying the Tap work through every page until the site feels unmistakably yours.</p>
-        </div>
-      </div>
-
-      <div class="pr-jstep">
-        <div class="pr-jrail"><span class="pr-jnum">4</span></div>
-        <div class="pr-jbody">
-          <span class="pr-jweek">Weeks 8&ndash;10</span>
-          <h3>QA and launch</h3>
-          <p>A smooth, well-drilled process we have perfected over hundreds of builds. We test across every device, fix anything that needs it, then launch. We move quickly, because a happy client and a site that lands on time is the whole point.</p>
-        </div>
-      </div>
-
+      </div></div>
+      <div class="pr-jstep"><div class="pr-jrail"><span class="pr-jnum">3</span><span class="pr-jline"></span></div><div class="pr-jbody"><span class="pr-jweek">Weeks 3&ndash;5</span><h3>Visual design</h3><p>We bring the brand to life through design, video and imagery, starting with the homepage. <b>Deliverable:</b> signed-off designs across key templates.</p></div></div>
+      <div class="pr-jstep"><div class="pr-jrail"><span class="pr-jnum">4</span><span class="pr-jline"></span></div><div class="pr-jbody"><span class="pr-jweek">Weeks 5&ndash;8</span><h3>Build &amp; staging</h3><p>We build the full site on a private staging link, so you can see it come together. <b>Deliverable:</b> the complete site, ready to review.</p></div></div>
+      <div class="pr-jstep"><div class="pr-jrail"><span class="pr-jnum">5</span></div><div class="pr-jbody"><span class="pr-jweek">Weeks 8&ndash;10</span><h3>QA &amp; launch</h3><p>A smooth, well-drilled process. We test across every device, fix anything that needs it, then launch, moving quickly to land on time.</p></div></div>
     </div>
   </div>
 </section>
 
-${testimonialSection}
-
-<section class="pr-sec pr-sec--alt">
-  <div class="pr-wrap pr-narrow">
-    ${kicker("Next steps")}
-    <h2>How we would move this forward.</h2>
-    ${list([
-      "We send you live links and a few examples across medical, retail and innovation.",
-      "We confirm a few details so we can put indicative costs together, with core build and options set out clearly.",
-      "Once costs are agreed, we bring everyone together for the workshop to lock the detail and the final sitemap.",
-      "We get to work. Our typical build runs 8 to 10 weeks from the workshop, and we pride ourselves on finishing on time.",
-    ])}
+<!-- 5 · Case studies -->
+<section class="pr-sec">
+  <div class="pr-wrap">
+    ${kicker("Case studies")}
+    <h2>Don't just take our word for it.</h2>
+    <p class="pr-lead">Real projects, real outcomes. Tap any project to see the challenge, what we did, and the results.</p>
+    ${caseGrid}
+    <div class="cs-store">${caseDetails}</div>
   </div>
 </section>
 
+<!-- Testimonials marquee -->
+<section class="pr-sec pr-tsection">
+  <div class="pr-thead">${kicker("What clients say")}<h2>In <em>their words</em>.</h2></div>
+  <div class="pr-tviewport" data-marquee="150"><ul class="pr-ttrack" role="list">${tCards}</ul></div>
+</section>
+
+<!-- 6 · Client portfolio -->
+<section class="pr-sec pr-sec--dark">
+  <div class="pr-wrap">
+    ${kicker("Client portfolio")}
+    <h2>Trusted across industries.</h2>
+    <p class="pr-jlead">From national institutions to independent brands, many for years. ${logoFiles.length}+ logos, one standard of work.</p>
+  </div>
+  ${logoMarquee}
+  <div class="pr-wrap" style="margin-top:3rem">${awardCards}</div>
+</section>
+
+<!-- 7 · Team highlights -->
+<section class="pr-sec pr-sec--alt">
+  <div class="pr-wrap">
+    ${kicker("Team highlights")}
+    <h2>The people behind the work.</h2>
+    <p class="pr-lead">A senior leadership team with decades of combined experience across design, development, marketing and operations.</p>
+    ${leaderCards}
+  </div>
+</section>
+
+<!-- 8 · Pricing & packages -->
+<section class="pr-sec">
+  <div class="pr-wrap">
+    ${kicker("Pricing & packages")}
+    <h2>Clear options, built around your goals.</h2>
+    <div class="pr-pricing">
+      <div class="pr-tier">
+        <h3>Website project</h3>
+        <p class="pr-tier__price">From €6,000</p>
+        <p class="pr-tier__desc">Design and build, from strategy to launch.</p>
+        <ul><li>Discovery workshop</li><li>Wireframes &amp; design</li><li>Build &amp; QA</li><li>Launch &amp; training</li></ul>
+      </div>
+      <div class="pr-tier pr-tier--feature">
+        <span class="pr-tier__badge">Most popular</span>
+        <h3>Growth retainer</h3>
+        <p class="pr-tier__price">From €1,500 / mo</p>
+        <p class="pr-tier__desc">Ongoing SEO, paid media, content and email.</p>
+        <ul><li>Quarterly strategy</li><li>Monthly delivery</li><li>Conversion tracking</li><li>Reporting tied to revenue</li></ul>
+      </div>
+      <div class="pr-tier">
+        <h3>Brand &amp; creative</h3>
+        <p class="pr-tier__price">Project-based</p>
+        <p class="pr-tier__desc">Branding, photography and video.</p>
+        <ul><li>Brand identity</li><li>Photo &amp; video</li><li>Social content</li><li>Templates &amp; guidelines</li></ul>
+      </div>
+    </div>
+    <p class="pr-soft">Indicative ranges. Custom and enterprise scopes available. Typically 50% to start and the balance on launch; retainers billed monthly. We report on revenue, ranked keywords and conversions, so you see the return.</p>
+  </div>
+</section>
+
+<!-- 9 · Next steps -->
 <section class="pr-sec pr-sec--dark pr-close">
   <div class="pr-wrap pr-narrow">
-    ${kicker("Talk soon")}
-    <h2>We would be delighted to build this with you.</h2>
-    <p>We think it is a strong fit.</p>
+    ${kicker("Next steps")}
+    <h2>Let's talk about what you're building.</h2>
+    ${list([
+      "Book a discovery call, 30 minutes, no charge, to talk through your goals.",
+      "We run a short initial assessment of where you are now and where the quick wins sit.",
+      "We come back with a focused first phase, clear scope and clear numbers, within a few days.",
+    ])}
     <p class="pr-contact"><a href="mailto:hey@rooftoptwentytwo.ie">hey@rooftoptwentytwo.ie</a> · +353 1 699 1422 · rooftoptwentytwo.ie</p>
     <p class="pr-sign">Cathal O'Reilly<br/><span>Founder and Managing Director, Rooftop Twenty Two</span></p>
-    <p class="pr-forclient">${psMark}<span>Prepared for PharmacyStore · Caring for your wellbeing</span></p>
   </div>
 </section>
 
-<footer class="pr-foot"><div class="pr-wrap">Private proposal for PharmacyStore · Prepared by Rooftop Twenty Two · June 2026</div></footer>
+<footer class="pr-foot"><div class="pr-wrap">Rooftop Twenty Two · Web design &amp; digital marketing · Dublin</div></footer>
 `;
 
 // ---- Encrypt ----------------------------------------------------------------
@@ -383,7 +278,7 @@ const payload = JSON.stringify({ s: salt.toString("base64"), i: iv.toString("bas
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex, nofollow" />
-    <title>Proposal — Rooftop Twenty Two for PharmacyStore</title>
+    <title>Rooftop Twenty Two — Pitch</title>
     <link rel="preload" href="/fonts/butler-bold.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/mulish-variable.woff2" as="font" type="font/woff2" crossorigin />
   </head>
@@ -391,22 +286,31 @@ const payload = JSON.stringify({ s: salt.toString("base64"), i: iv.toString("bas
     <div class="pr-gate" id="pr-gate">
       <form class="pr-gate__card" id="pr-form" autocomplete="off">
         <p class="pr-gate__brand">Rooftop Twenty Two</p>
-        <h1 class="pr-gate__title">Website proposal</h1>
-        <p class="pr-gate__sub">Prepared for PharmacyStore. Enter the password to view.</p>
+        <h1 class="pr-gate__title">Pitch deck</h1>
+        <p class="pr-gate__sub">Enter the password to view.</p>
         <input class="pr-gate__input" id="pr-input" type="password" placeholder="Password" aria-label="Password" autofocus />
-        <button class="pr-gate__btn" type="submit">View proposal</button>
+        <button class="pr-gate__btn" type="submit">View pitch</button>
         <p class="pr-gate__err" id="pr-err" hidden>That password isn't right. Try again.</p>
       </form>
     </div>
 
     <header class="pr-top" id="pr-top" hidden>
-      <div class="pr-top__brand">Rooftop Twenty Two <em class="pr-top__for" set:html={"for " + psMark + "PharmacyStore"}></em></div>
+      <div class="pr-top__brand">Rooftop Twenty Two</div>
       <button class="pr-top__pdf" id="pr-pdf" type="button">Download PDF</button>
     </header>
 
     <main class="pr-main" id="pr-main"></main>
 
     <div class="pr-progress" id="pr-progress" hidden><span id="pr-progress-bar"></span></div>
+
+    <!-- Case study modal -->
+    <div class="cs-modal" id="cs-modal" hidden>
+      <div class="cs-modal__backdrop" data-cs-close></div>
+      <div class="cs-modal__panel" role="dialog" aria-modal="true" aria-label="Case study">
+        <button class="cs-modal__close" data-cs-close aria-label="Close">&times;</button>
+        <div class="cs-modal__body" id="cs-modal-body"></div>
+      </div>
+    </div>
 
     <script type="application/json" id="pr-data" set:html={payload}></script>
 
@@ -421,6 +325,8 @@ const payload = JSON.stringify({ s: salt.toString("base64"), i: iv.toString("bas
       const top = document.getElementById("pr-top");
       const progress = document.getElementById("pr-progress");
       const bar = document.getElementById("pr-progress-bar");
+      const modal = document.getElementById("cs-modal");
+      const modalBody = document.getElementById("cs-modal-body");
       const KEY = "rt22-deck-pharmacy";
       const b64 = (s: string) => { const bin = atob(s); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u; };
 
@@ -432,34 +338,38 @@ const payload = JSON.stringify({ s: salt.toString("base64"), i: iv.toString("bas
       }
       function onScroll() { if (!bar) return; const h = document.documentElement.scrollHeight - window.innerHeight; bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + "%"; }
 
-      // Continuous testimonials marquee — scrollLeft driven (no transform/mask),
-      // pauses on hover, same technique as the homepage tickers.
       function initMarquees() {
         const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         const canHover = window.matchMedia("(hover: hover)").matches;
         document.querySelectorAll<HTMLElement>("[data-marquee]").forEach((vp) => {
-          const track = vp.firstElementChild as HTMLElement | null;
-          if (!track) return;
-          const dur = parseFloat(vp.getAttribute("data-marquee") || "150") || 150;
+          const track = vp.firstElementChild as HTMLElement | null; if (!track) return;
+          const dur = parseFloat(vp.getAttribute("data-marquee") || "120") || 120;
           let half = track.scrollWidth / 2, paused = false, last = 0;
           const measure = () => { half = track.scrollWidth / 2; };
           measure(); vp.scrollLeft = half;
           window.addEventListener("resize", measure, { passive: true });
           if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
-          if (canHover) {
-            vp.addEventListener("mouseenter", () => { paused = true; });
-            vp.addEventListener("mouseleave", () => { paused = false; });
-          }
+          if (canHover) { vp.addEventListener("mouseenter", () => { paused = true; }); vp.addEventListener("mouseleave", () => { paused = false; }); }
           if (reduce) return;
-          const tick = (ts: number) => {
-            if (!last) last = ts;
-            const dt = ts - last; last = ts;
-            if (!paused && half > 0) { vp.scrollLeft -= (half / (dur * 1000)) * dt; if (vp.scrollLeft <= 0) vp.scrollLeft += half; }
-            requestAnimationFrame(tick);
-          };
+          const tick = (ts: number) => { if (!last) last = ts; const dt = ts - last; last = ts; if (!paused && half > 0) { vp.scrollLeft -= (half / (dur * 1000)) * dt; if (vp.scrollLeft <= 0) vp.scrollLeft += half; } requestAnimationFrame(tick); };
           requestAnimationFrame(tick);
         });
       }
+
+      function openCase(i: string | null) {
+        const full = document.querySelector<HTMLElement>('.cs-full[data-cs="' + i + '"]');
+        if (!full || !modal || !modalBody) return;
+        modalBody.innerHTML = full.innerHTML;
+        modal.removeAttribute("hidden");
+        document.body.style.overflow = "hidden";
+      }
+      function closeCase() { modal?.setAttribute("hidden", ""); document.body.style.overflow = ""; }
+      function initCases() {
+        main?.querySelectorAll<HTMLElement>(".cs-card").forEach((c) => c.addEventListener("click", () => openCase(c.getAttribute("data-cs"))));
+        modal?.querySelectorAll<HTMLElement>("[data-cs-close]").forEach((e) => e.addEventListener("click", closeCase));
+      }
+      window.addEventListener("keydown", (e) => { if (e.key === "Escape") closeCase(); });
+
       async function unlock(pw: string, fromSession = false) {
         try {
           const html = await decrypt(pw);
@@ -470,8 +380,7 @@ const payload = JSON.stringify({ s: salt.toString("base64"), i: iv.toString("bas
           progress?.removeAttribute("hidden");
           sessionStorage.setItem(KEY, pw);
           window.addEventListener("scroll", onScroll, { passive: true });
-          onScroll();
-          initMarquees();
+          onScroll(); initMarquees(); initCases();
         } catch { if (!fromSession) { err?.removeAttribute("hidden"); input?.focus(); input?.select(); } }
       }
       form?.addEventListener("submit", (e) => { e.preventDefault(); err?.setAttribute("hidden", ""); unlock(input?.value || ""); });
@@ -486,21 +395,17 @@ const payload = JSON.stringify({ s: salt.toString("base64"), i: iv.toString("bas
         --r-accent: #E15047; --r-green: #01FFB2; --on-dark: #fff; --on-dark-soft: #C2DDDB;
         --serif: "Butler", Georgia, "Times New Roman", serif;
         --sans: "Mulish", system-ui, -apple-system, "Segoe UI", sans-serif;
-        /* PharmacyStore — co-brand touches + mockups only */
-        --ps-green: #007F40; --ps-forest: #01592E; --ps-grass: #92C83E;
       }
       .pr-html, .pr-body { margin: 0; }
       .pr-body { background: #fff; color: var(--ink); font-family: var(--sans); overflow-x: hidden; }
       .pr-body:not(.is-unlocked) { overflow: hidden; height: 100vh; }
       .pr-wrap { max-width: 1140px; margin: 0 auto; padding-inline: clamp(1.25rem, 5vw, 3.5rem); }
       .pr-narrow { max-width: 820px; }
-      .ps-mark { color: var(--ps-green); width: 1em; height: auto; vertical-align: -0.15em; }
 
       /* Gate */
-      .pr-gate { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 1.5rem;
-        background: radial-gradient(120% 90% at 80% 0%, rgba(1,255,178,0.12), transparent 55%), radial-gradient(120% 90% at 0% 100%, rgba(225,80,71,0.14), transparent 55%), var(--navy); }
+      .pr-gate { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 1.5rem; background: radial-gradient(120% 90% at 80% 0%, rgba(1,255,178,0.12), transparent 55%), radial-gradient(120% 90% at 0% 100%, rgba(225,80,71,0.14), transparent 55%), var(--navy); }
       .pr-gate__card { width: min(440px, 100%); background: #fff; border-radius: 20px; padding: 2.4rem; box-shadow: 0 24px 60px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 0.35rem; }
-      .pr-gate__brand { font-family: var(--sans); font-weight: 800; font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--r-accent); margin: 0 0 0.8rem; }
+      .pr-gate__brand { font-weight: 800; font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--r-accent); margin: 0 0 0.8rem; }
       .pr-gate__title { font-family: var(--serif); font-weight: 600; font-size: 1.85rem; line-height: 1.05; margin: 0; color: var(--navy); }
       .pr-gate__sub { font-size: 0.95rem; color: var(--ink-soft); margin: 0.4rem 0 1.2rem; }
       .pr-gate__input { width: 100%; box-sizing: border-box; padding: 0.85rem 1.1rem; border-radius: 12px; border: 1px solid var(--line); font-family: var(--sans); font-size: 1rem; color: var(--ink); }
@@ -511,47 +416,46 @@ const payload = JSON.stringify({ s: salt.toString("base64"), i: iv.toString("bas
 
       /* Top bar + progress */
       .pr-top { position: sticky; top: 0; z-index: 40; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.7rem clamp(1.25rem, 5vw, 3.5rem); background: rgba(13,32,48,0.96); color: #fff; }
-      .pr-top__brand { font-family: var(--serif); font-weight: 600; font-size: 1.05rem; display: flex; align-items: center; gap: 0.5rem; }
-      .pr-top__for { font-family: var(--sans); font-style: normal; font-weight: 700; font-size: 0.8rem; color: var(--on-dark-soft); display: inline-flex; align-items: center; gap: 0.3rem; }
-      .pr-top__for .ps-mark { color: var(--ps-grass); }
-      .pr-top__pdf { border: 1px solid rgba(255,255,255,0.25); background: transparent; color: #fff; font-family: var(--sans); font-weight: 700; font-size: 0.82rem; padding: 0.5rem 1rem; border-radius: 9999px; cursor: pointer; }
+      .pr-top__brand { font-family: var(--serif); font-weight: 600; font-size: 1.05rem; }
+      .pr-top__pdf { border: 1px solid rgba(255,255,255,0.25); background: transparent; color: #fff; font-weight: 700; font-size: 0.82rem; padding: 0.5rem 1rem; border-radius: 9999px; cursor: pointer; }
       .pr-top__pdf:hover { background: rgba(255,255,255,0.1); }
       .pr-progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 50; }
       .pr-progress span { display: block; height: 100%; width: 0; background: var(--r-green); }
 
       /* Type + sections */
-      .pr-kicker { font-family: var(--sans); font-weight: 800; font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--r-accent); margin: 0 0 1rem; }
+      .pr-kicker { font-weight: 800; font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--r-accent); margin: 0 0 1rem; }
       .pr-sec { padding-block: clamp(3.25rem, 7vw, 6rem); background: #fff; }
       .pr-sec--alt { background: var(--alt); }
       .pr-sec--dark { background: var(--navy); color: #fff; }
       .pr-sec h2 { font-family: var(--serif); font-weight: 600; font-size: clamp(1.9rem, 4.2vw, 3rem); line-height: 1.08; letter-spacing: -0.01em; color: var(--navy); margin: 0 0 1.25rem; }
       .pr-sec--dark h2 { color: #fff; }
       .pr-sec--dark .pr-kicker { color: var(--r-green); }
+      .pr-subh { font-family: var(--serif); font-weight: 600; font-size: 1.5rem; color: var(--navy); margin: 0 0 1.25rem; }
       .pr-sec p { font-size: 1.08rem; line-height: 1.65; color: var(--ink); margin: 0 0 1rem; max-width: 70ch; }
       .pr-sec--dark p { color: var(--on-dark-soft); }
       .pr-lead { font-size: 1.2rem; color: var(--ink-soft); }
       .pr-soft { font-size: 0.98rem; color: var(--ink-soft); margin-top: 1.5rem; }
-      .pr-sec--dark .pr-soft { color: rgba(255,255,255,0.7); }
+      .pr-jlead { font-size: 1.15rem; color: var(--on-dark-soft); margin-top: 0.4rem; }
 
       /* Hero */
-      .pr-hero { position: relative; overflow: hidden; color: #fff; padding-block: clamp(4.5rem, 12vw, 9rem);
-        background: radial-gradient(110% 120% at 85% 0%, rgba(1,255,178,0.12), transparent 55%), radial-gradient(90% 120% at 0% 100%, rgba(225,80,71,0.14), transparent 55%), linear-gradient(160deg, #12283a, var(--navy)); }
-      .pr-cobrand { display: flex; align-items: center; flex-wrap: wrap; gap: 0.6rem; margin: 0 0 1.75rem; font-weight: 800; }
-      .pr-cobrand__a { color: #fff; font-size: 0.95rem; letter-spacing: 0.02em; }
-      .pr-cobrand__sep { color: var(--on-dark-soft); font-weight: 600; font-size: 0.85rem; }
-      .pr-cobrand__b { display: inline-flex; align-items: center; gap: 0.35rem; color: #fff; font-size: 0.95rem; }
-      .pr-cobrand__b .ps-mark { color: var(--ps-grass); width: 1.15em; }
+      .pr-hero { position: relative; overflow: hidden; color: #fff; padding-block: clamp(4.5rem, 12vw, 9rem); background: radial-gradient(110% 120% at 85% 0%, rgba(1,255,178,0.12), transparent 55%), radial-gradient(90% 120% at 0% 100%, rgba(225,80,71,0.14), transparent 55%), linear-gradient(160deg, #12283a, var(--navy)); }
+      .pr-cobrand { font-weight: 800; font-size: 0.95rem; letter-spacing: 0.02em; margin: 0 0 1.75rem; }
+      .pr-cobrand__a { color: #fff; }
       .pr-hero .pr-kicker { color: var(--r-green); }
       .pr-hero h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(2.4rem, 6.5vw, 4.6rem); line-height: 1.02; letter-spacing: -0.02em; color: #fff; margin: 0; }
-      .pr-hero__sub { font-size: clamp(1.1rem, 2.2vw, 1.4rem); color: #fff; margin: 1.5rem 0 0; }
-      .pr-hero__meta { font-size: 0.95rem; color: rgba(255,255,255,0.72); margin: 0.6rem 0 0; }
+      .pr-hero__sub { font-size: clamp(1.1rem, 2.2vw, 1.4rem); color: #fff; margin: 1.5rem 0 0; max-width: 52ch; }
+      .pr-hero__meta { font-size: 0.92rem; color: rgba(255,255,255,0.72); margin: 0.8rem 0 0; }
 
-      /* Stats */
-      .pr-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-top: 2.5rem; }
-      .pr-stat { background: var(--navy); color: #fff; border-radius: 16px; padding: 1.75rem 1.5rem; text-align: center; }
-      .pr-stat b { display: block; font-family: var(--serif); font-weight: 600; font-size: clamp(2rem, 5vw, 3rem); color: var(--r-green); line-height: 1; }
-      .pr-stat span { display: block; font-size: 0.92rem; color: rgba(255,255,255,0.82); margin-top: 0.5rem; }
-      @media (max-width: 620px) { .pr-stats { grid-template-columns: 1fr; } }
+      /* Values + stats */
+      .pr-values { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-top: 2.5rem; }
+      .pr-value { background: var(--alt); border: 1px solid var(--line); border-radius: 14px; padding: 1.4rem; }
+      .pr-value b { display: block; font-family: var(--serif); font-weight: 600; font-size: 1.2rem; color: var(--navy); margin-bottom: 0.4rem; }
+      .pr-value span { font-size: 0.96rem; color: var(--ink-soft); }
+      .pr-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-top: 1.25rem; }
+      .pr-stat { background: var(--navy); color: #fff; border-radius: 16px; padding: 1.6rem 1.5rem; text-align: center; }
+      .pr-stat b { display: block; font-family: var(--serif); font-weight: 600; font-size: clamp(1.8rem, 5vw, 2.8rem); color: var(--r-green); line-height: 1; }
+      .pr-stat span { display: block; font-size: 0.9rem; color: rgba(255,255,255,0.82); margin-top: 0.5rem; }
+      @media (max-width: 640px) { .pr-values, .pr-stats { grid-template-columns: 1fr; } }
 
       /* Lists */
       .pr-list { list-style: none; margin: 1.5rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 1.1rem; }
@@ -560,90 +464,25 @@ const payload = JSON.stringify({ s: salt.toString("base64"), i: iv.toString("bas
       .pr-sec--dark .pr-list li { color: rgba(255,255,255,0.9); }
       .pr-sec--dark .pr-tick { background: var(--r-green); }
 
-      /* Awards */
-      .pr-awards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 1.75rem; }
-      .pr-award { text-align: center; background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 2rem 1.25rem; }
-      .pr-award img { height: 58px; width: auto; max-width: 70%; object-fit: contain; margin: 0 auto 1.1rem; display: block; }
-      .pr-award b { display: block; font-family: var(--serif); font-weight: 600; font-size: 1.2rem; color: var(--navy); }
-      .pr-award span { display: block; font-size: 0.9rem; color: var(--ink-soft); margin-top: 0.3rem; }
-      @media (max-width: 720px) { .pr-awards { grid-template-columns: 1fr; } }
-
       /* Team */
-      .pr-team { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-top: 1.75rem; }
-      .pr-mem img { width: 100%; aspect-ratio: 4/5; object-fit: cover; object-position: center 14%; border-radius: 14px; background: var(--alt); display: block; filter: grayscale(1); }
-      .pr-mem b { display: block; font-family: var(--serif); font-weight: 600; font-size: 1.1rem; color: var(--navy); margin-top: 0.7rem; }
-      .pr-mem span { display: block; font-size: 0.88rem; color: var(--ink-soft); }
-      @media (max-width: 820px) { .pr-team { grid-template-columns: repeat(2, 1fr); } }
+      .pr-team { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.25rem; margin-top: 0.5rem; }
+      .pr-mem img { width: 100%; aspect-ratio: 4/5; object-fit: cover; object-position: center 14%; border-radius: 12px; background: var(--alt); display: block; filter: grayscale(1); }
+      .pr-mem b { display: block; font-family: var(--serif); font-weight: 600; font-size: 1rem; color: var(--navy); margin-top: 0.6rem; }
+      .pr-mem span { display: block; font-size: 0.82rem; color: var(--ink-soft); }
+      @media (max-width: 900px) { .pr-team { grid-template-columns: repeat(3, 1fr); } }
+      @media (max-width: 560px) { .pr-team { grid-template-columns: repeat(2, 1fr); } }
 
-      /* Cases */
-      .pr-cases { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 1.75rem; }
-      .pr-case { background: var(--alt); border: 1px solid var(--line); border-radius: 16px; padding: 1.9rem; }
-      .pr-case h3 { font-family: var(--serif); font-weight: 600; font-size: 1.35rem; color: var(--navy); margin: 0; }
-      .pr-case__role { font-size: 0.85rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; color: var(--r-accent); margin: 0.3rem 0 0.9rem; }
-      .pr-case p { font-size: 1rem; line-height: 1.6; color: var(--ink); margin: 0; }
-      @media (max-width: 720px) { .pr-cases { grid-template-columns: 1fr; } }
+      /* Expertise */
+      .pr-exp { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 1.75rem; }
+      .pr-expcard { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 1.9rem; }
+      .pr-expnum { font-family: var(--serif); font-weight: 700; font-size: 1.4rem; color: var(--r-accent); }
+      .pr-expcard h3 { font-family: var(--serif); font-weight: 600; font-size: 1.3rem; color: var(--navy); margin: 0.4rem 0 0.6rem; }
+      .pr-expcard p { font-size: 1rem; margin: 0; }
+      .pr-spec { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2.5rem; }
+      .pr-spec__col h4 { font-family: var(--serif); font-weight: 600; font-size: 1.2rem; color: var(--navy); margin: 0 0 0.5rem; }
+      @media (max-width: 760px) { .pr-exp { grid-template-columns: 1fr; } .pr-spec { grid-template-columns: 1fr; } }
 
-      /* Sitemap tree */
-      .pr-tree { margin: 2rem 0 0; }
-      .pr-tree__home { display: inline-block; background: var(--r-accent); color: #fff; font-family: var(--serif); font-weight: 600; font-size: 1.25rem; padding: 0.55rem 1.6rem; border-radius: 12px; }
-      .pr-tree__row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 1.5rem; }
-      .pr-node { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); border-radius: 12px; padding: 1.1rem 1.2rem; }
-      .pr-node b { display: block; font-family: var(--serif); font-weight: 600; font-size: 1.1rem; color: #fff; margin-bottom: 0.5rem; }
-      .pr-node--leaf b { margin-bottom: 0; }
-      .pr-node ul { list-style: none; margin: 0; padding: 0; }
-      .pr-node li { font-size: 0.92rem; line-height: 1.6; color: var(--on-dark-soft); }
-      @media (max-width: 820px) { .pr-tree__row { grid-template-columns: repeat(2, 1fr); } }
-
-      /* First look (PharmacyStore-branded mockup) */
-      .pr-firstlook { display: grid; grid-template-columns: 1fr 1.1fr; gap: 2.5rem; align-items: center; }
-      @media (max-width: 860px) { .pr-firstlook { grid-template-columns: 1fr; } }
-      .mock { border-radius: 14px; overflow: hidden; box-shadow: 0 24px 60px rgba(13,32,48,0.18); border: 1px solid var(--line); background: #fff; }
-      .mock__bar { display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 0.9rem; background: #e9eef0; }
-      .mock__dot { width: 10px; height: 10px; border-radius: 50%; background: #c4cdd2; }
-      .mock__url { margin-left: 0.75rem; font-size: 0.72rem; color: #6a7884; background: #fff; border-radius: 6px; padding: 0.25rem 0.8rem; }
-      .mock__nav { display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1.2rem; background: #fff; }
-      .mock__logo { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--ps-green); font-weight: 800; font-size: 0.95rem; }
-      .mock__logo .ps-mark { width: 1.3em; }
-      .mock__links { font-size: 0.78rem; color: var(--ps-forest); font-weight: 600; }
-      .mock__hero { position: relative; overflow: hidden; background: linear-gradient(150deg, var(--ps-green), var(--ps-forest)); color: #fff; padding: 2.4rem 1.6rem 2.6rem; }
-      .mock__heart { position: absolute; right: -8%; bottom: -30%; width: 55%; height: auto; fill: rgba(255,255,255,0.1); }
-      .mock__herotext { position: relative; z-index: 1; }
-      .mock__tag { font-family: var(--serif); font-style: italic; color: var(--ps-grass); font-size: 0.95rem; margin: 0 0 0.5rem; }
-      .mock__hero h4 { font-family: var(--serif); font-weight: 600; font-size: clamp(1.3rem, 3vw, 1.9rem); line-height: 1.1; margin: 0 0 1.1rem; color: #fff; max-width: 16ch; }
-      .mock__btn { display: inline-block; background: #fff; color: var(--ps-forest); font-weight: 800; font-size: 0.8rem; padding: 0.6rem 1.2rem; border-radius: 9999px; }
-      .mock__tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; padding: 1rem; background: #fff; }
-      .mock__tiles span { background: #EAF3EC; color: var(--ps-forest); font-weight: 700; font-size: 0.78rem; text-align: center; padding: 0.9rem 0.4rem; border-radius: 10px; border: 1px solid #d7e7dc; }
-
-      /* Robotics */
-      .pr-robotics { position: relative; }
-
-      /* Tables */
-      .pr-tablewrap { margin-top: 1.75rem; overflow-x: auto; border: 1px solid var(--line); border-radius: 16px; }
-      .pr-table { width: 100%; border-collapse: collapse; min-width: 640px; background: #fff; }
-      .pr-table th, .pr-table td { text-align: left; padding: 1rem 1.15rem; vertical-align: top; font-size: 0.98rem; line-height: 1.45; border-top: 1px solid var(--line); }
-      .pr-table thead th { background: var(--navy); color: #fff; font-weight: 800; font-size: 0.9rem; border: 0; }
-      .pr-table tbody th { color: var(--r-accent); font-weight: 800; width: 22%; }
-      .pr-table td { color: var(--ink); }
-      .pr-table--int tbody th { width: 26%; color: var(--navy); font-family: var(--serif); font-weight: 600; font-size: 1.02rem; }
-      .pr-tag { display: inline-block; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.25rem 0.7rem; border-radius: 9999px; white-space: nowrap; }
-      .pr-tag--core { background: rgba(1,255,178,0.18); color: #0a7d59; }
-      .pr-tag--addon { background: rgba(225,80,71,0.14); color: var(--r-accent); }
-      .pr-rec { margin-top: 1.75rem; background: var(--alt); border-left: 4px solid var(--r-green); border-radius: 12px; padding: 1.5rem 1.75rem; }
-      .pr-rec b { display: block; font-family: var(--serif); font-weight: 600; font-size: 1.2rem; color: var(--navy); margin-bottom: 0.4rem; }
-      .pr-rec p { margin: 0; }
-
-      /* Timeline */
-      .pr-timeline { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.25rem; margin: 2rem 0 0; position: relative; }
-      .pr-timeline::before { content: ""; position: absolute; top: 22px; left: 10%; right: 10%; height: 2px; background: rgba(255,255,255,0.2); }
-      .pr-step { text-align: center; position: relative; }
-      .pr-step__n { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: var(--r-green); color: var(--navy); font-family: var(--serif); font-weight: 700; font-size: 1.1rem; position: relative; z-index: 1; }
-      .pr-step b { display: block; font-family: var(--serif); font-weight: 600; font-size: 1.05rem; color: #fff; margin-top: 0.9rem; line-height: 1.15; }
-      .pr-step__wk { display: block; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; color: var(--r-green); margin: 0.4rem 0; }
-      .pr-step p { font-size: 0.9rem; line-height: 1.4; color: rgba(255,255,255,0.8); margin: 0; }
-      @media (max-width: 820px) { .pr-timeline { grid-template-columns: 1fr 1fr; gap: 1.75rem; } .pr-timeline::before { display: none; } }
-
-      /* Journey (what to expect) */
-      .pr-jlead { font-size: 1.15rem; color: var(--on-dark-soft); margin-top: 0.4rem; }
+      /* Journey */
       .pr-journey { margin-top: 2.75rem; }
       .pr-jstep { display: grid; grid-template-columns: 48px 1fr; gap: 1.5rem; }
       .pr-jrail { display: flex; flex-direction: column; align-items: center; }
@@ -652,37 +491,85 @@ const payload = JSON.stringify({ s: salt.toString("base64"), i: iv.toString("bas
       .pr-jbody { padding-bottom: 2.75rem; }
       .pr-jstep:last-child .pr-jbody { padding-bottom: 0; }
       .pr-jweek { display: inline-block; font-size: 0.74rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--r-green); background: rgba(1,255,178,0.12); padding: 0.25rem 0.75rem; border-radius: 9999px; }
-      .pr-jbody h3 { font-family: var(--serif); font-weight: 600; font-size: clamp(1.4rem, 3vw, 1.95rem); color: #fff; margin: 0.7rem 0 0.6rem; line-height: 1.1; }
+      .pr-jbody h3 { font-family: var(--serif); font-weight: 600; font-size: clamp(1.4rem, 3vw, 1.9rem); color: #fff; margin: 0.7rem 0 0.6rem; line-height: 1.1; }
       .pr-jbody p { color: rgba(255,255,255,0.82); max-width: 64ch; }
+      .pr-jbody p b { color: #fff; }
       .pr-jwire { display: grid; grid-template-columns: 1.15fr 1fr; gap: 1.5rem; align-items: center; margin-top: 1.5rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 1.4rem; }
       .pr-jwire__cap { font-size: 0.92rem; color: rgba(255,255,255,0.78); margin: 0; max-width: none; }
       .pr-jwire__cap b { color: #fff; }
       @media (max-width: 720px) { .pr-jwire { grid-template-columns: 1fr; } }
-
-      /* Wireframe (PS-green CTA as a touch) */
-      .pr-wf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: center; margin-top: 3rem; }
-      .pr-wf-text h3 { font-family: var(--serif); font-weight: 600; font-size: 1.6rem; color: #fff; margin: 0 0 0.8rem; }
       .pr-wf { background: #fff; border-radius: 14px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.85rem; box-shadow: 0 16px 40px rgba(0,0,0,0.25); }
       .pr-wf__bar { display: flex; align-items: center; gap: 0.6rem; }
       .pr-wf__logo, .pr-wf__nav, .pr-wf__btn, .pr-wf__img, .pr-wf__cta, .pr-wf__lines span, .pr-wf__cards span { background: #d9dde1; border-radius: 5px; display: block; }
-      .pr-wf__logo { width: 84px; height: 20px; }
-      .pr-wf__nav { width: 48px; height: 12px; }
-      .pr-wf__btn { width: 60px; height: 22px; margin-left: auto; background: #c2c8ce; }
-      .pr-wf__hero { display: flex; gap: 1rem; }
-      .pr-wf__lines { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 0.6rem; }
-      .pr-wf__lines span { height: 14px; }
-      .pr-wf__lines span:nth-child(1) { width: 90%; }
-      .pr-wf__lines span:nth-child(2) { width: 65%; }
-      .pr-wf__cta { width: 100px; height: 26px; margin-top: 0.5rem; background: var(--ps-green); }
-      .pr-wf__img { width: 42%; min-height: 110px; }
-      .pr-wf__cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.7rem; }
-      .pr-wf__cards span { height: 56px; }
-      @media (max-width: 820px) { .pr-wf-row { grid-template-columns: 1fr; gap: 1.5rem; } }
+      .pr-wf__logo { width: 84px; height: 20px; } .pr-wf__nav { width: 48px; height: 12px; } .pr-wf__btn { width: 60px; height: 22px; margin-left: auto; background: #c2c8ce; }
+      .pr-wf__hero { display: flex; gap: 1rem; } .pr-wf__lines { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 0.6rem; } .pr-wf__lines span { height: 14px; } .pr-wf__lines span:nth-child(1) { width: 90%; } .pr-wf__lines span:nth-child(2) { width: 65%; }
+      .pr-wf__cta { width: 100px; height: 26px; margin-top: 0.5rem; background: var(--r-accent); } .pr-wf__img { width: 42%; min-height: 110px; } .pr-wf__cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.7rem; } .pr-wf__cards span { height: 56px; }
 
-      /* Testimonials marquee (same style + colours as the homepage) */
+      /* Case studies grid + modal */
+      .cs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 1.75rem; }
+      @media (max-width: 880px) { .cs-grid { grid-template-columns: repeat(2, 1fr); } }
+      @media (max-width: 560px) { .cs-grid { grid-template-columns: 1fr; } }
+      .cs-card { text-align: left; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: #fff; cursor: pointer; padding: 0; font: inherit; color: inherit; transition: transform 0.15s ease, box-shadow 0.15s ease; display: flex; flex-direction: column; }
+      .cs-card:hover { transform: translateY(-3px); box-shadow: 0 16px 34px rgba(13,32,48,0.14); }
+      .cs-card__img { display: block; aspect-ratio: 16/10; background: var(--alt); overflow: hidden; }
+      .cs-card__img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .cs-card__meta { padding: 1.1rem 1.2rem 1.3rem; display: flex; flex-direction: column; gap: 0.2rem; }
+      .cs-card__meta b { font-family: var(--serif); font-weight: 600; font-size: 1.1rem; color: var(--navy); }
+      .cs-card__tag { font-size: 0.88rem; color: var(--ink-soft); line-height: 1.35; }
+      .cs-card__cta { font-style: normal; font-weight: 700; font-size: 0.82rem; color: var(--r-accent); margin-top: 0.5rem; }
+      .cs-store { display: none; }
+      .cs-modal { position: fixed; inset: 0; z-index: 70; display: flex; align-items: center; justify-content: center; padding: 1.5rem; }
+      .cs-modal__backdrop { position: absolute; inset: 0; background: rgba(13,32,48,0.6); backdrop-filter: blur(3px); }
+      .cs-modal__panel { position: relative; z-index: 1; width: min(680px, 100%); max-height: 88vh; overflow-y: auto; background: #fff; border-radius: 18px; box-shadow: 0 30px 70px rgba(0,0,0,0.4); }
+      .cs-modal__close { position: absolute; top: 0.75rem; right: 0.9rem; z-index: 2; width: 38px; height: 38px; border-radius: 50%; border: 0; background: rgba(13,32,48,0.55); color: #fff; font-size: 1.3rem; line-height: 1; cursor: pointer; }
+      .cs-modal__body .cs-full__img { aspect-ratio: 16/9; background: var(--alt); }
+      .cs-modal__body .cs-full__img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .cs-modal__body h3 { font-family: var(--serif); font-weight: 600; font-size: 1.6rem; color: var(--navy); margin: 1.4rem 1.6rem 0; }
+      .cs-full__tag { font-weight: 800; font-size: 0.8rem; letter-spacing: 0.03em; text-transform: uppercase; color: var(--r-accent); margin: 0.3rem 1.6rem 0; }
+      .cs-full__body { font-size: 1rem; line-height: 1.65; color: var(--ink); margin: 1rem 1.6rem; }
+      .cs-stats { display: flex; flex-wrap: wrap; gap: 1.5rem; margin: 0 1.6rem 1.2rem; }
+      .cs-stats b { display: block; font-family: var(--serif); font-weight: 600; font-size: 1.8rem; color: var(--navy); }
+      .cs-stats span { font-size: 0.82rem; color: var(--ink-soft); }
+      .cs-full__link { display: inline-block; margin: 0 1.6rem 1.6rem; font-weight: 700; color: var(--r-accent); text-decoration: none; }
+
+      /* Client portfolio logo wall */
+      .pr-lviewport { overflow: hidden; margin-top: 2.5rem; }
+      .pr-ltrack { list-style: none; margin: 0; padding: 0; display: flex; width: max-content; align-items: center; }
+      .pr-litem { flex: 0 0 auto; margin-right: 4rem; }
+      .pr-litem img { height: 38px; width: auto; max-width: 160px; object-fit: contain; opacity: 0.9; }
+
+      /* Awards */
+      .pr-awards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+      .pr-award { text-align: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; padding: 1.75rem 1.25rem; }
+      .pr-award img { height: 52px; width: auto; max-width: 70%; object-fit: contain; margin: 0 auto 1rem; display: block; }
+      .pr-award b { display: block; font-family: var(--serif); font-weight: 600; font-size: 1.15rem; color: #fff; }
+      .pr-award span { display: block; font-size: 0.88rem; color: var(--on-dark-soft); margin-top: 0.3rem; }
+      @media (max-width: 720px) { .pr-awards { grid-template-columns: 1fr; } }
+
+      /* Team highlights */
+      .pr-leaders { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-top: 1.75rem; }
+      .pr-leader { margin: 0; }
+      .pr-leader img { width: 100%; aspect-ratio: 4/5; object-fit: cover; object-position: center 12%; border-radius: 14px; filter: grayscale(1); display: block; }
+      .pr-leader figcaption b { display: block; font-family: var(--serif); font-weight: 600; font-size: 1.15rem; color: var(--navy); margin-top: 0.7rem; }
+      .pr-leader figcaption span { font-size: 0.88rem; color: var(--ink-soft); }
+      @media (max-width: 760px) { .pr-leaders { grid-template-columns: repeat(2, 1fr); } }
+
+      /* Pricing */
+      .pr-pricing { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 1.75rem; align-items: start; }
+      .pr-tier { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 1.9rem; position: relative; }
+      .pr-tier--feature { border-color: var(--navy); box-shadow: 0 16px 40px rgba(13,32,48,0.12); }
+      .pr-tier__badge { position: absolute; top: -0.7rem; left: 1.9rem; background: var(--r-accent); color: #fff; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; padding: 0.3rem 0.8rem; border-radius: 9999px; }
+      .pr-tier h3 { font-family: var(--serif); font-weight: 600; font-size: 1.35rem; color: var(--navy); margin: 0; }
+      .pr-tier__price { font-family: var(--serif); font-weight: 600; font-size: 1.6rem; color: var(--r-accent); margin: 0.5rem 0 0.3rem; }
+      .pr-tier__desc { font-size: 0.95rem; color: var(--ink-soft); margin: 0 0 1rem; }
+      .pr-tier ul { list-style: none; margin: 0; padding: 1rem 0 0; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 0.6rem; }
+      .pr-tier li { font-size: 0.95rem; color: var(--ink); padding-left: 1.4rem; position: relative; }
+      .pr-tier li::before { content: ""; position: absolute; left: 0; top: 0.5rem; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--r-green); }
+      @media (max-width: 820px) { .pr-pricing { grid-template-columns: 1fr; } }
+
+      /* Testimonials marquee (homepage style) */
       .pr-tsection { overflow: hidden; background: #fff; }
       .pr-thead { text-align: center; max-width: 1140px; margin: 0 auto 2.5rem; padding-inline: clamp(1.25rem, 5vw, 3.5rem); }
-      .pr-thead .pr-kicker { display: inline-block; }
       .pr-tsection h2 { font-family: var(--serif); font-weight: 600; font-size: clamp(1.9rem, 4.2vw, 3rem); line-height: 1.08; color: var(--navy); margin: 0; }
       .pr-tsection h2 em { font-style: italic; color: var(--r-accent); }
       .pr-tviewport { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
@@ -690,29 +577,26 @@ const payload = JSON.stringify({ s: salt.toString("base64"), i: iv.toString("bas
       .pr-ttrack { list-style: none; margin: 0; padding: 0.5rem 0; display: flex; flex-direction: row; align-items: stretch; width: max-content; }
       .pr-tcard { flex: 0 0 clamp(280px, 80vw, 380px); margin: 0 1.5rem 0 0; display: flex; flex-direction: column; background: var(--alt); border: 1px solid var(--line); border-radius: 18px; padding: 2rem; }
       .pr-tmark { font-family: var(--serif); font-weight: 700; font-size: 3rem; line-height: 0.6; color: var(--r-accent); }
-      .pr-tquote { font-family: var(--sans); font-size: 1.02rem; line-height: 1.6; color: var(--ink); margin: 1rem 0 0; flex: 1 1 auto; }
+      .pr-tquote { font-size: 1.02rem; line-height: 1.6; color: var(--ink); margin: 1rem 0 0; flex: 1 1 auto; }
       .pr-tby { display: flex; align-items: center; gap: 0.85rem; margin-top: 1.75rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
-      .pr-tavatar { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: var(--r-accent); color: #fff; font-family: var(--sans); font-weight: 700; font-size: 0.95rem; }
+      .pr-tavatar { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background: var(--r-accent); color: #fff; font-weight: 700; font-size: 0.95rem; }
       .pr-twho { display: flex; flex-direction: column; }
-      .pr-tname { font-family: var(--sans); font-weight: 700; font-size: 1rem; color: var(--ink); }
-      .pr-tco { font-family: var(--sans); font-size: 0.85rem; color: var(--ink-soft); }
+      .pr-tname { font-weight: 700; font-size: 1rem; color: var(--ink); }
+      .pr-tco { font-size: 0.85rem; color: var(--ink-soft); }
 
       /* Close */
       .pr-contact { margin-top: 1.5rem; }
       .pr-contact a { color: var(--r-green); text-decoration: none; }
       .pr-sign { font-family: var(--serif); font-size: 1.2rem; color: #fff; margin-top: 1.75rem; }
       .pr-sign span { font-family: var(--sans); font-size: 0.95rem; color: rgba(255,255,255,0.75); }
-      .pr-forclient { display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 2rem; font-size: 0.9rem; color: var(--on-dark-soft); }
-      .pr-forclient .ps-mark { color: var(--ps-grass); width: 1.3em; }
-
       .pr-foot { background: #081521; color: rgba(255,255,255,0.6); font-size: 0.82rem; padding: 1.5rem 0; text-align: center; }
 
       @media print {
         @page { margin: 14mm; }
-        .pr-gate, .pr-top, .pr-progress { display: none !important; }
+        .pr-gate, .pr-top, .pr-progress, .cs-modal { display: none !important; }
         .pr-body { overflow: visible; }
         .pr-sec, .pr-hero { break-inside: avoid; }
-        .pr-sec--dark, .pr-hero, .pr-stat, .mock__hero { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .pr-sec--dark, .pr-hero, .pr-stat { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       }
     </style>
   </body>
