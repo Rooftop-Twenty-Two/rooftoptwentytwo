@@ -31,7 +31,7 @@ const namedCases = [
   { name: "One in Four", tag: "Care-sector charity", body: "A care-sector website we designed and built from the ground up, working from interactive wireframes through to the live site. It is information-led with clear, prominent actions, exactly the structure a pharmacy site needs when the goal is helping people find a service and book rather than buy. This was the wireframe example we walked you through on the call." },
 ];
 const portfolioCases: any[] = [];
-for (const s of ["bloomfield-health-services", "antaris-consulting", "breast-cancer-ireland", "gourmet-food-parlour"]) {
+for (const s of ["bloomfield-health-services", "antaris-consulting", "breast-cancer-ireland", "gourmet-food-parlour", "midlands-park-hotel", "the-irish-defence-forces", "irish-chauffeurs", "kinore", "european-milk-forum", "guinness-cork-jazz"]) {
   const e = portfolio.find((p) => p.data.slug === s);
   if (e && e.data.heroImage && has(e.data.heroImage)) portfolioCases.push(e.data);
 }
@@ -71,9 +71,20 @@ const teamGrid = `<div class="pr-team">${team.map((m) => `<figure class="pr-mem"
 const leaderCards = `<div class="pr-leaders">${leaders.map((m) => `<figure class="pr-leader"><img src="${m.portrait}" alt="${m.name}" loading="lazy"/><figcaption><b>${m.name}</b><span>${m.role}</span></figcaption></figure>`).join("")}</div>`;
 
 const statBlock = (r: any) => (r && r.stats && r.stats.length ? `<div class="cs-stats">${r.stats.map((s: any) => `<div><b>${s.prefix || ""}${s.to}${s.suffix || ""}</b><span>${s.label}</span></div>`).join("")}</div>` : "");
-const caseGrid = `<div class="cs-grid">${cases.map((c, i) => c.type === "image"
-  ? `<button class="cs-card" data-cs="${i}" type="button"><span class="cs-card__img"><img src="${c.image}" alt="${c.name}" loading="lazy"/></span><span class="cs-card__meta"><b>${c.name}</b><span class="cs-card__tag">${c.tag}</span><em class="cs-card__cta">View case study &rarr;</em></span></button>`
-  : `<button class="cs-card cs-card--text" data-cs="${i}" type="button"><span class="cs-card__label">Healthcare</span><span class="cs-card__meta"><b>${c.name}</b><span class="cs-card__tag">${c.tag}</span><em class="cs-card__cta">Read more &rarr;</em></span></button>`).join("")}</div>`;
+// Animated left-to-right marquee of case-study cards (duplicated for a seamless
+// loop). Clicking any card opens its detail popup. Built with concatenation to
+// avoid nested template literals.
+const caseCard = (c: any, i: number, dup: boolean) => {
+  const media = c.type === "image"
+    ? '<span class="cs-card__img"><img src="' + c.image + '" alt="' + c.name + '" loading="lazy"/></span>'
+    : '<span class="cs-card__img cs-card__img--text"><span>Healthcare</span></span>';
+  return '<li class="cs-cell"' + (dup ? ' aria-hidden="true"' : '') + '>' +
+    '<button class="cs-card" data-cs="' + i + '" type="button">' + media +
+    '<span class="cs-card__meta"><b>' + c.name + '</b><span class="cs-card__tag">' + c.tag + '</span>' +
+    '<em class="cs-card__cta">View case study &rarr;</em></span></button></li>';
+};
+const caseCells = cases.map((c, i) => caseCard(c, i, false)).join("") + cases.map((c, i) => caseCard(c, i, true)).join("");
+const caseMarquee = '<div class="cs-viewport" data-marquee="120"><ul class="cs-track" role="list">' + caseCells + '</ul></div>';
 const caseDetails = cases.map((c, i) => c.type === "image"
   ? `<div class="cs-full" data-cs="${i}" hidden><div class="cs-full__img"><img src="${c.image}" alt="${c.name}"/></div><h3>${c.name}</h3><p class="cs-full__tag">${c.tag}</p><p class="cs-full__body">${c.body}</p>${statBlock(c.results)}<a class="cs-full__link" href="/work/${c.slug}/" target="_blank" rel="noopener">Open full case study &rarr;</a></div>`
   : `<div class="cs-full" data-cs="${i}" hidden><div class="cs-full__head"><span>Healthcare</span></div><h3>${c.name}</h3><p class="cs-full__tag">${c.tag}</p><p class="cs-full__body">${c.body}</p><p class="cs-full__note">Live link available on request.</p></div>`).join("");
@@ -91,6 +102,23 @@ const homepageMock = `<div class="mock">
     <div class="mock__hero">${heart("mock__heart")}<div class="mock__herotext"><p class="mock__tag">Caring for your wellbeing</p><h4>Health checks that fit around your day.</h4><span class="mock__btn">Book an appointment</span></div></div>
     <div class="mock__tiles"><span>Vaccinations</span><span>Health checks</span><span>Weight management</span></div>
   </div></div>`;
+
+// Approved PharmacyStore designs for the "A first look" section. Drop the real
+// poster artwork into public/images/pharmacy-store/ (a single composite as
+// approved-designs.png/.jpg, or poster-1/2/3.jpg). Falls back to the built
+// mock-up until the artwork is present, so the page is always valid.
+const composite = ["/images/pharmacy-store/approved-designs.png", "/images/pharmacy-store/approved-designs.jpg", "/images/pharmacy-store/approved-designs.webp"].find(has);
+const posters = ["/images/pharmacy-store/poster-1.jpg", "/images/pharmacy-store/poster-2.jpg", "/images/pharmacy-store/poster-3.jpg"].filter(has);
+const hasApproved = !!composite || posters.length > 0;
+const posterImgs = posters.map((p) => '<figure class="pr-poster"><img src="' + p + '" alt="Approved PharmacyStore design" loading="lazy"/></figure>').join("");
+const firstLookVisual = composite
+  ? '<figure class="pr-composite"><img src="' + composite + '" alt="Approved PharmacyStore designs" loading="lazy"/></figure>'
+  : (posters.length ? '<div class="pr-posters">' + posterImgs + '</div>' : homepageMock);
+const firstLookHead = hasApproved ? "The approved look, ready for the web." : "An early visual direction.";
+const firstLookBody = hasApproved
+  ? "These are signed-off PharmacyStore designs, already approved. They set the visual direction we will carry across the new website: the green, the heart device, the warmth of caring for your wellbeing, and a clear, prominent route to act. We translate this exact look into the live site, from wireframe through to launch."
+  : "The following is an early, illustrative concept rather than a finished design, and the detail should be regarded as indicative only. Its purpose is to demonstrate how the TAP Creative brand carries through: the green, the heart device, the line about caring for your wellbeing, and the prominent placement of booking.";
+const firstLookFoot = hasApproved ? "The same brand, the same warmth, carried through every page of the site." : "The final design will be developed with you, from wireframe through to launch.";
 
 const journey = [
   { wk: "Week 1", t: "Discovery and strategy", p: "We meet at our Dublin offices to establish what the business requires of the site, agreeing the objectives, the audience and the overall structure.",
@@ -178,7 +206,41 @@ const content = `
 
 <div class="pr-band"><img src="/images/office/office-work-01.jpg" alt="Inside the Rooftop Twenty Two studio" loading="lazy"/></div>
 
-<!-- 5 · Our thinking for your site -->
+<!-- Case studies (animated, click to open) -->
+<section class="pr-sec pr-sec--alt">
+  <div class="pr-wrap">
+    ${kicker("Relevant case studies")}
+    <h2>Relevant healthcare experience.</h2>
+    <p class="pr-lead">These projects share the requirements of yours: presenting a service clearly, establishing trust, and making booking straightforward. Tap any card to read the full story.</p>
+  </div>
+  ${caseMarquee}
+  <div class="cs-store">${caseDetails}</div>
+</section>
+
+<!-- What clients say -->
+<section class="pr-sec pr-tsection">
+  <div class="pr-thead">${kicker("What clients say")}<h2>In <em>their words</em>.</h2></div>
+  <div class="pr-tviewport" data-marquee="150"><ul class="pr-ttrack" role="list">${tCards}</ul></div>
+</section>
+
+<!-- Client portfolio -->
+<section class="pr-sec pr-sec--dark">
+  <div class="pr-wrap">${kicker("Client portfolio")}<h2>A portfolio across sectors.</h2><p class="pr-jlead">We work with organisations ranging from national institutions to independent brands, many of them over a number of years. That longevity is a measure we value, as retaining clients is a more demanding test than winning them.</p></div>
+  ${logoMarquee}
+  <div class="pr-wrap" style="margin-top:3rem">${awardCards}</div>
+</section>
+
+<!-- Our process (brought up) -->
+<section class="pr-sec">
+  <div class="pr-wrap">
+    ${kicker("Our process · 8 to 10 weeks")}
+    <h2>Our process and timeline.</h2>
+    <p class="pr-lead">The following sets out how we work and what you receive at each stage. The complete build runs to between 8 and 10 weeks. We provide a range rather than a fixed date because approval times vary on the client side, and we prefer to set a realistic expectation than to commit to a figure that may later require revision.</p>
+    ${journeyHtml.replace(/pr-jstep/g, "pr-jstep pr-jstep--light").replace(/pr-jbody/g, "pr-jbody pr-jbody--light")}
+  </div>
+</section>
+
+<!-- Our thinking for your site -->
 <section class="pr-sec pr-sec--alt">
   <div class="pr-wrap pr-narrow">
     ${kicker("Our thinking for your site")}
@@ -191,12 +253,23 @@ const content = `
       "At the same time, give each of the five pharmacies its own page. Customers search for their nearest branch by name, so each page should carry that branch's own opening hours, location, services and photography, and load immediately, while still sitting clearly within the group brand.",
       "Remove the dated and Covid-era content and apply the TAP Creative brand and photography throughout. Outdated content implies a business that has not progressed, which works against the impression you intend to create.",
       "Incorporate SEO from the outset rather than retrofitting it after launch, as adding search capability later is slower, more costly, and concedes ground in the interim.",
-      "Present the robotics and automation story in full, as it represents a genuine point of difference that few independent groups in your area can claim. This is addressed further below.",
+      "Present the robotics and automation story in full, as it represents a genuine point of difference that few independent groups in your area can claim.",
     ])}
   </div>
 </section>
 
-<!-- 6 · Sitemap -->
+<!-- A first look (PharmacyStore-branded designs) -->
+<section class="pr-sec">
+  <div class="pr-wrap pr-narrow">
+    ${kicker("A first look")}
+    <h2>${firstLookHead}</h2>
+    <p>${firstLookBody}</p>
+    <p class="pr-soft">${firstLookFoot}</p>
+  </div>
+  <div class="pr-wrap pr-firstlook__visual">${firstLookVisual}</div>
+</section>
+
+<!-- Sitemap -->
 <section class="pr-sec pr-sec--dark">
   <div class="pr-wrap">
     ${kicker("Potential sitemap")}
@@ -217,7 +290,7 @@ const content = `
   </div>
 </section>
 
-<!-- 7 · Booking engine -->
+<!-- Booking engine -->
 <section class="pr-sec">
   <div class="pr-wrap">
     ${kicker("The booking engine")}
@@ -238,21 +311,8 @@ const content = `
   </div>
 </section>
 
-<!-- 8 · A first look (PharmacyStore-branded mockup) -->
+<!-- Integrations -->
 <section class="pr-sec pr-sec--alt">
-  <div class="pr-wrap pr-firstlook">
-    <div class="pr-firstlook__text">
-      ${kicker("A first look")}
-      <h2>An early visual direction.</h2>
-      <p>The following is an early, illustrative concept rather than a finished design, and the detail should be regarded as indicative only. Its purpose is to demonstrate how the TAP Creative brand carries through: the green, the heart device, the line about caring for your wellbeing, and the prominent placement of booking.</p>
-      <p class="pr-soft">The final design will be developed with you, from wireframe through to launch.</p>
-    </div>
-    <div class="pr-firstlook__mock">${homepageMock}</div>
-  </div>
-</section>
-
-<!-- 9 · Integrations -->
-<section class="pr-sec">
   <div class="pr-wrap">
     ${kicker("Other integrations")}
     <h2>Connected systems and integrations.</h2>
@@ -273,18 +333,8 @@ const content = `
   </div>
 </section>
 
-<!-- 10 · Robotics -->
-<section class="pr-sec pr-sec--dark">
-  <div class="pr-wrap pr-narrow">
-    ${kicker("A point of difference")}
-    <h2>Automation as a point of difference.</h2>
-    <p>You have indicated that you are progressing toward automation, and this merits prominence on the site. Robotic dispensing achieves accuracy approaching 100% and processes a substantial share of daily prescriptions within seconds, releasing your pharmacists to spend more time with patients rather than on routine dispensing. Boots Ireland and others already position this prominently, which demonstrates its value both operationally and as a proposition.</p>
-    <p>On the site, it serves two purposes. It establishes the group as forward-looking, and it supports the more premium positioning that the wider brand is working toward. We would welcome an update on the current stage of your rollout, so that the content can be planned around the actual timeline.</p>
-  </div>
-</section>
-
-<!-- 10b · Questions for you -->
-<section class="pr-sec pr-sec--alt">
+<!-- Questions for you -->
+<section class="pr-sec">
   <div class="pr-wrap pr-narrow">
     ${kicker("Questions for you")}
     <h2>The systems and plans we will design around.</h2>
@@ -305,71 +355,26 @@ const content = `
   </div>
 </section>
 
-<!-- 11 · Our process -->
-<section class="pr-sec pr-sec--dark" style="padding-top:0">
-  <div class="pr-wrap">
-    ${kicker("Our process · 8 to 10 weeks")}
-    <h2>Our process and timeline.</h2>
-    <p class="pr-jlead">The following sets out how we work and what you receive at each stage. The complete build runs to between 8 and 10 weeks. We provide a range rather than a fixed date because approval times vary on the client side, and we prefer to set a realistic expectation than to commit to a figure that may later require revision.</p>
-    ${journeyHtml}
-  </div>
-</section>
-
-<!-- 12 · Case studies -->
-<section class="pr-sec">
-  <div class="pr-wrap">
-    ${kicker("Relevant case studies")}
-    <h2>Relevant healthcare experience.</h2>
-    <p class="pr-lead">The following projects share the requirements of yours: presenting a service clearly, establishing trust, and making booking straightforward. Further detail is available on each.</p>
-    ${caseGrid}
-    <div class="cs-store">${caseDetails}</div>
-  </div>
-</section>
-
-<section class="pr-sec pr-tsection">
-  <div class="pr-thead">${kicker("What clients say")}<h2>In <em>their words</em>.</h2></div>
-  <div class="pr-tviewport" data-marquee="150"><ul class="pr-ttrack" role="list">${tCards}</ul></div>
-</section>
-
-<!-- 13 · Client portfolio -->
-<section class="pr-sec pr-sec--dark">
-  <div class="pr-wrap">${kicker("Client portfolio")}<h2>A portfolio across sectors.</h2><p class="pr-jlead">We work with organisations ranging from national institutions to independent brands, many of them over a number of years. That longevity is a measure we value, as retaining clients is a more demanding test than winning them.</p></div>
-  ${logoMarquee}
-  <div class="pr-wrap" style="margin-top:3rem">${awardCards}</div>
-</section>
-
-<!-- 14 · Team highlights -->
+<!-- Pricing & packages (gold / silver / bronze) -->
 <section class="pr-sec pr-sec--alt">
-  <div class="pr-wrap">${kicker("Team highlights")}<h2>Senior leadership.</h2><p class="pr-lead">A senior leadership team with decades of combined experience across design, development, marketing and operations.</p>${leaderCards}</div>
-</section>
-
-<!-- 15 · Pricing & packages -->
-<section class="pr-sec">
   <div class="pr-wrap">
     ${kicker("Pricing & packages")}
     <h2>Investment.</h2>
-    <p class="pr-lead">Three options are set out below, according to how far you wish to proceed at launch. Each is presented as a single investment figure rather than an itemised breakdown, reflecting a defined outcome rather than a quantity of hours.</p>
+    <p class="pr-lead">Three packages are set out below, gold, silver and bronze, according to how far you wish to take it at launch. Each is presented as a single investment figure rather than an itemised breakdown, reflecting a defined outcome rather than a quantity of hours.</p>
     <div class="pr-pricing">
-      <div class="pr-tier"><h3>Website project</h3><p class="pr-tier__price">From €X,000</p><p class="pr-tier__desc">The new service and information site, design to launch.</p><ul><li>Discovery workshop</li><li>Interactive wireframe</li><li>Design, build &amp; QA</li><li>Five location pages</li><li>Launch &amp; training</li></ul></div>
-      <div class="pr-tier pr-tier--feature"><span class="pr-tier__badge">Our recommendation</span><h3>Website plus booking</h3><p class="pr-tier__price">From €X,000</p><p class="pr-tier__desc">Everything in the website project, plus an off-the-shelf booking engine set up and styled to your brand.</p><ul><li>Everything in Website project</li><li>Booking engine, set up &amp; styled</li><li>Core integrations (GBP, reviews, maps, GA4)</li><li>SEO foundations per service</li></ul></div>
-      <div class="pr-tier"><h3>Growth retainer</h3><p class="pr-tier__price">From €X a month</p><p class="pr-tier__desc">Ongoing local SEO, content and social to grow bookings over time.</p><ul><li>Quarterly strategy</li><li>Monthly content &amp; SEO</li><li>Reporting tied to actual bookings</li><li>Bespoke booking later, if you outgrow off the shelf</li></ul></div>
+      <div class="pr-tier pr-tier--gold"><span class="pr-tier__metal">Gold</span><h3>The complete build, plus growth</h3><p class="pr-tier__price">From €X,000 + €X / mo</p><p class="pr-tier__desc">Everything in Silver, plus an ongoing growth retainer.</p><ul><li>Everything in Silver</li><li>Growth retainer: monthly local SEO, content &amp; social</li><li>Quarterly strategy &amp; reporting tied to bookings</li><li>Priority support</li><li>Path to a bespoke booking engine as you scale</li></ul></div>
+      <div class="pr-tier pr-tier--silver pr-tier--feature"><span class="pr-tier__badge">Our recommendation</span><span class="pr-tier__metal">Silver</span><h3>Website plus booking</h3><p class="pr-tier__price">From €X,000</p><p class="pr-tier__desc">The new site, plus booking, ready to convert from day one.</p><ul><li>Everything in Bronze</li><li>Off-the-shelf booking engine, set up &amp; styled to your brand</li><li>Core integrations (GBP, reviews, maps, GA4)</li><li>SEO foundations per service &amp; location</li></ul></div>
+      <div class="pr-tier pr-tier--bronze"><span class="pr-tier__metal">Bronze</span><h3>The website</h3><p class="pr-tier__price">From €X,000</p><p class="pr-tier__desc">The new service and information site, design to launch.</p><ul><li>Discovery workshop</li><li>Interactive wireframe</li><li>Design, build &amp; QA</li><li>Five location pages</li><li>Launch &amp; training</li></ul></div>
     </div>
     <p class="pr-soft">These figures are indicative and will be confirmed following the discovery workshop, once the scope is fully defined. Providing fixed figures in advance of that would require a margin for caution that you would ultimately bear. Payment is typically structured as 50% on commencement and the balance on launch, with retainers invoiced monthly.</p>
   </div>
 </section>
 
-<!-- 16 · Next steps -->
+<!-- Close -->
 <section class="pr-sec pr-sec--dark pr-close">
   <div class="pr-wrap pr-narrow">
-    ${kicker("Next steps")}
+    ${kicker("Get in touch")}
     <h2>We would welcome the opportunity to deliver this with you.</h2>
-    <p class="pr-jlead">The next steps are as follows.</p>
-    ${list([
-      "We provide live links and a selection of comparable work across the medical, retail and innovation sectors, allowing you to assess the standard before any commitment.",
-      "We confirm the remaining details and prepare indicative costs, with the core build and the options clearly set out.",
-      "Once the costs are agreed, we convene the discovery workshop to finalise the detail and the sitemap.",
-      "We commence the project, with the build running to between 8 and 10 weeks and completed on schedule.",
-    ])}
     <p>We would be glad to answer any questions in advance of a decision, at whatever level of detail is helpful.</p>
     <p class="pr-contact"><a href="mailto:hey@rooftoptwentytwo.ie">hey@rooftoptwentytwo.ie</a> · +353 1 699 1422 · rooftoptwentytwo.ie</p>
     <p class="pr-sign">Cathal O'Reilly<br/><span>Founder and Managing Director, Rooftop Twenty Two</span></p>
@@ -589,6 +594,14 @@ const payload = JSON.stringify({ s: salt.toString("base64"), i: iv.toString("bas
       .pr-node ul { list-style: none; margin: 0; padding: 0; } .pr-node li { font-size: 0.92rem; line-height: 1.6; color: var(--on-dark-soft); }
       @media (max-width: 820px) { .pr-tree__row { grid-template-columns: repeat(2, 1fr); } }
 
+      .pr-firstlook__visual { margin-top: 2.5rem; }
+      .pr-firstlook__visual .mock { max-width: 720px; margin: 0 auto; }
+      .pr-posters { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; max-width: 820px; margin: 0 auto; }
+      @media (max-width: 700px) { .pr-posters { grid-template-columns: 1fr; max-width: 360px; } }
+      .pr-poster { margin: 0; border-radius: 14px; overflow: hidden; box-shadow: 0 18px 44px rgba(13,32,48,0.18); border: 1px solid var(--line); background: var(--alt); }
+      .pr-poster img { width: 100%; aspect-ratio: 9 / 16; object-fit: cover; display: block; }
+      .pr-composite { margin: 0; border-radius: 16px; overflow: hidden; box-shadow: 0 18px 44px rgba(13,32,48,0.18); }
+      .pr-composite img { width: 100%; height: auto; display: block; }
       .pr-firstlook { display: grid; grid-template-columns: 1fr 1.1fr; gap: 2.5rem; align-items: center; }
       @media (max-width: 860px) { .pr-firstlook { grid-template-columns: 1fr; } }
       .mock { border-radius: 14px; overflow: hidden; box-shadow: 0 24px 60px rgba(13,32,48,0.18); border: 1px solid var(--line); background: #fff; }
@@ -719,6 +732,35 @@ const payload = JSON.stringify({ s: salt.toString("base64"), i: iv.toString("bas
       .pr-sign { font-family: var(--serif); font-size: 1.2rem; color: #fff; margin-top: 1.75rem; } .pr-sign span { font-family: var(--sans); font-size: 0.95rem; color: rgba(255,255,255,0.75); }
       .pr-forclient { display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 2rem; font-size: 0.9rem; color: var(--on-dark-soft); } .pr-forclient .ps-mark { color: var(--ps-grass); width: 1.3em; }
       .pr-foot { background: #081521; color: rgba(255,255,255,0.6); font-size: 0.82rem; padding: 1.5rem 0; text-align: center; }
+
+      /* Case studies — animated marquee */
+      .cs-viewport { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; -webkit-overflow-scrolling: touch; margin-top: 2rem; }
+      .cs-viewport::-webkit-scrollbar { display: none; }
+      .cs-track { list-style: none; margin: 0; padding: 0.5rem 0; display: flex; flex-direction: row; align-items: stretch; width: max-content; }
+      .cs-cell { flex: 0 0 300px; margin-right: 1.5rem; display: flex; }
+      .cs-cell .cs-card { width: 100%; }
+      .cs-card__img--text { display: flex; align-items: center; justify-content: center; background: var(--navy); }
+      .cs-card__img--text span { color: var(--r-green); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
+
+      /* Pricing — gold / silver / bronze accents */
+      .pr-tier--gold { border-top: 4px solid #C9A24B; }
+      .pr-tier--silver { border-top: 4px solid #9AA6AD; }
+      .pr-tier--bronze { border-top: 4px solid #B07A4B; }
+      .pr-tier__metal { display: block; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.3rem; }
+      .pr-tier--gold .pr-tier__metal { color: #B0862F; }
+      .pr-tier--silver .pr-tier__metal { color: #7c8790; }
+      .pr-tier--bronze .pr-tier__metal { color: #9C6A3E; }
+      .pr-tier h3 { font-size: 1.15rem; }
+
+      /* Process journey on a light background */
+      .pr-jstep--light .pr-jline { background: rgba(13,32,48,0.16); }
+      .pr-jbody--light h3 { color: var(--navy); }
+      .pr-jbody--light p { color: var(--ink); }
+      .pr-jbody--light .pr-jweek { color: #0a7d59; background: rgba(1,255,178,0.18); }
+      .pr-jbody--light .pr-jinvolveh { color: var(--ink-soft); }
+      .pr-jbody--light .pr-jinvolve li { color: var(--ink); }
+      .pr-jbody--light .pr-jdeliver { color: var(--navy); }
+      .pr-jstep--light .pr-jnum { background: var(--navy); color: #fff; }
 
       @media print {
         @page { margin: 14mm; }
