@@ -230,16 +230,6 @@ const content = `
   <div class="pr-wrap" style="margin-top:3rem">${awardCards}</div>
 </section>
 
-<!-- Our process (brought up) -->
-<section class="pr-sec">
-  <div class="pr-wrap">
-    ${kicker("Our process · 8 to 10 weeks")}
-    <h2>Our process and timeline.</h2>
-    <p class="pr-lead">The following sets out how we work and what you receive at each stage. The complete build runs to between 8 and 10 weeks. We provide a range rather than a fixed date because approval times vary on the client side, and we prefer to set a realistic expectation than to commit to a figure that may later require revision.</p>
-    ${journeyHtml.replace(/pr-jstep/g, "pr-jstep pr-jstep--light").replace(/pr-jbody/g, "pr-jbody pr-jbody--light")}
-  </div>
-</section>
-
 <!-- Our thinking for your site -->
 <section class="pr-sec pr-sec--alt">
   <div class="pr-wrap pr-narrow">
@@ -352,6 +342,16 @@ const content = `
       </div>
     </div>
     <p class="pr-soft">None of this needs answering before we meet. It shapes what we cover at the discovery workshop, and the more we know in advance, the more precisely we can cost the integrations.</p>
+  </div>
+</section>
+
+<!-- Our process & timeline -->
+<section class="pr-sec pr-sec--dark">
+  <div class="pr-wrap">
+    ${kicker("Our process · 8 to 10 weeks")}
+    <h2>Our process and timeline.</h2>
+    <p class="pr-jlead">The following sets out how we work and what you receive at each stage. The complete build runs to between 8 and 10 weeks. We provide a range rather than a fixed date because approval times vary on the client side, and we prefer to set a realistic expectation than to commit to a figure that may later require revision.</p>
+    ${journeyHtml}
   </div>
 </section>
 
