@@ -1,6 +1,6 @@
 ---
 // ────────────────────────────────────────────────────────────────────────────
-// Rooftop Twenty Two — pitch deck FOR PHARMACY STORE (website + booking).
+// Rooftop Twenty Two · pitch deck FOR PHARMACY STORE (website + booking).
 // Prepared for Ciaran McNally & Tracey Dunne. R22 is the primary brand;
 // PharmacyStore appears as a co-brand lockup and inside the homepage mockup.
 // Long-form scrolling page, same palette as the homepage, with office imagery.
@@ -128,7 +128,7 @@ const journey = [
   { wk: "Weeks 3 to 5", t: "Visual design", p: "We develop the brand through design, video and imagery, beginning with the homepage and the principal templates.",
     inv: ["The TAP Creative brand applied consistently across every template", "Homepage and key page designs", "Direction for the photography and video produced in your premises", "Pharmacist profiles and trust signals incorporated, as recognisable team members carry greater weight than written reassurance"], d: "approved designs across the principal templates." },
   { wk: "Weeks 5 to 8", t: "Build and staging", p: "We build the complete site on a private staging environment accessible only to you, allowing you to monitor progress and test the site throughout.",
-    inv: ["The complete site built on a private staging link", "A straightforward content management system, enabling your team to update hours, services and offers independently", "The booking engine integrated and operational", "SEO foundations for each service and location, together with the core integrations"], d: "the completed site, ready for review." },
+    inv: ["The complete site built on a private staging link", "A straightforward content management system, enabling your team to update hours, services and offers independently", "The booking engine integrated and operational", "SEO foundations for each service and location, together with the core integrations", "A full map of the current URLs with 301 redirects to their new equivalents, so existing rankings are preserved through the move"], d: "the completed site, ready for review." },
   { wk: "Weeks 8 to 10", t: "Testing and launch", p: "This is the stage we conduct most frequently. We test comprehensively, resolve any outstanding issues, and proceed to launch on schedule.",
     inv: ["Testing across mobile, tablet and desktop browsers", "Accessibility and performance checks, ensuring hours and locations load immediately", "A final content review and a short training session for your team", "A planned go-live, with close support in the period following launch"], d: "a live site, a trained team, and our continued support." },
 ];
@@ -168,6 +168,15 @@ const content = `
     <p>We have strong experience with medical and healthcare clients, from consultants and clinics to care organisations. That experience is directly relevant, because on a service-led site, trust and a clear route to booking determine results far more than they do in product sales. It is the kind of work we do particularly well.</p>
   </div>
   <div class="pr-wrap"><figure class="pr-photo"><img src="/images/office/office-collab-01.jpg" alt="The Rooftop Twenty Two team at work" loading="lazy"/></figure></div>
+</section>
+
+<!-- The opportunity (strategic through-line) -->
+<section class="pr-sec pr-sec--dark">
+  <div class="pr-wrap pr-narrow">
+    ${kicker("The opportunity")}
+    <h2>Where the growth is.</h2>
+    <p class="pr-jlead">The commercial opportunity sits in private services. Flu and travel vaccinations, health checks, weight management and minor ailments are higher margin than retail, they are in steady local demand, and they can be booked online. The central job of the website is to convert that demand into booked appointments, across all five locations and outside opening hours. Everything that follows in this proposal is built around that single objective.</p>
+  </div>
 </section>
 
 <!-- 3 · About us + team -->
@@ -243,6 +252,7 @@ const content = `
       "At the same time, give each of the five pharmacies its own page. Customers search for their nearest branch by name, so each page should carry that branch's own opening hours, location, services and photography, and load immediately, while still sitting clearly within the group brand.",
       "Remove the dated and Covid-era content and apply the TAP Creative brand and photography throughout. Outdated content implies a business that has not progressed, which works against the impression you intend to create.",
       "Incorporate SEO from the outset rather than retrofitting it after launch, as adding search capability later is slower, more costly, and concedes ground in the interim.",
+      "Protect the search rankings you already hold. Moving off e-commerce means many existing product pages will go, and without care that can cost hard-won visibility overnight. We map every current URL and put redirects in place, so existing search equity carries across to the new site rather than being lost.",
       "Present the robotics and automation story in full, as it represents a genuine point of difference that few independent groups in your area can claim.",
     ])}
   </div>
@@ -355,6 +365,24 @@ const content = `
   </div>
 </section>
 
+<!-- Measuring success -->
+<section class="pr-sec">
+  <div class="pr-wrap pr-narrow">
+    ${kicker("Measuring success")}
+    <h2>How we will know it is working.</h2>
+    <p>From launch we track what matters commercially rather than vanity figures. The measures we would report on include:</p>
+    ${list([
+      "Online bookings per month, broken down by service and by location",
+      "The share of vaccinations and health checks booked through the site rather than by phone or in branch",
+      "Local search visibility for the terms that drive bookings, for example &ldquo;flu vaccine [area]&rdquo; and &ldquo;travel vaccine [area]&rdquo;, including presence in the Google map pack",
+      "Conversion rate from visit to booking, so we can see where the site can be improved",
+      "Enquiry and call volume from each location page",
+    ])}
+    <p style="margin-top:1.5rem">We agree the targets with you at the workshop, once we have your baseline figures. Honest targets need a starting point, and we set them against your own numbers rather than against generic benchmarks.</p>
+    <p>The conversion and booking measures rely on GA4 event tracking across the booking steps and on each location page. This is already accounted for by the analytics integration described elsewhere in the proposal, so it introduces no new commitment, though the events will need to be defined during the build.</p>
+  </div>
+</section>
+
 <!-- Pricing & packages (gold / silver / bronze) -->
 <section class="pr-sec pr-sec--alt">
   <div class="pr-wrap">
@@ -362,11 +390,20 @@ const content = `
     <h2>Investment.</h2>
     <p class="pr-lead">Three packages are set out below, gold, silver and bronze, according to how far you wish to take it at launch. Each is presented as a single investment figure rather than an itemised breakdown, reflecting a defined outcome rather than a quantity of hours.</p>
     <div class="pr-pricing">
-      <div class="pr-tier pr-tier--gold"><span class="pr-tier__metal">Gold</span><h3>The complete build, plus growth</h3><p class="pr-tier__price">From €X,000 + €X / mo</p><p class="pr-tier__desc">Everything in Silver, plus an ongoing growth retainer.</p><ul><li>Everything in Silver</li><li>Growth retainer: monthly local SEO, content &amp; social</li><li>Quarterly strategy &amp; reporting tied to bookings</li><li>Priority support</li><li>Path to a bespoke booking engine as you scale</li></ul></div>
+      <div class="pr-tier pr-tier--gold"><span class="pr-tier__metal">Gold</span><h3>The complete build, plus growth</h3><p class="pr-tier__price">From €X,000 + €X / mo</p><p class="pr-tier__desc">Everything in Silver, plus an ongoing growth retainer. The health advice section is the engine of this work: regular, useful content on the conditions and services people search for is what lifts local rankings month after month, and it is the main focus of the retainer.</p><ul><li>Everything in Silver</li><li>Growth retainer: monthly local SEO, content &amp; social</li><li>Quarterly strategy &amp; reporting tied to bookings</li><li>Priority support</li><li>Path to a bespoke booking engine as you scale</li></ul></div>
       <div class="pr-tier pr-tier--silver pr-tier--feature"><span class="pr-tier__badge">Our recommendation</span><span class="pr-tier__metal">Silver</span><h3>Website plus booking</h3><p class="pr-tier__price">From €X,000</p><p class="pr-tier__desc">The new site, plus booking, ready to convert from day one.</p><ul><li>Everything in Bronze</li><li>Off-the-shelf booking engine, set up &amp; styled to your brand</li><li>Core integrations (GBP, reviews, maps, GA4)</li><li>SEO foundations per service &amp; location</li></ul></div>
       <div class="pr-tier pr-tier--bronze"><span class="pr-tier__metal">Bronze</span><h3>The website</h3><p class="pr-tier__price">From €X,000</p><p class="pr-tier__desc">The new service and information site, design to launch.</p><ul><li>Discovery workshop</li><li>Interactive wireframe</li><li>Design, build &amp; QA</li><li>Five location pages</li><li>Launch &amp; training</li></ul></div>
     </div>
     <p class="pr-soft">These figures are indicative and will be confirmed following the discovery workshop, once the scope is fully defined. Providing fixed figures in advance of that would require a margin for caution that you would ultimately bear. Payment is typically structured as 50% on commencement and the balance on launch, with retainers invoiced monthly.</p>
+  </div>
+</section>
+
+<!-- Why this is low risk -->
+<section class="pr-sec">
+  <div class="pr-wrap pr-narrow">
+    ${kicker("Why us")}
+    <h2>Why this is low risk for you.</h2>
+    <p>Three things reduce the risk of working with us on this. We already hold the TAP Creative brand work, so your brand arrives online exactly as designed, with no reinterpretation. We have built service and booking sites in healthcare before, so the structure is proven rather than experimental. And the whole team is in-house, so there are no handoffs to third parties you never meet. You are buying a known quantity, delivered by the people who planned it.</p>
   </div>
 </section>
 
@@ -400,7 +437,7 @@ const payload = JSON.stringify({ s: salt.toString("base64"), i: iv.toString("bas
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex, nofollow" />
-    <title>Rooftop Twenty Two for PharmacyStore — Proposal</title>
+    <title>Rooftop Twenty Two for PharmacyStore · Proposal</title>
     <link rel="preload" href="/fonts/butler-bold.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/mulish-variable.woff2" as="font" type="font/woff2" crossorigin />
   </head>
@@ -733,7 +770,7 @@ const payload = JSON.stringify({ s: salt.toString("base64"), i: iv.toString("bas
       .pr-forclient { display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 2rem; font-size: 0.9rem; color: var(--on-dark-soft); } .pr-forclient .ps-mark { color: var(--ps-grass); width: 1.3em; }
       .pr-foot { background: #081521; color: rgba(255,255,255,0.6); font-size: 0.82rem; padding: 1.5rem 0; text-align: center; }
 
-      /* Case studies — animated marquee */
+      /* Case studies · animated marquee */
       .cs-viewport { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; -webkit-overflow-scrolling: touch; margin-top: 2rem; }
       .cs-viewport::-webkit-scrollbar { display: none; }
       .cs-track { list-style: none; margin: 0; padding: 0.5rem 0; display: flex; flex-direction: row; align-items: stretch; width: max-content; }
@@ -742,7 +779,7 @@ const payload = JSON.stringify({ s: salt.toString("base64"), i: iv.toString("bas
       .cs-card__img--text { display: flex; align-items: center; justify-content: center; background: var(--navy); }
       .cs-card__img--text span { color: var(--r-green); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
 
-      /* Pricing — gold / silver / bronze accents */
+      /* Pricing · gold / silver / bronze accents */
       .pr-tier--gold { border-top: 4px solid #C9A24B; }
       .pr-tier--silver { border-top: 4px solid #9AA6AD; }
       .pr-tier--bronze { border-top: 4px solid #B07A4B; }
