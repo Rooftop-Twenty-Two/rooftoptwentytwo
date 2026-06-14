@@ -5,6 +5,8 @@ import PageHero from "../../components/reskin/PageHero.astro";
 import CaseStudyResults from "../../components/reskin/CaseStudyResults.astro";
 import WContactForm from "../../components/reskin/WContactForm.astro";
 import Picture from "../../components/Picture.astro";
+import BreadcrumbSchema from "../../components/seo/BreadcrumbSchema.astro";
+import CaseStudySchema from "../../components/seo/CaseStudySchema.astro";
 
 export async function getStaticPaths() {
   const entries = await getCollection("portfolio", ({ data }) => !data.needs_review);
@@ -30,9 +32,37 @@ const moreWork = Array.from({ length: 3 }).map((_, i) => allSorted[(currentIndex
 // alternate full-bleed / inset to open up the gaps and pace the page.
 const sectionImages = sections.map((_, i) => gallery[i] ?? null);
 const extraImages = gallery.slice(sections.length);
+
+// SEO. Brand-led title/description (handled by Layout) plus structured data that
+// ties the page to the client as an entity, so it can surface alongside the
+// brand name in search. The case study's own hero doubles as the social image.
+const site = Astro.site ?? new URL("https://rooftoptwentytwo.ie");
+const pageUrl = new URL(`/work/${currentSlug}/`, site).toString();
+const heroAbs = heroImage ? new URL(heroImage, site).toString() : undefined;
+const seoDescription = metaDescription ?? summary ?? tagline ?? name;
+const seoKeywords = [...(services ?? []), ...(entry.data.sectors ?? [])];
 ---
 
-<Layout title={`${name} Case Study | Rooftop Twenty Two`} description={metaDescription ?? summary ?? tagline ?? name}>
+<Layout
+  title={`${name} Case Study | Rooftop Twenty Two`}
+  description={seoDescription}
+  ogImage={heroImage ?? "/og-default.jpg"}
+>
+  <BreadcrumbSchema
+    items={[
+      { name: "Home", url: "/" },
+      { name: "Work", url: "/work/" },
+      { name, url: `/work/${currentSlug}/` },
+    ]}
+  />
+  <CaseStudySchema
+    name={name}
+    description={seoDescription}
+    url={pageUrl}
+    image={heroAbs}
+    websiteUrl={websiteUrl}
+    keywords={seoKeywords}
+  />
   <PageHero
     kicker={(services ?? []).slice(0, 3).join(" · ") || "Case study"}
     title={name}

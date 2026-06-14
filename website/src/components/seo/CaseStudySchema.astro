@@ -1,0 +1,47 @@
+---
+// Case study structured data. Emits a CreativeWork that is explicitly `about`
+// the client Organization, which is the strongest on-page signal that the page
+// concerns that brand, helping it surface for brand-adjacent queries
+// ("[brand] case study", "[brand] website", "[brand] agency"). Rooftop Twenty
+// Two is named as creator/publisher.
+interface Props {
+  name: string;            // client brand name
+  description: string;
+  url: string;             // absolute page URL
+  image?: string;          // absolute hero image URL
+  websiteUrl?: string;     // client's own site, used as the brand entity URL
+  keywords?: string[];     // services + sectors
+}
+
+const { name, description, url, image, websiteUrl, keywords = [] } = Astro.props;
+
+const about: Record<string, unknown> = { "@type": "Organization", name };
+if (websiteUrl) {
+  about.url = websiteUrl;
+  about.sameAs = [websiteUrl];
+}
+
+const r22 = {
+  "@type": "Organization",
+  name: "Rooftop Twenty Two",
+  url: "https://rooftoptwentytwo.ie",
+};
+
+const data: Record<string, unknown> = {
+  "@context": "https://schema.org",
+  "@type": "CreativeWork",
+  "@id": `${url}#casestudy`,
+  name: `${name} Case Study`,
+  headline: `${name} Case Study`,
+  description,
+  url,
+  inLanguage: "en-IE",
+  about,
+  creator: r22,
+  publisher: r22,
+};
+if (image) data.image = image;
+if (keywords.length) data.keywords = keywords.join(", ");
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(data)} />
