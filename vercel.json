@@ -1,7 +1,0 @@
-{
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": null,
-  "installCommand": "cd ecomod-demo && npm install",
-  "buildCommand": "cd ecomod-demo && npm run build",
-  "outputDirectory": "ecomod-demo/dist"
-}
