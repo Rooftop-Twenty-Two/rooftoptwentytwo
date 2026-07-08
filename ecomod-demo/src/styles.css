@@ -1,23 +1,24 @@
-/* EcoMod wireframe demo. Greyscale chrome (dark-grey headers and accent,
-   no navy/coral). The --navy and --coral tokens are kept as names but now
-   hold greys. The one exception is functional status: the red/amber/green
-   RAG flags, condition grades and errors stay in colour on purpose. */
+/* EcoMod wireframe demo. Palette taken from the EcoMod logo: green (Eco),
+   red (Mod), orange (the hex nut). Green is primary (header, buttons,
+   headings), orange is the accent (annotation pins, role switcher), red is
+   attention. The --navy and --coral tokens are kept as names but now hold
+   the brand green and orange. Image placeholders stay grey so the screens
+   still read as wireframes. */
 
 :root {
-  /* Chrome is greyscale: headers and the accent are dark greys, not
-     navy/coral. Status stays in colour: the red/amber/green RAG flags,
-     grades and errors are functional and must read at a glance. */
+  /* Brand colours from the EcoMod logo. Green primary, orange accent, red
+     attention. RAG green/amber/red map onto green/orange/red. */
   --ink: #1b1b1b;
-  --navy: #2d2d2d;   /* headers, primary buttons, internal panel */
-  --coral: #454545;  /* accent: annotation pins, side panel, toast rule */
+  --navy: #1E7D34;   /* brand green: header, buttons, headings, links, internal panel */
+  --coral: #F5821F;  /* brand orange accent: pins, role switcher, side panel, toast rule */
   --grey-1: #f7f7f7;
   --grey-2: #ececec;
   --grey-3: #d4d4d4;
   --grey-4: #9a9a9a;
   --grey-5: #666;
-  --green: #2e7d32;  /* status good (RAG green, grade A, in stock) */
-  --amber: #b8860b;  /* status mid (RAG amber, grade B, reserved) */
-  --red: #c62828;    /* status attention (RAG red, grade C, sold, errors) */
+  --green: #3DA935;  /* status good (RAG green, grade A, in stock) */
+  --amber: #F5821F;  /* status mid (RAG amber -> brand orange, grade B, reserved) */
+  --red: #DA291C;    /* brand red: RAG red, grade C, sold, form errors */
 }
 
 * { box-sizing: border-box; }
@@ -51,7 +52,7 @@ button:hover { background: var(--grey-1); }
   background: var(--navy); color: #fff; border-color: var(--navy);
   padding: 9px 16px; font-weight: 600;
 }
-.btn-primary:hover { background: #444; }
+.btn-primary:hover { background: #17692C; }
 .btn-primary:disabled { background: var(--grey-3); border-color: var(--grey-3); cursor: not-allowed; }
 .btn-ghost { background: #fff; }
 .btn-small { padding: 3px 8px; font-size: .8rem; }
@@ -73,11 +74,11 @@ button:hover { background: var(--grey-1); }
 
 .role-switcher {
   margin-left: auto; display: flex; align-items: center; gap: 8px;
-  border: 2px solid #8a8a8a; border-radius: 4px; padding: 4px 8px;
-  background: rgba(255, 255, 255, .1);
+  border: 2px solid var(--coral); border-radius: 4px; padding: 4px 8px;
+  background: rgba(255, 255, 255, .92);
 }
-.role-switcher span { font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: #d0d0d0; font-weight: 700; }
-.role-switcher select { border-color: #8a8a8a; font-weight: 600; padding: 4px 6px; }
+.role-switcher span { font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: var(--coral); font-weight: 700; }
+.role-switcher select { border-color: var(--coral); font-weight: 600; padding: 4px 6px; }
 
 main.page { max-width: 1180px; margin: 0 auto; padding: 26px 18px 80px; }
 
@@ -137,7 +138,7 @@ main.page { max-width: 1180px; margin: 0 auto; padding: 26px 18px 80px; }
   color: #fff; font-size: .75rem; font-weight: 700; cursor: pointer;
   border: none; vertical-align: middle; flex: 0 0 auto;
 }
-.pin:hover { background: #333; }
+.pin:hover { background: #D96F15; }
 .annotations-toggle {
   position: fixed; right: 0; top: 130px; z-index: 40;
   background: var(--coral); color: #fff; border: none; padding: 9px 12px;
