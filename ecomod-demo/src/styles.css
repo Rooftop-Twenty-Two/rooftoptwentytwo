@@ -1,11 +1,12 @@
-/* EcoMod wireframe demo. Deliberately greyscale throughout: dark-grey
-   headers and accent, no colour. The --navy and --coral tokens below are
-   kept as names but now hold greys. Status uses a dark-to-light scale. */
+/* EcoMod wireframe demo. Greyscale chrome (dark-grey headers and accent,
+   no navy/coral). The --navy and --coral tokens are kept as names but now
+   hold greys. The one exception is functional status: the red/amber/green
+   RAG flags, condition grades and errors stay in colour on purpose. */
 
 :root {
-  /* Deliberately greyscale. Headers and the accent are dark greys, not
-     navy/coral. Status indicators (RAG, grades) read as a dark-to-light
-     severity scale; their text labels carry the meaning. */
+  /* Chrome is greyscale: headers and the accent are dark greys, not
+     navy/coral. Status stays in colour: the red/amber/green RAG flags,
+     grades and errors are functional and must read at a glance. */
   --ink: #1b1b1b;
   --navy: #2d2d2d;   /* headers, primary buttons, internal panel */
   --coral: #454545;  /* accent: annotation pins, side panel, toast rule */
@@ -14,9 +15,9 @@
   --grey-3: #d4d4d4;
   --grey-4: #9a9a9a;
   --grey-5: #666;
-  --green: #9a9a9a;  /* status good: lightest */
-  --amber: #6b6b6b;  /* status mid */
-  --red: #2b2b2b;    /* status attention / errors: darkest */
+  --green: #2e7d32;  /* status good (RAG green, grade A, in stock) */
+  --amber: #b8860b;  /* status mid (RAG amber, grade B, reserved) */
+  --red: #c62828;    /* status attention (RAG red, grade C, sold, errors) */
 }
 
 * { box-sizing: border-box; }
@@ -121,7 +122,7 @@ main.page { max-width: 1180px; margin: 0 auto; padding: 26px 18px 80px; }
 .badge.status-sold { border-color: var(--red); color: var(--red); }
 .badge.status-in-stock { border-color: var(--green); color: var(--green); }
 
-.rag { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; border: 1px solid rgba(0,0,0,.25); }
+.rag { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
 .rag.green { background: var(--green); }
 .rag.amber { background: var(--amber); }
 .rag.red { background: var(--red); }
@@ -156,8 +157,8 @@ main.page { max-width: 1180px; margin: 0 auto; padding: 26px 18px 80px; }
 /* Forms ----------------------------------------------------------------- */
 .form-row { margin-bottom: 14px; max-width: 480px; }
 .form-row input, .form-row select { width: 100%; }
-.field-error { color: var(--red); font-size: .8rem; margin-top: 3px; font-weight: 600; }
-input.invalid, select.invalid { border-color: var(--red); border-width: 2px; outline-color: var(--red); }
+.field-error { color: var(--red); font-size: .8rem; margin-top: 3px; }
+input.invalid, select.invalid { border-color: var(--red); outline-color: var(--red); }
 fieldset { border: 1px solid var(--grey-3); margin: 0 0 20px; padding: 14px 16px; }
 legend { font-weight: 700; color: var(--navy); padding: 0 6px; font-size: .92rem; }
 
