@@ -91,7 +91,7 @@ function RepoRow({ sub, dup, onOpen, onStatus }) {
   const slaBreach = sub.status === 'New' && hoursSince(sub.createdAt) >= 24
   return (
     <tr className="clickable" onClick={onOpen}>
-      <td><strong>{sub.ref}</strong>{dup && <div className="small" style={{ color: '#b8860b' }}>Possible duplicate of {dup}</div>}</td>
+      <td><strong>{sub.ref}</strong>{dup && <div className="small" style={{ color: 'var(--amber)' }}>Possible duplicate of {dup}</div>}</td>
       <td>{sub.company.name}</td>
       <td className="small">{SECTOR_LABEL[sub.sector]}</td>
       <td>{sub.county}</td>
@@ -213,7 +213,7 @@ function RepoDetailInner() {
           <Pin n={5} />
         </div>
       </div>
-      {dup && <p className="small" style={{ color: '#b8860b' }}><strong>Possible duplicate of {dup}.</strong> Same company or contact email as an earlier submission.</p>}
+      {dup && <p className="small" style={{ color: 'var(--amber)' }}><strong>Possible duplicate of {dup}.</strong> Same company or contact email as an earlier submission.</p>}
       <p className="muted small">Submitted {fmtDateTime(sub.createdAt)} ({timeSince(sub.createdAt)}). {sub.status === 'New' && hoursSince(sub.createdAt) >= 24 && <span className="sla-warn">Over the 24 hour response promise.</span>}</p>
 
       <div className="panel-split section-gap">
@@ -239,9 +239,9 @@ function RepoDetailInner() {
 
         {/* Internal half */}
         <div className="panel-internal">
-          <h3><span className="badge" style={{ borderColor: '#1B2A4A', color: '#1B2A4A' }}>Internal</span> Commercial valuation blueprint <Pin n={2} /></h3>
+          <h3><span className="badge" style={{ borderColor: 'var(--navy)', color: 'var(--navy)' }}>Internal</span> Commercial valuation blueprint <Pin n={2} /></h3>
           {compliance && (
-            <p className="small" style={{ border: '1px solid #b8860b', padding: '6px 9px', color: '#b8860b' }}>
+            <p className="small" style={{ border: '1px solid var(--amber)', padding: '6px 9px', color: 'var(--amber)' }}>
               <strong>Compliance:</strong> {compliance} <Pin n={3} />
             </p>
           )}

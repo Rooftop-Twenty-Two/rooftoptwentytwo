@@ -4,7 +4,7 @@ import { PageAnnotations, Pin } from '../components/Annotations.jsx'
 // A talking slide, not a build. Simple boxes on purpose.
 const Box = ({ title, sub, wide }) => (
   <div className="card" style={{ textAlign: 'center', gridColumn: wide ? '1 / -1' : undefined }}>
-    <strong style={{ color: '#1B2A4A' }}>{title}</strong>
+    <strong style={{ color: 'var(--navy)' }}>{title}</strong>
     <p className="small muted" style={{ margin: '4px 0 0' }}>{sub}</p>
   </div>
 )

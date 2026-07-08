@@ -1,18 +1,22 @@
-/* EcoMod wireframe demo. Deliberately greyscale with one coral accent
-   reserved for annotations and the role switcher, navy for headers. */
+/* EcoMod wireframe demo. Deliberately greyscale throughout: dark-grey
+   headers and accent, no colour. The --navy and --coral tokens below are
+   kept as names but now hold greys. Status uses a dark-to-light scale. */
 
 :root {
+  /* Deliberately greyscale. Headers and the accent are dark greys, not
+     navy/coral. Status indicators (RAG, grades) read as a dark-to-light
+     severity scale; their text labels carry the meaning. */
   --ink: #1b1b1b;
-  --navy: #1B2A4A;
-  --coral: #FF6B5B;
+  --navy: #2d2d2d;   /* headers, primary buttons, internal panel */
+  --coral: #454545;  /* accent: annotation pins, side panel, toast rule */
   --grey-1: #f7f7f7;
   --grey-2: #ececec;
   --grey-3: #d4d4d4;
   --grey-4: #9a9a9a;
   --grey-5: #666;
-  --green: #2e7d32;
-  --amber: #b8860b;
-  --red: #c62828;
+  --green: #9a9a9a;  /* status good: lightest */
+  --amber: #6b6b6b;  /* status mid */
+  --red: #2b2b2b;    /* status attention / errors: darkest */
 }
 
 * { box-sizing: border-box; }
@@ -46,7 +50,7 @@ button:hover { background: var(--grey-1); }
   background: var(--navy); color: #fff; border-color: var(--navy);
   padding: 9px 16px; font-weight: 600;
 }
-.btn-primary:hover { background: #24365c; }
+.btn-primary:hover { background: #444; }
 .btn-primary:disabled { background: var(--grey-3); border-color: var(--grey-3); cursor: not-allowed; }
 .btn-ghost { background: #fff; }
 .btn-small { padding: 3px 8px; font-size: .8rem; }
@@ -60,7 +64,7 @@ button:hover { background: var(--grey-1); }
 .app-header .brand small { display: block; font-weight: 400; font-size: .62rem; opacity: .7; letter-spacing: .12em; text-transform: uppercase; }
 .app-nav { display: flex; gap: 2px; flex-wrap: wrap; }
 .app-nav a {
-  color: #cfd6e4; text-decoration: none; padding: 16px 11px; font-size: .88rem;
+  color: #c4c4c4; text-decoration: none; padding: 16px 11px; font-size: .88rem;
   border-bottom: 3px solid transparent;
 }
 .app-nav a.active { color: #fff; border-bottom-color: #fff; }
@@ -68,11 +72,11 @@ button:hover { background: var(--grey-1); }
 
 .role-switcher {
   margin-left: auto; display: flex; align-items: center; gap: 8px;
-  border: 2px solid var(--coral); border-radius: 4px; padding: 4px 8px;
-  background: rgba(255, 107, 91, .12);
+  border: 2px solid #8a8a8a; border-radius: 4px; padding: 4px 8px;
+  background: rgba(255, 255, 255, .1);
 }
-.role-switcher span { font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: var(--coral); font-weight: 700; }
-.role-switcher select { border-color: var(--coral); font-weight: 600; padding: 4px 6px; }
+.role-switcher span { font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: #d0d0d0; font-weight: 700; }
+.role-switcher select { border-color: #8a8a8a; font-weight: 600; padding: 4px 6px; }
 
 main.page { max-width: 1180px; margin: 0 auto; padding: 26px 18px 80px; }
 
@@ -117,7 +121,7 @@ main.page { max-width: 1180px; margin: 0 auto; padding: 26px 18px 80px; }
 .badge.status-sold { border-color: var(--red); color: var(--red); }
 .badge.status-in-stock { border-color: var(--green); color: var(--green); }
 
-.rag { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
+.rag { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; border: 1px solid rgba(0,0,0,.25); }
 .rag.green { background: var(--green); }
 .rag.amber { background: var(--amber); }
 .rag.red { background: var(--red); }
@@ -132,7 +136,7 @@ main.page { max-width: 1180px; margin: 0 auto; padding: 26px 18px 80px; }
   color: #fff; font-size: .75rem; font-weight: 700; cursor: pointer;
   border: none; vertical-align: middle; flex: 0 0 auto;
 }
-.pin:hover { background: #e5533f; }
+.pin:hover { background: #333; }
 .annotations-toggle {
   position: fixed; right: 0; top: 130px; z-index: 40;
   background: var(--coral); color: #fff; border: none; padding: 9px 12px;
@@ -152,8 +156,8 @@ main.page { max-width: 1180px; margin: 0 auto; padding: 26px 18px 80px; }
 /* Forms ----------------------------------------------------------------- */
 .form-row { margin-bottom: 14px; max-width: 480px; }
 .form-row input, .form-row select { width: 100%; }
-.field-error { color: var(--red); font-size: .8rem; margin-top: 3px; }
-input.invalid, select.invalid { border-color: var(--red); outline-color: var(--red); }
+.field-error { color: var(--red); font-size: .8rem; margin-top: 3px; font-weight: 600; }
+input.invalid, select.invalid { border-color: var(--red); border-width: 2px; outline-color: var(--red); }
 fieldset { border: 1px solid var(--grey-3); margin: 0 0 20px; padding: 14px 16px; }
 legend { font-weight: 700; color: var(--navy); padding: 0 6px; font-size: .92rem; }
 
@@ -166,7 +170,7 @@ legend { font-weight: 700; color: var(--navy); padding: 0 6px; font-size: .92rem
 
 /* Modal ------------------------------------------------------------------ */
 .modal-backdrop {
-  position: fixed; inset: 0; background: rgba(27,42,74,.5); z-index: 80;
+  position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 80;
   display: flex; align-items: center; justify-content: center; padding: 20px;
 }
 .modal {

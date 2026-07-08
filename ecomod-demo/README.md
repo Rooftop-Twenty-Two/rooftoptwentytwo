@@ -1,7 +1,7 @@
 # EcoMod modular sales platform. Working wireframe demo
 
 R22 concept demo for The EcoMod Group pitch. It looks like a wireframe on purpose
-(greyscale, placeholder imagery, coral annotation pins) but the logic underneath is real:
+(greyscale, placeholder imagery, numbered annotation pins) but the logic underneath is real:
 form validation, a live margin engine, dual dataset generation and role-based views.
 
 ## Run it
@@ -16,7 +16,7 @@ localStorage, so nothing is lost mid-demo. Anything that would be cloud-side in 
 (uploads, PDF generation, CRM push, email alerts) is simulated and labelled as simulated.
 "Reset demo data" in the footer restores the seed state.
 
-Use the coral role switcher in the header: Public Visitor, Yard Staff (CabinDepot),
+Use the role switcher in the header: Public Visitor, Yard Staff (CabinDepot),
 Estimator, Management. Naming: EcoMod is the customer-facing brand, CabinDepot Ops is the
 internal yard and operations tooling.
 

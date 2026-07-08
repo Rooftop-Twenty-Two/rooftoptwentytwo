@@ -231,8 +231,8 @@ function DemandStrip() {
 }
 
 function AccessMatrix() {
-  const tick = <span style={{ color: '#2e7d32', fontWeight: 700 }}>Yes</span>
-  const cross = <span style={{ color: '#c62828' }}>No</span>
+  const tick = <span style={{ color: 'var(--ink)', fontWeight: 700 }}>Yes</span>
+  const cross = <span style={{ color: 'var(--grey-4)' }}>No</span>
   return (
     <div className="section-gap">
       <h2>Access control <Pin n={3} /></h2>

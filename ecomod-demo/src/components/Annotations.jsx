@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 
-// Numbered coral annotation pins plus a collapsible side panel.
+// Numbered annotation pins plus a collapsible side panel.
 // Each page registers its annotations; pins in the page open the panel.
 // These double as talking points in the pitch meeting.
 
