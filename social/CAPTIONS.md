@@ -12,7 +12,7 @@ Pick 4–6 hashtags from the bank in `STRATEGY.md`.
 **LinkedIn**
 > We won Gold at the 2026 Spider Awards.
 >
-> Recognition for the Breast Cancer Ireland work, plus shortlists at the Digital Media Awards and the European Search Awards.
+> Recognition for the team's work this year, plus shortlists at the Digital Media Awards and the European Search Awards.
 >
 > Proud of the team. On to the next one.
 >

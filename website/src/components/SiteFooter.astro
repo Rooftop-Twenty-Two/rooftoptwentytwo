@@ -120,10 +120,10 @@ const year = new Date().getFullYear();
       <p class="footer-awards__label">Award-winning work</p>
       <ul class="footer-awards__list">
         <li>
-          <a href="/latest/spider-awards-2026-gold/">
+          <span class="footer-awards__static">
             <img class="footer-awards__logo" src="/images/spider-awards-rev.png" alt="Spider Awards" loading="lazy" decoding="async" />
             <span class="footer-awards__txt"><b>Gold winners</b> · Spider Awards</span>
-          </a>
+          </span>
         </li>
         <li>
           <a href="/latest/digital-media-awards-seo-finalist/">
@@ -170,7 +170,7 @@ const year = new Date().getFullYear();
   .footer-awards { margin-top: 2.5rem; }
   .footer-awards__label { font-family: var(--w-font-body); font-weight: 700; font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c-accent-2); margin: 0 0 1.25rem; }
   .footer-awards__list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 1.5rem 2.5rem; }
-  .footer-awards__list a { display: inline-flex; align-items: center; gap: 0.8rem; text-decoration: none; color: var(--c-on-dark); opacity: 0.82; transition: opacity var(--w-dur-fast) var(--w-ease); }
+  .footer-awards__list a, .footer-awards__static { display: inline-flex; align-items: center; gap: 0.8rem; text-decoration: none; color: var(--c-on-dark); opacity: 0.82; transition: opacity var(--w-dur-fast) var(--w-ease); }
   .footer-awards__list a:hover { opacity: 1; }
   .footer-awards__logo { height: 34px; width: auto; filter: brightness(0) invert(1); }
   .footer-awards__txt { font-family: var(--w-font-body); font-size: 0.85rem; color: #fff; white-space: nowrap; }
