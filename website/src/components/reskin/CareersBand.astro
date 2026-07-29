@@ -9,13 +9,13 @@ const jobs = (await getCollection("jobs", ({ data }) => !data.draft))
   <div class="cb__inner">
     <div class="cb__copy reveal">
       <p class="kicker kicker--on-dark kicker--script">Careers</p>
-      <h2 class="cb__title">We&rsquo;re <em>hiring</em>.</h2>
+      <h2 class="cb__title">{jobs.length > 0 ? <Fragment>We&rsquo;re <em>hiring</em>.</Fragment> : <Fragment>Come work <em>with us</em>.</Fragment>}</h2>
       <p class="cb__body">
         Join an independent Dublin studio with hybrid working (home on Wednesdays and
         Fridays), a pension contribution and paid health insurance, and real
         work you&rsquo;ll be proud of.
       </p>
-      <a href="/careers/" class="wbtn wbtn--accent">See all roles</a>
+      <a href="/careers/" class="wbtn wbtn--accent">{jobs.length > 0 ? "See all roles" : "See what it’s like here"}</a>
     </div>
 
     {jobs.length > 0 && (

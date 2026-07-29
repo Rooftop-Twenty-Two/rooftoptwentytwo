@@ -18,15 +18,15 @@ const benefits = [
 ];
 ---
 
-<Layout title="Digital Marketing & Web Jobs in Dublin | Rooftop Twenty Two" description="Join Rooftop Twenty Two, an independent agency in Dublin. Hybrid working, pension, health insurance, and charity days. See our open roles.">
+<Layout title="Digital Marketing & Web Jobs in Dublin | Rooftop Twenty Two" description="Join Rooftop Twenty Two, an independent agency in Dublin. Hybrid working, pension, health insurance, and charity days. See what it's like to work here.">
   <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "Careers", url: "/careers/" }]} />
 
   <PageHero
     kicker="Careers"
     title="Grow your career on the <em>rooftop</em>."
     intro="We're an independent branding and digital studio in Dublin, a senior, in-house team that treats every client's growth like our own. If you do great work and want to do it alongside people who care, we'd love to hear from you."
-    primary={{ label: "See open roles", href: "#roles" }}
-    secondary={{ label: "Get in touch", href: "/contact/#contact" }}
+    primary={jobs.length > 0 ? { label: "See open roles", href: "#roles" } : { label: "Get in touch", href: "/contact/#contact" }}
+    secondary={jobs.length > 0 ? { label: "Get in touch", href: "/contact/#contact" } : undefined}
   />
 
   <!-- Why work here -->
@@ -52,7 +52,9 @@ const benefits = [
   <section class="cr-roles" id="roles">
     <div class="cr-roles__inner">
       <p class="kicker kicker--script">Open roles</p>
-      <h2 class="cr-h2 cr-mb">We&rsquo;re currently hiring for {jobs.length} {jobs.length === 1 ? "role" : "roles"}.</h2>
+      <h2 class="cr-h2 cr-mb">{jobs.length > 0
+        ? `We’re currently hiring for ${jobs.length} ${jobs.length === 1 ? "role" : "roles"}.`
+        : "Nothing open at the moment."}</h2>
       {jobs.length > 0 ? (
         <ul class="cr-list">
           {jobs.map((j) => (
@@ -72,9 +74,11 @@ const benefits = [
           ))}
         </ul>
       ) : (
-        <p class="cr-empty">No open roles right now, but we&rsquo;re always glad to hear from good people. <a href="/contact/#contact">Get in touch</a>.</p>
+        <p class="cr-empty">We&rsquo;re not hiring for anything specific right now. We&rsquo;re still glad to hear from good people, so send us a line at <a href="mailto:hey@rooftoptwentytwo.ie">hey@rooftoptwentytwo.ie</a> and we&rsquo;ll keep you in mind for the next opening.</p>
       )}
-      <p class="cr-note">Don&rsquo;t see the right role? Send us a line at <a href="mailto:hey@rooftoptwentytwo.ie">hey@rooftoptwentytwo.ie</a>. We&rsquo;re always happy to meet good people.</p>
+      {jobs.length > 0 && (
+        <p class="cr-note">Don&rsquo;t see the right role? Send us a line at <a href="mailto:hey@rooftoptwentytwo.ie">hey@rooftoptwentytwo.ie</a>. We&rsquo;re always happy to meet good people.</p>
+      )}
     </div>
   </section>
 
