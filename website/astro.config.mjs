@@ -63,12 +63,9 @@ export default defineConfig({
     react(),
     keystatic(),
     sitemap({
-      // Keep noindex pages (e.g. the post-enquiry thank-you, private /p/ decks,
-      // the campaign-only newsletter landing page) out of the sitemap.
-      filter: (page) =>
-        !/\/thank-you\/?$/.test(page) &&
-        !/\/p\//.test(page) &&
-        !/\/newsletter\/?$/.test(page),
+      // Keep noindex pages (e.g. the post-enquiry thank-you, private /p/ decks)
+      // out of the sitemap.
+      filter: (page) => !/\/thank-you\/?$/.test(page) && !/\/p\//.test(page),
       customPages: [
         ...collectionCustomPages('portfolio', '/work/'),
         ...collectionCustomPages('services', '/services/'),
