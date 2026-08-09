@@ -52,7 +52,7 @@ const benefits = [
   <section class="cr-roles" id="roles">
     <div class="cr-roles__inner">
       <p class="kicker kicker--script">Open roles</p>
-      <h2 class="cr-h2 cr-mb">We&rsquo;re currently hiring for {jobs.length} {jobs.length === 1 ? "role" : "roles"}.</h2>
+      <h2 class="cr-h2 cr-mb">{jobs.length > 0 ? `We’re currently hiring for ${jobs.length} ${jobs.length === 1 ? "role" : "roles"}.` : "We’re not hiring at the moment."}</h2>
       {jobs.length > 0 ? (
         <ul class="cr-list">
           {jobs.map((j) => (
