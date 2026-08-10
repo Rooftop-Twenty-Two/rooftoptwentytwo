@@ -7,21 +7,22 @@ import BreadcrumbSchema from "../components/seo/BreadcrumbSchema.astro";
 // own markup and styling, posting straight to JotForm (EU) so responses land in
 // the JotForm inbox.
 //
-// ⚠️ SET-UP TODO — this form is briefed to JotForm separately (see
-// docs/website-brief-form-spec.md). Until that JotForm form exists, the values
-// below are PLACEHOLDERS and submissions won't be delivered. Once the JotForm
-// form is built:
-//   1. Replace JOTFORM_ID with the new form's ID.
-//   2. Reconcile every field `name` here with the names JotForm generates
-//      (e.g. q7_company, brand_assets[] → q12_brandAssets[]). Copy them
-//      verbatim from the JotForm form source, exactly as /contact does.
-// The honeypot (`website`) must stay empty; formID + simple_spc are required.
-const JOTFORM_ID = "REPLACE_WITH_BRIEF_FORM_ID";
+// Field names, option values, required flags and the form ID below are taken
+// VERBATIM from the live JotForm form "Website Discovery & Requirements Form"
+// (ID 262212815673052) so a submission from this page matches one made on
+// JotForm exactly. If the JotForm form changes, mirror the change here.
+// See docs/website-brief-form-spec.md. The honeypot (`website`) must stay empty;
+// formID + simple_spc are JotForm's required hidden fields.
+const JOTFORM_ID = "262212815673052";
 const jotformAction = `https://eu-submit.jotform.com/submit/${JOTFORM_ID}`;
 const simpleSpc = `${JOTFORM_ID}-${JOTFORM_ID}`;
 
-// Multiple-choice option sets. Kept as data so the markup stays clean and the
-// options are easy to edit in one place (and match the JotForm brief).
+// Option sets — values copied verbatim from the JotForm source.
+const projectType = [
+  "Brand-new website",
+  "Rebuild/redesign of current site",
+  "Not sure yet",
+];
 const brandAssets = [
   "High-resolution logos",
   "High-res imagery",
@@ -32,12 +33,44 @@ const brandAssets = [
 ];
 const websiteGoals = [
   "Generate leads",
-  "Capture enquiries",
-  "Take bookings or show a calendar",
+  "Capture enquiries (enquiry forms)",
+  "Take bookings / show a calendar",
   "Publish blog and news updates",
   "Update with new products, listings or services",
   "Offer a brochure download",
   "Sell online (ecommerce)",
+];
+const contentApproach = [
+  "Happy for R22 to write all copy (we'll review and amend it)",
+  "We'll supply some copy ourselves, R22 to write the rest",
+  "We'll supply all copy ourselves",
+  "Not sure yet",
+];
+const currentPlatform = [
+  "WordPress",
+  "Squarespace",
+  "Wix",
+  "Shopify",
+  "Custom build",
+  "Don't know",
+  "Not applicable (no current site)",
+];
+const domainControl = [
+  "We do, and we have access",
+  "Our previous developer / agency",
+  "Not sure",
+];
+const platformPreference = [
+  "Keep our current platform",
+  "Happy to move to whatever R22 recommends",
+  "We have a specific platform in mind (please tell us)",
+];
+const integrations = [
+  "Email marketing (Mailchimp, HubSpot, etc.)",
+  "CRM",
+  "Booking / scheduling system",
+  "Payment gateway",
+  "Analytics (GA4, etc.)",
 ];
 const promotion = [
   "Search engines (SEO)",
@@ -50,9 +83,8 @@ const promotion = [
 ];
 const pageCounts = ["1–5", "5–10", "10–20", "20–50", "50–100"];
 const addedServices = [
-  "Logo or brand identity",
+  "Logo / brand identity",
   "Illustrations",
-  "Website copywriting",
   "Photography",
   "Video production",
 ];
@@ -79,7 +111,12 @@ const ongoingHelp = [
   "Service level agreement",
   "Compliance measures",
 ];
-const budgets = ["Under €5k", "€5–10k", "€10–15k", "€15–20k", "€20k+", "Not sure yet"];
+const accessibility = [
+  "Yes (please tell us)",
+  "No",
+  "Not sure — we'd like R22's guidance",
+];
+const budgets = ["€7–10k", "€10–15k", "€15–20k", "€20k+", "Not sure yet"];
 ---
 
 <Layout
@@ -92,7 +129,7 @@ const budgets = ["Under €5k", "€5–10k", "€10–15k", "€15–20k", "€
   <PageHero
     kicker="Website brief"
     title="Tell us about your <em>new website</em>."
-    intro="The more you share here, the sharper our thinking and our quote. Take it section by section. If you're not sure on something, skip it or give us your best guess. Nothing here is binding, it just gives us a proper head start."
+    intro="Share a little about your business, brand, current site and technical needs so we can scope your new website properly. Fields marked required are the ones we really need. The rest just gives us a head start."
   />
 
   <section class="wb">
@@ -108,29 +145,41 @@ const budgets = ["Under €5k", "€5–10k", "€10–15k", "€15–20k", "€
           <legend class="wb__legend"><span class="wb__num">01</span> Your details</legend>
           <div class="wb__grid">
             <label class="wb__field">
-              <span class="wb__label">First name</span>
-              <input type="text" name="first_name" required autocomplete="given-name" />
+              <span class="wb__label">First name <span class="wb__req">*</span></span>
+              <input type="text" name="q3_q3_textbox1" required autocomplete="given-name" />
             </label>
             <label class="wb__field">
-              <span class="wb__label">Last name</span>
-              <input type="text" name="last_name" required autocomplete="family-name" />
+              <span class="wb__label">Last name <span class="wb__req">*</span></span>
+              <input type="text" name="q4_q4_textbox2" required autocomplete="family-name" />
             </label>
             <label class="wb__field">
-              <span class="wb__label">Email</span>
-              <input type="email" name="email" required autocomplete="email" placeholder="you@company.com" />
+              <span class="wb__label">Phone number <span class="wb__req">*</span></span>
+              <input type="tel" name="q5_q5_phone3[full]" required autocomplete="tel" />
             </label>
             <label class="wb__field">
-              <span class="wb__label">Phone <span class="wb__opt">(optional)</span></span>
-              <input type="tel" name="phone" autocomplete="tel" />
+              <span class="wb__label">Email address <span class="wb__req">*</span></span>
+              <input type="email" name="q6_q6_email4" required autocomplete="email" placeholder="you@company.com" />
             </label>
             <label class="wb__field">
-              <span class="wb__label">Company</span>
-              <input type="text" name="company" required autocomplete="organization" />
+              <span class="wb__label">Company name <span class="wb__req">*</span></span>
+              <input type="text" name="q7_q7_textbox5" required autocomplete="organization" />
             </label>
             <label class="wb__field">
-              <span class="wb__label">Current website <span class="wb__opt">(if you have one)</span></span>
-              <input type="url" name="current_domain" inputmode="url" placeholder="https://" />
+              <span class="wb__label">Current website domain <span class="wb__opt">(optional)</span></span>
+              <input type="text" name="q8_q8_textbox6" inputmode="url" placeholder="https://" />
             </label>
+          </div>
+
+          <div class="wb__group">
+            <p class="wb__group-label">Is this a brand-new website or a rebuild/redesign? <span class="wb__req">*</span></p>
+            <div class="wb__options wb__options--grid">
+              {projectType.map((opt) => (
+                <label class="wb__check">
+                  <input type="radio" name="q9_q9_radio7" value={opt} required />
+                  <span>{opt}</span>
+                </label>
+              ))}
+            </div>
           </div>
         </fieldset>
 
@@ -138,41 +187,46 @@ const budgets = ["Under €5k", "€5–10k", "€10–15k", "€15–20k", "€
         <fieldset class="wb__section">
           <legend class="wb__legend"><span class="wb__num">02</span> About your business</legend>
           <label class="wb__field wb__field--full">
-            <span class="wb__label">Summary about the business</span>
+            <span class="wb__label">Business summary <span class="wb__req">*</span></span>
             <span class="wb__help">Who you are, what you do, and what makes you different.</span>
-            <textarea name="business_summary" rows="4"></textarea>
+            <textarea name="q11_q11_textarea9" rows="4" required></textarea>
           </label>
           <label class="wb__field wb__field--full">
-            <span class="wb__label">Our position in the market</span>
+            <span class="wb__label">Market position <span class="wb__opt">(optional)</span></span>
             <span class="wb__help">Where you sit. Budget, mid-market, premium, and why.</span>
-            <textarea name="market_position" rows="3"></textarea>
+            <textarea name="q12_q12_textarea10" rows="3"></textarea>
           </label>
           <label class="wb__field wb__field--full">
-            <span class="wb__label">Our competitors are</span>
-            <textarea name="competitors" rows="3"></textarea>
+            <span class="wb__label">Main competitors <span class="wb__opt">(optional)</span></span>
+            <textarea name="q13_q13_textarea11" rows="3"></textarea>
           </label>
           <label class="wb__field wb__field--full">
-            <span class="wb__label">Our target audiences are</span>
-            <textarea name="target_audiences" rows="3"></textarea>
+            <span class="wb__label">Target audiences <span class="wb__req">*</span></span>
+            <textarea name="q14_q14_textarea12" rows="3" required></textarea>
           </label>
           <label class="wb__field wb__field--full">
-            <span class="wb__label">Our commercial objectives</span>
+            <span class="wb__label">Commercial objectives <span class="wb__req">*</span></span>
             <span class="wb__help">What a successful website actually does for the business.</span>
-            <textarea name="commercial_objectives" rows="3"></textarea>
+            <textarea name="q15_q15_textarea13" rows="3" required></textarea>
+          </label>
+          <label class="wb__field wb__field--full">
+            <span class="wb__label">What does success look like in 12 months? <span class="wb__req">*</span></span>
+            <span class="wb__help">Include the metrics or outcomes that matter.</span>
+            <textarea name="q16_q16_textarea14" rows="3" required></textarea>
           </label>
         </fieldset>
 
-        <!-- 3 — Your brand and goals -->
+        <!-- 3 — Brand and content -->
         <fieldset class="wb__section">
-          <legend class="wb__legend"><span class="wb__num">03</span> Your brand and goals</legend>
+          <legend class="wb__legend"><span class="wb__num">03</span> Brand and content</legend>
 
           <div class="wb__group">
-            <p class="wb__group-label">We have the following brand assets</p>
+            <p class="wb__group-label">What brand assets can you provide?</p>
             <p class="wb__help">Tick everything you already have. Don't worry about gaps, we can fill them.</p>
             <div class="wb__options wb__options--grid">
               {brandAssets.map((opt) => (
                 <label class="wb__check">
-                  <input type="checkbox" name="brand_assets[]" value={opt} />
+                  <input type="checkbox" name="q18_q18_checkbox16[]" value={opt} />
                   <span>{opt}</span>
                 </label>
               ))}
@@ -180,11 +234,24 @@ const budgets = ["Under €5k", "€5–10k", "€10–15k", "€15–20k", "€
           </div>
 
           <div class="wb__group">
-            <p class="wb__group-label">The website must be built to do the following</p>
+            <p class="wb__group-label">What must the website do?</p>
             <div class="wb__options wb__options--grid">
               {websiteGoals.map((opt) => (
                 <label class="wb__check">
-                  <input type="checkbox" name="website_goals[]" value={opt} />
+                  <input type="checkbox" name="q19_q19_checkbox17[]" value={opt} />
+                  <span>{opt}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div class="wb__group">
+            <p class="wb__group-label">R22 writing copy: what works best for you? <span class="wb__req">*</span></p>
+            <p class="wb__help">Website copy is written by our team as part of the project, and you'll be able to review and amend it before launch.</p>
+            <div class="wb__options wb__options--stack">
+              {contentApproach.map((opt) => (
+                <label class="wb__check">
+                  <input type="radio" name="q20_q20_radio18" value={opt} required />
                   <span>{opt}</span>
                 </label>
               ))}
@@ -196,99 +263,192 @@ const budgets = ["Under €5k", "€5–10k", "€10–15k", "€15–20k", "€
         <fieldset class="wb__section">
           <legend class="wb__legend"><span class="wb__num">04</span> Your current website</legend>
           <label class="wb__field wb__field--full">
-            <span class="wb__label">What we like about our website</span>
-            <textarea name="website_likes" rows="3"></textarea>
+            <span class="wb__label">What do you like about your current website? <span class="wb__opt">(optional)</span></span>
+            <textarea name="q22_q22_textarea20" rows="3"></textarea>
           </label>
           <label class="wb__field wb__field--full">
-            <span class="wb__label">What frustrates us about our website</span>
-            <textarea name="website_frustrations" rows="3"></textarea>
+            <span class="wb__label">What frustrates you about your current website? <span class="wb__opt">(optional)</span></span>
+            <textarea name="q23_q23_textarea21" rows="3"></textarea>
           </label>
           <label class="wb__field wb__field--full">
-            <span class="wb__label">Other websites we like</span>
+            <span class="wb__label">Websites you like <span class="wb__opt">(optional)</span></span>
             <span class="wb__help">Paste a few links, and a line on what you like about each if you can.</span>
-            <textarea name="websites_we_like" rows="3" placeholder="https://"></textarea>
+            <input type="text" name="q24_q24_textbox22" placeholder="https://" />
+          </label>
+          <label class="wb__field wb__field--full">
+            <span class="wb__label">How would you like your website to feel? <span class="wb__opt">(optional)</span></span>
+            <span class="wb__help">A few words describing the feel and tone.</span>
+            <input type="text" name="q25_q25_textbox23" />
+          </label>
+          <label class="wb__field wb__field--full">
+            <span class="wb__label">Websites or brands you don't like, and why <span class="wb__opt">(optional)</span></span>
+            <textarea name="q26_q26_textarea24" rows="3"></textarea>
           </label>
         </fieldset>
 
-        <!-- 5 — Scope and services -->
+        <!-- 5 — Technical and platform -->
         <fieldset class="wb__section">
-          <legend class="wb__legend"><span class="wb__num">05</span> Scope and services</legend>
+          <legend class="wb__legend"><span class="wb__num">05</span> Technical and platform</legend>
 
           <div class="wb__group">
-            <p class="wb__group-label">How we plan to promote the new website</p>
+            <p class="wb__group-label">What is your current website built on? <span class="wb__req">*</span></p>
             <div class="wb__options wb__options--grid">
-              {promotion.map((opt) => (
+              {currentPlatform.map((opt) => (
                 <label class="wb__check">
-                  <input type="checkbox" name="promotion[]" value={opt} />
+                  <input type="radio" name="q28_q28_radio26" value={opt} required />
+                  <span>{opt}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <label class="wb__field wb__field--full">
+            <span class="wb__label">Where is the website currently hosted? <span class="wb__opt">(optional)</span></span>
+            <input type="text" name="q29_q29_textbox27" />
+          </label>
+
+          <div class="wb__group">
+            <p class="wb__group-label">Who controls the domain name and DNS? <span class="wb__req">*</span></p>
+            <div class="wb__options wb__options--stack">
+              {domainControl.map((opt) => (
+                <label class="wb__check">
+                  <input type="radio" name="q30_q30_radio28" value={opt} required />
+                  <span>{opt}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div class="wb__group">
+            <p class="wb__group-label">Platform preference <span class="wb__req">*</span></p>
+            <div class="wb__options wb__options--stack">
+              {platformPreference.map((opt) => (
+                <label class="wb__check">
+                  <input type="radio" name="q31_q31_radio29" value={opt} required />
+                  <span>{opt}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div class="wb__group">
+            <p class="wb__group-label">What tools does the new website need to connect to?</p>
+            <div class="wb__options wb__options--grid">
+              {integrations.map((opt) => (
+                <label class="wb__check">
+                  <input type="checkbox" name="q32_q32_checkbox30[]" value={opt} />
                   <span>{opt}</span>
                 </label>
               ))}
             </div>
             <label class="wb__field wb__field--full wb__field--tight">
-              <span class="wb__label">Anything else <span class="wb__opt">(optional)</span></span>
-              <input type="text" name="promotion_other" placeholder="Other ways you'll promote it" />
+              <span class="wb__label">Other <span class="wb__opt">(optional)</span></span>
+              <input type="text" name="q32_q32_checkbox30[other]" placeholder="Other tools to connect to" />
             </label>
-          </div>
-
-          <div class="wb__group">
-            <p class="wb__group-label">Roughly, how many pages do you foresee the website having?</p>
-            <div class="wb__options wb__options--pills">
-              {pageCounts.map((opt) => (
-                <label class="wb__pill">
-                  <input type="radio" name="page_count" value={opt} />
-                  <span>{opt}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          <div class="wb__group">
-            <p class="wb__group-label">Added services you'd like us to complete</p>
-            <div class="wb__options wb__options--grid">
-              {addedServices.map((opt) => (
-                <label class="wb__check">
-                  <input type="checkbox" name="added_services[]" value={opt} />
-                  <span>{opt}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          <div class="wb__group">
-            <p class="wb__group-label">Website functionality</p>
-            <div class="wb__options wb__options--grid">
-              {functionality.map((opt) => (
-                <label class="wb__check">
-                  <input type="checkbox" name="functionality[]" value={opt} />
-                  <span>{opt}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          <div class="wb__group">
-            <p class="wb__group-label">Going forward, we would like help with</p>
-            <div class="wb__options wb__options--grid">
-              {ongoingHelp.map((opt) => (
-                <label class="wb__check">
-                  <input type="checkbox" name="ongoing_help[]" value={opt} />
-                  <span>{opt}</span>
-                </label>
-              ))}
-            </div>
           </div>
         </fieldset>
 
-        <!-- 6 — Commercials -->
+        <!-- 6 — Scope and services -->
         <fieldset class="wb__section">
-          <legend class="wb__legend"><span class="wb__num">06</span> Commercials</legend>
+          <legend class="wb__legend"><span class="wb__num">06</span> Scope and services</legend>
 
           <div class="wb__group">
-            <p class="wb__group-label">Our budget for the project is</p>
+            <p class="wb__group-label">How will the new website be promoted? <span class="wb__req">*</span></p>
+            <div class="wb__options wb__options--grid">
+              {promotion.map((opt) => (
+                <label class="wb__check">
+                  <input type="checkbox" name="q34_q34_checkbox32[]" value={opt} data-promo />
+                  <span>{opt}</span>
+                </label>
+              ))}
+            </div>
+            <label class="wb__field wb__field--full wb__field--tight">
+              <span class="wb__label">Other <span class="wb__opt">(optional)</span></span>
+              <input type="text" name="q34_q34_checkbox32[other]" data-promo-other placeholder="Another way you'll promote it" />
+            </label>
+            <p class="wb__err" data-promo-err hidden>Please choose at least one option, or add one under “Other”.</p>
+          </div>
+
+          <label class="wb__field wb__field--full">
+            <span class="wb__label">Other promotion details <span class="wb__opt">(optional)</span></span>
+            <input type="text" name="q35_q35_textbox33" />
+          </label>
+
+          <div class="wb__group">
+            <p class="wb__group-label">Roughly how many pages will the website have? <span class="wb__req">*</span></p>
+            <div class="wb__options wb__options--pills">
+              {pageCounts.map((opt) => (
+                <label class="wb__pill">
+                  <input type="radio" name="q36_q36_radio34" value={opt} required />
+                  <span>{opt}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div class="wb__group">
+            <p class="wb__group-label">What added services are needed?</p>
+            <div class="wb__options wb__options--grid">
+              {addedServices.map((opt) => (
+                <label class="wb__check">
+                  <input type="checkbox" name="q37_q37_checkbox35[]" value={opt} />
+                  <span>{opt}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div class="wb__group">
+            <p class="wb__group-label">What website functionality is required?</p>
+            <div class="wb__options wb__options--grid">
+              {functionality.map((opt) => (
+                <label class="wb__check">
+                  <input type="checkbox" name="q38_q38_checkbox36[]" value={opt} />
+                  <span>{opt}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div class="wb__group">
+            <p class="wb__group-label">What ongoing help would you like?</p>
+            <div class="wb__options wb__options--grid">
+              {ongoingHelp.map((opt) => (
+                <label class="wb__check">
+                  <input type="checkbox" name="q39_q39_checkbox37[]" value={opt} />
+                  <span>{opt}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div class="wb__group">
+            <p class="wb__group-label">Do you need accessibility or compliance guidance? <span class="wb__req">*</span></p>
+            <div class="wb__options wb__options--stack">
+              {accessibility.map((opt) => (
+                <label class="wb__check">
+                  <input type="radio" name="q40_q40_radio38" value={opt} required />
+                  <span>{opt}</span>
+                </label>
+              ))}
+            </div>
+            <label class="wb__field wb__field--full wb__field--tight">
+              <span class="wb__label">Please tell us about any accessibility or compliance needs <span class="wb__opt">(optional)</span></span>
+              <textarea name="q41_q41_textarea39" rows="2"></textarea>
+            </label>
+          </div>
+        </fieldset>
+
+        <!-- 7 — Commercials -->
+        <fieldset class="wb__section">
+          <legend class="wb__legend"><span class="wb__num">07</span> Commercials</legend>
+
+          <div class="wb__group">
+            <p class="wb__group-label">Budget <span class="wb__req">*</span></p>
             <div class="wb__options wb__options--pills">
               {budgets.map((opt) => (
                 <label class="wb__pill">
-                  <input type="radio" name="budget" value={opt} />
+                  <input type="radio" name="q43_q43_radio41" value={opt} required />
                   <span>{opt}</span>
                 </label>
               ))}
@@ -296,13 +456,17 @@ const budgets = ["Under €5k", "€5–10k", "€10–15k", "€15–20k", "€
           </div>
 
           <label class="wb__field">
-            <span class="wb__label">We require the website delivered by <span class="wb__opt">(optional)</span></span>
-            <input type="date" name="deadline" />
+            <span class="wb__label">Required delivery date <span class="wb__req">*</span></span>
+            <input type="date" id="wb-deadline" required aria-label="Required delivery date" />
           </label>
+          <!-- JotForm expects the date split into month/day/year; populated on submit. -->
+          <input type="hidden" name="q44_q44_datetime42[month]" data-date-part="month" />
+          <input type="hidden" name="q44_q44_datetime42[day]" data-date-part="day" />
+          <input type="hidden" name="q44_q44_datetime42[year]" data-date-part="year" />
 
           <label class="wb__field wb__field--full">
-            <span class="wb__label">Additional information about the project <span class="wb__opt">(optional)</span></span>
-            <textarea name="additional_info" rows="4"></textarea>
+            <span class="wb__label">Additional information <span class="wb__opt">(optional)</span></span>
+            <textarea name="q45_q45_textarea43" rows="4"></textarea>
           </label>
         </fieldset>
 
@@ -323,11 +487,44 @@ const budgets = ["Under €5k", "€5–10k", "€10–15k", "€15–20k", "€
   const form = document.querySelector<HTMLFormElement>("[data-brief-form]");
   if (form) {
     const dest = "/thank-you/";
+
+    // Keep JotForm's month/day/year date fields in sync with the native picker.
+    const dateEl = form.querySelector<HTMLInputElement>("#wb-deadline");
+    const setPart = (part: string, v: string) => {
+      const el = form.querySelector<HTMLInputElement>(`[data-date-part="${part}"]`);
+      if (el) el.value = v;
+    };
+    const syncDate = () => {
+      if (dateEl && dateEl.value) {
+        const [y, m, d] = dateEl.value.split("-");
+        setPart("month", m); setPart("day", d); setPart("year", y);
+      } else {
+        setPart("month", ""); setPart("day", ""); setPart("year", "");
+      }
+    };
+    dateEl?.addEventListener("change", syncDate);
+
+    const promoErr = form.querySelector<HTMLElement>("[data-promo-err]");
+
     form.addEventListener("submit", (e) => {
       // Honeypot: if a bot filled it, skip the real submit.
       const hp = form.querySelector<HTMLInputElement>('input[name="website"]');
       if (hp && hp.value) { e.preventDefault(); window.location.href = dest; return; }
-      if (!form.checkValidity()) return;
+
+      syncDate();
+
+      // Promotion is required (at least one, or an "Other" value).
+      const promoChecked = form.querySelectorAll('[data-promo]:checked').length;
+      const promoOther = form.querySelector<HTMLInputElement>("[data-promo-other]");
+      const promoOk = promoChecked > 0 || !!(promoOther && promoOther.value.trim());
+      if (promoErr) promoErr.hidden = promoOk;
+      if (!promoOk) {
+        e.preventDefault();
+        promoErr?.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      }
+
+      if (!form.checkValidity()) return; // let the browser flag native required fields
       e.preventDefault();
       const btn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
       if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
@@ -367,6 +564,7 @@ const budgets = ["Under €5k", "€5–10k", "€10–15k", "€15–20k", "€
   .wb__field--tight { margin-top: 1rem; }
   .wb__label { font-family: var(--w-font-body); font-weight: 600; font-size: 0.9rem; color: var(--c-ink); }
   .wb__opt { font-weight: 400; color: var(--c-ink-soft); }
+  .wb__req { color: var(--c-accent); font-weight: 700; }
   .wb__help { font-family: var(--w-font-body); font-size: 0.85rem; color: var(--c-ink-soft); line-height: 1.5; margin: -0.15rem 0 0.1rem; }
   .wb__field input, .wb__field textarea {
     width: 100%; font-family: var(--w-font-body); font-size: 1rem;
@@ -385,6 +583,7 @@ const budgets = ["Under €5k", "€5–10k", "€10–15k", "€15–20k", "€
   .wb__group .wb__help { margin: -0.5rem 0 0; }
   .wb__options--grid { display: grid; grid-template-columns: 1fr; gap: 0.65rem; }
   @media (min-width: 560px) { .wb__options--grid { grid-template-columns: 1fr 1fr; } }
+  .wb__options--stack { display: grid; grid-template-columns: 1fr; gap: 0.65rem; }
   .wb__options--pills { display: flex; flex-wrap: wrap; gap: 0.6rem; }
 
   .wb__check {
@@ -408,6 +607,8 @@ const budgets = ["Under €5k", "€5–10k", "€10–15k", "€15–20k", "€
   .wb__pill:has(input:checked) { border-color: var(--c-accent); background: color-mix(in srgb, var(--c-accent) 10%, var(--c-bg-alt)); font-weight: 600; }
 
   .wb__check input:focus-visible, .wb__pill input:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
+
+  .wb__err { font-family: var(--w-font-body); font-size: 0.85rem; color: var(--c-accent); font-weight: 600; margin: 0; }
 
   /* Submit */
   .wb__submit-row { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem; }
