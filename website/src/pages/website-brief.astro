@@ -1,0 +1,416 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PageHero from "../components/reskin/PageHero.astro";
+import BreadcrumbSchema from "../components/seo/BreadcrumbSchema.astro";
+
+// New-website briefing form. Same approach as /contact and /events: the site's
+// own markup and styling, posting straight to JotForm (EU) so responses land in
+// the JotForm inbox.
+//
+// ⚠️ SET-UP TODO — this form is briefed to JotForm separately (see
+// docs/website-brief-form-spec.md). Until that JotForm form exists, the values
+// below are PLACEHOLDERS and submissions won't be delivered. Once the JotForm
+// form is built:
+//   1. Replace JOTFORM_ID with the new form's ID.
+//   2. Reconcile every field `name` here with the names JotForm generates
+//      (e.g. q7_company, brand_assets[] → q12_brandAssets[]). Copy them
+//      verbatim from the JotForm form source, exactly as /contact does.
+// The honeypot (`website`) must stay empty; formID + simple_spc are required.
+const JOTFORM_ID = "REPLACE_WITH_BRIEF_FORM_ID";
+const jotformAction = `https://eu-submit.jotform.com/submit/${JOTFORM_ID}`;
+const simpleSpc = `${JOTFORM_ID}-${JOTFORM_ID}`;
+
+// Multiple-choice option sets. Kept as data so the markup stays clean and the
+// options are easy to edit in one place (and match the JotForm brief).
+const brandAssets = [
+  "High-resolution logos",
+  "High-res imagery",
+  "Video",
+  "Brand guidelines",
+  "Tone-of-voice guidelines",
+  "Social media profiles",
+];
+const websiteGoals = [
+  "Generate leads",
+  "Capture enquiries",
+  "Take bookings or show a calendar",
+  "Publish blog and news updates",
+  "Update with new products, listings or services",
+  "Offer a brochure download",
+  "Sell online (ecommerce)",
+];
+const promotion = [
+  "Search engines (SEO)",
+  "Pay per click",
+  "Email",
+  "Social",
+  "Paid social",
+  "Offline (radio, TV, print)",
+  "Events",
+];
+const pageCounts = ["1–5", "5–10", "10–20", "20–50", "50–100"];
+const addedServices = [
+  "Logo or brand identity",
+  "Illustrations",
+  "Website copywriting",
+  "Photography",
+  "Video production",
+];
+const functionality = [
+  "About us page",
+  "Enquiry forms",
+  "Blog / news",
+  "Image gallery",
+  "Newsletter signup",
+  "Document downloads",
+  "Data capture",
+  "Maps",
+  "Product catalogue (non-ecommerce)",
+  "Ecommerce",
+  "Integration with a third-party booking system",
+  "Live chat",
+];
+const ongoingHelp = [
+  "Training to use the website",
+  "Performance and monitoring",
+  "Backups",
+  "Ongoing marketing",
+  "Ongoing development",
+  "Service level agreement",
+  "Compliance measures",
+];
+const budgets = ["Under €5k", "€5–10k", "€10–15k", "€15–20k", "€20k+", "Not sure yet"];
+---
+
+<Layout
+  title="New Website Brief | Rooftop Twenty Two"
+  description="Brief us on your new website. Tell us about your business, your goals and what you need, and we'll come back with a plan and a quote."
+  hideStickyMobileCTA={true}
+>
+  <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "Website brief", url: "/website-brief/" }]} />
+
+  <PageHero
+    kicker="Website brief"
+    title="Tell us about your <em>new website</em>."
+    intro="The more you share here, the sharper our thinking and our quote. Take it section by section. If you're not sure on something, skip it or give us your best guess. Nothing here is binding, it just gives us a proper head start."
+  />
+
+  <section class="wb">
+    <div class="wb__inner">
+      <form class="wb__form" action={jotformAction} method="post" accept-charset="utf-8" data-brief-form>
+        <input type="hidden" name="formID" value={JOTFORM_ID} />
+        <input type="hidden" name="simple_spc" value={simpleSpc} />
+        <!-- JotForm honeypot: must stay empty -->
+        <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="wb__hp" />
+
+        <!-- 1 — Your details -->
+        <fieldset class="wb__section">
+          <legend class="wb__legend"><span class="wb__num">01</span> Your details</legend>
+          <div class="wb__grid">
+            <label class="wb__field">
+              <span class="wb__label">First name</span>
+              <input type="text" name="first_name" required autocomplete="given-name" />
+            </label>
+            <label class="wb__field">
+              <span class="wb__label">Last name</span>
+              <input type="text" name="last_name" required autocomplete="family-name" />
+            </label>
+            <label class="wb__field">
+              <span class="wb__label">Email</span>
+              <input type="email" name="email" required autocomplete="email" placeholder="you@company.com" />
+            </label>
+            <label class="wb__field">
+              <span class="wb__label">Phone <span class="wb__opt">(optional)</span></span>
+              <input type="tel" name="phone" autocomplete="tel" />
+            </label>
+            <label class="wb__field">
+              <span class="wb__label">Company</span>
+              <input type="text" name="company" required autocomplete="organization" />
+            </label>
+            <label class="wb__field">
+              <span class="wb__label">Current website <span class="wb__opt">(if you have one)</span></span>
+              <input type="url" name="current_domain" inputmode="url" placeholder="https://" />
+            </label>
+          </div>
+        </fieldset>
+
+        <!-- 2 — About your business -->
+        <fieldset class="wb__section">
+          <legend class="wb__legend"><span class="wb__num">02</span> About your business</legend>
+          <label class="wb__field wb__field--full">
+            <span class="wb__label">Summary about the business</span>
+            <span class="wb__help">Who you are, what you do, and what makes you different.</span>
+            <textarea name="business_summary" rows="4"></textarea>
+          </label>
+          <label class="wb__field wb__field--full">
+            <span class="wb__label">Our position in the market</span>
+            <span class="wb__help">Where you sit. Budget, mid-market, premium, and why.</span>
+            <textarea name="market_position" rows="3"></textarea>
+          </label>
+          <label class="wb__field wb__field--full">
+            <span class="wb__label">Our competitors are</span>
+            <textarea name="competitors" rows="3"></textarea>
+          </label>
+          <label class="wb__field wb__field--full">
+            <span class="wb__label">Our target audiences are</span>
+            <textarea name="target_audiences" rows="3"></textarea>
+          </label>
+          <label class="wb__field wb__field--full">
+            <span class="wb__label">Our commercial objectives</span>
+            <span class="wb__help">What a successful website actually does for the business.</span>
+            <textarea name="commercial_objectives" rows="3"></textarea>
+          </label>
+        </fieldset>
+
+        <!-- 3 — Your brand and goals -->
+        <fieldset class="wb__section">
+          <legend class="wb__legend"><span class="wb__num">03</span> Your brand and goals</legend>
+
+          <div class="wb__group">
+            <p class="wb__group-label">We have the following brand assets</p>
+            <p class="wb__help">Tick everything you already have. Don't worry about gaps, we can fill them.</p>
+            <div class="wb__options wb__options--grid">
+              {brandAssets.map((opt) => (
+                <label class="wb__check">
+                  <input type="checkbox" name="brand_assets[]" value={opt} />
+                  <span>{opt}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div class="wb__group">
+            <p class="wb__group-label">The website must be built to do the following</p>
+            <div class="wb__options wb__options--grid">
+              {websiteGoals.map((opt) => (
+                <label class="wb__check">
+                  <input type="checkbox" name="website_goals[]" value={opt} />
+                  <span>{opt}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- 4 — Your current website -->
+        <fieldset class="wb__section">
+          <legend class="wb__legend"><span class="wb__num">04</span> Your current website</legend>
+          <label class="wb__field wb__field--full">
+            <span class="wb__label">What we like about our website</span>
+            <textarea name="website_likes" rows="3"></textarea>
+          </label>
+          <label class="wb__field wb__field--full">
+            <span class="wb__label">What frustrates us about our website</span>
+            <textarea name="website_frustrations" rows="3"></textarea>
+          </label>
+          <label class="wb__field wb__field--full">
+            <span class="wb__label">Other websites we like</span>
+            <span class="wb__help">Paste a few links, and a line on what you like about each if you can.</span>
+            <textarea name="websites_we_like" rows="3" placeholder="https://"></textarea>
+          </label>
+        </fieldset>
+
+        <!-- 5 — Scope and services -->
+        <fieldset class="wb__section">
+          <legend class="wb__legend"><span class="wb__num">05</span> Scope and services</legend>
+
+          <div class="wb__group">
+            <p class="wb__group-label">How we plan to promote the new website</p>
+            <div class="wb__options wb__options--grid">
+              {promotion.map((opt) => (
+                <label class="wb__check">
+                  <input type="checkbox" name="promotion[]" value={opt} />
+                  <span>{opt}</span>
+                </label>
+              ))}
+            </div>
+            <label class="wb__field wb__field--full wb__field--tight">
+              <span class="wb__label">Anything else <span class="wb__opt">(optional)</span></span>
+              <input type="text" name="promotion_other" placeholder="Other ways you'll promote it" />
+            </label>
+          </div>
+
+          <div class="wb__group">
+            <p class="wb__group-label">Roughly, how many pages do you foresee the website having?</p>
+            <div class="wb__options wb__options--pills">
+              {pageCounts.map((opt) => (
+                <label class="wb__pill">
+                  <input type="radio" name="page_count" value={opt} />
+                  <span>{opt}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div class="wb__group">
+            <p class="wb__group-label">Added services you'd like us to complete</p>
+            <div class="wb__options wb__options--grid">
+              {addedServices.map((opt) => (
+                <label class="wb__check">
+                  <input type="checkbox" name="added_services[]" value={opt} />
+                  <span>{opt}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div class="wb__group">
+            <p class="wb__group-label">Website functionality</p>
+            <div class="wb__options wb__options--grid">
+              {functionality.map((opt) => (
+                <label class="wb__check">
+                  <input type="checkbox" name="functionality[]" value={opt} />
+                  <span>{opt}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div class="wb__group">
+            <p class="wb__group-label">Going forward, we would like help with</p>
+            <div class="wb__options wb__options--grid">
+              {ongoingHelp.map((opt) => (
+                <label class="wb__check">
+                  <input type="checkbox" name="ongoing_help[]" value={opt} />
+                  <span>{opt}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- 6 — Commercials -->
+        <fieldset class="wb__section">
+          <legend class="wb__legend"><span class="wb__num">06</span> Commercials</legend>
+
+          <div class="wb__group">
+            <p class="wb__group-label">Our budget for the project is</p>
+            <div class="wb__options wb__options--pills">
+              {budgets.map((opt) => (
+                <label class="wb__pill">
+                  <input type="radio" name="budget" value={opt} />
+                  <span>{opt}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <label class="wb__field">
+            <span class="wb__label">We require the website delivered by <span class="wb__opt">(optional)</span></span>
+            <input type="date" name="deadline" />
+          </label>
+
+          <label class="wb__field wb__field--full">
+            <span class="wb__label">Additional information about the project <span class="wb__opt">(optional)</span></span>
+            <textarea name="additional_info" rows="4"></textarea>
+          </label>
+        </fieldset>
+
+        <div class="wb__submit-row">
+          <button type="submit" class="wbtn wbtn--accent">Send us the brief</button>
+          <p class="wb__note">We read every brief properly and come back with a thoughtful reply.</p>
+        </div>
+        <p class="wb__status" role="status" aria-live="polite" data-form-status hidden></p>
+      </form>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  // Progressive enhancement: submit the brief to JotForm in the background
+  // (no-cors + keepalive so the request still completes), then send the visitor
+  // to /thank-you/. Without JS the form posts to JotForm normally.
+  const form = document.querySelector<HTMLFormElement>("[data-brief-form]");
+  if (form) {
+    const dest = "/thank-you/";
+    form.addEventListener("submit", (e) => {
+      // Honeypot: if a bot filled it, skip the real submit.
+      const hp = form.querySelector<HTMLInputElement>('input[name="website"]');
+      if (hp && hp.value) { e.preventDefault(); window.location.href = dest; return; }
+      if (!form.checkValidity()) return;
+      e.preventDefault();
+      const btn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
+      fetch(form.action, { method: "POST", body: new FormData(form), mode: "no-cors", keepalive: true })
+        .catch(() => {})
+        .finally(() => { window.location.href = dest; });
+    });
+  }
+</script>
+
+<style>
+  .wb { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .wb__inner { max-width: 820px; margin: 0 auto; padding-inline: var(--w-gutter); }
+
+  .wb__form { display: flex; flex-direction: column; gap: 2.5rem; }
+  .wb__hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+
+  /* Sections */
+  .wb__section {
+    border: 1px solid var(--c-line); border-radius: var(--w-radius);
+    background: var(--c-bg); box-shadow: var(--w-shadow-soft);
+    padding: clamp(1.5rem, 3vw, 2.25rem); margin: 0; min-inline-size: 0;
+    display: flex; flex-direction: column; gap: 1.5rem;
+  }
+  .wb__legend {
+    display: flex; align-items: baseline; gap: 0.75rem;
+    font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3);
+    color: var(--c-ink); padding: 0; line-height: 1.1;
+  }
+  .wb__num { font-family: var(--w-font-display); font-weight: 700; font-size: 0.9rem; color: var(--c-accent); }
+
+  /* Text fields */
+  .wb__grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+  @media (min-width: 620px) { .wb__grid { grid-template-columns: 1fr 1fr; } }
+  .wb__field { display: flex; flex-direction: column; gap: 0.45rem; }
+  .wb__field--full { grid-column: 1 / -1; }
+  .wb__field--tight { margin-top: 1rem; }
+  .wb__label { font-family: var(--w-font-body); font-weight: 600; font-size: 0.9rem; color: var(--c-ink); }
+  .wb__opt { font-weight: 400; color: var(--c-ink-soft); }
+  .wb__help { font-family: var(--w-font-body); font-size: 0.85rem; color: var(--c-ink-soft); line-height: 1.5; margin: -0.15rem 0 0.1rem; }
+  .wb__field input, .wb__field textarea {
+    width: 100%; font-family: var(--w-font-body); font-size: 1rem;
+    padding: 0.85rem 1rem; border-radius: 12px;
+    border: 1px solid var(--c-line); background: var(--c-bg-alt); color: var(--c-ink);
+    resize: vertical;
+  }
+  .wb__field input::placeholder, .wb__field textarea::placeholder { color: var(--c-ink-soft); opacity: 0.7; }
+  .wb__field input:focus-visible, .wb__field textarea:focus-visible {
+    outline: 2px solid var(--c-accent); outline-offset: 2px; border-color: transparent;
+  }
+
+  /* Checkbox / radio groups */
+  .wb__group { display: flex; flex-direction: column; gap: 0.85rem; }
+  .wb__group-label { font-family: var(--w-font-body); font-weight: 600; font-size: 0.95rem; color: var(--c-ink); margin: 0; }
+  .wb__group .wb__help { margin: -0.5rem 0 0; }
+  .wb__options--grid { display: grid; grid-template-columns: 1fr; gap: 0.65rem; }
+  @media (min-width: 560px) { .wb__options--grid { grid-template-columns: 1fr 1fr; } }
+  .wb__options--pills { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+
+  .wb__check {
+    display: flex; align-items: flex-start; gap: 0.65rem;
+    font-family: var(--w-font-body); font-size: 0.95rem; color: var(--c-ink); line-height: 1.4;
+    padding: 0.7rem 0.85rem; border: 1px solid var(--c-line); border-radius: 12px;
+    background: var(--c-bg-alt); cursor: pointer; transition: border-color var(--w-dur-fast) var(--w-ease);
+  }
+  .wb__check:hover { border-color: var(--c-accent); }
+  .wb__check input { margin-top: 0.15rem; accent-color: var(--c-accent); width: 1.05rem; height: 1.05rem; flex: 0 0 auto; }
+  .wb__check:has(input:checked) { border-color: var(--c-accent); background: color-mix(in srgb, var(--c-accent) 8%, var(--c-bg-alt)); }
+
+  .wb__pill {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-family: var(--w-font-body); font-size: 0.95rem; color: var(--c-ink);
+    padding: 0.6rem 1rem; border: 1px solid var(--c-line); border-radius: var(--radius-pill);
+    background: var(--c-bg-alt); cursor: pointer; transition: border-color var(--w-dur-fast) var(--w-ease);
+  }
+  .wb__pill:hover { border-color: var(--c-accent); }
+  .wb__pill input { accent-color: var(--c-accent); }
+  .wb__pill:has(input:checked) { border-color: var(--c-accent); background: color-mix(in srgb, var(--c-accent) 10%, var(--c-bg-alt)); font-weight: 600; }
+
+  .wb__check input:focus-visible, .wb__pill input:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
+
+  /* Submit */
+  .wb__submit-row { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem; }
+  .wb__note { font-family: var(--w-font-body); font-size: var(--fs-small); color: var(--c-ink-soft); margin: 0; }
+  .wb__status { font-family: var(--w-font-body); font-size: var(--fs-small); color: var(--c-ink-soft); margin: 0; }
+</style>
