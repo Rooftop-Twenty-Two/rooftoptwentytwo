@@ -76,7 +76,8 @@ Hidden/required system fields: `formID` = `262212815673052`, `simple_spc` =
 
 **R22 writing copy (`q20`):** Happy for R22 to write all copy (we'll review and amend it) · We'll supply some copy ourselves, R22 to write the rest · We'll supply all copy ourselves · Not sure yet
 
-**Current platform (`q28`):** WordPress · Squarespace · Wix · Shopify · Custom build · Don't know · Not applicable (no current site)
+**Current platform (`q28`):** Custom build · WordPress · Shopify · Don't know · Not applicable (no current site)
+(On the site, Custom build is listed first with a short note — "Our recommendation. Greater flexibility and control." — to steer gently towards it. The submitted value stays "Custom build".)
 
 **Domain / DNS control (`q30`):** We do, and we have access · Our previous developer / agency · Not sure
 
@@ -96,7 +97,7 @@ Hidden/required system fields: `formID` = `262212815673052`, `simple_spc` =
 
 **Accessibility / compliance (`q40`):** Yes (please tell us) · No · Not sure — we'd like R22's guidance
 
-**Budget (`q43`):** €7–10k · €10–15k · €15–20k · €20k+ · Not sure yet
+**Budget (`q43`):** €5–15k · €15–25k · €25k+
 
 ## Notes
 

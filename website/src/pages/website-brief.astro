@@ -46,14 +46,14 @@ const contentApproach = [
   "We'll supply all copy ourselves",
   "Not sure yet",
 ];
+// `value` is submitted to JotForm; `note` is UI-only helper text. Custom build
+// is listed first and carries a note, to gently steer towards it.
 const currentPlatform = [
-  "WordPress",
-  "Squarespace",
-  "Wix",
-  "Shopify",
-  "Custom build",
-  "Don't know",
-  "Not applicable (no current site)",
+  { value: "Custom build", note: "Our recommendation. Greater flexibility and control over how the site works and grows." },
+  { value: "WordPress" },
+  { value: "Shopify" },
+  { value: "Don't know" },
+  { value: "Not applicable (no current site)" },
 ];
 const domainControl = [
   "We do, and we have access",
@@ -116,7 +116,7 @@ const accessibility = [
   "No",
   "Not sure — we'd like R22's guidance",
 ];
-const budgets = ["€7–10k", "€10–15k", "€15–20k", "€20k+", "Not sure yet"];
+const budgets = ["€5–15k", "€15–25k", "€25k+"];
 ---
 
 <Layout
@@ -292,11 +292,11 @@ const budgets = ["€7–10k", "€10–15k", "€15–20k", "€20k+", "Not sur
 
           <div class="wb__group">
             <p class="wb__group-label">What is your current website built on? <span class="wb__req">*</span></p>
-            <div class="wb__options wb__options--grid">
+            <div class="wb__options wb__options--stack">
               {currentPlatform.map((opt) => (
                 <label class="wb__check">
-                  <input type="radio" name="q28_q28_radio26" value={opt} required />
-                  <span>{opt}</span>
+                  <input type="radio" name="q28_q28_radio26" value={opt.value} required />
+                  <span>{opt.value}{opt.note && <span class="wb__check-note">{opt.note}</span>}</span>
                 </label>
               ))}
             </div>
@@ -594,6 +594,7 @@ const budgets = ["€7–10k", "€10–15k", "€15–20k", "€20k+", "Not sur
   }
   .wb__check:hover { border-color: var(--c-accent); }
   .wb__check input { margin-top: 0.15rem; accent-color: var(--c-accent); width: 1.05rem; height: 1.05rem; flex: 0 0 auto; }
+  .wb__check-note { display: block; font-size: 0.82rem; font-weight: 400; color: var(--c-ink-soft); line-height: 1.4; margin-top: 0.2rem; }
   .wb__check:has(input:checked) { border-color: var(--c-accent); background: color-mix(in srgb, var(--c-accent) 8%, var(--c-bg-alt)); }
 
   .wb__pill {
