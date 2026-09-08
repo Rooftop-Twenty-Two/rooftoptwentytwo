@@ -77,20 +77,20 @@ const guests = [
     )}
     <div class="tv-banner__scrim"></div>
     <div class="tv-banner__inner">
+      <!-- The when and where live in the reserve card, so the hero leads on the
+           series mark rather than repeating them. -->
+      <div class="tv-eyebrow">
+        {hasFile(ev.seriesLogo)
+          ? <img class="tv-eyebrow__logo" src={ev.seriesLogo} alt={ev.series} loading="eager" decoding="async" />
+          : <p class="tv-eyebrow__wordmark">{ev.series}</p>}
+      </div>
+
       <h1 class="tv-banner__title">
         <span class="tv-banner__ep">{ev.episode}</span>
         {ev.headline}
       </h1>
 
       <p class="tv-banner__by">{ev.presentedBy} &middot; {ev.hostedBy}</p>
-
-      <!-- The when and where live in the reserve card, so the hero closes on
-           the series mark rather than repeating them. -->
-      <div class="tv-eyebrow">
-        {hasFile(ev.seriesLogo)
-          ? <img class="tv-eyebrow__logo" src={ev.seriesLogo} alt={ev.series} loading="eager" decoding="async" />
-          : <p class="tv-eyebrow__wordmark">{ev.series}</p>}
-      </div>
     </div>
   </section>
 
@@ -233,8 +233,8 @@ const guests = [
   .tv-banner__scrim { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(13,32,48,0.45) 0%, rgba(13,32,48,0.72) 55%, rgba(13,32,48,0.94) 100%); }
   .tv-banner__inner { max-width: var(--w-container); width: 100%; margin: 0 auto; padding: clamp(3rem, 6vw, 5rem) var(--w-gutter) clamp(2.5rem, 5vw, 4rem); }
 
-  /* Series mark closes the hero, under the credit line. */
-  .tv-eyebrow { display: flex; justify-content: flex-start; margin-top: clamp(1.75rem, 3vw, 2.75rem); }
+  /* Series mark opens the hero, above the episode line. */
+  .tv-eyebrow { display: flex; justify-content: flex-start; }
   .tv-eyebrow__logo { height: clamp(52px, 6vw, 84px); width: auto; max-width: 100%; object-fit: contain; }
   /* Stands in for the series logo until the artwork lands. */
   .tv-eyebrow__wordmark { font-family: var(--w-font-display); font-weight: 600; font-size: 1.15rem; letter-spacing: 0.02em; color: #fff; border: 1px solid rgba(255,255,255,0.35); border-radius: var(--radius-pill); padding: 0.45rem 1.1rem; margin: 0; }
