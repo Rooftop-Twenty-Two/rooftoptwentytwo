@@ -77,12 +77,6 @@ const guests = [
     )}
     <div class="tv-banner__scrim"></div>
     <div class="tv-banner__inner">
-      <div class="tv-eyebrow">
-        {hasFile(ev.seriesLogo)
-          ? <img class="tv-eyebrow__logo" src={ev.seriesLogo} alt={ev.series} loading="eager" decoding="async" />
-          : <p class="tv-eyebrow__wordmark">{ev.series}</p>}
-      </div>
-
       <h1 class="tv-banner__title">
         <span class="tv-banner__ep">{ev.episode}</span>
         {ev.headline}
@@ -90,11 +84,13 @@ const guests = [
 
       <p class="tv-banner__by">{ev.presentedBy} &middot; {ev.hostedBy}</p>
 
-      <p class="tv-banner__when">
-        <span>{ev.date} &middot; {ev.time}</span>
-        <span class="tv-banner__where">{ev.venue}, {ev.address}</span>
-        <a class="tv-banner__map" href={ev.directions} target="_blank" rel="noopener">Get directions</a>
-      </p>
+      <!-- The when and where live in the reserve card, so the hero closes on
+           the series mark rather than repeating them. -->
+      <div class="tv-eyebrow">
+        {hasFile(ev.seriesLogo)
+          ? <img class="tv-eyebrow__logo" src={ev.seriesLogo} alt={ev.series} loading="eager" decoding="async" />
+          : <p class="tv-eyebrow__wordmark">{ev.series}</p>}
+      </div>
     </div>
   </section>
 
@@ -237,21 +233,15 @@ const guests = [
   .tv-banner__scrim { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(13,32,48,0.45) 0%, rgba(13,32,48,0.72) 55%, rgba(13,32,48,0.94) 100%); }
   .tv-banner__inner { max-width: var(--w-container); width: 100%; margin: 0 auto; padding: clamp(3rem, 6vw, 5rem) var(--w-gutter) clamp(2.5rem, 5vw, 4rem); }
 
-  /* Logo holds the right edge of the hero; it drops back to the left on narrow
-     screens, where there is nothing to sit opposite it. */
-  .tv-eyebrow { display: flex; justify-content: flex-start; }
-  @media (min-width: 800px) { .tv-eyebrow { justify-content: flex-end; } }
-  .tv-eyebrow__logo { height: clamp(44px, 5vw, 66px); width: auto; max-width: 100%; object-fit: contain; }
+  /* Series mark closes the hero, under the credit line. */
+  .tv-eyebrow { display: flex; justify-content: flex-start; margin-top: clamp(1.75rem, 3vw, 2.75rem); }
+  .tv-eyebrow__logo { height: clamp(52px, 6vw, 84px); width: auto; max-width: 100%; object-fit: contain; }
   /* Stands in for the series logo until the artwork lands. */
   .tv-eyebrow__wordmark { font-family: var(--w-font-display); font-weight: 600; font-size: 1.15rem; letter-spacing: 0.02em; color: #fff; border: 1px solid rgba(255,255,255,0.35); border-radius: var(--radius-pill); padding: 0.45rem 1.1rem; margin: 0; }
   .tv-banner__by { font-family: var(--w-font-body); font-weight: 600; font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--c-accent-2); margin: 1.1rem 0 0; }
 
   .tv-banner__title { font-family: var(--w-font-display); font-weight: 600; font-size: clamp(2rem, 3.2vw + 0.9rem, 3.4rem); line-height: 1.06; letter-spacing: var(--tracking-display); color: #fff; margin: 1.75rem 0 0; max-width: 22ch; }
   .tv-banner__ep { display: block; font-family: var(--w-font-script); font-weight: 400; font-size: clamp(2.4rem, 2.6vw + 1.6rem, 3.6rem); line-height: 0.95; letter-spacing: 0; color: var(--c-accent); transform: rotate(-2deg); transform-origin: left; margin-bottom: 0.85rem; }
-  .tv-banner__when { display: grid; gap: 0.35rem; font-family: var(--w-font-body); font-size: 1.05rem; color: var(--c-on-dark-soft); margin: 1.5rem 0 0; max-width: 46ch; }
-  .tv-banner__when > span:first-child { font-weight: 700; color: #fff; }
-  .tv-banner__where { line-height: 1.5; }
-  .tv-banner__map { justify-self: start; color: var(--c-accent-2); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 
   /* Main two-column */
   .tv-main { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
