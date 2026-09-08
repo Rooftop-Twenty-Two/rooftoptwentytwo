@@ -236,7 +236,10 @@ const guests = [
   .tv-banner__scrim { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(13,32,48,0.45) 0%, rgba(13,32,48,0.72) 55%, rgba(13,32,48,0.94) 100%); }
   .tv-banner__inner { max-width: var(--w-container); width: 100%; margin: 0 auto; padding: clamp(3rem, 6vw, 5rem) var(--w-gutter) clamp(2.5rem, 5vw, 4rem); }
 
-  .tv-eyebrow { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1.1rem; }
+  /* Logo sits at the right edge of the hero, the credit line at the left. They
+     stack logo-first on narrow screens, where there is no room to sit apart. */
+  .tv-eyebrow { display: flex; flex-direction: column; align-items: flex-start; gap: 0.9rem; }
+  @media (min-width: 800px) { .tv-eyebrow { flex-direction: row-reverse; justify-content: space-between; align-items: center; gap: 1.5rem; } }
   .tv-eyebrow__logo { height: clamp(44px, 5vw, 66px); width: auto; max-width: 100%; object-fit: contain; }
   /* Stands in for the series logo until the artwork lands. */
   .tv-eyebrow__wordmark { font-family: var(--w-font-display); font-weight: 600; font-size: 1.15rem; letter-spacing: 0.02em; color: #fff; border: 1px solid rgba(255,255,255,0.35); border-radius: var(--radius-pill); padding: 0.45rem 1.1rem; margin: 0; }
