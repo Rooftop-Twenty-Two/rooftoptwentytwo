@@ -63,9 +63,12 @@ export default defineConfig({
     react(),
     keystatic(),
     sitemap({
-      // Keep noindex pages (e.g. the post-enquiry thank-you, private /p/ decks)
-      // out of the sitemap.
-      filter: (page) => !/\/thank-you\/?$/.test(page) && !/\/p\//.test(page),
+      // Keep noindex pages (e.g. the post-enquiry thank-you, private /p/ decks,
+      // unlisted event pages we hand out by link only) out of the sitemap.
+      filter: (page) =>
+        !/\/thank-you\/?$/.test(page) &&
+        !/\/p\//.test(page) &&
+        !/\/events\/the-view-from-twenty-two-/.test(page),
       customPages: [
         ...collectionCustomPages('portfolio', '/work/'),
         ...collectionCustomPages('services', '/services/'),
