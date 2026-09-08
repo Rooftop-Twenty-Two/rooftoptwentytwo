@@ -232,7 +232,8 @@ const ev = events[0];
   /* Register */
   .eb-reg { background: var(--c-dark); color: var(--c-on-dark); padding-block: var(--w-section-y); }
   .eb-reg__inner { max-width: 720px; margin: 0 auto; padding-inline: var(--w-gutter); }
-  .eb-reg__title { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); letter-spacing: var(--tracking-display); color: var(--c-on-dark); margin: 0.4rem 0 0; }
+  /* Capped below --fs-h2 so "Register your interest." holds one line at every width. */
+  .eb-reg__title { font-family: var(--w-font-display); font-weight: 600; font-size: min(var(--fs-h2), 9vw, 3.6rem); letter-spacing: var(--tracking-display); color: var(--c-on-dark); margin: 0.4rem 0 0; }
   .eb-reg__lead { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.65; color: var(--c-on-dark-soft); margin: 1rem 0 2.5rem; }
   .eb-form { display: grid; gap: 1.25rem; }
   .eb-form__row { display: grid; gap: 1.25rem; }
