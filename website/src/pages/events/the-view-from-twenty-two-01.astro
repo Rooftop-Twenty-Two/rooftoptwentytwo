@@ -16,7 +16,8 @@ const hasFile = (p: string) => existsSync(path.join(process.cwd(), "public", p))
 
 const ev = {
   series: "The View from Twenty Two",
-  seriesLogo: "/images/events/the-view-from-twenty-two-logo.png",
+  // White wordmark, so it sits on the banner as-is and is inverted on the card.
+  seriesLogo: "/images/events/the-view-from-twenty-two-logo.svg",
   episode: "Episode 01",
   headline: "Diarmuid McSweeney and Lorraine Heskin join Gary Fox",
   presentedBy: "Presented by Gary Fox",
@@ -32,11 +33,14 @@ const ev = {
 };
 
 // One shape for host and guests so the three profiles render the same way.
+// `focus` is the object-position for the square crop: portrait shots need the
+// frame pulled up or the centre crop lands on the sitter's chest.
 const host = {
   initials: "GF",
   name: "Gary Fox",
   role: "Presenter",
   photo: "/images/events/gary-fox.jpg",
+  focus: "center center",
   bio: "Gary Fox hosts The Entrepreneur Experiment, Ireland&rsquo;s top-ranked independent business podcast, and has interviewed hundreds of entrepreneurs about the habits and decisions behind their success. Before podcasting, he founded the short-term rental management company HostButlers, taught brand strategy as a marketing lecturer at Dublin Business School, and worked in brand solutions at AdRoll before starting the video platform VideoScamp. Each episode of The View from Twenty Two, he sits down with a different founder to get into the real story behind their business and their brand.",
 };
 
@@ -46,6 +50,7 @@ const guests = [
     name: "Diarmuid McSweeney",
     role: "Co-Founder, Gym+Coffee",
     photo: "/images/events/diarmuid-mcsweeney.jpg",
+    focus: "center center",
     bio: "Diarmuid McSweeney co-founded Gym+Coffee in 2017 alongside Niall Horgan and Karl Swaine, and today serves as the company&rsquo;s Chief Marketing Officer and Chief Community Officer. The idea came out of the active, outdoor lifestyle the three picked up while travelling in Australia and California, and the brand has grown into one of Ireland&rsquo;s fastest-growing apparel labels, with stores in Dublin, Cork and Limerick and a growing customer base in the UK and US.",
   },
   {
@@ -53,6 +58,7 @@ const guests = [
     name: "Lorraine Heskin",
     role: "Founder &amp; CEO, Gourmet Food Parlour",
     photo: "/images/events/lorraine-heskin.jpg",
+    focus: "center 12%",
     bio: "Lorraine Heskin studied at the University of Limerick and spent several years working in the food industry in New York before founding Gourmet Food Parlour in 2006, opening a 25-seat caf&eacute; in D&uacute;n Laoghaire. Under her leadership, the group has grown into one of Dublin&rsquo;s best-known restaurant businesses, with 12 locations across Dublin, Meath and Galway, several concepts inside Arnotts, and a catering arm that works with organisations including the FAI, Shamrock Rovers and the Olympic Federation of Ireland. She was an EY Entrepreneur of the Year finalist in 2023 and was later named CEO of the Year at the Business Post Leadership and Excellence Awards.",
   },
 ];
@@ -110,7 +116,7 @@ const guests = [
         <div class="tv-block reveal">
           <h2 class="tv-h2">Your host</h2>
           <div class="tv-person">
-            <div class="tv-person__photo">
+            <div class="tv-person__photo" style={`--focus: ${host.focus}`}>
               {hasFile(host.photo)
                 ? <Picture src={host.photo} alt={`${host.name}, ${host.role}`} loading="lazy" decoding="async" />
                 : <span class="tv-person__ph" aria-hidden="true">{host.initials}</span>}
@@ -127,7 +133,7 @@ const guests = [
           <h2 class="tv-h2">Your guests</h2>
           {guests.map((g) => (
             <div class="tv-person">
-              <div class="tv-person__photo">
+              <div class="tv-person__photo" style={`--focus: ${g.focus}`}>
                 {hasFile(g.photo)
                   ? <Picture src={g.photo} alt={`${g.name}, ${g.role.replace("&amp;", "and")}`} loading="lazy" decoding="async" />
                   : <span class="tv-person__ph" aria-hidden="true">{g.initials}</span>}
@@ -231,7 +237,7 @@ const guests = [
   .tv-banner__inner { max-width: var(--w-container); width: 100%; margin: 0 auto; padding: clamp(3rem, 6vw, 5rem) var(--w-gutter) clamp(2.5rem, 5vw, 4rem); }
 
   .tv-eyebrow { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1.1rem; }
-  .tv-eyebrow__logo { height: 48px; width: auto; max-width: 260px; object-fit: contain; }
+  .tv-eyebrow__logo { height: clamp(44px, 5vw, 66px); width: auto; max-width: 100%; object-fit: contain; }
   /* Stands in for the series logo until the artwork lands. */
   .tv-eyebrow__wordmark { font-family: var(--w-font-display); font-weight: 600; font-size: 1.15rem; letter-spacing: 0.02em; color: #fff; border: 1px solid rgba(255,255,255,0.35); border-radius: var(--radius-pill); padding: 0.45rem 1.1rem; margin: 0; }
   .tv-eyebrow__by { font-family: var(--w-font-body); font-weight: 600; font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--c-accent-2); margin: 0; }
@@ -255,7 +261,7 @@ const guests = [
   .tv-person + .tv-person { margin-top: 2.5rem; padding-top: 2.5rem; border-top: 1px solid var(--c-line); }
   @media (min-width: 560px) { .tv-person { grid-template-columns: 148px 1fr; gap: 1.75rem; align-items: start; } }
   .tv-person__photo { border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 1; background: var(--c-bg-alt); max-width: 148px; display: grid; place-items: center; }
-  .tv-person__photo :global(img) { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .tv-person__photo :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: var(--focus, center center); display: block; }
   /* Lettered stand-in until the real headshot is dropped in. */
   .tv-person__ph { font-family: var(--w-font-display); font-weight: 600; font-size: 2.25rem; letter-spacing: 0.04em; color: var(--c-ink-soft); opacity: 0.5; }
   .tv-person__name { font-family: var(--w-font-display); font-weight: 600; font-size: 1.25rem; color: var(--c-ink); margin: 0; }
@@ -265,7 +271,8 @@ const guests = [
   @media (min-width: 960px) { .tv-rail { position: sticky; top: 6rem; } }
   .tv-card { background: var(--c-bg); border: 1px solid var(--c-line); border-radius: var(--w-radius); box-shadow: var(--w-shadow-soft); padding: clamp(1.5rem, 2.5vw, 2rem); }
   .tv-card__series { margin: 0 0 1rem; }
-  .tv-card__series img { height: 44px; width: auto; max-width: 200px; object-fit: contain; }
+  /* The wordmark ships white for the dark banner; flip it black for this card. */
+  .tv-card__series img { height: 52px; width: auto; max-width: 100%; object-fit: contain; filter: brightness(0); opacity: 0.9; }
   .tv-card__wordmark { font-family: var(--w-font-display); font-weight: 600; font-size: 1.1rem; line-height: 1.25; color: var(--c-ink); margin: 0 0 0.35rem; }
   .tv-card__ep { font-family: var(--w-font-body); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c-accent); margin: 0 0 1.5rem; }
   .tv-card__cta { width: 100%; justify-content: center; }
