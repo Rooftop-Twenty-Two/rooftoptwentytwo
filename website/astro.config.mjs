@@ -52,12 +52,19 @@ for (const slug of collectionSlugs('portfolio')) {
   };
 }
 
+// The Gym+Coffee events page is retired and Events is off the nav, so /events/
+// has nothing to land on. Send the old URL home rather than 404 the people who
+// still have the link. Individual event pages under /events/ are unaffected.
+const retiredRedirects = {
+  '/events/': { status: 301, destination: '/' },
+};
+
 // https://astro.build/config
 export default defineConfig({
   site: SITE,
   trailingSlash: 'always',
   adapter,
-  redirects: portfolioRedirects,
+  redirects: { ...portfolioRedirects, ...retiredRedirects },
   integrations: [
     mdx(),
     react(),
