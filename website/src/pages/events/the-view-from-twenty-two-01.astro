@@ -23,8 +23,10 @@ const ev = {
   presentedBy: "Presented by Gary Fox",
   hostedBy: "Hosted by Rooftop Twenty Two",
   banner: "/images/events/episode-01-hero.jpg",
-  date: "8 October",
-  time: "11:00",
+  // Spelled out in full everywhere it appears. The day of the week and the
+  // time are the two things people most need to get right.
+  date: "Thursday 8 October",
+  time: "11am",
   // One entry per rendered line. Set explicitly rather than left to wrap, or
   // the narrow card orphans the last word of a line.
   addressLines: [
@@ -71,7 +73,7 @@ const guests = [
 
 <Layout
   title="The View from Twenty Two, Episode 01 | Rooftop Twenty Two"
-  description="Gary Fox sits down with Diarmuid McSweeney of Gym+Coffee and Lorraine Heskin of Gourmet Food Parlour. 8 October, 11:00, at Rooftop Twenty Two, DCU Innovate Hub."
+  description="Gary Fox sits down with Diarmuid McSweeney of Gym+Coffee and Lorraine Heskin of Gourmet Food Parlour. Thursday 8 October, 11am, at Rooftop Twenty Two, DCU Innovate Hub."
   hideStickyMobileCTA={true}
   noindex={true}
 >
@@ -87,10 +89,16 @@ const guests = [
         {ev.headline}
       </h1>
 
+      <!-- The date and time sit right under the headline so nobody has to
+           hunt for them. The address stays in the reserve card. -->
+      <p class="tv-banner__when">
+        <span class="tv-banner__when-day">{ev.date}</span>
+        <span class="tv-banner__when-sep" aria-hidden="true">&middot;</span>
+        <span class="tv-banner__when-time">{ev.time}</span>
+      </p>
+
       <p class="tv-banner__by">{ev.presentedBy} &middot; {ev.hostedBy}</p>
 
-      <!-- The when and where live in the reserve card, so the hero closes on
-           the series mark rather than repeating them. -->
       <div class="tv-eyebrow">
         {hasFile(ev.seriesLogo)
           ? <img class="tv-eyebrow__logo" src={ev.seriesLogo} alt={ev.series} loading="eager" decoding="async" />
@@ -166,8 +174,12 @@ const guests = [
 
           <dl class="tv-meta">
             <div class="tv-meta__row">
-              <dt>Date and time</dt>
-              <dd>{ev.date}, {ev.time}</dd>
+              <dt>Date</dt>
+              <dd class="tv-meta__strong">{ev.date}</dd>
+            </div>
+            <div class="tv-meta__row">
+              <dt>Time</dt>
+              <dd class="tv-meta__strong">{ev.time}</dd>
             </div>
             <div class="tv-meta__row">
               <dt>Location</dt>
@@ -193,6 +205,7 @@ const guests = [
       <div class="tv-reserve__head reveal">
         <p class="kicker kicker--on-dark kicker--script">Save your spot</p>
         <h2 class="tv-reserve__title">Reserve your seat.</h2>
+        <p class="tv-reserve__when">{ev.date}, {ev.time}. {ev.format}</p>
         <p class="tv-reserve__lead">We&rsquo;re keeping the room small so it stays a proper conversation. Put your name down and we&rsquo;ll come back to confirm your seat and everything you need on the day.</p>
       </div>
 
@@ -243,6 +256,10 @@ const guests = [
   .tv-eyebrow__logo { height: clamp(52px, 6vw, 84px); width: auto; max-width: 100%; object-fit: contain; }
   /* Stands in for the series logo until the artwork lands. */
   .tv-eyebrow__wordmark { font-family: var(--w-font-display); font-weight: 600; font-size: 1.15rem; letter-spacing: 0.02em; color: #fff; border: 1px solid rgba(255,255,255,0.35); border-radius: var(--radius-pill); padding: 0.45rem 1.1rem; margin: 0; }
+  /* Date and time, big and plain, straight under the headline. */
+  .tv-banner__when { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.35rem 0.75rem; font-family: var(--w-font-display); font-weight: 600; font-size: clamp(1.35rem, 1.2vw + 1rem, 1.9rem); line-height: 1.2; color: #fff; margin: 1.5rem 0 0; }
+  .tv-banner__when-sep { color: var(--c-accent); }
+  .tv-banner__when-time { color: var(--c-accent); }
   .tv-banner__by { font-family: var(--w-font-body); font-weight: 600; font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--c-accent-2); margin: 1.1rem 0 0; }
 
   .tv-banner__title { font-family: var(--w-font-display); font-weight: 600; font-size: clamp(2rem, 3.2vw + 0.9rem, 3.4rem); line-height: 1.06; letter-spacing: var(--tracking-display); color: #fff; margin: 1.75rem 0 0; max-width: 22ch; }
@@ -279,6 +296,7 @@ const guests = [
   .tv-meta__row { display: grid; gap: 0.2rem; padding: 0.7rem 0; }
   .tv-meta__row dt { font-family: var(--w-font-body); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--c-ink-soft); }
   .tv-meta__row dd { font-family: var(--w-font-body); font-size: 1rem; line-height: 1.5; color: var(--c-ink); margin: 0; }
+  .tv-meta__row dd.tv-meta__strong { font-family: var(--w-font-display); font-weight: 600; font-size: 1.25rem; }
   .tv-meta__line { display: block; }
   .tv-meta__link { display: inline-block; margin-top: 0.35rem; color: var(--c-accent); text-decoration: underline; text-underline-offset: 3px; }
 
@@ -287,7 +305,8 @@ const guests = [
   .tv-reserve__inner { max-width: 720px; margin: 0 auto; padding-inline: var(--w-gutter); }
   /* Capped below --fs-h2 so the heading holds one line at every width. */
   .tv-reserve__title { font-family: var(--w-font-display); font-weight: 600; font-size: min(var(--fs-h2), 9vw, 3.6rem); letter-spacing: var(--tracking-display); color: var(--c-on-dark); margin: 0.4rem 0 0; }
-  .tv-reserve__lead { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.65; color: var(--c-on-dark-soft); margin: 1rem 0 2.5rem; }
+  .tv-reserve__when { font-family: var(--w-font-display); font-weight: 600; font-size: clamp(1.15rem, 1vw + 0.85rem, 1.5rem); line-height: 1.3; color: var(--c-on-dark); margin: 1.25rem 0 0; }
+  .tv-reserve__lead { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.65; color: var(--c-on-dark-soft); margin: 0.75rem 0 2.5rem; }
   .tv-form { display: grid; gap: 1.25rem; }
   .tv-form__row { display: grid; gap: 1.25rem; }
   @media (min-width: 520px) { .tv-form__row { grid-template-columns: 1fr 1fr; } }
