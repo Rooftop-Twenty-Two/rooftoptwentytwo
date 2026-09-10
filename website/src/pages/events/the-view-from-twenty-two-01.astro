@@ -25,11 +25,10 @@ const ev = {
   banner: "/images/events/episode-01-hero.jpg",
   date: "8 October",
   time: "11:00",
-  venue: "Rooftop Twenty Two, Talent Garden Dublin",
+  venue: "Rooftop Twenty Two, DCU Innovate Hub",
   address: "Claremont Avenue, Glasnevin, Dublin 11, D11 YNR2",
-  directions:
-    "https://www.google.com/maps/search/?api=1&query=Talent+Garden+Dublin%2C+Claremont+Avenue%2C+Glasnevin%2C+Dublin+11%2C+D11+YNR2",
-  format: "In person at Talent Garden Dublin.",
+  directions: "https://maps.app.goo.gl/R622B75Xcb9GCzjz9",
+  format: "In person at DCU Innovate Hub.",
 };
 
 // One shape for host and guests so the three profiles render the same way.
@@ -66,14 +65,14 @@ const guests = [
 
 <Layout
   title="The View from Twenty Two, Episode 01 | Rooftop Twenty Two"
-  description="Gary Fox sits down with Diarmuid McSweeney of Gym+Coffee and Lorraine Heskin of Gourmet Food Parlour. 8 October, 11:00, at Rooftop Twenty Two, Talent Garden Dublin."
+  description="Gary Fox sits down with Diarmuid McSweeney of Gym+Coffee and Lorraine Heskin of Gourmet Food Parlour. 8 October, 11:00, at Rooftop Twenty Two, DCU Innovate Hub."
   hideStickyMobileCTA={true}
   noindex={true}
 >
   <!-- Banner -->
   <section class="tv-banner">
     {ev.banner && hasFile(ev.banner) && (
-      <div class="tv-banner__media"><Picture src={ev.banner} alt="The Rooftop Twenty Two branded wall at Talent Garden Dublin" loading="eager" decoding="async" /></div>
+      <div class="tv-banner__media"><Picture src={ev.banner} alt="The Rooftop Twenty Two branded wall at DCU Innovate Hub" loading="eager" decoding="async" /></div>
     )}
     <div class="tv-banner__scrim"></div>
     <div class="tv-banner__inner">
