@@ -25,8 +25,14 @@ const ev = {
   banner: "/images/events/episode-01-hero.jpg",
   date: "8 October",
   time: "11:00",
-  venue: "Rooftop Twenty Two, DCU Innovate Hub",
-  address: "Claremont Avenue, Glasnevin, Dublin 11, D11 YNR2",
+  // One entry per rendered line. Set explicitly rather than left to wrap, or
+  // the narrow card orphans the last word of a line.
+  addressLines: [
+    "Rooftop Twenty Two",
+    "DCU Innovate Hub",
+    "Claremont Avenue, Glasnevin",
+    "Dublin 11, D11 YNR2",
+  ],
   directions: "https://maps.app.goo.gl/R622B75Xcb9GCzjz9",
   format: "In person at DCU Innovate Hub.",
 };
@@ -166,8 +172,8 @@ const guests = [
             <div class="tv-meta__row">
               <dt>Location</dt>
               <dd>
-                {ev.venue}<br />{ev.address}<br />
-                <a href={ev.directions} target="_blank" rel="noopener">Get directions</a>
+                {ev.addressLines.map((line) => <span class="tv-meta__line">{line}</span>)}
+                <a class="tv-meta__link" href={ev.directions} target="_blank" rel="noopener">Get directions</a>
               </dd>
             </div>
             <div class="tv-meta__row">
@@ -273,7 +279,8 @@ const guests = [
   .tv-meta__row { display: grid; gap: 0.2rem; padding: 0.7rem 0; }
   .tv-meta__row dt { font-family: var(--w-font-body); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--c-ink-soft); }
   .tv-meta__row dd { font-family: var(--w-font-body); font-size: 1rem; line-height: 1.5; color: var(--c-ink); margin: 0; }
-  .tv-meta__row dd a { color: var(--c-accent); text-decoration: underline; text-underline-offset: 3px; }
+  .tv-meta__line { display: block; }
+  .tv-meta__link { display: inline-block; margin-top: 0.35rem; color: var(--c-accent); text-decoration: underline; text-underline-offset: 3px; }
 
   /* Reserve */
   .tv-reserve { background: var(--c-dark); color: var(--c-on-dark); padding-block: var(--w-section-y); }
