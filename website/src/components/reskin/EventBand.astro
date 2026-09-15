@@ -73,7 +73,12 @@ const ev = {
     max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter);
     display: grid; grid-template-columns: 1fr; gap: 2.5rem; align-items: center;
   }
-  @media (min-width: 920px) { .eb__inner { grid-template-columns: 1.05fr 0.95fr; gap: 4rem; } }
+  /* Photo on the left, copy on the right. The markup keeps copy first so the
+     heading still comes before the image for screen readers and on mobile. */
+  @media (min-width: 920px) {
+    .eb__inner { grid-template-columns: 0.95fr 1.05fr; gap: 4rem; }
+    .eb__media { order: -1; }
+  }
 
   .eb__title {
     font-family: var(--w-font-display); font-weight: 600;
