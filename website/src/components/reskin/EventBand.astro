@@ -68,7 +68,10 @@ const ev = {
 </section>
 
 <style>
-  .eb { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+  /* Sits on the same white ground as the About intro below it, which brings
+     its own top padding, so this band only pads the top. A full section
+     padding on both left a double-height gap between the two. */
+  .eb { background: var(--c-bg); color: var(--c-ink); padding-block: clamp(3rem, 6vw, 5rem) 0; }
   .eb__inner {
     max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter);
     display: grid; grid-template-columns: 1fr; gap: 2.5rem; align-items: center;
