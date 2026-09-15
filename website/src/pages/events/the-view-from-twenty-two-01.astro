@@ -4,9 +4,12 @@ import Picture from "../../components/Picture.astro";
 import { existsSync } from "node:fs";
 import path from "node:path";
 
-// Unlisted page. It is deliberately not in the header, the menu overlay, the
-// footer or /events/, it is noindex, and astro.config.mjs keeps it out of the
-// sitemap. The only way in is the link we send people.
+// Public page. It is indexable and in the sitemap, but Events is off the nav,
+// so people arrive by the link we share or via search.
+//
+// Registration is interest only. The form does not hold a seat. We go through
+// the names and confirm each place by email, so the copy below says that
+// plainly and never promises a seat on submit.
 
 // Assets render only once present in the repo, so nothing shows broken. Until
 // the real photos and logos land, each slot falls back to a lettered
@@ -75,7 +78,6 @@ const guests = [
   title="The View from Twenty Two, Episode 01 | Rooftop Twenty Two"
   description="Gary Fox sits down with Diarmuid McSweeney of Gym+Coffee and Lorraine Heskin of Gourmet Food Parlour. Thursday 8 October, 11am, at Rooftop Twenty Two, DCU Innovate Hub."
   hideStickyMobileCTA={true}
-  noindex={true}
 >
   <!-- Banner -->
   <section class="tv-banner">
@@ -170,7 +172,8 @@ const guests = [
             ? <div class="tv-card__series"><img src={ev.seriesLogo} alt={ev.series} loading="lazy" decoding="async" /></div>
             : <p class="tv-card__wordmark">{ev.series}</p>}
           <p class="tv-card__ep">{ev.episode}</p>
-          <a href="#reserve" class="wbtn wbtn--accent tv-card__cta">Reserve your seat</a>
+          <a href="#register" class="wbtn wbtn--accent tv-card__cta">Register your interest</a>
+          <p class="tv-card__hint">Places are limited. We&rsquo;ll confirm your spot by email.</p>
 
           <dl class="tv-meta">
             <div class="tv-meta__row">
@@ -199,14 +202,14 @@ const guests = [
     </div>
   </section>
 
-  <!-- Reserve -->
-  <section class="tv-reserve" id="reserve">
+  <!-- Register interest -->
+  <section class="tv-reserve" id="register">
     <div class="tv-reserve__inner">
       <div class="tv-reserve__head reveal">
-        <p class="kicker kicker--on-dark kicker--script">Save your spot</p>
-        <h2 class="tv-reserve__title">Reserve your seat.</h2>
+        <p class="kicker kicker--on-dark kicker--script">Want to be there?</p>
+        <h2 class="tv-reserve__title">Register your interest.</h2>
         <p class="tv-reserve__when">{ev.date}, {ev.time}. {ev.format}</p>
-        <p class="tv-reserve__lead">We&rsquo;re keeping the room small so it stays a proper conversation. Put your name down and we&rsquo;ll come back to confirm your seat and everything you need on the day.</p>
+        <p class="tv-reserve__lead">We&rsquo;re keeping the room small so it stays a proper conversation, which means places are limited. Put your name down below. That doesn&rsquo;t hold a seat just yet. We&rsquo;ll go through the list and email you to confirm your place, along with everything you need on the day.</p>
       </div>
 
       <form class="tv-form reveal" action="https://eu-submit.jotform.com/submit/261524935328057" method="post" accept-charset="utf-8" data-event-form>
@@ -232,8 +235,8 @@ const guests = [
         </div>
         <!-- JotForm honeypot: must stay empty -->
         <input type="text" name="website" class="tv-form__hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
-        <button type="submit" class="wbtn wbtn--accent tv-form__submit">Reserve your seat</button>
-        <p class="tv-form__note">No spam. We&rsquo;ll only email you about this event.</p>
+        <button type="submit" class="wbtn wbtn--accent tv-form__submit">Register your interest</button>
+        <p class="tv-form__note">Your place isn&rsquo;t confirmed until you hear from us by email. No spam. We&rsquo;ll only email you about this event.</p>
         <p class="tv-form__status" role="status" aria-live="polite" data-form-status hidden></p>
       </form>
     </div>
@@ -292,6 +295,7 @@ const guests = [
   .tv-card__wordmark { font-family: var(--w-font-display); font-weight: 600; font-size: 1.1rem; line-height: 1.25; color: var(--c-ink); margin: 0 0 0.35rem; }
   .tv-card__ep { font-family: var(--w-font-body); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c-accent); margin: 0 0 1.5rem; }
   .tv-card__cta { width: 100%; justify-content: center; }
+  .tv-card__hint { font-family: var(--w-font-body); font-size: var(--fs-small); line-height: 1.5; color: var(--c-ink-soft); text-align: center; margin: 0.75rem 0 0; }
   .tv-meta { margin: 1.5rem 0 0; padding: 1.5rem 0 0; border-top: 1px solid var(--c-line); }
   .tv-meta__row { display: grid; gap: 0.2rem; padding: 0.7rem 0; }
   .tv-meta__row dt { font-family: var(--w-font-body); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--c-ink-soft); }
