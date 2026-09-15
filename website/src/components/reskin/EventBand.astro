@@ -1,0 +1,111 @@
+---
+// Homepage event band. Points people at the current The View from Twenty Two
+// episode. Dated content, so pull this section from index.astro once the event
+// has passed (or repoint it at the next episode).
+import Picture from "../Picture.astro";
+import { existsSync } from "node:fs";
+import path from "node:path";
+
+const hasFile = (p: string) => existsSync(path.join(process.cwd(), "public", p));
+
+const ev = {
+  href: "/events/the-view-from-twenty-two-01/",
+  registerHref: "/events/the-view-from-twenty-two-01/#register",
+  series: "The View from Twenty Two",
+  seriesLogo: "/images/events/the-view-from-twenty-two-logo.svg",
+  episode: "Episode 01",
+  headline: "Diarmuid McSweeney and Lorraine Heskin join Gary Fox.",
+  date: "Thursday 8 October",
+  time: "11am",
+  venue: "DCU Innovate Hub, Glasnevin",
+  photo: "/images/events/episode-01-hero.jpg",
+};
+---
+
+<section class="eb">
+  <div class="eb__inner">
+    <div class="eb__copy reveal">
+      <!-- Plain uppercase kicker here, not the script one: the episode line
+           below is already in the handwriting face. -->
+      <p class="kicker">Live at Rooftop Twenty Two</p>
+      <h2 class="eb__title">
+        <span class="eb__ep">{ev.episode}</span>
+        {ev.headline}
+      </h2>
+      <p class="eb__when">
+        <span>{ev.date}</span>
+        <span class="eb__when-sep" aria-hidden="true">&middot;</span>
+        <span class="eb__when-time">{ev.time}</span>
+        <span class="eb__when-sep" aria-hidden="true">&middot;</span>
+        <span>{ev.venue}</span>
+      </p>
+      <p class="eb__body">
+        {ev.series} is our new event series with Gary Fox. Each episode brings a
+        founder into the room to talk about how they actually built their business.
+        First up, the co-founder of Gym+Coffee and the founder of Gourmet Food Parlour.
+        Places are limited, so register your interest and we&rsquo;ll confirm your spot by email.
+      </p>
+      <div class="eb__cta">
+        <a href={ev.registerHref} class="wbtn wbtn--accent">Register your interest</a>
+        <a href={ev.href} class="wbtn wbtn--ghost">About the event</a>
+      </div>
+    </div>
+
+    <a href={ev.href} class="eb__media reveal" aria-label={`${ev.series}, ${ev.episode}`}>
+      {hasFile(ev.photo) && (
+        <span class="eb__photo"><Picture src={ev.photo} alt="The Rooftop Twenty Two branded wall at DCU Innovate Hub" loading="lazy" decoding="async" /></span>
+      )}
+      <span class="eb__scrim" aria-hidden="true"></span>
+      {hasFile(ev.seriesLogo)
+        ? <img class="eb__logo" src={ev.seriesLogo} alt="" loading="lazy" decoding="async" />
+        : <span class="eb__wordmark">{ev.series}</span>}
+    </a>
+  </div>
+</section>
+
+<style>
+  .eb { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .eb__inner {
+    max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter);
+    display: grid; grid-template-columns: 1fr; gap: 2.5rem; align-items: center;
+  }
+  @media (min-width: 920px) { .eb__inner { grid-template-columns: 1.05fr 0.95fr; gap: 4rem; } }
+
+  .eb__title {
+    font-family: var(--w-font-display); font-weight: 600;
+    font-size: clamp(1.9rem, 3vw + 0.5rem, 3.1rem);
+    line-height: 1.08; letter-spacing: var(--tracking-display);
+    color: var(--c-ink); margin: 0.75rem 0 0; max-width: 20ch;
+  }
+  .eb__ep {
+    display: block; font-family: var(--w-font-script); font-weight: 400;
+    font-size: clamp(2.2rem, 2.2vw + 1.4rem, 3.2rem); line-height: 0.95; letter-spacing: 0;
+    color: var(--c-accent); transform: rotate(-2deg); transform-origin: left; margin-bottom: 0.75rem;
+  }
+  .eb__when {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 0.6rem;
+    font-family: var(--w-font-display); font-weight: 600;
+    font-size: clamp(1.1rem, 0.8vw + 0.9rem, 1.4rem); line-height: 1.3;
+    color: var(--c-ink); margin: 1.25rem 0 0;
+  }
+  .eb__when-sep, .eb__when-time { color: var(--c-accent); }
+  .eb__body { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: var(--lh-body); color: var(--c-ink-soft); margin: 1.1rem 0 0; max-width: 54ch; }
+  .eb__cta { display: flex; flex-wrap: wrap; gap: 0.85rem; margin-top: 2rem; }
+
+  /* Photo card with the series mark sitting on it. */
+  .eb__media {
+    position: relative; display: block; overflow: hidden; isolation: isolate;
+    aspect-ratio: 4 / 3; border-radius: var(--w-radius); background: var(--c-dark);
+    box-shadow: var(--w-shadow-soft);
+  }
+  .eb__photo { position: absolute; inset: 0; display: block; }
+  .eb__photo :global(img) { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform var(--w-dur-slow, 600ms) var(--w-ease); }
+  .eb__media:hover .eb__photo :global(img) { transform: scale(1.03); }
+  .eb__scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(13,32,48,0.05) 0%, rgba(13,32,48,0.7) 100%); }
+  .eb__logo { position: absolute; left: 1.5rem; bottom: 1.5rem; height: clamp(44px, 5vw, 64px); width: auto; max-width: calc(100% - 3rem); object-fit: contain; }
+  .eb__wordmark {
+    position: absolute; left: 1.5rem; bottom: 1.5rem;
+    font-family: var(--w-font-display); font-weight: 600; font-size: 1.1rem; color: #fff;
+    border: 1px solid rgba(255,255,255,0.35); border-radius: var(--radius-pill); padding: 0.45rem 1.1rem;
+  }
+</style>

@@ -165,6 +165,12 @@ const isActive = (base: string) => path === base || path.startsWith(base);
           </div>
         </li>
 
+        <!-- EVENTS: /events/ itself redirects home, so link straight to the
+             current episode. Repoint when the next one goes live. -->
+        <li class:list={["hd__item", isActive("/events") && "is-active"]}>
+          <a class="hd__link" href="/events/the-view-from-twenty-two-01/">Events</a>
+        </li>
+
         <!-- CAREERS -->
         <li class:list={["hd__item", isActive("/careers") && "is-active"]}>
           <a class="hd__link" href="/careers/">Careers</a>
