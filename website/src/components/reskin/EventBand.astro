@@ -18,7 +18,11 @@ const ev = {
   date: "Thursday 8 October",
   time: "11am",
   venue: "DCU Innovate Hub, Glasnevin",
-  photo: "/images/events/episode-01-hero.jpg",
+  photo: "/images/events/gary-fox.jpg",
+  photoAlt: "Gary Fox, presenter of The View from Twenty Two",
+  // object-position for the 4:3 crop of a square headshot. Pulled up so the
+  // top of the head stays in frame.
+  photoFocus: "center 18%",
 };
 ---
 
@@ -53,7 +57,7 @@ const ev = {
 
     <a href={ev.href} class="eb__media reveal" aria-label={`${ev.series}, ${ev.episode}`}>
       {hasFile(ev.photo) && (
-        <span class="eb__photo"><Picture src={ev.photo} alt="The Rooftop Twenty Two branded wall at DCU Innovate Hub" loading="lazy" decoding="async" /></span>
+        <span class="eb__photo" style={`--focus: ${ev.photoFocus}`}><Picture src={ev.photo} alt={ev.photoAlt} loading="lazy" decoding="async" /></span>
       )}
       <span class="eb__scrim" aria-hidden="true"></span>
       {hasFile(ev.seriesLogo)
@@ -99,7 +103,7 @@ const ev = {
     box-shadow: var(--w-shadow-soft);
   }
   .eb__photo { position: absolute; inset: 0; display: block; }
-  .eb__photo :global(img) { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform var(--w-dur-slow, 600ms) var(--w-ease); }
+  .eb__photo :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: var(--focus, center center); display: block; transition: transform var(--w-dur-slow, 600ms) var(--w-ease); }
   .eb__media:hover .eb__photo :global(img) { transform: scale(1.03); }
   .eb__scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(13,32,48,0.05) 0%, rgba(13,32,48,0.7) 100%); }
   .eb__logo { position: absolute; left: 1.5rem; bottom: 1.5rem; height: clamp(44px, 5vw, 64px); width: auto; max-width: calc(100% - 3rem); object-fit: contain; }
