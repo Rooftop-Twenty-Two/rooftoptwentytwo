@@ -1,5 +1,5 @@
 ---
-title: "Account Manager or Account Executive"
+title: "Account Manager"
 slug: "account-manager"
 summary: "A hands-on role owning a portfolio of client relationships. You'll lead their day-to-day marketing and make sure everything keeps moving."
 type: "Full-time"
