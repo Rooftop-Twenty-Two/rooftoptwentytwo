@@ -20,7 +20,7 @@ const blocks = [
   { label: "Nice to have", items: j.niceToHave },
 ].filter((b) => b.items && b.items.length > 0);
 
-const benefits = [
+const benefits = j.benefits ?? [
   "Hybrid, work from home Wednesdays and Fridays",
   "Pension contribution",
   "Private health insurance, paid for",
@@ -50,6 +50,13 @@ const benefits = [
             <ul class="jb__list">
               {b.items.map((it) => <li>{it}</li>)}
             </ul>
+          </div>
+        ))}
+
+        {j.sections.map((sec) => (
+          <div class="jb__block reveal">
+            <h2 class="jb__h">{sec.heading}</h2>
+            <p class="jb__p">{sec.body}</p>
           </div>
         ))}
 
@@ -85,6 +92,7 @@ const benefits = [
   .jb__list { list-style: none; margin: 0; padding: 0; }
   .jb__list li { position: relative; padding: 0 0 0 1.6rem; margin: 0 0 0.85rem; font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.55; color: var(--c-ink-soft); }
   .jb__list li::before { content: ""; position: absolute; left: 0; top: 0.6em; width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--c-accent); }
+  .jb__p { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.6; color: var(--c-ink-soft); margin: 0; }
   .jb__apply { margin-top: 3rem; }
   .jb__apply-note { font-family: var(--w-font-body); font-size: var(--fs-small); color: var(--c-ink-soft); margin: 1rem 0 0; }
   /* Plain text links only, never the .wbtn CTA (which has its own colours). */

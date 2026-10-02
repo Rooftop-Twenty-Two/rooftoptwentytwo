@@ -228,6 +228,10 @@ const jobs = defineCollection({
     responsibilities: z.array(z.string()).default([]),
     requirements: z.array(z.string()).default([]),
     niceToHave: z.array(z.string()).default([]),
+    // Extra prose sections shown after the lists, e.g. "How you work".
+    sections: z.array(z.object({ heading: z.string(), body: z.string() })).default([]),
+    // Overrides the default package list on the role page when set.
+    benefits: z.array(z.string()).optional(),
     draft: z.boolean().default(false),
   }),
 });
