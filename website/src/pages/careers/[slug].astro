@@ -14,11 +14,16 @@ const { entry } = Astro.props;
 const j = entry.data;
 const mailto = `mailto:hey@rooftoptwentytwo.ie?subject=${encodeURIComponent(`Application for ${j.title}`)}`;
 
+const paras = (text?: string) => (text ?? "").split(/\n\s*\n/).map((t) => t.trim()).filter(Boolean);
+
 const blocks = [
-  { label: "What you'll do", items: j.responsibilities },
-  { label: "What you'll bring", items: j.requirements },
-  { label: "Nice to have", items: j.niceToHave },
+  { label: j.labels.responsibilities ?? "What you'll do", items: j.responsibilities },
+  { label: j.labels.requirements ?? "What you'll bring", items: j.requirements, lead: paras(j.requirementsIntro) },
+  { label: j.labels.niceToHave ?? "Nice to have", items: j.niceToHave },
 ].filter((b) => b.items && b.items.length > 0);
+
+const sectionsBefore = j.sections.filter((s) => s.position === "before");
+const sectionsAfter = j.sections.filter((s) => s.position !== "before");
 
 const benefits = j.benefits ?? [
   "Hybrid, work from home Wednesdays and Fridays",
@@ -42,21 +47,29 @@ const benefits = j.benefits ?? [
   <section class="jb">
     <div class="jb__inner">
       <div class="jb__main">
-        <p class="jb__intro reveal">{j.intro}</p>
+        {paras(j.intro).map((t) => <p class="jb__intro reveal">{t}</p>)}
+
+        {sectionsBefore.map((sec) => (
+          <div class="jb__block reveal">
+            <h2 class="jb__h">{sec.heading}</h2>
+            {paras(sec.body).map((t) => <p class="jb__p">{t}</p>)}
+          </div>
+        ))}
 
         {blocks.map((b) => (
           <div class="jb__block reveal">
             <h2 class="jb__h">{b.label}</h2>
+            {b.lead?.map((t) => <p class="jb__p jb__lead">{t}</p>)}
             <ul class="jb__list">
               {b.items.map((it) => <li>{it}</li>)}
             </ul>
           </div>
         ))}
 
-        {j.sections.map((sec) => (
+        {sectionsAfter.map((sec) => (
           <div class="jb__block reveal">
             <h2 class="jb__h">{sec.heading}</h2>
-            <p class="jb__p">{sec.body}</p>
+            {paras(sec.body).map((t) => <p class="jb__p">{t}</p>)}
           </div>
         ))}
 
@@ -93,6 +106,8 @@ const benefits = j.benefits ?? [
   .jb__list li { position: relative; padding: 0 0 0 1.6rem; margin: 0 0 0.85rem; font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.55; color: var(--c-ink-soft); }
   .jb__list li::before { content: ""; position: absolute; left: 0; top: 0.6em; width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--c-accent); }
   .jb__p { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.6; color: var(--c-ink-soft); margin: 0; }
+  .jb__p + .jb__p, .jb__intro + .jb__intro { margin-top: 1em; }
+  .jb__lead:last-of-type { margin-bottom: 1.25rem; }
   .jb__apply { margin-top: 3rem; }
   .jb__apply-note { font-family: var(--w-font-body); font-size: var(--fs-small); color: var(--c-ink-soft); margin: 1rem 0 0; }
   /* Plain text links only, never the .wbtn CTA (which has its own colours). */

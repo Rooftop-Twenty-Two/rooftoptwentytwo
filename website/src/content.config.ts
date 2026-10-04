@@ -228,8 +228,21 @@ const jobs = defineCollection({
     responsibilities: z.array(z.string()).default([]),
     requirements: z.array(z.string()).default([]),
     niceToHave: z.array(z.string()).default([]),
-    // Extra prose sections shown after the lists, e.g. "How you work".
-    sections: z.array(z.object({ heading: z.string(), body: z.string() })).default([]),
+    // Override the default list headings ("What you'll do" etc.) when set.
+    labels: z.object({
+      responsibilities: z.string().optional(),
+      requirements: z.string().optional(),
+      niceToHave: z.string().optional(),
+    }).default({}),
+    // Prose shown above the requirements list. Blank lines split paragraphs.
+    requirementsIntro: z.string().optional(),
+    // Extra prose sections, e.g. "How you work". Shown after the lists unless
+    // position is "before". Blank lines in body split paragraphs.
+    sections: z.array(z.object({
+      heading: z.string(),
+      body: z.string(),
+      position: z.enum(["before", "after"]).default("after"),
+    })).default([]),
     // Overrides the default package list on the role page when set.
     benefits: z.array(z.string()).optional(),
     draft: z.boolean().default(false),
