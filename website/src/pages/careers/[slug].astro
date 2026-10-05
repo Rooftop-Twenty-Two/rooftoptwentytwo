@@ -12,7 +12,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const j = entry.data;
-const mailto = `mailto:hey@rooftoptwentytwo.ie?subject=${encodeURIComponent(`Application for ${j.title}`)}`;
+const mailto = `mailto:careers@rooftoptwentytwo.ie?subject=${encodeURIComponent(`Application for ${j.title}`)}`;
 
 const paras = (text?: string) => (text ?? "").split(/\n\s*\n/).map((t) => t.trim()).filter(Boolean);
 
@@ -75,7 +75,7 @@ const benefits = j.benefits ?? [
 
         <div class="jb__apply reveal">
           <a href={mailto} class="wbtn wbtn--accent">Apply for this role</a>
-          <p class="jb__apply-note">Send your CV and a few lines about yourself to <a href="mailto:hey@rooftoptwentytwo.ie">hey@rooftoptwentytwo.ie</a>.</p>
+          <p class="jb__apply-note">Send your CV and a few lines about yourself to <a href="mailto:careers@rooftoptwentytwo.ie">careers@rooftoptwentytwo.ie</a>.</p>
         </div>
       </div>
 
