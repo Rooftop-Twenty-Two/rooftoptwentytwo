@@ -1,0 +1,78 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PageHero from "../components/reskin/PageHero.astro";
+import WCtaBand from "../components/reskin/WCtaBand.astro";
+import { values } from "../lib/values";
+---
+
+<Layout title="Our Purpose | Rooftop Twenty Two, Dublin" description="Why Rooftop Twenty Two exists. We help ambitious businesses grow through marketing that's clear, connected and accountable, and we use our business to give back.">
+  <PageHero
+    kicker="Our purpose"
+    title="Growing businesses and <em>giving back</em>."
+    bg="/images/office/office-collab-01.jpg"
+  />
+
+  <!-- Purpose -->
+  <section class="pp-why" id="purpose">
+    <div class="pp-why__inner">
+      <div class="reveal">
+        <p class="kicker kicker--script">Why we exist</p>
+        <h2 class="pp-h2">Success should create value <em>beyond the bottom line</em>.</h2>
+      </div>
+      <div class="pp-why__body reveal">
+        <p>
+          We exist to help ambitious businesses grow through marketing that&rsquo;s
+          clear, connected and accountable.
+        </p>
+        <p>
+          We believe success should create value beyond the bottom line, for our
+          clients, our people and the communities we&rsquo;re part of.
+        </p>
+        <p>
+          That means building lasting relationships, supporting causes that matter
+          and using our business to make a positive contribution to society.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Values -->
+  <section class="pp-vals" id="values">
+    <div class="pp-vals__inner">
+      <p class="kicker kicker--on-dark kicker--script">Our values</p>
+      <h2 class="pp-h2 pp-vals__title">Performance, people, purpose, connection.</h2>
+      <div class="pp-vals__grid">
+        {values.map((v, i) => (
+          <div class="pp-val reveal">
+            <span class="pp-val__n">{String(i + 1).padStart(2, "0")}</span>
+            <h3 class="pp-val__title">{v.title}</h3>
+            <p class="pp-val__body">{v.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <WCtaBand />
+</Layout>
+
+<style>
+  .pp-h2 { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2); line-height: var(--lh-heading); letter-spacing: var(--tracking-display); margin: 0.5rem 0 0; }
+  .pp-h2 em { font-style: italic; }
+
+  .pp-why { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .pp-why__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); display: grid; grid-template-columns: 1fr; gap: 2rem; }
+  @media (min-width: 900px) { .pp-why__inner { grid-template-columns: 0.85fr 1.15fr; gap: 4rem; } }
+  .pp-why__body p { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.75; color: var(--c-ink-soft); margin: 0 0 1.25rem; }
+  .pp-why__body p:first-child { font-size: var(--fs-h3); line-height: 1.5; color: var(--c-ink); }
+
+  .pp-vals { background: var(--c-dark); color: var(--c-on-dark); padding-block: var(--w-section-y); }
+  .pp-vals__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .pp-vals__title { color: var(--c-on-dark); }
+  .pp-vals__grid { margin-top: 3rem; display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
+  @media (min-width: 640px) { .pp-vals__grid { grid-template-columns: repeat(2, 1fr); gap: 3rem; } }
+  @media (min-width: 1100px) { .pp-vals__grid { grid-template-columns: repeat(4, 1fr); } }
+  .pp-val__n { font-family: var(--w-font-display); font-weight: 700; font-size: 2rem; color: var(--c-accent-2); }
+  .pp-val__title { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); color: var(--c-on-dark); margin: 0.75rem 0 0; }
+  .pp-val__body { font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-on-dark-soft); line-height: 1.6; margin: 0.75rem 0 0; }
+</style>

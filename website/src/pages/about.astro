@@ -6,6 +6,7 @@ import ClientTestimonials from "../components/reskin/ClientTestimonials.astro";
 import AwardsBand from "../components/reskin/AwardsBand.astro";
 import WCtaBand from "../components/reskin/WCtaBand.astro";
 import Picture from "../components/Picture.astro";
+import { values } from "../lib/values";
 import { existsSync } from "node:fs";
 import path from "node:path";
 
@@ -21,11 +22,6 @@ const gallery = [
   { src: "/images/office/office-work-02.jpg", alt: "Irish Landmark Trust content alongside campaign analytics" },
 ];
 
-const values = [
-  { title: "Owners, not vendors", body: "We work like we're part of your team, invested in your growth." },
-  { title: "Everything in-house", body: "Strategy, brand, web, paid, and content under one roof. One joined-up team, no hand-offs." },
-  { title: "Accountable to outcomes", body: "We measure success the way you do: pipeline, revenue, and results that compound over time." },
-];
 ---
 
 <Layout title="About Us | Rooftop Twenty Two, Dublin" description="Meet Rooftop Twenty Two, an independent branding, web, and performance marketing studio in Dublin. A senior, in-house team that treats your growth as our own.">
@@ -111,7 +107,7 @@ const values = [
   <section class="ab-vals" id="how-we-work">
     <div class="ab-vals__inner">
       <p class="kicker kicker--on-dark kicker--script">What we&rsquo;re about</p>
-      <h2 class="ab-h2 ab-vals__title">Performance, people, purpose.</h2>
+      <h2 class="ab-h2 ab-vals__title">Performance, people, purpose, connection.</h2>
       <div class="ab-vals__grid">
         {values.map((v, i) => (
           <div class="ab-val reveal">
@@ -121,6 +117,7 @@ const values = [
           </div>
         ))}
       </div>
+      <a href="/purpose/" class="r22-link r22-link--on-dark ab-vals__more">Read our purpose</a>
     </div>
   </section>
 
@@ -182,7 +179,9 @@ const values = [
   .ab-vals__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
   .ab-vals__title { color: var(--c-on-dark); }
   .ab-vals__grid { margin-top: 3rem; display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
-  @media (min-width: 760px) { .ab-vals__grid { grid-template-columns: repeat(3, 1fr); gap: 3rem; } }
+  @media (min-width: 640px) { .ab-vals__grid { grid-template-columns: repeat(2, 1fr); gap: 3rem; } }
+  @media (min-width: 1100px) { .ab-vals__grid { grid-template-columns: repeat(4, 1fr); } }
+  .ab-vals__more { display: inline-block; margin-top: 3rem; font-family: var(--w-font-body); font-weight: 500; }
   .ab-val__n { font-family: var(--w-font-display); font-weight: 700; font-size: 2rem; color: var(--c-accent-2); }
   .ab-val__title { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); color: var(--c-on-dark); margin: 0.75rem 0 0; }
   .ab-val__body { font-family: var(--w-font-body); font-size: var(--fs-body); color: var(--c-on-dark-soft); line-height: 1.6; margin: 0.75rem 0 0; }
