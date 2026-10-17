@@ -9,7 +9,7 @@
     "dev": "astro dev",
     "images:webp": "node scripts/gen-webp.mjs",
     "prebuild": "node scripts/gen-webp.mjs",
-    "build": "astro build",
+    "build": "astro build && node scripts/postbuild-headers.mjs",
     "preview": "astro preview",
     "start": "node ./dist/server/entry.mjs",
     "astro": "astro"

@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /keystatic/
+Disallow: /api/
+
+Sitemap: https://rooftoptwentytwo.ie/sitemap-index.xml
