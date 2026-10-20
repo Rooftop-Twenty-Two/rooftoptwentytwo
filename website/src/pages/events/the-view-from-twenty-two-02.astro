@@ -1,0 +1,392 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Picture from "../../components/Picture.astro";
+import { existsSync } from "node:fs";
+import path from "node:path";
+
+// Public page. It is indexable and in the sitemap, but Events is off the nav,
+// so people arrive by the link we share or via search.
+//
+// Registration is interest only. The form does not hold a seat. We go through
+// the names and confirm each place by email, so the copy below says that
+// plainly and never promises a seat on submit.
+
+// Assets render only once present in the repo, so nothing shows broken. Until
+// the real photos and logos land, each slot falls back to a lettered
+// placeholder. Drop a file at the path below and it takes over on the next
+// build, no code change needed.
+const hasFile = (p: string) => existsSync(path.join(process.cwd(), "public", p));
+
+const ev = {
+  series: "The View from Twenty Two",
+  // White wordmark, so it sits on the banner as-is and is inverted on the card.
+  seriesLogo: "/images/events/the-view-from-twenty-two-logo.svg",
+  episode: "Episode 02",
+  headline: "Richie Sadlier and Emily Usher join Gary Fox",
+  presentedBy: "Presented by Gary Fox",
+  hostedBy: "Hosted by Rooftop Twenty Two",
+  banner: "/images/events/episode-01-hero.jpg",
+  // Spelled out in full everywhere it appears. The day of the week and the
+  // time are the two things people most need to get right.
+  date: "Thursday 5 November",
+  time: "11am",
+  // One entry per rendered line. Set explicitly rather than left to wrap, or
+  // the narrow card orphans the last word of a line.
+  addressLines: [
+    "Rooftop Twenty Two",
+    "DCU Innovate Hub",
+    "Claremont Avenue, Glasnevin",
+    "Dublin 11, D11 YNR2",
+  ],
+  directions: "https://maps.app.goo.gl/R622B75Xcb9GCzjz9",
+  format: "In person at DCU Innovate Hub.",
+};
+
+// One shape for host and guests so the three profiles render the same way.
+// `focus` is the object-position for the square crop: portrait shots need the
+// frame pulled up or the centre crop lands on the sitter's chest.
+const host = {
+  initials: "GF",
+  name: "Gary Fox",
+  role: "Presenter",
+  photo: "/images/events/gary-fox.jpg",
+  focus: "center center",
+  bio: "Gary Fox hosts The Entrepreneur Experiment, Ireland&rsquo;s top-ranked independent business podcast, and has interviewed hundreds of entrepreneurs about the habits and decisions behind their success. Before podcasting, he founded the short-term rental management company HostButlers, taught brand strategy as a marketing lecturer at Dublin Business School, and worked in brand solutions at AdRoll before starting the video platform VideoScamp. Across the two episodes of The View from Twenty Two, he sits down with founders to get into the real story behind their business and their brand.",
+};
+
+// Photos from Episode 01 in October, so people can see what the morning is like.
+const gallery = [
+  { src: "/images/events/episode-01-gallery-1.jpg", alt: "Gary Fox in conversation with Lorraine Heskin on stage at Episode 01" },
+  { src: "/images/events/episode-01-gallery-2.jpg", alt: "Guests chatting over coffee before Episode 01" },
+  { src: "/images/events/episode-01-gallery-3.jpg", alt: "Rooftop Twenty Two tote bags laid out on the seats before Episode 01" },
+  { src: "/images/events/episode-01-gallery-4.jpg", alt: "Welcoming the audience to Episode 01 at DCU Innovate Hub" },
+  { src: "/images/events/episode-01-gallery-5.jpg", alt: "Gary Fox and Diarmuid McSweeney on stage at Episode 01" },
+  { src: "/images/events/episode-01-gallery-6.jpg", alt: "A full room listening in at Episode 01" },
+];
+
+// Guest headshots are cropped from the Episode 02 "Meet the speakers"
+// artwork, so they match the social posts.
+const guests = [
+  {
+    initials: "RS",
+    name: "Richie Sadlier",
+    role: "Broadcaster, RT&Eacute; and Founder, Let&rsquo;s Talk SPHE",
+    photo: "/images/events/richie-sadlier.jpg",
+    focus: "center center",
+    bio: "Richie Sadlier is one of the best-known voices in Irish broadcasting. He played as a striker for Millwall and won a senior cap for Ireland before a hip injury ended his playing career at 24. He moved into the studio as a football analyst with RT&Eacute;, and has been part of its coverage of the big nights in Irish and international football ever since. Away from the cameras, he retrained as a psychotherapist and spent more than a decade running workshops in schools on mental health, consent and wellbeing. His memoir, Recovering, came out in 2019. That work led him to found Let&rsquo;s Talk SPHE, a platform that gives Irish post-primary schools the content and classroom tools to teach SPHE well.",
+  },
+  {
+    initials: "EU",
+    name: "Emily Usher",
+    role: "Founder, The Ballsy Baker",
+    photo: "/images/events/emily-usher.jpg",
+    focus: "center center",
+    bio: "Emily Usher is the founder of The Ballsy Baker. If you&rsquo;ve picked up a protein ball by the till in your local coffee shop, there&rsquo;s a good chance it was one of hers. The Ballsy Baker is now stocked in more than 400 independent coffee shops across Ireland and supplies large multinationals every day.",
+  },
+];
+---
+
+<Layout
+  title="The View from Twenty Two, Episode 02 | Rooftop Twenty Two"
+  description="Gary Fox sits down with Richie Sadlier, RTÉ broadcaster and founder of Let's Talk SPHE, and Emily Usher, founder of The Ballsy Baker. Thursday 5 November, 11am, at Rooftop Twenty Two, DCU Innovate Hub."
+  hideStickyMobileCTA={true}
+>
+  <!-- Banner -->
+  <section class="tv-banner">
+    {ev.banner && hasFile(ev.banner) && (
+      <div class="tv-banner__media"><Picture src={ev.banner} alt="The Rooftop Twenty Two branded wall at DCU Innovate Hub" loading="eager" decoding="async" /></div>
+    )}
+    <div class="tv-banner__scrim"></div>
+    <div class="tv-banner__inner">
+      <h1 class="tv-banner__title">
+        <span class="tv-banner__ep">{ev.episode}</span>
+        {ev.headline}
+      </h1>
+
+      <!-- The date and time sit right under the headline so nobody has to
+           hunt for them. The address stays in the reserve card. -->
+      <p class="tv-banner__when">
+        <span class="tv-banner__when-day">{ev.date}</span>
+        <span class="tv-banner__when-sep" aria-hidden="true">&middot;</span>
+        <span class="tv-banner__when-time">{ev.time}</span>
+      </p>
+
+      <p class="tv-banner__by">{ev.presentedBy} &middot; {ev.hostedBy}</p>
+
+      <div class="tv-eyebrow">
+        {hasFile(ev.seriesLogo)
+          ? <img class="tv-eyebrow__logo" src={ev.seriesLogo} alt={ev.series} loading="eager" decoding="async" />
+          : <p class="tv-eyebrow__wordmark">{ev.series}</p>}
+      </div>
+    </div>
+  </section>
+
+  <!-- Body (left) + sticky reserve card (right) -->
+  <section class="tv-main">
+    <div class="tv-main__inner">
+
+      <div class="tv-content">
+        <div class="tv-block reveal">
+          <h2 class="tv-h2">What the show is</h2>
+          <p class="tv-p">Rooftop Twenty Two is hosting The View from Twenty Two, a two-part event run in collaboration with Gary Fox. Each one brings entrepreneurs and brand founders into the room to talk about how they actually built what they&rsquo;ve built. <a class="tv-link" href="/events/the-view-from-twenty-two-01/">Episode 01</a> ran in October. This is Episode 02, in November.</p>
+        </div>
+
+        <div class="tv-block reveal">
+          <h2 class="tv-h2">About this episode</h2>
+          <p class="tv-p">Gary Fox sits down with Richie Sadlier, RT&Eacute; broadcaster and founder of Let&rsquo;s Talk SPHE, and Emily Usher, founder of The Ballsy Baker. Hear how Emily took a protein ball into more than 400 coffee shops and onto the desks of some of the biggest employers in the country. Then hear Richie on a career that has taken him from professional football to the RT&Eacute; studio, the therapy room and the classroom.</p>
+          <p class="tv-p">Gary built his name doing exactly this on The Entrepreneur Experiment, and Episode 02 follows the same approach. One on one, direct, and focused on the decisions that got them here.</p>
+        </div>
+
+        <div class="tv-block reveal">
+          <h2 class="tv-h2">Your host</h2>
+          <div class="tv-person">
+            <div class="tv-person__photo" style={`--focus: ${host.focus}`}>
+              {hasFile(host.photo)
+                ? <Picture src={host.photo} alt={`${host.name}, ${host.role}`} loading="lazy" decoding="async" />
+                : <span class="tv-person__ph" aria-hidden="true">{host.initials}</span>}
+            </div>
+            <div>
+              <p class="tv-person__name">{host.name}</p>
+              <p class="tv-person__role" set:html={host.role} />
+              <p class="tv-p" set:html={host.bio} />
+            </div>
+          </div>
+        </div>
+
+        <div class="tv-block reveal">
+          <h2 class="tv-h2">Your guests</h2>
+          {guests.map((g) => (
+            <div class="tv-person">
+              <div class="tv-person__photo" style={`--focus: ${g.focus}`}>
+                {hasFile(g.photo)
+                  ? <Picture src={g.photo} alt={`${g.name}, ${g.role.replace("&amp;", "and")}`} loading="lazy" decoding="async" />
+                  : <span class="tv-person__ph" aria-hidden="true">{g.initials}</span>}
+              </div>
+              <div>
+                <p class="tv-person__name">{g.name}</p>
+                <p class="tv-person__role" set:html={g.role} />
+                <p class="tv-p" set:html={g.bio} />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div class="tv-block reveal">
+          <h2 class="tv-h2">What to expect</h2>
+          <p class="tv-p">On arrival there will be tea and coffee, with time to talk before Gary takes the stage and again once the conversation wraps.</p>
+        </div>
+      </div>
+
+      <!-- Sticky reserve card -->
+      <aside class="tv-rail">
+        <div class="tv-card">
+          {hasFile(ev.seriesLogo)
+            ? <div class="tv-card__series"><img src={ev.seriesLogo} alt={ev.series} loading="lazy" decoding="async" /></div>
+            : <p class="tv-card__wordmark">{ev.series}</p>}
+          <p class="tv-card__ep">{ev.episode}</p>
+          <a href="#register" class="wbtn wbtn--accent tv-card__cta">Register your interest</a>
+          <p class="tv-card__hint">Places are limited. We&rsquo;ll confirm your spot by email.</p>
+
+          <dl class="tv-meta">
+            <div class="tv-meta__row">
+              <dt>Date</dt>
+              <dd class="tv-meta__strong">{ev.date}</dd>
+            </div>
+            <div class="tv-meta__row">
+              <dt>Time</dt>
+              <dd class="tv-meta__strong">{ev.time}</dd>
+            </div>
+            <div class="tv-meta__row">
+              <dt>Location</dt>
+              <dd>
+                {ev.addressLines.map((line) => <span class="tv-meta__line">{line}</span>)}
+                <a class="tv-meta__link" href={ev.directions} target="_blank" rel="noopener">Get directions</a>
+              </dd>
+            </div>
+            <div class="tv-meta__row">
+              <dt>Format</dt>
+              <dd>{ev.format}</dd>
+            </div>
+          </dl>
+        </div>
+      </aside>
+
+    </div>
+  </section>
+
+  <!-- Episode 01 gallery -->
+  <section class="tv-gallery">
+    <div class="tv-gallery__inner">
+      <div class="tv-gallery__head reveal">
+        <p class="kicker kicker--script">From Episode 01</p>
+        <h2 class="tv-h2">Here&rsquo;s how October went.</h2>
+        <p class="tv-p">A full room, good coffee and two founders talking straight. Episode 02 runs the same way.</p>
+      </div>
+      <div class="tv-gallery__grid reveal">
+        {gallery.filter((g) => hasFile(g.src)).map((g) => (
+          <figure class="tv-gallery__item"><Picture src={g.src} alt={g.alt} loading="lazy" decoding="async" /></figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Register interest -->
+  <section class="tv-reserve" id="register">
+    <div class="tv-reserve__inner">
+      <div class="tv-reserve__head reveal">
+        <p class="kicker kicker--on-dark kicker--script">Want to be there?</p>
+        <h2 class="tv-reserve__title">Register your interest.</h2>
+        <p class="tv-reserve__when">{ev.date}, {ev.time}. {ev.format}</p>
+        <p class="tv-reserve__lead">We&rsquo;re keeping the room small so it stays a proper conversation, which means places are limited. Put your name down below. That doesn&rsquo;t hold a seat just yet. We&rsquo;ll go through the list and email you to confirm your place, along with everything you need on the day.</p>
+      </div>
+
+      <form class="tv-form reveal" action="https://eu-submit.jotform.com/submit/261524935328057" method="post" accept-charset="utf-8" data-event-form>
+        <input type="hidden" name="formID" value="261524935328057" />
+        <input type="hidden" name="simple_spc" value="261524935328057-261524935328057" />
+        <div class="tv-form__row">
+          <div class="tv-form__field">
+            <label class="tv-form__label" for="tv-first">First name</label>
+            <input id="tv-first" type="text" name="q2_q2_fullname0[first]" required autocomplete="given-name" />
+          </div>
+          <div class="tv-form__field">
+            <label class="tv-form__label" for="tv-last">Last name</label>
+            <input id="tv-last" type="text" name="q2_q2_fullname0[last]" required autocomplete="family-name" />
+          </div>
+        </div>
+        <div class="tv-form__field">
+          <label class="tv-form__label" for="tv-email">Email</label>
+          <input id="tv-email" type="email" name="q3_q3_email1" required autocomplete="email" />
+        </div>
+        <div class="tv-form__field">
+          <label class="tv-form__label" for="tv-company">Company <span class="tv-form__opt">(optional)</span></label>
+          <input id="tv-company" type="text" name="q4_q4_textbox2" autocomplete="organization" />
+        </div>
+        <!-- JotForm honeypot: must stay empty -->
+        <input type="text" name="website" class="tv-form__hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <button type="submit" class="wbtn wbtn--accent tv-form__submit">Register your interest</button>
+        <p class="tv-form__note">Your place isn&rsquo;t confirmed until you hear from us by email. No spam. We&rsquo;ll only email you about this event.</p>
+        <p class="tv-form__status" role="status" aria-live="polite" data-form-status hidden></p>
+      </form>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .tv-h2 { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); line-height: 1.1; color: var(--c-ink); margin: 0 0 1rem; }
+  .tv-p { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.7; color: var(--c-ink-soft); margin: 0 0 1.1rem; max-width: 64ch; }
+  .tv-link { color: var(--c-accent); text-decoration: underline; text-underline-offset: 3px; }
+
+  /* Banner */
+  .tv-banner { position: relative; isolation: isolate; color: var(--c-on-dark); min-height: clamp(400px, 48vw, 580px); display: flex; align-items: flex-end; }
+  .tv-banner__media { position: absolute; inset: 0; z-index: -2; }
+  .tv-banner__media :global(img) { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .tv-banner__scrim { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(13,32,48,0.45) 0%, rgba(13,32,48,0.72) 55%, rgba(13,32,48,0.94) 100%); }
+  .tv-banner__inner { max-width: var(--w-container); width: 100%; margin: 0 auto; padding: clamp(3rem, 6vw, 5rem) var(--w-gutter) clamp(2.5rem, 5vw, 4rem); }
+
+  /* Series mark closes the hero, under the credit line. */
+  .tv-eyebrow { display: flex; justify-content: flex-start; margin-top: clamp(1.75rem, 3vw, 2.75rem); }
+  .tv-eyebrow__logo { height: clamp(52px, 6vw, 84px); width: auto; max-width: 100%; object-fit: contain; }
+  /* Stands in for the series logo until the artwork lands. */
+  .tv-eyebrow__wordmark { font-family: var(--w-font-display); font-weight: 600; font-size: 1.15rem; letter-spacing: 0.02em; color: #fff; border: 1px solid rgba(255,255,255,0.35); border-radius: var(--radius-pill); padding: 0.45rem 1.1rem; margin: 0; }
+  /* Date and time, big and plain, straight under the headline. */
+  .tv-banner__when { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.35rem 0.75rem; font-family: var(--w-font-display); font-weight: 600; font-size: clamp(1.35rem, 1.2vw + 1rem, 1.9rem); line-height: 1.2; color: #fff; margin: 1.5rem 0 0; }
+  .tv-banner__when-sep { color: var(--c-accent); }
+  .tv-banner__when-time { color: var(--c-accent); }
+  .tv-banner__by { font-family: var(--w-font-body); font-weight: 600; font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--c-accent-2); margin: 1.1rem 0 0; }
+
+  .tv-banner__title { font-family: var(--w-font-display); font-weight: 600; font-size: clamp(2rem, 3.2vw + 0.9rem, 3.4rem); line-height: 1.06; letter-spacing: var(--tracking-display); color: #fff; margin: 1.75rem 0 0; max-width: 22ch; }
+  .tv-banner__ep { display: block; font-family: var(--w-font-script); font-weight: 400; font-size: clamp(2.4rem, 2.6vw + 1.6rem, 3.6rem); line-height: 0.95; letter-spacing: 0; color: var(--c-accent); transform: rotate(-2deg); transform-origin: left; margin-bottom: 0.85rem; }
+
+  /* Main two-column */
+  .tv-main { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .tv-main__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); display: grid; grid-template-columns: 1fr; gap: 3rem; }
+  @media (min-width: 960px) { .tv-main__inner { grid-template-columns: 1fr 360px; gap: 4rem; align-items: start; } }
+  .tv-block { margin-bottom: 3rem; }
+  .tv-block:last-child { margin-bottom: 0; }
+
+  /* Host and guests */
+  .tv-person { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+  .tv-person + .tv-person { margin-top: 2.5rem; padding-top: 2.5rem; border-top: 1px solid var(--c-line); }
+  @media (min-width: 560px) { .tv-person { grid-template-columns: 148px 1fr; gap: 1.75rem; align-items: start; } }
+  .tv-person__photo { border-radius: var(--w-radius); overflow: hidden; aspect-ratio: 1; background: var(--c-bg-alt); max-width: 148px; display: grid; place-items: center; }
+  .tv-person__photo :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: var(--focus, center center); display: block; }
+  /* Lettered stand-in until the real headshot is dropped in. */
+  .tv-person__ph { font-family: var(--w-font-display); font-weight: 600; font-size: 2.25rem; letter-spacing: 0.04em; color: var(--c-ink-soft); opacity: 0.5; }
+  .tv-person__name { font-family: var(--w-font-display); font-weight: 600; font-size: 1.25rem; color: var(--c-ink); margin: 0; }
+  .tv-person__role { font-family: var(--w-font-body); font-size: 0.95rem; color: var(--c-ink-soft); margin: 0.15rem 0 1rem; }
+
+  /* Sticky reserve card */
+  @media (min-width: 960px) { .tv-rail { position: sticky; top: 6rem; } }
+  .tv-card { background: var(--c-bg); border: 1px solid var(--c-line); border-radius: var(--w-radius); box-shadow: var(--w-shadow-soft); padding: clamp(1.5rem, 2.5vw, 2rem); }
+  .tv-card__series { margin: 0 0 1rem; }
+  /* The wordmark ships white for the dark banner; flip it black for this card. */
+  .tv-card__series img { height: 52px; width: auto; max-width: 100%; object-fit: contain; filter: brightness(0); opacity: 0.9; }
+  .tv-card__wordmark { font-family: var(--w-font-display); font-weight: 600; font-size: 1.1rem; line-height: 1.25; color: var(--c-ink); margin: 0 0 0.35rem; }
+  .tv-card__ep { font-family: var(--w-font-body); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c-accent); margin: 0 0 1.5rem; }
+  .tv-card__cta { width: 100%; justify-content: center; }
+  .tv-card__hint { font-family: var(--w-font-body); font-size: var(--fs-small); line-height: 1.5; color: var(--c-ink-soft); text-align: center; margin: 0.75rem 0 0; }
+  .tv-meta { margin: 1.5rem 0 0; padding: 1.5rem 0 0; border-top: 1px solid var(--c-line); }
+  .tv-meta__row { display: grid; gap: 0.2rem; padding: 0.7rem 0; }
+  .tv-meta__row dt { font-family: var(--w-font-body); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--c-ink-soft); }
+  .tv-meta__row dd { font-family: var(--w-font-body); font-size: 1rem; line-height: 1.5; color: var(--c-ink); margin: 0; }
+  .tv-meta__row dd.tv-meta__strong { font-family: var(--w-font-display); font-weight: 600; font-size: 1.25rem; }
+  .tv-meta__line { display: block; }
+  .tv-meta__link { display: inline-block; margin-top: 0.35rem; color: var(--c-accent); text-decoration: underline; text-underline-offset: 3px; }
+
+  /* Episode 01 gallery */
+  .tv-gallery { background: var(--c-bg-alt); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .tv-gallery__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .tv-gallery__head { margin-bottom: 2rem; }
+  .tv-gallery__head .tv-h2 { margin-top: 0.4rem; }
+  .tv-gallery__grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(0.5rem, 1.2vw, 1rem); }
+  @media (min-width: 820px) { .tv-gallery__grid { grid-template-columns: repeat(3, 1fr); } }
+  .tv-gallery__item { margin: 0; aspect-ratio: 3 / 2; border-radius: var(--w-radius); overflow: hidden; background: var(--c-dark); }
+  .tv-gallery__item :global(img) { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  /* Reserve */
+  .tv-reserve { background: var(--c-dark); color: var(--c-on-dark); padding-block: var(--w-section-y); }
+  .tv-reserve__inner { max-width: 720px; margin: 0 auto; padding-inline: var(--w-gutter); }
+  /* Capped below --fs-h2 so the heading holds one line at every width. */
+  .tv-reserve__title { font-family: var(--w-font-display); font-weight: 600; font-size: min(var(--fs-h2), 9vw, 3.6rem); letter-spacing: var(--tracking-display); color: var(--c-on-dark); margin: 0.4rem 0 0; }
+  .tv-reserve__when { font-family: var(--w-font-display); font-weight: 600; font-size: clamp(1.15rem, 1vw + 0.85rem, 1.5rem); line-height: 1.3; color: var(--c-on-dark); margin: 1.25rem 0 0; }
+  .tv-reserve__lead { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.65; color: var(--c-on-dark-soft); margin: 0.75rem 0 2.5rem; }
+  .tv-form { display: grid; gap: 1.25rem; }
+  .tv-form__row { display: grid; gap: 1.25rem; }
+  @media (min-width: 520px) { .tv-form__row { grid-template-columns: 1fr 1fr; } }
+  .tv-form__field { display: grid; gap: 0.45rem; }
+  .tv-form__label { font-family: var(--w-font-body); font-weight: 600; font-size: 0.85rem; color: var(--c-on-dark); }
+  .tv-form__opt { font-weight: 400; color: var(--c-on-dark-soft); }
+  .tv-form__field input {
+    font-family: var(--w-font-body); font-size: 1rem; padding: 0.85rem 1rem;
+    border-radius: 12px; border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.04); color: #fff;
+  }
+  .tv-form__field input:focus { outline: 2px solid var(--c-accent-2); outline-offset: 1px; }
+  .tv-form__hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+  .tv-form__submit { justify-self: start; margin-top: 0.25rem; }
+  .tv-form__note { font-family: var(--w-font-body); font-size: var(--fs-small); color: var(--c-on-dark-soft); margin: 0; }
+  .tv-form__status { font-family: var(--w-font-body); font-size: var(--fs-small); color: #ffb3ad; margin: 0; }
+</style>
+
+<script>
+  // Same pattern as /events/: submit to JotForm in the background (no-cors +
+  // keepalive, so the request still completes), then send the visitor to
+  // /thank-you/. With JS off the form posts to JotForm normally.
+  const form = document.querySelector<HTMLFormElement>("[data-event-form]");
+  if (form) {
+    const dest = "/thank-you/";
+    form.addEventListener("submit", (e) => {
+      // Honeypot: if a bot filled it, skip the real submit.
+      const hp = form.querySelector<HTMLInputElement>('input[name="website"]');
+      if (hp && hp.value) { e.preventDefault(); window.location.href = dest; return; }
+      // Let the browser run native required-field validation first.
+      if (!form.checkValidity()) return;
+      e.preventDefault();
+      const btn = form.querySelector<HTMLButtonElement>('[type="submit"]');
+      if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
+      fetch(form.action, { method: "POST", body: new FormData(form), mode: "no-cors", keepalive: true })
+        .catch(() => {})
+        .finally(() => { window.location.href = dest; });
+    });
+  }
+</script>
