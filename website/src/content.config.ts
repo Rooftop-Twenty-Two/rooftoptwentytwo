@@ -32,6 +32,8 @@ const portfolio = defineCollection({
           heading: z.string(),
           body: z.string(),
           image: z.string().optional(),
+          // Extra visuals shown as a two-up grid under the section's breaker.
+          images: z.array(z.string()).default([]),
           bullets: z.array(z.string()).default([]),
           // Optional sub-headed groups of bullets (e.g. "Brand Identity", "Web
           // Design & Development") so dense Strategy sections read as structured

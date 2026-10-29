@@ -139,6 +139,15 @@ const seoKeywords = [...(services ?? []), ...(entry.data.sectors ?? [])];
             <figcaption class="cs-breaker__cap">{name} <span aria-hidden="true">·</span> {sec.heading}</figcaption>
           </figure>
         )}
+        {sec.images && sec.images.length > 0 && (
+          <div class="cs-grid reveal">
+            {sec.images.map((src) => (
+              <figure class="cs-grid__item r22-media">
+                <Picture src={src} alt={`${name}, ${sec.heading}`} loading="lazy" decoding="async" />
+              </figure>
+            ))}
+          </div>
+        )}
       </>
     ))}
 
@@ -232,6 +241,21 @@ const seoKeywords = [...(services ?? []), ...(entry.data.sectors ?? [])];
     text-transform: uppercase; color: var(--c-ink-soft);
   }
   .cs-breaker__cap span { color: var(--c-accent); padding: 0 0.2rem; }
+
+  /* Optional extra visuals for a section (sections[].images): a two-up grid of
+   * framed 16:9 shots, one column on phones. */
+  .cs-grid {
+    width: min(1100px, calc(100% - 2 * var(--w-gutter)));
+    margin: clamp(1.5rem, 3vw, 2.5rem) auto;
+    display: grid; grid-template-columns: 1fr; gap: 1.25rem;
+  }
+  @media (min-width: 760px) { .cs-grid { grid-template-columns: repeat(2, 1fr); } }
+  .cs-grid__item {
+    margin: 0; overflow: hidden;
+    border-radius: var(--w-radius); border: 1px solid var(--c-line);
+    box-shadow: var(--w-shadow-soft); background: var(--c-bg-alt);
+  }
+  .cs-grid__item img { display: block; width: 100%; height: 100%; object-fit: cover; aspect-ratio: 16 / 9; }
 
   /* Feature breaker, framed on a navy band. */
   .cs-breaker--bleed { background: var(--c-dark); padding-block: clamp(2.5rem, 5vw, 4.5rem); }
