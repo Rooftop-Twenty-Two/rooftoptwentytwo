@@ -41,6 +41,8 @@ const pageUrl = new URL(`/work/${currentSlug}/`, site).toString();
 const heroAbs = heroImage ? new URL(heroImage, site).toString() : undefined;
 const seoDescription = metaDescription ?? summary ?? tagline ?? name;
 const seoKeywords = [...(services ?? []), ...(entry.data.sectors ?? [])];
+// "Modern Tyres'" rather than "Modern Tyres's" in the contact heading.
+const possessive = /s$/i.test(name) ? `${name}'` : `${name}'s`;
 ---
 
 <Layout
@@ -166,7 +168,7 @@ const seoKeywords = [...(services ?? []), ...(entry.data.sectors ?? [])];
   </section>
 
   <WContactForm
-    heading={`Want results like ${name}'s? <em>Let's talk</em>.`}
+    heading={`Want results like ${possessive}? <em>Let's talk</em>.`}
     routing={`project:${Astro.params.slug}`}
     prefillSubject={`Project enquiry, inspired by ${name}`}
   />
