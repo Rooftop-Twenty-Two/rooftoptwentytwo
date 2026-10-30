@@ -14,7 +14,7 @@ type PlatformCompare = {
   kicker?: string; heading: string; intro?: string; columns: string[]; highlight?: number;
   rows: { label: string; values: string[] }[]; note?: string;
 };
-type FeatureGrid = { kicker?: string; heading: string; intro?: string; items: { title: string; body: string }[] };
+type FeatureGrid = { kicker?: string; heading: string; intro?: string; items: { title: string; body: string; href?: string }[] };
 type StackPicks = { kicker?: string; heading: string; intro?: string; rows: { building: string; pick: string; why: string }[] };
 interface Props {
   name: string; ctaName?: string; slug: string; cluster: string; isClusterParent: boolean;
@@ -54,6 +54,7 @@ const serviceTagMap: Record<string, string[]> = {
   "google-ads": ["Google Ads"],
   "paid-social": ["Paid Social Media"],
   "seo": ["SEO"],
+  "ai-search-optimisation": ["SEO"],
   "email-marketing": [],
   "creative-and-content": ["Social Media", "Photography", "Videography", "Video", "Brand Design", "Brand Identity", "Branding", "Brand Strategy", "Brand Naming"],
   "design": ["Brand Design", "Brand Identity", "Brand Strategy", "Brand Naming"],
@@ -161,6 +162,7 @@ const breadcrumbs = isClusterParent
             <li class="reveal">
               <h3 class="ws-feat__t">{it.title}</h3>
               <p class="ws-feat__b">{it.body}</p>
+              {it.href && <a class="ws-feat__link" href={it.href}>Read more<span aria-hidden="true"> &rarr;</span></a>}
             </li>
           ))}
         </ul>
@@ -400,6 +402,8 @@ const breadcrumbs = isClusterParent
   @media (min-width: 1040px) { .ws-feat__grid { grid-template-columns: 1fr 1fr 1fr; } }
   .ws-feat__grid li { border: 1px solid var(--c-line-dark); border-radius: var(--w-radius); padding: 1.75rem; }
   .ws-feat__t { font-family: var(--w-font-display); font-weight: 600; font-size: 1.3rem; line-height: 1.2; color: var(--c-on-dark); margin: 0; }
+  .ws-feat__link { display: inline-block; margin-top: 1rem; font-family: var(--w-font-body); font-weight: 600; color: var(--c-accent-2-bright); text-decoration: none; }
+  .ws-feat__link:hover { text-decoration: underline; }
   .ws-feat__b { font-family: var(--w-font-body); font-size: 1rem; line-height: 1.6; color: var(--c-on-dark-soft); margin: 0.75rem 0 0; }
 
   .ws-picks { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }

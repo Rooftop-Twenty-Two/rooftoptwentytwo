@@ -133,7 +133,7 @@ const services = defineCollection({
         kicker: z.string().optional(),
         heading: z.string(),
         intro: z.string().optional(),
-        items: z.array(z.object({ title: z.string(), body: z.string() })),
+        items: z.array(z.object({ title: z.string(), body: z.string(), href: z.string().optional() })),
       })
       .optional(),
     // Optional "what you're building → our pick → why" table.
