@@ -63,6 +63,10 @@ const retiredRedirects = {
   // Case study slug tidied from its WordPress-era "-2" suffix.
   '/work/tc-matthews-2/': { status: 301, destination: '/work/tc-matthews/' },
   '/portfolio/tc-matthews-2/': { status: 301, destination: '/work/tc-matthews/' },
+  // Joseph May removed from the site.
+  '/work/joseph-may/': { status: 301, destination: '/work/' },
+  '/portfolio/joseph-may/': { status: 301, destination: '/work/' },
+  '/latest/joseph-may-website-launch/': { status: 301, destination: '/latest/' },
 };
 
 // https://astro.build/config
