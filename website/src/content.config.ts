@@ -96,15 +96,15 @@ const team = defineCollection({
   }),
 });
 
-// Service pages. Three clusters (performance-marketing, creative-and-content,
-// web) with leaf services under each. Cluster parents use the same schema;
+// Service pages. Four clusters (performance-marketing, creative-and-content,
+// web, ai-for-business) with leaf services under each. Cluster parents use the same schema;
 // they're identified by `cluster: true`.
 const services = defineCollection({
   loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/services" }),
   schema: z.object({
     name: z.string(),
     slug: z.string(),
-    cluster: z.string(), // "performance-marketing" | "creative-and-content" | "web"
+    cluster: z.string(), // "performance-marketing" | "creative-and-content" | "web" | "ai-for-business"
     isClusterParent: z.boolean().default(false),
     summary: z.string(),
     metaDescription: z.string(),

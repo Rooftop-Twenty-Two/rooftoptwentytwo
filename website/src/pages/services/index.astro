@@ -10,7 +10,7 @@ const all = (await getCollection("services")).sort(
   (a, b) => (a.data.order ?? 100) - (b.data.order ?? 100)
 );
 
-type Cluster = "performance-marketing" | "creative-and-content" | "web";
+type Cluster = "performance-marketing" | "creative-and-content" | "web" | "ai-for-business";
 const clusterMeta: Record<Cluster, { name: string; body: string }> = {
   "performance-marketing": {
     name: "Performance Marketing",
@@ -20,12 +20,16 @@ const clusterMeta: Record<Cluster, { name: string; body: string }> = {
     name: "Creative & Content",
     body: "Branding, brand identity, social, photo, and video, produced in-house at the cadence the channels actually need.",
   },
+  "ai-for-business": {
+    name: "AI for Business",
+    body: "AI training for marketing teams, straight advice on what to use, and the setup and workflows that make it stick.",
+  },
   web: {
     name: "Website Design and Development",
     body: "Strategy, design, build, and care, modern sites chosen against your buyer journey, not our preference.",
   },
 };
-const clusters: Cluster[] = ["performance-marketing", "creative-and-content", "web"];
+const clusters: Cluster[] = ["performance-marketing", "creative-and-content", "web", "ai-for-business"];
 const grouped = clusters.map((cluster) => ({
   cluster,
   meta: clusterMeta[cluster],
@@ -42,7 +46,7 @@ const grouped = clusters.map((cluster) => ({
   <PageHero
     kicker="Our expertise"
     title="Full-funnel marketing, <em>under one roof</em>."
-    intro="Three clusters, performance marketing, creative & content, and web. The same in-house team strategises, produces, and ships across all three, so the work stays joined-up across every surface of your brand."
+    intro="Four areas: performance marketing, creative and content, web, and AI for business. The same in-house team plans, makes and ships across all of them, so the work stays joined-up."
     primary={{ label: "Start a conversation", href: "/contact/#contact" }}
     secondary={{ label: "See selected work", href: "/work/" }}
   />

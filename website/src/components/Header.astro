@@ -7,13 +7,14 @@ import PressToTalkRing from "./PressToTalkRing.astro";
 const services = (await getCollection("services")).sort(
   (a, b) => (a.data.order ?? 100) - (b.data.order ?? 100)
 );
-// Group services into the same three clusters used on the homepage:
-// Creative & Content, Web, Performance Marketing.
-const clusterOrder = ["creative-and-content", "web", "performance-marketing"];
+// Group services into the same clusters used on the homepage:
+// Creative & Content, Web, Performance Marketing, AI for Business.
+const clusterOrder = ["creative-and-content", "web", "performance-marketing", "ai-for-business"];
 const clusterNames: Record<string, string> = {
   "creative-and-content": "Creative & Content",
   "web": "Website Design",
   "performance-marketing": "Performance Marketing",
+  "ai-for-business": "AI for Business",
 };
 const svcGroups = clusterOrder.map((cl) => {
   const parent = services.find((s) => s.data.cluster === cl && s.data.isClusterParent);
@@ -263,12 +264,12 @@ const isActive = (base: string) => path === base || path.startsWith(base);
     grid-template-columns: 220px 240px 200px; width: max-content; max-width: 88vw;
   }
   .mega__grid--work { grid-template-columns: 200px 240px 200px; }
-  /* Services panel: three homepage clusters as columns, plus the CTA. */
+  /* Services panel: four homepage clusters as columns, plus the CTA. */
   .mega__grid--services { grid-template-columns: auto 230px 210px; align-items: stretch; }
   .mega__svc-img { display: block; border-radius: var(--w-radius); overflow: hidden; min-height: 100%; }
   .mega__svc-img img { width: 100%; height: 100%; min-height: 220px; object-fit: cover; display: block; transition: transform var(--w-dur) var(--w-ease); }
   .mega__svc-img:hover img { transform: scale(1.04); }
-  .mega__cats { display: grid; grid-template-columns: repeat(3, minmax(150px, 1fr)); gap: 2rem; }
+  .mega__cats { display: grid; grid-template-columns: repeat(4, minmax(140px, 1fr)); gap: 1.75rem; }
   .mega__cat-h {
     display: block; font-family: var(--w-font-display); font-weight: 700; font-size: 1.05rem;
     color: var(--c-ink); text-decoration: none; padding-bottom: 0.6rem; margin-bottom: 0.4rem;
