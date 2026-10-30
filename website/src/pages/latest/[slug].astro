@@ -177,6 +177,10 @@ const shareEmail = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeUR
   .article-body :global(ol) { list-style: decimal; }
   .article-body :global(li) { margin-bottom: 0.5rem; }
   .article-body :global(li::marker) { color: var(--c-accent); }
+  .article-body :global(table) { width: 100%; border-collapse: collapse; margin: 2rem 0; font-family: var(--w-font-body); font-size: 1rem; }
+  .article-body :global(th), .article-body :global(td) { text-align: left; vertical-align: top; padding: 0.85rem 1rem 0.85rem 0; border-bottom: 1px solid var(--c-line); line-height: 1.5; }
+  .article-body :global(th) { font-family: var(--w-font-display); font-weight: 600; color: var(--c-ink); border-bottom-width: 2px; }
+  .article-body :global(td:last-child) { font-weight: 600; color: var(--c-accent); }
   .article-body :global(blockquote) { margin: 2rem 0; padding-left: 1.5rem; border-left: 3px solid var(--c-accent); font-family: var(--w-font-display); font-style: italic; font-size: 1.4rem; line-height: 1.4; color: var(--c-ink); }
   .article-body :global(img) { display: block; width: 100%; height: auto; border: 1px solid var(--c-line); border-radius: var(--w-radius); margin: 2rem 0; }
   .article-body :global(.article-video) { margin: 2.5rem 0; }
