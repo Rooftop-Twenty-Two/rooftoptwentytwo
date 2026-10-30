@@ -1,4 +1,5 @@
 ---
+import Img from "../components/Img.astro";
 import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
 import PageHero from "../components/reskin/PageHero.astro";
@@ -39,7 +40,7 @@ const gallery = [
         <p class="kicker kicker--script">Our story</p>
         <h2 class="ab-h2">From a bedroom in 2020 to a <em>team of 17</em>.</h2>
         <figure class="ab-story__sign">
-          <img src="/images/hero/Cathal.png" alt="Cathal O&rsquo;Reilly, founder of Rooftop Twenty Two" loading="lazy" decoding="async" />
+          <Img src="/images/hero/Cathal.png" alt="Cathal O&rsquo;Reilly, founder of Rooftop Twenty Two" loading="lazy" decoding="async" />
           <figcaption>Cathal O&rsquo;Reilly<span>Founder</span></figcaption>
         </figure>
       </div>

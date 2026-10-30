@@ -1,4 +1,5 @@
 ---
+import Img from "../Img.astro";
 // Homepage event band. Points people at the current The View from Twenty Two
 // episode. Dated content, so pull this section from index.astro once the event
 // has passed (or repoint it at the next episode).
@@ -61,7 +62,7 @@ const ev = {
       )}
       <span class="eb__scrim" aria-hidden="true"></span>
       {hasFile(ev.seriesLogo)
-        ? <img class="eb__logo" src={ev.seriesLogo} alt="" loading="lazy" decoding="async" />
+        ? <Img class="eb__logo" src={ev.seriesLogo} alt="" loading="lazy" decoding="async" />
         : <span class="eb__wordmark">{ev.series}</span>}
     </a>
   </div>

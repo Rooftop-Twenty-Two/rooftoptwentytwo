@@ -1,4 +1,5 @@
 ---
+import Img from "../Img.astro";
 // 2026 awards — dark trust band shared by the homepage and About page.
 // White-reversed logos on navy, result highlighted in the mint accent.
 interface Props {
@@ -21,7 +22,7 @@ const awards = [
       {awards.map((a) => (
         <li class="aw__item reveal">
           <a href={a.href}>
-            <img class="aw__logo" src={a.logo} alt={a.name} loading="lazy" decoding="async" />
+            <Img class="aw__logo" src={a.logo} alt={a.name} loading="lazy" decoding="async" />
             <span class="aw__txt"><b>{a.result}</b><span class="aw__sep">·</span>{a.name}</span>
           </a>
         </li>

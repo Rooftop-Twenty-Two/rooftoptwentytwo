@@ -1,0 +1,18 @@
+---
+// Plain <img> with its real width/height stamped at build time, so the browser
+// reserves space before it loads (no layout shift). Same markup as a bare <img>,
+// so existing CSS selectors keep working. Use Picture.astro for WebP delivery.
+import { imageSize } from "../lib/image-size";
+
+interface Props {
+  src: string;
+  alt: string;
+  [key: string]: unknown;
+}
+
+const { src, alt, ...rest } = Astro.props as Props;
+const dims = rest.width === undefined && rest.height === undefined ? await imageSize(src) : null;
+const sizeAttrs = dims ? { width: dims.width, height: dims.height } : {};
+---
+
+<img src={src} alt={alt} {...sizeAttrs} {...rest} />

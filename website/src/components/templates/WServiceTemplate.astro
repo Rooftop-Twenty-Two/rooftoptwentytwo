@@ -17,7 +17,7 @@ type PlatformCompare = {
 type FeatureGrid = { kicker?: string; heading: string; intro?: string; items: { title: string; body: string; href?: string }[] };
 type StackPicks = { kicker?: string; heading: string; intro?: string; rows: { building: string; pick: string; why: string }[] };
 interface Props {
-  name: string; ctaName?: string; slug: string; cluster: string; isClusterParent: boolean;
+  name: string; metaTitle?: string; ctaName?: string; slug: string; cluster: string; isClusterParent: boolean;
   summary: string; metaDescription: string; heroEyebrow?: string;
   heroHeading: string; heroBody: string; whatItIs: string; whatsIncluded: string[];
   platformCompare?: PlatformCompare; featureGrid?: FeatureGrid; stackPicks?: StackPicks;
@@ -25,7 +25,7 @@ interface Props {
   relatedProgrammes: string[]; caseStudySlugs: string[]; faq: FAQ[];
 }
 const {
-  name, ctaName, slug, cluster, isClusterParent, summary, metaDescription, heroEyebrow,
+  name, metaTitle, ctaName, slug, cluster, isClusterParent, summary, metaDescription, heroEyebrow,
   heroHeading, heroBody, whatItIs, whatsIncluded, platformCompare, featureGrid, stackPicks,
   process, sectorsThatBuy, relatedServices, caseStudySlugs, faq,
 } = Astro.props;
@@ -33,7 +33,7 @@ const {
 // Short term for the "Talk to us about …" CTAs; full name elsewhere.
 const ctaTerm = ctaName ?? name;
 const pageUrl = `/services/${slug}/`;
-const title = `${name} | Rooftop Twenty Two`;
+const title = metaTitle ?? `${name} | Rooftop Twenty Two`;
 
 // Service heroes use studio/office shots (not client logos). Pick one
 // deterministically from the slug so each service keeps a consistent image.
@@ -92,7 +92,7 @@ const breadcrumbs = isClusterParent
   : [{ name: "Home", url: "/" }, { name: "Services", url: "/services/" }, { name: cluster.replace(/-/g, " "), url: `/services/${cluster}/` }, { name, url: pageUrl }];
 ---
 
-<Layout title={title} description={metaDescription}>
+<Layout title={title} description={metaDescription} ogImage={heroBg}>
   <BreadcrumbSchema items={breadcrumbs} />
   <ServiceSchema name={name} description={metaDescription} url={pageUrl} />
 

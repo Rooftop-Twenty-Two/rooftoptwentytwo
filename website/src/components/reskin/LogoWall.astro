@@ -1,4 +1,5 @@
 ---
+import Img from "../Img.astro";
 // S4, Logo wall / trust bar. Monochrome (white) client logos on a dark band,
 // scrolling as a seamless left-to-right marquee.
 const logos = [
@@ -28,7 +29,7 @@ const track = [...half, ...half];
     <ul class="lw__track" role="list">
       {track.map((l, i) => (
         <li aria-hidden={i >= half.length ? "true" : "false"}>
-          <img src={l.src} alt={i >= half.length ? "" : l.alt} loading="lazy" decoding="async" />
+          <Img src={l.src} alt={i >= half.length ? "" : l.alt} loading="lazy" decoding="async" />
         </li>
       ))}
     </ul>

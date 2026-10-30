@@ -1,4 +1,5 @@
 ---
+import Img from "./Img.astro";
 // S1, Home hero (re-skin / Wolfgang direction).
 // Near-black canvas, slow-pan (Ken Burns) office photo, kicker, big display
 // H1 with a rotating discipline word, dual pill CTAs. No video asset yet, 
@@ -26,7 +27,7 @@ const awards = awardDefs.map((a) => ({ ...a, hasLogo: existsSync(path.join(proce
       <!-- On phones the wide studio shot's big wall wordmark clashes with the
            headline, so swap to a calmer team shot below 880px. -->
       <source media="(max-width: 880px)" srcset="/images/office/office-collab-01.jpg" />
-      <img src={poster} alt="" fetchpriority="high" />
+      <Img src={poster} alt="The Rooftop Twenty Two studio in Glasnevin, Dublin" fetchpriority="high" />
     </picture>
     <div class="whero__scrim"></div>
   </div>
@@ -55,7 +56,7 @@ const awards = awardDefs.map((a) => ({ ...a, hasLogo: existsSync(path.join(proce
     {awards.map((a) => (
       <li class="whero__award">
         <a href={a.href}>
-          {a.hasLogo && <img class="whero__award-logo" src={a.logo} alt={a.name} loading="lazy" decoding="async" />}
+          {a.hasLogo && <Img class="whero__award-logo" src={a.logo} alt={a.name} loading="lazy" decoding="async" />}
           <span class="whero__award-txt"><b>{a.result}</b> <span aria-hidden="true">·</span> {a.name}</span>
         </a>
       </li>

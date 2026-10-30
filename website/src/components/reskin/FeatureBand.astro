@@ -1,4 +1,5 @@
 ---
+import Img from "../Img.astro";
 // S8, Feature dark band. "Ownership / partner" statement on the left, with the
 // team awards photo + 2026 awards on the right. One high-contrast moment.
 import { existsSync } from "node:fs";
@@ -31,7 +32,7 @@ const awards = [
     <div class="fb__right reveal">
       {hasPhoto && (
         <figure class="fb__photo">
-          <img src={photo} alt="The Rooftop Twenty Two team collecting Gold at the 2026 Spider Awards" loading="lazy" decoding="async" />
+          <Img src={photo} alt="The Rooftop Twenty Two team collecting Gold at the 2026 Spider Awards" loading="lazy" decoding="async" />
           <figcaption>Some of the team picking up Gold at the 2026 Spider Awards.</figcaption>
         </figure>
       )}
@@ -41,7 +42,7 @@ const awards = [
           {awards.map((a) => (
             <li class="fb__award">
               <a href={a.href}>
-                <img class="fb__award-logo" src={a.logo} alt={a.name} loading="lazy" decoding="async" />
+                <Img class="fb__award-logo" src={a.logo} alt={a.name} loading="lazy" decoding="async" />
                 <span class="fb__award-txt"><b>{a.result}</b><span class="fb__award-sep">·</span>{a.name}</span>
               </a>
             </li>

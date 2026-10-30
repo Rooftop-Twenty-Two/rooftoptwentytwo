@@ -1,7 +1,7 @@
 ---
 title: "Paid Media Manager"
 slug: "paid-media-manager"
-summary: "We are looking for a hands-on Paid Media Manager to lead the planning, execution and optimisation of Google Ads and Meta Ads campaigns across a portfolio of clients."
+summary: "We're looking for a hands-on Paid Media Manager to plan, run and optimise Google Ads and Meta Ads campaigns across a portfolio of clients."
 type: "Full-time"
 location: "Dublin · Hybrid"
 order: 2

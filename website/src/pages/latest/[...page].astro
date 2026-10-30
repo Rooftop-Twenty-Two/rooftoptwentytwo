@@ -25,7 +25,9 @@ const pageNumbers = Array.from({ length: page.lastPage }, (_, i) => i + 1);
 
 <Layout
   title={page.currentPage > 1 ? `Insights (Page ${page.currentPage}) | Rooftop Twenty Two` : "Web & Digital Marketing Insights | Rooftop Twenty Two"}
-  description="Notes from the studio on brand, web, and performance marketing, plus the work we make for ambitious Irish businesses."
+  description={page.currentPage > 1
+    ? `Page ${page.currentPage} of our insights: notes on brand, web, SEO and performance marketing for Irish businesses.`
+    : "Notes from the studio on brand, web, and performance marketing, plus the work we make for ambitious Irish businesses."}
 >
   <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "Insights", url: "/latest/" }]} />
 

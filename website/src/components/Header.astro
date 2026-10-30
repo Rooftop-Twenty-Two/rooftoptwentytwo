@@ -1,4 +1,5 @@
 ---
+import Img from "./Img.astro";
 import { getCollection } from "astro:content";
 import PressToTalkRing from "./PressToTalkRing.astro";
 
@@ -70,14 +71,14 @@ const isActive = (base: string) => path === base || path.startsWith(base);
               </div>
               {work[0] && (
                 <a class="mega__featured" href={work[0].href}>
-                  <span class="mega__fimg"><img src={work[0].img} alt={work[0].name} loading="lazy" /></span>
+                  <span class="mega__fimg"><Img src={work[0].img} alt={work[0].name} loading="lazy" /></span>
                   <span class="mega__flabel">Featured case study</span>
                   <span class="mega__ftitle">{work[0].name}</span>
                 </a>
               )}
               <div class="mega__media">
                 {work.slice(1, 3).map((w) => (
-                  <a class="mega__tile" href={w.href}><img src={w.img} alt={w.name} loading="lazy" /></a>
+                  <a class="mega__tile" href={w.href}><Img src={w.img} alt={w.name} loading="lazy" /></a>
                 ))}
               </div>
             </div>
@@ -102,10 +103,10 @@ const isActive = (base: string) => path === base || path.startsWith(base);
               <a class="mega__featured mega__featured--cta" href="/contact/">
                 <span class="mega__ftitle">Not sure where to start?</span>
                 <span class="mega__fsub">Tell us what you&rsquo;re scaling and we&rsquo;ll point you the right way.</span>
-                <span class="mega__cta-row"><img class="mega__avatar" src="/images/hero/Cathal.png" alt="" loading="lazy" /> Get in touch &rarr;</span>
+                <span class="mega__cta-row"><Img class="mega__avatar" src="/images/hero/Cathal.png" alt="" loading="lazy" /> Get in touch &rarr;</span>
               </a>
               <a class="mega__svc-img" href="/work/">
-                <img src="/images/office/office-work-01.jpg" alt="Rooftop Twenty Two work in progress" loading="lazy" />
+                <Img src="/images/office/office-work-01.jpg" alt="Rooftop Twenty Two work in progress" loading="lazy" />
               </a>
             </div>
           </div>
@@ -127,11 +128,11 @@ const isActive = (base: string) => path === base || path.startsWith(base);
               </div>
               <div class="mega__featured mega__featured--quote">
                 <span class="mega__quote">&ldquo;We work like we&rsquo;re part of your team, because the best results come from people who treat your growth as their growth.&rdquo;</span>
-                <span class="mega__cite"><img class="mega__avatar" src="/images/hero/Cathal.png" alt="" loading="lazy" /> Cathal O&rsquo;Reilly, Founder</span>
+                <span class="mega__cite"><Img class="mega__avatar" src="/images/hero/Cathal.png" alt="" loading="lazy" /> Cathal O&rsquo;Reilly, Founder</span>
               </div>
               <div class="mega__media">
-                <a class="mega__tile" href="/about/#team"><img src="/images/office/office-collab-02.jpg" alt="Team collaborating" loading="lazy" /></a>
-                <a class="mega__tile" href="/about/"><img src="/images/office/office-studio-01.jpg" alt="The Rooftop studio" loading="lazy" /></a>
+                <a class="mega__tile" href="/about/#team"><Img src="/images/office/office-collab-02.jpg" alt="Team collaborating" loading="lazy" /></a>
+                <a class="mega__tile" href="/about/"><Img src="/images/office/office-studio-01.jpg" alt="The Rooftop studio" loading="lazy" /></a>
               </div>
             </div>
           </div>
@@ -151,14 +152,14 @@ const isActive = (base: string) => path === base || path.startsWith(base);
               </div>
               {articles[0] && (
                 <a class="mega__featured" href={articles[0].href}>
-                  {articles[0].img && <span class="mega__fimg"><img src={articles[0].img} alt={articles[0].title} loading="lazy" /></span>}
+                  {articles[0].img && <span class="mega__fimg"><Img src={articles[0].img} alt={articles[0].title} loading="lazy" /></span>}
                   <span class="mega__flabel">Latest article</span>
                   <span class="mega__ftitle">{articles[0].title}</span>
                 </a>
               )}
               <div class="mega__media">
                 {articles.slice(1, 3).map((a) => (
-                  a.img ? <a class="mega__tile" href={a.href}><img src={a.img} alt={a.title} loading="lazy" /></a> : null
+                  a.img ? <a class="mega__tile" href={a.href}><Img src={a.img} alt={a.title} loading="lazy" /></a> : null
                 ))}
               </div>
             </div>
@@ -181,7 +182,7 @@ const isActive = (base: string) => path === base || path.startsWith(base);
     <div class="hd__right header__item" data-header-item>
       <a href="/contact/" class="wbtn wbtn--accent hd__cta">Contact us</a>
       <a href="/contact/" class="hd__avatar" aria-hidden="true" tabindex="-1">
-        <img src="/images/team/contact-avatar.jpg" alt="" loading="lazy" decoding="async" />
+        <Img src="/images/team/contact-avatar.jpg" alt="" loading="lazy" decoding="async" />
       </a>
       <button type="button" class="hd__menu" data-menu-open-trigger aria-label="Menu" aria-expanded="false">
         <PressToTalkRing size={52} />

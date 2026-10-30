@@ -10,6 +10,7 @@ type FAQ = { question: string; answer: string };
 
 interface Props {
   name: string;
+  metaTitle?: string;
   slug: string;
   summary: string;
   metaDescription: string;
@@ -26,13 +27,16 @@ interface Props {
 }
 
 const {
-  name, slug, metaDescription, heroEyebrow, heroHeading, heroBody,
+  name, metaTitle, slug, metaDescription, heroEyebrow, heroHeading, heroBody,
   challenges, pointOfView, serviceSlugs, programmeSlugs, caseStudySlugs,
   aggregateMetrics, faq,
 } = Astro.props;
 
 const pageUrl = `/sectors/${slug}/`;
-const title = `${name} | Rooftop Twenty Two`;
+const title = metaTitle ?? `${name} | Rooftop Twenty Two`;
+// Only link programmes that actually have a page; otherwise point to the grants guide.
+const liveProgrammes = new Set((await getCollection("programmes")).map((p) => p.data.slug));
+const programmeLinks = programmeSlugs.filter((p) => liveProgrammes.has(p));
 const lower = name.toLowerCase();
 const titleCase = (s: string) => s.replace(/-/g, " ").replace(/\b\w/g, (m) => m.toUpperCase());
 
@@ -147,12 +151,12 @@ const caseStudies = caseStudySlugs
   {programmeSlugs.length > 0 && (
     <section class="se-prog">
       <div class="se-prog__inner">
-        <p class="kicker kicker--on-dark kicker--script">Enterprise Ireland funded</p>
-        <h2 class="se-h2 se-prog__h">Funded programmes for {lower}.</h2>
+        <p class="kicker kicker--on-dark kicker--script">{programmeLinks.length > 0 ? "Enterprise Ireland funded" : "Grants and funding"}</p>
+        <h2 class="se-h2 se-prog__h">{programmeLinks.length > 0 ? `Funded programmes for ${lower}.` : "Help paying for it."}</h2>
         <ul class="se-prog__pills">
-          {programmeSlugs.map((p) => (
-            <li><a href={`/programmes/${p}/`}>{titleCase(p)}</a></li>
-          ))}
+          {programmeLinks.length > 0
+            ? programmeLinks.map((p) => <li><a href={`/programmes/${p}/`}>{titleCase(p)}</a></li>)
+            : <li><a href="/latest/trading-online-voucher-grants-ireland/">Trading Online Voucher and grants guide</a></li>}
         </ul>
       </div>
     </section>

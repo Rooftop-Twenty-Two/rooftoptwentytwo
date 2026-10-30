@@ -1,4 +1,5 @@
 ---
+import Img from "../../components/Img.astro";
 import Layout from "../../layouts/Layout.astro";
 import Picture from "../../components/Picture.astro";
 import { existsSync } from "node:fs";
@@ -88,7 +89,7 @@ const guests = [
 
 <Layout
   title="The View from Twenty Two, Episode 02 | Rooftop Twenty Two"
-  description="Gary Fox sits down with Richie Sadlier, RTÉ broadcaster and founder of Let's Talk SPHE, and Emily Usher, founder of The Ballsy Baker. Thursday 5 November, 11am, at Rooftop Twenty Two, DCU Innovate Hub."
+  description="Gary Fox sits down with Richie Sadlier of Let's Talk SPHE and Emily Usher of The Ballsy Baker. Thursday 5 November, 11am, DCU Innovate Hub, Dublin."
   hideStickyMobileCTA={true}
 >
   <!-- Banner -->
@@ -115,7 +116,7 @@ const guests = [
 
       <div class="tv-eyebrow">
         {hasFile(ev.seriesLogo)
-          ? <img class="tv-eyebrow__logo" src={ev.seriesLogo} alt={ev.series} loading="eager" decoding="async" />
+          ? <Img class="tv-eyebrow__logo" src={ev.seriesLogo} alt={ev.series} loading="eager" decoding="async" />
           : <p class="tv-eyebrow__wordmark">{ev.series}</p>}
       </div>
     </div>
@@ -181,7 +182,7 @@ const guests = [
       <aside class="tv-rail">
         <div class="tv-card">
           {hasFile(ev.seriesLogo)
-            ? <div class="tv-card__series"><img src={ev.seriesLogo} alt={ev.series} loading="lazy" decoding="async" /></div>
+            ? <div class="tv-card__series"><Img src={ev.seriesLogo} alt={ev.series} loading="lazy" decoding="async" /></div>
             : <p class="tv-card__wordmark">{ev.series}</p>}
           <p class="tv-card__ep">{ev.episode}</p>
           <a href="#register" class="wbtn wbtn--accent tv-card__cta">Register your interest</a>

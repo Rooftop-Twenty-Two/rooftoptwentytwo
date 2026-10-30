@@ -1,0 +1,19 @@
+# Rooftop Twenty Two
+# Search engines and AI assistants are welcome to read the public site.
+# AI crawlers are named so it's clear they're allowed; they share the same rules.
+User-agent: *
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-SearchBot
+User-agent: PerplexityBot
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /keystatic
+Disallow: /api/
+Disallow: /thank-you/
+Disallow: /p/
+
+Sitemap: https://rooftoptwentytwo.ie/sitemap-index.xml

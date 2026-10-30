@@ -1,4 +1,5 @@
 ---
+import Img from "../components/Img.astro";
 import Layout from "../layouts/Layout.astro";
 
 // The enquiry form is the site's own markup/styling but posts straight to
@@ -89,7 +90,7 @@ const sandyfordDirections = `https://www.google.com/maps/dir/?api=1&destination=
       <!-- Row 2: details + map -->
       <div class="ct__bottom">
         <div class="ct__details">
-          <figure class="ct__details-photo"><img src="/images/office/office-studio-01.jpg" alt="The Rooftop Twenty Two studio" loading="lazy" decoding="async" /></figure>
+          <figure class="ct__details-photo"><Img src="/images/office/office-studio-01.jpg" alt="The Rooftop Twenty Two studio" loading="lazy" decoding="async" /></figure>
           <div class="ct__details-info">
             <a class="ct__line" href="tel:+35316991422"><span class="ct__line-ic" aria-hidden="true">&#9742;</span> +353 1 699 1422</a>
             <a class="ct__line" href="mailto:hey@rooftoptwentytwo.ie"><span class="ct__line-ic" aria-hidden="true">&#9993;</span> hey@rooftoptwentytwo.ie</a>

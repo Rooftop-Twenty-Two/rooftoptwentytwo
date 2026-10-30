@@ -57,6 +57,12 @@ for (const slug of collectionSlugs('portfolio')) {
 // still have the link. Individual event pages under /events/ are unaffected.
 const retiredRedirects = {
   '/events/': { status: 301, destination: '/' },
+  // The EI programmes listing had no programmes behind it. The grants guide
+  // covers the same need, so send the old URL (and its rankings) there.
+  '/programmes/': { status: 301, destination: '/latest/trading-online-voucher-grants-ireland/' },
+  // Case study slug tidied from its WordPress-era "-2" suffix.
+  '/work/tc-matthews-2/': { status: 301, destination: '/work/tc-matthews/' },
+  '/portfolio/tc-matthews-2/': { status: 301, destination: '/work/tc-matthews/' },
 };
 
 // https://astro.build/config

@@ -1,4 +1,5 @@
 ---
+import Img from "../../components/Img.astro";
 import { getCollection, render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import WCtaBand from "../../components/reskin/WCtaBand.astro";
@@ -13,7 +14,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content, headings } = await render(entry);
-const { title, slug, excerpt, metaDescription, author, publishedAt, updatedAt, heroImage, tags } = entry.data;
+const { title, metaTitle, slug, excerpt, metaDescription, author, publishedAt, updatedAt, heroImage, tags } = entry.data;
 
 const pageUrl = `/latest/${slug}/`;
 const fullUrl = new URL(pageUrl, Astro.site ?? Astro.url.origin).href;
@@ -33,7 +34,12 @@ const shareX = `https://twitter.com/intent/tweet?url=${encodeURIComponent(fullUr
 const shareEmail = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(fullUrl)}`;
 ---
 
-<Layout title={`${title} | Rooftop Twenty Two`} description={metaDescription}>
+<Layout
+  title={metaTitle ?? (title.length <= 40 ? `${title} | Rooftop Twenty Two` : title)}
+  description={metaDescription}
+  ogImage={heroImage ?? "/og-default.jpg"}
+  ogType="article"
+>
   <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "Insights", url: "/latest/" }, { name: title, url: pageUrl }]} />
   <ArticleSchema headline={title} description={metaDescription} url={pageUrl} image={heroImage} datePublished={publishedAt} dateModified={updatedAt ?? publishedAt} authorName={author} />
 
@@ -54,7 +60,7 @@ const shareEmail = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeUR
       </div>
       {heroImage && (
         <figure class="ap-hero__media">
-          <img src={heroImage} alt={title} loading="eager" decoding="async" />
+          <Img src={heroImage} alt={title} loading="eager" decoding="async" />
         </figure>
       )}
     </div>

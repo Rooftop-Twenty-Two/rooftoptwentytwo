@@ -12,6 +12,9 @@ const portfolio = defineCollection({
   schema: z.object({
     name: z.string(),
     slug: z.string().optional(),
+    // Optional hand-written <title> (aim for 50–60 chars incl. brand). Falls
+    // back to the page-type default when absent.
+    metaTitle: z.string().optional(),
     tagline: z.string().optional(),
     summary: z.string().optional(),
     // Concise (≤160 char) meta description for search/social. Falls back to
@@ -105,6 +108,9 @@ const services = defineCollection({
     isClusterParent: z.boolean().default(false),
     summary: z.string(),
     metaDescription: z.string(),
+    // Optional hand-written <title> (aim for 50–60 chars incl. brand). Falls
+    // back to the page-type default when absent.
+    metaTitle: z.string().optional(),
     // Short service term for the "Talk to us about …" CTA buttons, when the full
     // `name` is too long for a button. Falls back to `name` when absent.
     ctaName: z.string().optional(),
@@ -165,6 +171,9 @@ const sectors = defineCollection({
     slug: z.string(),
     summary: z.string(),
     metaDescription: z.string(),
+    // Optional hand-written <title> (aim for 50–60 chars incl. brand). Falls
+    // back to the page-type default when absent.
+    metaTitle: z.string().optional(),
     heroEyebrow: z.string().optional(),
     heroHeading: z.string(),
     heroBody: z.string(),
@@ -214,6 +223,9 @@ const articles = defineCollection({
   schema: z.object({
     title: z.string(),
     slug: z.string(),
+    // Optional hand-written <title> (aim for 50–60 chars incl. brand). Falls
+    // back to the page-type default when absent.
+    metaTitle: z.string().optional(),
     excerpt: z.string(),
     metaDescription: z.string(),
     author: z.string().default("Rooftop Twenty Two"),

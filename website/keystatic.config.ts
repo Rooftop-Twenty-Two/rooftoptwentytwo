@@ -45,6 +45,7 @@ export default config({
       columns: ["name", "tagline"],
       schema: {
         name: fields.slug({ name: { label: "Client name" } }),
+        metaTitle: fields.text({ label: "Meta title (SEO, aim for 50–60 characters)" }),
         tagline: fields.text({ label: "Tagline" }),
         summary: fields.text({ label: "Summary (intro paragraph)", multiline: true }),
         metaDescription: fields.text({ label: "Meta description (SEO, ≤160 chars)", multiline: true }),
@@ -120,6 +121,7 @@ export default config({
       columns: ["title", "publishedAt"],
       schema: {
         title: fields.slug({ name: { label: "Title" } }),
+        metaTitle: fields.text({ label: "Meta title (SEO, aim for 50–60 characters)" }),
         excerpt: fields.text({ label: "Excerpt", multiline: true }),
         metaDescription: fields.text({ label: "Meta description (SEO)", multiline: true }),
         author: fields.text({ label: "Author", defaultValue: "Rooftop Twenty Two" }),
@@ -175,6 +177,7 @@ export default config({
       columns: ["name"],
       schema: {
         name: fields.slug({ name: { label: "Name" } }),
+        metaTitle: fields.text({ label: "Meta title (SEO, aim for 50–60 characters)" }),
         cluster: fields.text({ label: "Cluster (performance-marketing / creative-and-content / web)" }),
         isClusterParent: fields.checkbox({ label: "Is cluster parent", defaultValue: false }),
         summary: fields.text({ label: "Summary", multiline: true }),
@@ -199,6 +202,7 @@ export default config({
       columns: ["name"],
       schema: {
         name: fields.slug({ name: { label: "Name" } }),
+        metaTitle: fields.text({ label: "Meta title (SEO, aim for 50–60 characters)" }),
         summary: fields.text({ label: "Summary", multiline: true }),
         metaDescription: fields.text({ label: "Meta description", multiline: true }),
         heroEyebrow: fields.text({ label: "Hero eyebrow" }),
