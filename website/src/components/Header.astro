@@ -31,11 +31,12 @@ const svcGroups = clusterOrder.map((cl) => {
 
 const portfolio = (await getCollection("portfolio", ({ data }) => !data.needs_review))
   .sort((a, b) => (a.data.order ?? 100) - (b.data.order ?? 100));
-const work = (portfolio.filter((p) => p.data.featured && p.data.heroImage).length >= 3
-  ? portfolio.filter((p) => p.data.featured && p.data.heroImage)
-  : portfolio.filter((p) => p.data.heroImage))
-  .map((p) => ({ name: p.data.name, tagline: p.data.tagline, img: p.data.heroImage!, href: `/work/${p.id.replace(/\.mdx?$/, "")}/` }))
-  .slice(0, 4);
+// Work mega panel: a larger grid of projects. Featured first, then by order.
+const workMenu = portfolio
+  .filter((p) => p.data.heroImage)
+  .sort((a, b) => Number(b.data.featured) - Number(a.data.featured) || (a.data.order ?? 100) - (b.data.order ?? 100) || a.data.name.localeCompare(b.data.name))
+  .slice(0, 10)
+  .map((p) => ({ name: p.data.name, tagline: p.data.tagline, img: p.data.heroImage!, href: `/work/${p.id.replace(/\.mdx?$/, "")}/` }));
 
 const articlesAll = (await getCollection("articles")).sort(
   (a, b) => +new Date(b.data.publishedAt as any) - +new Date(a.data.publishedAt as any)
@@ -63,25 +64,20 @@ const isActive = (base: string) => path === base || path.startsWith(base);
           <button type="button" class="hd__link" id="t-work" aria-haspopup="true" aria-expanded="false" aria-controls="mp-work">Work</button>
           <div class="mega" id="mp-work" role="region" aria-labelledby="t-work">
             <div class="mega__grid mega__grid--work">
-              <div class="mega__a">
+              <div class="mega__work-head">
                 <p class="mega__eyebrow">Selected work</p>
-                <ul class="mega__links">
-                  {work.slice(0, 3).map((w) => <li><a class="r22-link" href={w.href}>{w.name}</a></li>)}
-                </ul>
                 <a class="mega__viewall r22-link" href="/work/">View all work &rarr;</a>
               </div>
-              {work[0] && (
-                <a class="mega__featured" href={work[0].href}>
-                  <span class="mega__fimg"><Img src={work[0].img} alt={work[0].name} loading="lazy" /></span>
-                  <span class="mega__flabel">Featured case study</span>
-                  <span class="mega__ftitle">{work[0].name}</span>
-                </a>
-              )}
-              <div class="mega__media">
-                {work.slice(1, 3).map((w) => (
-                  <a class="mega__tile" href={w.href}><Img src={w.img} alt={w.name} loading="lazy" /></a>
+              <ul class="mega__work">
+                {workMenu.map((w) => (
+                  <li>
+                    <a class="mega__wcard" href={w.href}>
+                      <span class="mega__wimg"><Img src={w.img} alt={w.name} loading="lazy" /></span>
+                      <span class="mega__wname">{w.name}</span>
+                    </a>
+                  </li>
                 ))}
-              </div>
+              </ul>
             </div>
           </div>
         </li>
@@ -263,7 +259,16 @@ const isActive = (base: string) => path === base || path.startsWith(base);
     border: 1px solid var(--c-line); border-radius: var(--w-radius); box-shadow: var(--w-shadow-soft);
     grid-template-columns: 220px 240px 200px; width: max-content; max-width: 88vw;
   }
-  .mega__grid--work { grid-template-columns: 200px 240px 200px; }
+  .mega__grid--work { grid-template-columns: 1fr; width: min(1120px, 92vw); max-width: 92vw; gap: 1rem; }
+  .mega__work-head { display: flex; align-items: baseline; justify-content: space-between; }
+  .mega__work-head .mega__eyebrow { margin: 0; }
+  .mega__work { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1rem 0.9rem; }
+  .mega__wcard { display: grid; gap: 0.45rem; text-decoration: none; color: var(--c-ink); }
+  .mega__wimg { display: block; border-radius: 10px; overflow: hidden; aspect-ratio: 16/10; background: var(--c-bg-alt); }
+  .mega__wimg img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform var(--w-dur) var(--w-ease); }
+  .mega__wcard:hover .mega__wimg img { transform: scale(1.05); }
+  .mega__wname { font-family: var(--w-font-display); font-weight: 600; font-size: 0.95rem; line-height: 1.2; transition: color var(--w-dur-fast); }
+  .mega__wcard:hover .mega__wname { color: var(--c-accent); }
   /* Services panel: four homepage clusters as columns, plus the CTA. */
   .mega__grid--services { grid-template-columns: auto 230px 210px; align-items: stretch; }
   .mega__svc-img { display: block; border-radius: var(--w-radius); overflow: hidden; min-height: 100%; }
