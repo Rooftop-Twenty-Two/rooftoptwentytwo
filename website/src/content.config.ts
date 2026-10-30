@@ -113,6 +113,38 @@ const services = defineCollection({
     heroBody: z.string(),
     whatItIs: z.string(),
     whatsIncluded: z.array(z.string()).default([]),
+    // Optional side-by-side comparison (e.g. WordPress vs Shopify vs custom
+    // code). Each row's `values` line up with `columns`. `highlight` is the
+    // zero-based index of the column to pick out.
+    platformCompare: z
+      .object({
+        kicker: z.string().optional(),
+        heading: z.string(),
+        intro: z.string().optional(),
+        columns: z.array(z.string()),
+        highlight: z.number().optional(),
+        rows: z.array(z.object({ label: z.string(), values: z.array(z.string()) })),
+        note: z.string().optional(),
+      })
+      .optional(),
+    // Optional grid of short explainer cards (title + body).
+    featureGrid: z
+      .object({
+        kicker: z.string().optional(),
+        heading: z.string(),
+        intro: z.string().optional(),
+        items: z.array(z.object({ title: z.string(), body: z.string() })),
+      })
+      .optional(),
+    // Optional "what you're building → our pick → why" table.
+    stackPicks: z
+      .object({
+        kicker: z.string().optional(),
+        heading: z.string(),
+        intro: z.string().optional(),
+        rows: z.array(z.object({ building: z.string(), pick: z.string(), why: z.string() })),
+      })
+      .optional(),
     process: z
       .array(z.object({ step: z.string(), label: z.string(), body: z.string() }))
       .default([]),
