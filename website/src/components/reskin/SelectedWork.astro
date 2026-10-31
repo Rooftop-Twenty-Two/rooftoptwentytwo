@@ -11,10 +11,17 @@ const all = (await getCollection("portfolio")).sort(
 // Kept off the homepage marquee (still live on /work/ and elsewhere).
 const HOMEPAGE_EXCLUDE = new Set(["best4travel", "antaris-consulting"]);
 const withHero = all.filter((p) => p.data.heroImage && !HOMEPAGE_EXCLUDE.has(p.data.slug));
-// Lead with the featured work, then fill by order.
+// Lead with projects where we delivered brand, website and campaigns together,
+// then the featured work, then fill by order.
+const HOMEPAGE_LEAD = ["shomera", "irish-chauffeurs", "think-group"];
+const lead = HOMEPAGE_LEAD
+  .map((slug) => withHero.find((p) => p.data.slug === slug))
+  .filter((p): p is (typeof withHero)[number] => Boolean(p));
+const rest = withHero.filter((p) => !HOMEPAGE_LEAD.includes(p.data.slug));
 const cards = [
-  ...withHero.filter((p) => p.data.featured),
-  ...withHero.filter((p) => !p.data.featured),
+  ...lead,
+  ...rest.filter((p) => p.data.featured),
+  ...rest.filter((p) => !p.data.featured),
 ].slice(0, 10);
 // Two identical halves so the -50% → 0 animation loops seamlessly.
 const track = [...cards, ...cards];

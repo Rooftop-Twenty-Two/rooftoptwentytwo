@@ -8,15 +8,15 @@ const image = "/images/office/office-portrait-01.jpg";
 <section class="ai">
   <div class="ai__inner">
     <div class="ai__copy reveal">
-      <p class="kicker kicker--script">Your outsourced marketing growth team</p>
+      <p class="kicker kicker--script">The challenge</p>
       <h2 class="ai__title">
-        One strategy, every channel, clear results, <em>today</em>.
+        Where most businesses <em>get stuck</em>.
       </h2>
-      <p class="ai__body">
-        Rooftop Twenty Two is an independent studio that plugs into your business
-        like an in-house team, bringing strategy, brand, web, and performance
-        together in one place. One joined-up team, accountable to the numbers that matter.
-      </p>
+      <ul class="ai__list">
+        <li>Budget is going out, but it&rsquo;s hard to say what it returns.</li>
+        <li>The brand and website haven&rsquo;t kept pace with the business.</li>
+        <li>The marketing team is capable, but stretched across too many channels.</li>
+      </ul>
       <div class="ai__cta">
         <a href="/about/" class="wbtn wbtn--primary">About us</a>
         <a href="/contact/" class="wbtn wbtn--ghost ai__ghost">Get in touch</a>
@@ -51,13 +51,30 @@ const image = "/images/office/office-portrait-01.jpg";
     margin: 1rem 0 0;
   }
   .ai__title em { font-style: normal; color: var(--c-accent); }
-  .ai__body {
+  .ai__list {
+    list-style: none;
+    margin: 1.75rem 0 0;
+    padding: 0;
+    max-width: 46ch;
+    border-top: 1px solid var(--c-line);
+  }
+  .ai__list li {
     font-family: var(--w-font-body);
     font-size: var(--fs-body);
     line-height: var(--lh-body);
     color: var(--c-ink-soft);
-    margin-top: 1.5rem;
-    max-width: 46ch;
+    padding: 1rem 0 1rem 1.75rem;
+    border-bottom: 1px solid var(--c-line);
+    position: relative;
+  }
+  .ai__list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: calc(1rem + 0.7em);
+    width: 0.75rem;
+    height: 2px;
+    background: var(--c-accent);
   }
   .ai__cta { display: flex; flex-wrap: wrap; gap: 0.85rem; margin-top: 2rem; }
   .ai__ghost { color: var(--c-ink); }

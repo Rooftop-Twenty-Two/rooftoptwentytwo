@@ -2,10 +2,8 @@
 import Img from "./Img.astro";
 // S1, Home hero (re-skin / Wolfgang direction).
 // Near-black canvas, slow-pan (Ken Burns) office photo, kicker, big display
-// H1 with a rotating discipline word, dual pill CTAs. No video asset yet, 
-// structured so a <video> can drop in behind .whero__media later.
-// Default resting word is "growth" (the homepage promise); the rest rotate.
-const rotating = ["growth", "performance", "creative", "paid ads", "social", "SEO", "web", "content"];
+// two-line H1 (second line in the accent colour), dual pill CTAs. No video
+// asset yet, structured so a <video> can drop in behind .whero__media later.
 const poster = "/images/office/office-studio-01.jpg";
 
 // Recent awards, shown bottom-right of the hero in white. Logos render
@@ -33,22 +31,19 @@ const awards = awardDefs.map((a) => ({ ...a, hasLogo: existsSync(path.join(proce
   </div>
 
   <div class="whero__inner">
-    <p class="kicker kicker--on-dark kicker--script whero__kicker">Your outsourced growth team</p>
+    <p class="kicker kicker--on-dark kicker--script whero__kicker">Brand, web and marketing for growing businesses</p>
     <h1 class="whero__title">
-      <span class="whero__lead">We&rsquo;re your partners in</span>
-      <span class="whero__rotator" data-rotator aria-live="polite">
-        {rotating.map((w, i) => (
-          <span class:list={["whero__word", { "is-active": i === 0 }]} data-word>{w}</span>
-        ))}
-      </span>
+      <span class="whero__lead">A clear plan for growth.</span>
+      <span class="whero__lead whero__accent">Delivered by one team.</span>
     </h1>
     <p class="whero__sub">
-      Strategy, creative, performance. One team, under one roof, working like
-      part of yours.
+      We help businesses decide where their marketing should focus, then
+      deliver it. Brand, website and campaigns under one roof, measured
+      against enquiries, sales and revenue.
     </p>
     <div class="whero__cta">
-      <a href="/work/" class="wbtn wbtn--accent">See our work</a>
-      <a href="/contact/" class="wbtn wbtn--ghost">Get in touch</a>
+      <a href="/contact/" class="wbtn wbtn--accent">Talk to us about your growth plans</a>
+      <a href="/work/" class="wbtn wbtn--ghost">See our results</a>
     </div>
   </div>
 
@@ -119,42 +114,7 @@ const awards = awardDefs.map((a) => ({ ...a, hasLogo: existsSync(path.join(proce
   }
   .whero__lead { display: block; }
 
-  .whero__rotator {
-    position: relative;
-    display: block;
-    height: 1em;
-  }
-  .whero__word {
-    position: absolute;
-    left: 0;
-    top: 0;
-    color: var(--c-accent-2-bright);
-    opacity: 0;
-    transform: translateY(0.7em);
-    filter: blur(8px);
-    transition:
-      opacity 0.55s var(--w-ease),
-      transform 0.75s cubic-bezier(0.16, 1, 0.3, 1),
-      filter 0.55s var(--w-ease);
-    white-space: nowrap;
-    will-change: opacity, transform, filter;
-  }
-  /* Incoming word: rise, sharpen, fade in — held back briefly so the outgoing
-     word has lifted clear first, for a clean hand-off rather than a crossfade. */
-  .whero__word.is-active {
-    opacity: 1;
-    transform: none;
-    filter: blur(0);
-    transition-delay: 0.14s;
-  }
-  /* Outgoing word: lift up and blur away, a touch quicker than the entrance. */
-  .whero__word.is-leaving {
-    opacity: 0;
-    transform: translateY(-0.7em);
-    filter: blur(8px);
-    transition-duration: 0.45s, 0.5s, 0.45s;
-    transition-delay: 0s;
-  }
+  .whero__accent { color: var(--c-accent-2-bright); }
 
   .whero__sub {
     font-family: var(--w-font-body);
@@ -201,26 +161,3 @@ const awards = awardDefs.map((a) => ({ ...a, hasLogo: existsSync(path.join(proce
     .whero__media img { animation: none; transform: scale(1.02); }
   }
 </style>
-
-<script>
-  // Rotating discipline word. Honours reduced-motion (stays on first word).
-  const rotator = document.querySelector<HTMLElement>("[data-rotator]");
-  if (rotator) {
-    const words = Array.from(rotator.querySelectorAll<HTMLElement>("[data-word]"));
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!reduce && words.length > 1) {
-      let i = 0;
-      setInterval(() => {
-        const current = words[i];
-        i = (i + 1) % words.length;
-        const next = words[i];
-        current.classList.remove("is-active");
-        current.classList.add("is-leaving");
-        next.classList.remove("is-leaving");
-        next.classList.add("is-active");
-        // clear the leaving marker after the transition so it can re-enter later
-        window.setTimeout(() => current.classList.remove("is-leaving"), 750);
-      }, 2600);
-    }
-  }
-</script>

@@ -1,27 +1,22 @@
 ---
 // S6, Services overview (condensed). Kicker + intro + a list of service rows
-// (label + blurb + explore link). White section. Content mirrors the four
-// R22 clusters.
+// (label + blurb + explore link). White section. Content mirrors the three core
+// pillars (brand, website, campaigns), with AI as a supporting line.
 const services = [
   {
-    name: "Creative & Content",
+    name: "Brand",
     href: "/services/creative-and-content/",
-    body: "Branding, brand identity, social, photo, and video, produced in-house at the cadence the channels actually need.",
+    body: "How your business is seen and remembered. Identity, messaging, photography, video and content.",
   },
   {
-    name: "Website Design and Development",
+    name: "Website",
     href: "/services/web/",
-    body: "Strategy, design, build, and care, modern sites chosen against your buyer journey, not our preference.",
+    body: "Where interest turns into enquiries and sales. Strategy, design, build and ongoing care.",
   },
   {
-    name: "Performance Marketing",
+    name: "Campaigns",
     href: "/services/performance-marketing/",
-    body: "Google Ads, paid social, SEO, and email, built around the conversions that move your business.",
-  },
-  {
-    name: "AI for Business",
-    href: "/services/ai-for-business/",
-    body: "AI training for marketing teams, practical advice on the right tools, and workflows that save real hours.",
+    body: "How the right customers find you. Google Ads, paid social, SEO and email.",
   },
 ];
 ---
@@ -29,8 +24,12 @@ const services = [
 <section class="so">
   <div class="so__inner">
     <div class="so__head reveal">
-      <p class="kicker kicker--script">Our expertise</p>
-      <h2 class="so__title">Everything you need <em>to grow</em>. One team.</h2>
+      <p class="kicker kicker--script">What we deliver</p>
+      <h2 class="so__title">Everything growth <em>depends on</em>.</h2>
+      <p class="so__intro">
+        A campaign is only as good as the brand and website it sends people to.
+        That&rsquo;s why we deliver all three.
+      </p>
     </div>
     <ul class="so__list reveal--stagger">
       {services.map((s, i) => (
@@ -42,6 +41,10 @@ const services = [
         </li>
       ))}
     </ul>
+    <p class="so__more reveal">
+      We also help teams put AI to work in their marketing and operations.
+      <a href="/services/ai-for-business/">AI for Business &rarr;</a>
+    </p>
   </div>
 </section>
 
@@ -53,6 +56,16 @@ const services = [
     line-height: var(--lh-heading); letter-spacing: var(--tracking-display); margin: 0.5rem 0 0; max-width: 18ch;
   }
   .so__title em { font-style: italic; }
+  .so__intro {
+    font-family: var(--w-font-body); font-size: var(--fs-body); line-height: var(--lh-body);
+    color: var(--c-ink-soft); margin: 1.25rem 0 0; max-width: 46ch;
+  }
+  .so__more {
+    font-family: var(--w-font-body); font-size: var(--fs-body); line-height: var(--lh-body);
+    color: var(--c-ink-soft); margin: 2rem 0 0;
+  }
+  .so__more a { color: var(--c-ink); font-weight: 600; text-decoration: none; margin-left: 0.35rem; white-space: nowrap; }
+  .so__more a:hover { color: var(--c-ink-soft); }
   .so__list { list-style: none; margin: 2.5rem 0 0; padding: 0; border-top: 1px solid var(--c-line); }
   .so__row {
     display: grid; grid-template-columns: auto 1fr; gap: 0.25rem 1.5rem; align-items: baseline;

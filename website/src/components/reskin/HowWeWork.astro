@@ -1,0 +1,100 @@
+---
+// Homepage "How we work": three steps (strategy, execution, reporting) plus a
+// short list showing technical depth in plain terms. Off-white section.
+const steps = [
+  {
+    title: "Strategy",
+    body: "We review your numbers, your market, your brand and your website. Then we recommend where to invest, and what to stop.",
+  },
+  {
+    title: "Execution",
+    body: "Our in-house team delivers the work: the brand, the website, and the campaigns across search, social and email that bring in customers.",
+  },
+  {
+    title: "Reporting",
+    body: "A monthly review against the numbers you run the business on: enquiries, sales, revenue and cost per customer.",
+  },
+];
+
+const practice = [
+  "Websites built to convert, with speed, tracking and search visibility in place from launch.",
+  "Brand work grounded in how your customers choose, not only in how it looks.",
+  "Every enquiry and sale tracked back to the campaign that generated it.",
+  "Campaigns reviewed weekly, so underperforming spend is moved quickly.",
+];
+---
+
+<section class="hw" id="how-we-work">
+  <div class="hw__inner">
+    <div class="hw__head reveal">
+      <p class="kicker kicker--script">How we work</p>
+      <h2 class="hw__title">Strategy, execution and reporting. <em>One team.</em></h2>
+    </div>
+
+    <ol class="hw__steps reveal--stagger">
+      {steps.map((s, i) => (
+        <li class="hw__step">
+          <span class="hw__num">{String(i + 1).padStart(2, "0")}</span>
+          <h3 class="hw__step-title">{s.title}</h3>
+          <p class="hw__step-body">{s.body}</p>
+        </li>
+      ))}
+    </ol>
+
+    <div class="hw__practice reveal">
+      <p class="hw__practice-label">In practice</p>
+      <ul class="hw__practice-list">
+        {practice.map((p) => <li>{p}</li>)}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hw { background: var(--c-bg-alt); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .hw__inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .hw__title {
+    font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2);
+    line-height: var(--lh-heading); letter-spacing: var(--tracking-display);
+    margin: 0.5rem 0 0; max-width: 20ch;
+  }
+  .hw__title em { font-style: normal; color: var(--c-accent); }
+
+  .hw__steps {
+    list-style: none; margin: 2.75rem 0 0; padding: 0;
+    display: grid; grid-template-columns: 1fr; gap: 2rem;
+  }
+  @media (min-width: 860px) { .hw__steps { grid-template-columns: repeat(3, 1fr); gap: 2.5rem; } }
+  .hw__step { border-top: 2px solid var(--c-ink); padding-top: 1.25rem; }
+  .hw__num { font-family: var(--w-font-display); font-weight: 600; color: var(--c-ink-soft); font-size: 1.1rem; }
+  .hw__step-title {
+    font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3);
+    line-height: 1.1; margin: 0.6rem 0 0;
+  }
+  .hw__step-body {
+    font-family: var(--w-font-body); font-size: var(--fs-body); line-height: var(--lh-body);
+    color: var(--c-ink-soft); margin: 0.85rem 0 0;
+  }
+
+  .hw__practice {
+    margin-top: 3.5rem; padding-top: 2rem; border-top: 1px solid var(--c-line);
+    display: grid; grid-template-columns: 1fr; gap: 1rem;
+  }
+  @media (min-width: 860px) { .hw__practice { grid-template-columns: 12rem 1fr; gap: 2.5rem; } }
+  .hw__practice-label {
+    font-family: var(--w-font-display); font-weight: 600; font-size: 1.1rem; margin: 0;
+  }
+  .hw__practice-list {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: 1fr; gap: 0.85rem 2.5rem;
+  }
+  @media (min-width: 640px) { .hw__practice-list { grid-template-columns: 1fr 1fr; } }
+  .hw__practice-list li {
+    font-family: var(--w-font-body); font-size: var(--fs-body); line-height: var(--lh-body);
+    color: var(--c-ink-soft); padding-left: 1.75rem; position: relative;
+  }
+  .hw__practice-list li::before {
+    content: ""; position: absolute; left: 0; top: 0.75em;
+    width: 0.75rem; height: 2px; background: var(--c-accent);
+  }
+</style>
