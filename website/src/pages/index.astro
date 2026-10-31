@@ -3,36 +3,33 @@ import Layout from "../layouts/Layout.astro";
 import HeroHome from "../components/HeroHome.astro";
 import EventBand from "../components/reskin/EventBand.astro";
 import AboutIntro from "../components/reskin/AboutIntro.astro";
-import HowWeWork from "../components/reskin/HowWeWork.astro";
 import LogoWall from "../components/reskin/LogoWall.astro";
+import CaseStudyVideo from "../components/reskin/CaseStudyVideo.astro";
 import SelectedWork from "../components/reskin/SelectedWork.astro";
 import ServicesOverview from "../components/reskin/ServicesOverview.astro";
-import CaseStudyVideo from "../components/reskin/CaseStudyVideo.astro";
 import FeatureBand from "../components/reskin/FeatureBand.astro";
 import TeamPreview from "../components/reskin/TeamPreview.astro";
+import CareersBand from "../components/reskin/CareersBand.astro";
 import ClientTestimonials from "../components/reskin/ClientTestimonials.astro";
 import LatestInsights from "../components/reskin/LatestInsights.astro";
 import WCtaBand from "../components/reskin/WCtaBand.astro";
 ---
 
 <Layout
-  title="Brand, Web & Digital Marketing Agency Dublin | Rooftop Twenty Two"
-  description="Rooftop Twenty Two helps growing businesses decide where their marketing should focus, then delivers it. Brand, website and campaigns from one in-house team in Dublin, measured against enquiries, sales and revenue."
+  title="Web & Digital Marketing Agency Dublin | Rooftop Twenty Two"
+  description="Rooftop Twenty Two is a website and digital marketing agency in Dublin. Web design, SEO, paid media, and content under one roof for ambitious Irish brands."
 >
   <HeroHome />
+  <EventBand />
   <AboutIntro />
-  <HowWeWork />
-  <ServicesOverview />
   <LogoWall heading="Trusted by ambitious brands" />
   <CaseStudyVideo />
   <SelectedWork />
+  <ServicesOverview />
   <FeatureBand />
-  <ClientTestimonials />
-  <EventBand />
   <TeamPreview />
+  <CareersBand />
+  <ClientTestimonials />
   <LatestInsights />
-  <WCtaBand
-    heading="Let's talk about where the business is headed."
-    body="Tell us where you want to be in 12 months. We'll come back with a clear view on how to get there, and a time to talk it through."
-  />
+  <WCtaBand />
 </Layout>
