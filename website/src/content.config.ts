@@ -165,6 +165,8 @@ const services = defineCollection({
           z.object({
             title: z.string(),
             body: z.string(),
+            points: z.array(z.string()).default([]),
+            stat: z.object({ value: z.string(), label: z.string() }).optional(),
             media: z
               .array(
                 z.object({
@@ -262,6 +264,8 @@ const programmes = defineCollection({
           z.object({
             title: z.string(),
             body: z.string(),
+            points: z.array(z.string()).default([]),
+            stat: z.object({ value: z.string(), label: z.string() }).optional(),
             media: z
               .array(
                 z.object({
