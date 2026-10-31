@@ -31,11 +31,11 @@ const awards = awardDefs.map((a) => ({ ...a, hasLogo: existsSync(path.join(proce
   </div>
 
   <div class="whero__inner">
-    <p class="kicker kicker--on-dark kicker--script whero__kicker">Brand, web and marketing for growing businesses</p>
-    <h1 class="whero__title">
+    <h1 class="kicker kicker--on-dark kicker--script whero__kicker">Brand, web and digital marketing agency in Dublin</h1>
+    <p class="whero__title">
       <span class="whero__lead">A clear plan for growth.</span>
       <span class="whero__lead whero__accent">Delivered by one team.</span>
-    </h1>
+    </p>
     <p class="whero__sub">
       We help businesses decide where their marketing should focus, then
       deliver it. Brand, website and campaigns under one roof, measured
@@ -101,7 +101,7 @@ const awards = awardDefs.map((a) => ({ ...a, hasLogo: existsSync(path.join(proce
     max-width: var(--w-container);
     margin: 0 auto;
   }
-  .whero__kicker { margin-bottom: 1.5rem; }
+  .whero__kicker { margin: 0 0 1.5rem; }
 
   .whero__title {
     font-family: var(--w-font-display);
