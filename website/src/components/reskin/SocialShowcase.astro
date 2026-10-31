@@ -1,0 +1,327 @@
+---
+// Social Media Management showcase, rendered inside the service template for
+// /services/social-media-management/. Four visual sections:
+//   1. How a month works: six-step cycle beside a stylised content calendar
+//   2. Inside the monthly deck: real pages from decks sent to clients
+//   3. Video wall: in-house reels that play muted while on screen
+//   4. Community, managed: what happens after a post goes live
+import Picture from "../Picture.astro";
+
+const steps = [
+  { n: "01", title: "Monthly plan", body: "Before each month starts, we plan the content around your goals: themes, key dates, offers and what's happening in the business." },
+  { n: "02", title: "Planning meeting", body: "A short monthly meeting to walk you through the plan. You add what's coming up, we agree the priorities." },
+  { n: "03", title: "Monthly content", body: "Our team shoots, designs and edits the month's content in-house, then sends it to you as one deck for sign-off." },
+  { n: "04", title: "Rolled out", body: "Approved posts are scheduled and published across your channels on the agreed dates, with reels and stories in between." },
+  { n: "05", title: "Community managed", body: "Comments, messages and reviews are answered in your tone of voice, and anything that needs you is flagged to you." },
+  { n: "06", title: "Report and refine", body: "A monthly report on reach, engagement and enquiries, and what we'll change next month based on what worked." },
+];
+
+// Stylised month: 5 rows of 7 days. Values are event keys, shown as chips.
+type Ev = "post" | "reel" | "story" | "shoot" | "meeting" | "deck" | "report";
+const days: Record<number, Ev[]> = {
+  1: ["post"], 2: ["reel"], 3: ["shoot"], 5: ["post", "story"], 7: ["reel"],
+  8: ["post"], 10: ["story"], 12: ["post"], 14: ["reel"], 15: ["post"],
+  17: ["story"], 19: ["post"], 21: ["reel"], 22: ["post"], 24: ["meeting"],
+  25: ["deck"], 26: ["post", "story"], 28: ["reel"], 29: ["post"], 30: ["report"],
+};
+const evLabel: Record<Ev, string> = {
+  post: "Post", reel: "Reel", story: "Story", shoot: "Shoot day",
+  meeting: "Planning meeting", deck: "Deck sign-off", report: "Monthly report",
+};
+const cells = Array.from({ length: 35 }, (_, i) => i + 1);
+
+const decks = [
+  { src: "/images/social/decks/gfp-grid.jpg", client: "Gourmet Food Parlour", label: "Social guidelines and feed" },
+  { src: "/images/social/decks/shomera-ad1.jpg", client: "Shomera", label: "Monthly social ads" },
+  { src: "/images/social/decks/think-posts.jpg", client: "Think Group", label: "Organic social creative" },
+  { src: "/images/social/decks/idf-feed.jpg", client: "Irish Dog Foods", label: "Organic social creative" },
+  { src: "/images/social/decks/mig-xmas-overview.jpg", client: "McCarthy Insurance Group", label: "Christmas social content" },
+  { src: "/images/social/decks/gcj-posts.jpg", client: "Guinness Cork Jazz", label: "Festival social content" },
+  { src: "/images/social/decks/xmas-post.jpg", client: "Barry & Byrne", label: "Monthly content sign-off" },
+  { src: "/images/social/decks/gfp-posts.jpg", client: "Gourmet Food Parlour", label: "Post designs" },
+  { src: "/images/social/decks/shomera-carousel.jpg", client: "Shomera", label: "Carousel ad" },
+  { src: "/images/social/decks/ilt-posts.jpg", client: "Irish Landmark Trust", label: "Social content" },
+];
+
+const reels = [
+  { file: "gfp-summer-menu", client: "Gourmet Food Parlour", label: "Summer menu" },
+  { file: "1933-sofa", client: "The 1933 Furniture Company", label: "The hands behind every sofa" },
+  { file: "gcj-halsall", client: "Guinness Cork Jazz", label: "Artist announcement" },
+  { file: "bloomfield-1", client: "Bloomfield", label: "A place of hope" },
+  { file: "gfp-burger", client: "Gourmet Food Parlour", label: "Takeaway launch" },
+  { file: "gcj-macy", client: "Guinness Cork Jazz", label: "Macy Gray story" },
+  { file: "1933-factory", client: "The 1933 Furniture Company", label: "Inside the factory" },
+  { file: "gfp-harvest", client: "Gourmet Food Parlour", label: "Harvest Festival" },
+  { file: "bloomfield-reception", client: "Bloomfield", label: "New reception" },
+  { file: "gfp-bts", client: "Gourmet Food Parlour", label: "Behind the scenes" },
+  { file: "gcj-launch", client: "Guinness Cork Jazz", label: "Festival launch" },
+  { file: "gfp-we-cook", client: "Gourmet Food Parlour", label: "We cook, you enjoy" },
+];
+
+const community = [
+  { title: "Comments and messages", body: "Answered in your tone of voice during business hours, Monday to Friday." },
+  { title: "Reviews", body: "Thanked, answered and, where something's gone wrong, handled carefully and quickly." },
+  { title: "Flagged to you", body: "Complaints, leads and anything sensitive come straight to the right person in your team." },
+  { title: "Fed back into the plan", body: "The questions people ask become next month's content." },
+];
+---
+
+<!-- 1. How a month works -->
+<section class="sx-month">
+  <div class="sx-inner">
+    <div class="sx-head reveal">
+      <p class="kicker kicker--script">How a month works</p>
+      <h2 class="sx-h2">Planned, made, rolled out <em>and looked after</em>.</h2>
+      <p class="sx-intro">Every month follows the same rhythm, so you always know what's going out, when, and why.</p>
+    </div>
+
+    <div class="sx-month__grid">
+      <ol class="sx-steps reveal--stagger">
+        {steps.map((s) => (
+          <li class="sx-step">
+            <span class="sx-step__n">{s.n}</span>
+            <div>
+              <h3 class="sx-step__t">{s.title}</h3>
+              <p class="sx-step__b">{s.body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <figure class="sx-cal reveal" aria-label="An example month of social media content">
+        <div class="sx-cal__top">
+          <span class="sx-cal__title">A typical month</span>
+          <span class="sx-cal__sub">Instagram · Facebook · LinkedIn · TikTok</span>
+        </div>
+        <div class="sx-cal__dow" aria-hidden="true">
+          {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => <span>{d}</span>)}
+        </div>
+        <div class="sx-cal__grid">
+          {cells.map((d) => (
+            <div class:list={["sx-cal__cell", { "is-out": d > 30 }]}>
+              {d <= 30 && <span class="sx-cal__d">{d}</span>}
+              {(days[d] ?? []).map((e) => <span class={`sx-chip sx-chip--${e}`}>{evLabel[e]}</span>)}
+            </div>
+          ))}
+        </div>
+        <div class="sx-cal__band">Community managed, every weekday</div>
+        <figcaption class="sx-cal__legend">
+          <span><i class="sx-dot sx-dot--post"></i>Posts</span>
+          <span><i class="sx-dot sx-dot--reel"></i>Reels and stories</span>
+          <span><i class="sx-dot sx-dot--shoot"></i>Shoot day</span>
+          <span><i class="sx-dot sx-dot--meeting"></i>Planning and sign-off</span>
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- 2. Inside the monthly deck -->
+<section class="sx-decks">
+  <div class="sx-inner">
+    <div class="sx-head sx-head--split reveal">
+      <div>
+        <p class="kicker kicker--script">Inside the monthly deck</p>
+        <h2 class="sx-h2">Every post for the month, <em>in one place</em>.</h2>
+      </div>
+      <p class="sx-intro">Each month you get a deck with every post, caption and date laid out. You review it, ask for changes, and sign it off before anything goes live. These are real pages from decks we've sent to clients.</p>
+    </div>
+  </div>
+  <div class="sx-decks__rail" role="list">
+    {decks.map((d) => (
+      <figure class="sx-deck" role="listitem">
+        <div class="sx-deck__img">
+          <Picture src={d.src} alt={`${d.client}: ${d.label}`} loading="lazy" decoding="async" />
+        </div>
+        <figcaption><b>{d.client}</b><span>{d.label}</span></figcaption>
+      </figure>
+    ))}
+  </div>
+  <p class="sx-decks__hint sx-inner" aria-hidden="true">Scroll for more &rarr;</p>
+</section>
+
+<!-- 3. Video wall -->
+<section class="sx-reels">
+  <div class="sx-inner">
+    <div class="sx-head sx-head--split reveal">
+      <div>
+        <p class="kicker kicker--script kicker--on-dark">Made in-house</p>
+        <h2 class="sx-h2 sx-h2--light">Shot, edited and posted <em>by the same team</em>.</h2>
+      </div>
+      <p class="sx-intro sx-intro--light">Our photographers and videographers shoot on location every month: restaurants, festivals, factories and clinics. Hospitality is where we do the most, from menu launches to event weekends.</p>
+    </div>
+    <ul class="sx-reels__grid" role="list">
+      {reels.map((r) => (
+        <li class="sx-reel">
+          <video
+            class="sx-reel__v"
+            data-reel
+            data-src={`/videos/social/${r.file}.mp4`}
+            poster={`/images/social/reels/${r.file}.jpg`}
+            muted
+            loop
+            playsinline
+            preload="none"
+            aria-label={`${r.client}: ${r.label}`}
+          ></video>
+          <div class="sx-reel__cap"><b>{r.client}</b><span>{r.label}</span></div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<!-- 4. Community, managed -->
+<section class="sx-comm">
+  <div class="sx-inner sx-comm__grid">
+    <div class="reveal">
+      <p class="kicker kicker--script">Community managed</p>
+      <h2 class="sx-h2">The conversation <em>doesn't stop</em> at posting.</h2>
+      <p class="sx-intro">Social is where customers ask questions, leave reviews and sometimes complain. We look after all of it, so your brand sounds the same in the comments as it does in the posts.</p>
+    </div>
+    <ol class="sx-flow reveal--stagger">
+      {community.map((c, i) => (
+        <li class="sx-flow__item">
+          <span class="sx-flow__n">{String(i + 1).padStart(2, "0")}</span>
+          <div>
+            <h3 class="sx-flow__t">{c.title}</h3>
+            <p class="sx-flow__b">{c.body}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .sx-inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .sx-head { max-width: 46rem; }
+  .sx-head--split { max-width: none; display: grid; gap: 1.25rem 4rem; align-items: end; }
+  @media (min-width: 960px) { .sx-head--split { grid-template-columns: 1.1fr 0.9fr; } }
+  .sx-h2 {
+    font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2);
+    line-height: var(--lh-heading); letter-spacing: var(--tracking-display); margin: 0.5rem 0 0; color: var(--c-ink);
+  }
+  .sx-h2 em { font-style: normal; color: var(--c-accent); }
+  .sx-h2--light { color: #fff; }
+  .sx-h2--light em { color: var(--c-accent-2-bright); }
+  .sx-intro { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: var(--lh-body); color: var(--c-ink-soft); margin: 1rem 0 0; max-width: 46ch; }
+  .sx-intro--light { color: var(--c-on-dark-soft); }
+
+  /* 1. Month */
+  .sx-month { background: var(--c-bg); padding-block: var(--w-section-y); }
+  .sx-month__grid { display: grid; gap: 3rem; margin-top: 3rem; align-items: start; }
+  @media (min-width: 1040px) { .sx-month__grid { grid-template-columns: 0.85fr 1.15fr; gap: 4rem; } }
+  .sx-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; border-top: 1px solid var(--c-line); }
+  .sx-step { display: grid; grid-template-columns: 3rem 1fr; gap: 1rem; padding: 1.25rem 0; border-bottom: 1px solid var(--c-line); }
+  .sx-step__n { font-family: var(--w-font-display); font-weight: 600; font-size: 1.1rem; color: var(--c-accent); padding-top: 0.15rem; }
+  .sx-step__t { font-family: var(--w-font-display); font-weight: 600; font-size: 1.35rem; line-height: 1.15; margin: 0; color: var(--c-ink); }
+  .sx-step__b { font-family: var(--w-font-body); font-size: 1rem; line-height: 1.6; color: var(--c-ink-soft); margin: 0.35rem 0 0; }
+
+  .sx-cal {
+    margin: 0; background: var(--c-bg-alt); border-radius: var(--w-radius); padding: clamp(1rem, 2.5vw, 1.75rem);
+    box-shadow: var(--w-shadow-soft); position: sticky; top: 7rem;
+  }
+  .sx-cal__top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0.5rem; }
+  .sx-cal__title { font-family: var(--w-font-display); font-weight: 600; font-size: 1.4rem; color: var(--c-ink); }
+  .sx-cal__sub { font-family: var(--w-font-body); font-size: 0.8rem; color: var(--c-ink-soft); }
+  .sx-cal__dow, .sx-cal__grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .sx-cal__dow { margin-top: 1rem; }
+  .sx-cal__dow span { font-family: var(--w-font-body); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--c-ink-soft); padding: 0 0.3rem 0.35rem; }
+  .sx-cal__cell {
+    background: #fff; border-radius: 8px; min-height: clamp(3.4rem, 6.5vw, 5.25rem); padding: 0.3rem;
+    display: flex; flex-direction: column; gap: 3px; overflow: hidden;
+  }
+  .sx-cal__cell.is-out { background: transparent; }
+  .sx-cal__d { font-family: var(--w-font-body); font-size: 0.7rem; font-weight: 700; color: var(--c-ink-soft); }
+  .sx-chip {
+    font-family: var(--w-font-body); font-size: 0.66rem; font-weight: 700; line-height: 1.15;
+    border-radius: 5px; padding: 0.2rem 0.3rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .sx-chip--post { background: var(--c-dark); color: #fff; }
+  .sx-chip--reel, .sx-chip--story { background: #ccfff0; color: var(--c-ink); }
+  .sx-chip--shoot { background: var(--c-accent); color: #fff; }
+  .sx-chip--meeting, .sx-chip--deck, .sx-chip--report { background: #fff1d6; color: #7a4b00; border: 1px solid #f0d49a; white-space: normal; }
+  @media (max-width: 560px) {
+    .sx-chip { font-size: 0; padding: 0; height: 6px; border-radius: 3px; border: 0; }
+  }
+  .sx-cal__band {
+    margin-top: 0.6rem; border-radius: 8px; padding: 0.55rem 0.8rem; text-align: center;
+    font-family: var(--w-font-body); font-size: 0.8rem; font-weight: 700; color: var(--c-ink);
+    background: repeating-linear-gradient(135deg, #ccfff0 0 12px, #b8f7e4 12px 24px);
+  }
+  .sx-cal__legend { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; margin-top: 1rem; font-family: var(--w-font-body); font-size: 0.8rem; color: var(--c-ink-soft); }
+  .sx-dot { display: inline-block; width: 0.7rem; height: 0.7rem; border-radius: 3px; margin-right: 0.4rem; vertical-align: -0.05rem; }
+  .sx-dot--post { background: var(--c-dark); }
+  .sx-dot--reel { background: #8ff5d6; }
+  .sx-dot--shoot { background: var(--c-accent); }
+  .sx-dot--meeting { background: #f6d58e; }
+
+  /* 2. Decks */
+  .sx-decks { background: var(--c-bg-alt); padding-block: var(--w-section-y); overflow: hidden; }
+  .sx-decks__rail {
+    display: flex; gap: 1.5rem; overflow-x: auto; scroll-snap-type: x mandatory;
+    --sx-edge: max(var(--w-gutter), calc((100vw - var(--w-container)) / 2 + var(--w-gutter)));
+    padding: 2.75rem var(--sx-edge) 1rem;
+    scroll-padding-inline: var(--sx-edge);
+    scrollbar-width: thin; scrollbar-color: var(--c-line) transparent;
+  }
+  .sx-deck { margin: 0; flex: 0 0 min(84vw, 620px); scroll-snap-align: start; }
+  .sx-deck__img { border-radius: 14px; overflow: hidden; background: #fff; box-shadow: var(--w-shadow-soft); aspect-ratio: 16 / 9; }
+  .sx-deck__img :global(img) { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .sx-deck figcaption { display: flex; flex-wrap: wrap; gap: 0.25rem 0.6rem; margin-top: 0.9rem; font-family: var(--w-font-body); font-size: 0.95rem; color: var(--c-ink-soft); }
+  .sx-deck figcaption b { color: var(--c-ink); font-weight: 700; }
+  .sx-decks__hint { font-family: var(--w-font-body); font-size: 0.85rem; font-weight: 600; color: var(--c-ink-soft); margin-top: 0.5rem; }
+
+  /* 3. Reels */
+  .sx-reels { background: var(--c-dark); padding-block: var(--w-section-y); }
+  .sx-reels__grid { list-style: none; margin: 3rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+  @media (max-width: 639px) { .sx-reel:nth-child(n + 9) { display: none; } }
+  @media (min-width: 640px) { .sx-reels__grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 1000px) { .sx-reels__grid { grid-template-columns: repeat(6, 1fr); gap: 1rem; } }
+  .sx-reel { position: relative; border-radius: 14px; overflow: hidden; aspect-ratio: 9 / 16; background: #091826; }
+  .sx-reel__v { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .sx-reel__cap {
+    position: absolute; left: 0; right: 0; bottom: 0; padding: 2.5rem 0.75rem 0.75rem;
+    background: linear-gradient(to top, rgba(9, 24, 38, 0.92), rgba(9, 24, 38, 0));
+    display: flex; flex-direction: column; gap: 0.1rem; font-family: var(--w-font-body); color: #fff;
+  }
+  .sx-reel__cap b { font-size: 0.78rem; font-weight: 700; }
+  .sx-reel__cap span { font-size: 0.75rem; color: var(--c-on-dark-soft); }
+
+  /* 4. Community */
+  .sx-comm { background: var(--c-bg); padding-block: var(--w-section-y); }
+  .sx-comm__grid { display: grid; gap: 3rem; align-items: start; }
+  @media (min-width: 960px) { .sx-comm__grid { grid-template-columns: 1fr 1fr; gap: 5rem; } }
+  .sx-flow { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; }
+  .sx-flow__item {
+    display: grid; grid-template-columns: 3rem 1fr; gap: 1rem; align-items: start;
+    background: var(--c-bg-alt); border-radius: 14px; padding: 1.25rem 1.4rem;
+  }
+  .sx-flow__n {
+    width: 2.5rem; height: 2.5rem; border-radius: 50%; display: grid; place-items: center;
+    background: var(--c-dark); color: var(--c-accent-2-bright); font-family: var(--w-font-display); font-weight: 600; font-size: 0.95rem;
+  }
+  .sx-flow__t { font-family: var(--w-font-display); font-weight: 600; font-size: 1.25rem; margin: 0.1rem 0 0; color: var(--c-ink); }
+  .sx-flow__b { font-family: var(--w-font-body); font-size: 1rem; line-height: 1.6; color: var(--c-ink-soft); margin: 0.3rem 0 0; }
+</style>
+
+<script>
+  // Reels load and play only while on screen, muted. Reduced motion: posters only.
+  const reels = Array.from(document.querySelectorAll<HTMLVideoElement>("[data-reel]"));
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reels.length && !reduce && "IntersectionObserver" in window) {
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        const v = e.target as HTMLVideoElement;
+        if (e.isIntersecting) {
+          if (!v.src && v.dataset.src) v.src = v.dataset.src;
+          v.play().catch(() => {});
+        } else {
+          v.pause();
+        }
+      }
+    }, { threshold: 0.35 });
+    reels.forEach((v) => io.observe(v));
+  }
+</script>

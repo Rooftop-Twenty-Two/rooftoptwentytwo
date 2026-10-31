@@ -117,6 +117,9 @@ const breadcrumbs = isClusterParent
     </div>
   </section>
 
+  <!-- Optional page-specific showcase (e.g. the social media page) -->
+  <slot name="showcase" />
+
   {platformCompare && (
     <section class="ws-cmp">
       <div class="ws-cmp__inner">
