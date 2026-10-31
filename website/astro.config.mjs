@@ -67,6 +67,9 @@ const retiredRedirects = {
   '/work/joseph-may/': { status: 301, destination: '/work/' },
   '/portfolio/joseph-may/': { status: 301, destination: '/work/' },
   '/latest/joseph-may-website-launch/': { status: 301, destination: '/latest/' },
+  // Dublin Shuttles removed from the site.
+  '/work/dublin-shuttles/': { status: 301, destination: '/work/' },
+  '/portfolio/dublin-shuttles/': { status: 301, destination: '/work/' },
 };
 
 // https://astro.build/config

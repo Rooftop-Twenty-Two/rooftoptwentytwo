@@ -1,0 +1,78 @@
+---
+// Homepage case study video: Cathal on the Shomera project. Copy and one
+// published SEO result on the left, portrait video on the right. The video
+// never autoplays; it loads metadata only until someone presses play.
+const video = "/videos/cathal-shomera.mp4";
+const poster = "/images/video/cathal-shomera-poster.jpg";
+---
+
+<section class="cv">
+  <div class="cv__inner">
+    <div class="cv__copy reveal">
+      <p class="kicker kicker--script">Case study: Shomera</p>
+      <h2 class="cv__title">Brand, website and campaigns, <em>working together</em>.</h2>
+      <p class="cv__body">
+        Shomera has designed and built garden studios and house extensions in
+        Ireland since 1998. We rebuilt the brand from the strategy up, designed
+        and built a new website, and run the search and paid campaigns that
+        bring in the right enquiries.
+      </p>
+      <p class="cv__body">Cathal explains how the pieces fit together.</p>
+      <div class="cv__stat">
+        <span class="cv__stat-num">51 of 77</span>
+        <span class="cv__stat-txt">tracked search terms in Google&rsquo;s top three, with 36 at number one (June 2026).</span>
+      </div>
+      <a href="/work/shomera/" class="wbtn wbtn--primary cv__btn">Read the Shomera case study</a>
+    </div>
+
+    <figure class="cv__media reveal">
+      <video
+        class="cv__video"
+        src={video}
+        poster={poster}
+        controls
+        playsinline
+        preload="metadata"
+        aria-label="Cathal O'Reilly, founder of Rooftop Twenty Two, talks through the Shomera project"
+      ></video>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .cv { background: var(--c-bg); color: var(--c-ink); padding-block: var(--w-section-y); }
+  .cv__inner {
+    max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter);
+    display: grid; grid-template-columns: 1fr; gap: 2.5rem; align-items: center;
+  }
+  @media (min-width: 900px) {
+    .cv__inner { grid-template-columns: 1.15fr 0.85fr; gap: 5rem; }
+  }
+  .cv__title {
+    font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2);
+    line-height: var(--lh-heading); letter-spacing: var(--tracking-display);
+    margin: 0.5rem 0 0; max-width: 18ch;
+  }
+  .cv__title em { font-style: normal; color: var(--c-accent); }
+  .cv__body {
+    font-family: var(--w-font-body); font-size: var(--fs-body); line-height: var(--lh-body);
+    color: var(--c-ink-soft); margin: 1.25rem 0 0; max-width: 46ch;
+  }
+  .cv__stat {
+    display: flex; flex-direction: column; gap: 0.35rem;
+    margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--c-line); max-width: 46ch;
+  }
+  .cv__stat-num {
+    font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3);
+    line-height: 1.1; color: var(--c-ink);
+  }
+  .cv__stat-txt { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.5; color: var(--c-ink-soft); }
+  .cv__btn { margin-top: 2rem; }
+
+  .cv__media {
+    margin: 0 auto; width: 100%; max-width: 360px;
+    border-radius: calc(var(--w-radius) * 1.5); overflow: hidden;
+    aspect-ratio: 9 / 16; background: var(--c-dark); box-shadow: var(--w-shadow-soft);
+  }
+  .cv__video { width: 100%; height: 100%; object-fit: cover; display: block; }
+</style>

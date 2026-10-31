@@ -77,24 +77,23 @@ const practice = [
   }
 
   .hw__practice {
-    margin-top: 3.5rem; padding-top: 2rem; border-top: 1px solid var(--c-line);
-    display: grid; grid-template-columns: 1fr; gap: 1rem;
+    margin-top: clamp(3.5rem, 6vw, 5rem);
+    background: var(--c-bg);
+    border-radius: var(--w-radius);
+    padding: clamp(1.75rem, 3.5vw, 3rem);
+    box-shadow: var(--w-shadow-soft);
   }
-  @media (min-width: 860px) { .hw__practice { grid-template-columns: 12rem 1fr; gap: 2.5rem; } }
   .hw__practice-label {
-    font-family: var(--w-font-display); font-weight: 600; font-size: 1.1rem; margin: 0;
+    font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3);
+    line-height: 1.1; margin: 0;
   }
   .hw__practice-list {
-    list-style: none; margin: 0; padding: 0;
-    display: grid; grid-template-columns: 1fr; gap: 0.85rem 2.5rem;
+    list-style: none; margin: 1.75rem 0 0; padding: 0;
+    display: grid; grid-template-columns: 1fr; gap: 1.25rem 3rem;
   }
-  @media (min-width: 640px) { .hw__practice-list { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 720px) { .hw__practice-list { grid-template-columns: 1fr 1fr; } }
   .hw__practice-list li {
     font-family: var(--w-font-body); font-size: var(--fs-body); line-height: var(--lh-body);
-    color: var(--c-ink-soft); padding-left: 1.75rem; position: relative;
-  }
-  .hw__practice-list li::before {
-    content: ""; position: absolute; left: 0; top: 0.75em;
-    width: 0.75rem; height: 2px; background: var(--c-accent);
+    color: var(--c-ink); padding-top: 1rem; border-top: 1px solid var(--c-line);
   }
 </style>
