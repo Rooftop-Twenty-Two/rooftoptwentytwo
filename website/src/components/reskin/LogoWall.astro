@@ -1,5 +1,7 @@
 ---
 import Img from "../Img.astro";
+interface Props { heading?: string }
+const { heading = "Trusted by ambitious Irish brands" } = Astro.props;
 // S4, Logo wall / trust bar. Monochrome (white) client logos on a dark band,
 // scrolling as a seamless left-to-right marquee.
 const logos = [
@@ -23,7 +25,7 @@ const track = [...half, ...half];
 
 <section class="lw">
   <div class="lw__inner">
-    <p class="kicker kicker--on-dark">Trusted by ambitious Irish brands</p>
+    <p class="kicker kicker--on-dark">{heading}</p>
   </div>
   <div class="lw__marquee" data-marquee="38" data-marquee-dir="reverse" aria-hidden="false">
     <ul class="lw__track" role="list">

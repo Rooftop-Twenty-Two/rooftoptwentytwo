@@ -1,51 +1,78 @@
 ---
-// Sticky floating "Get in touch" CTA, bottom-right. Hidden at the top of the
-// page, slides in once the user scrolls past the hero, and tucks away again
-// near the footer so it never sits on top of the pre-footer contact CTA.
-// Cathal's face sits beside the label to keep it personal. Shown on every
-// page except /contact (where it'd be redundant).
-const portrait = "/images/team/R22-Headshot-updated-11-768x1024.jpg";
-const onContact = Astro.url.pathname.startsWith("/contact");
+// Floating Shomera video prompt, bottom-right on every page. Shows the opening
+// frame of Cathal's Shomera video with a play badge. Hidden at the top of the
+// page, slides in once the user scrolls past the hero, and tucks away near the
+// footer so it never covers the pre-footer contact CTA. Clicking it opens the
+// video large in a modal dialog, with links to the case study and contact.
+const thumb = "/images/video/cathal-shomera-thumb.jpg";
+const video = "/videos/cathal-shomera.mp4";
+const poster = "/images/video/cathal-shomera-poster.jpg";
 ---
 
-{!onContact && (
-  <a
-    href="/contact/"
-    class="sticky-cta"
-    data-sticky-cta
-    aria-label="Get in touch with Cathal at Rooftop Twenty Two"
-  >
-    <img
-      class="sticky-cta__face"
-      src={portrait}
-      alt=""
-      width="40"
-      height="40"
-      loading="lazy"
-      decoding="async"
-    />
-    <span class="sticky-cta__label">Get in touch</span>
-  </a>
-)}
+<button
+  type="button"
+  class="vcta"
+  data-vcta
+  aria-haspopup="dialog"
+  aria-controls="vcta-dialog"
+>
+  <span class="vcta__thumb">
+    <img src={thumb} alt="" width="60" height="80" loading="lazy" decoding="async" />
+    <span class="vcta__play" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="12" height="12"><path d="M8 5v14l11-7z" fill="currentColor" /></svg>
+    </span>
+  </span>
+  <span class="vcta__text">
+    <span class="vcta__kicker">Case study &middot; 2 min</span>
+    <span class="vcta__label">Watch Cathal on Shomera</span>
+  </span>
+</button>
+
+<dialog class="vmodal" id="vcta-dialog" aria-label="Cathal O'Reilly on the Shomera case study" data-vmodal>
+  <div class="vmodal__panel">
+    <button type="button" class="vmodal__close" data-vmodal-close aria-label="Close video">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+    </button>
+    <div class="vmodal__media">
+      <video
+        class="vmodal__video"
+        data-vmodal-video
+        src={video}
+        poster={poster}
+        controls
+        playsinline
+        preload="none"
+      ></video>
+    </div>
+    <div class="vmodal__copy">
+      <p class="vmodal__kicker">Case study: Shomera</p>
+      <p class="vmodal__title">Brand, website and campaigns, working together.</p>
+      <div class="vmodal__cta">
+        <a href="/work/shomera/" class="wbtn wbtn--accent">Read the Shomera case study</a>
+        <a href="/contact/" class="wbtn wbtn--ghost vmodal__ghost">Talk to us about your growth plans</a>
+      </div>
+    </div>
+  </div>
+</dialog>
 
 <style>
-  .sticky-cta {
+  .vcta {
     position: fixed;
     bottom: 1rem;
     right: 1rem;
     z-index: 90;
     display: inline-flex;
     align-items: center;
-    gap: 0.6rem;
-    padding: 0.5rem 1.1rem 0.5rem 0.5rem;
+    gap: 0.9rem;
+    padding: 0.5rem 1.4rem 0.5rem 0.5rem;
     background-color: var(--c-accent);
     color: #ffffff;
-    border-radius: 9999px;
+    border: 0;
+    border-radius: 18px;
     font-family: var(--font-sans);
-    font-weight: 600;
-    font-size: 0.95rem;
-    text-decoration: none;
-    box-shadow: 0 8px 24px rgba(225, 80, 71, 0.32);
+    text-align: left;
+    cursor: pointer;
+    box-shadow: 0 10px 28px rgba(225, 80, 71, 0.34);
     /* Hidden until scrolled: park it off the bottom-right and fade out. */
     opacity: 0;
     transform: translateY(140%);
@@ -55,35 +82,97 @@ const onContact = Astro.url.pathname.startsWith("/contact");
       opacity 320ms var(--ease-out-rooftop),
       box-shadow 200ms var(--ease-out-rooftop);
   }
-  .sticky-cta.is-visible {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
-  }
-  .sticky-cta:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 28px rgba(225, 80, 71, 0.42);
-  }
-  .sticky-cta__face {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-    object-position: 50% 18%;
-    background: #fff;
+  .vcta.is-visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .vcta:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(225, 80, 71, 0.44); }
+  .vcta:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+
+  .vcta__thumb {
+    position: relative; flex: 0 0 auto;
+    width: 60px; height: 80px; border-radius: 12px; overflow: hidden;
     box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.9);
-    flex: 0 0 auto;
+    background: var(--c-dark);
   }
+  .vcta__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .vcta__play {
+    position: absolute; right: 4px; bottom: 4px;
+    width: 24px; height: 24px; border-radius: 50%;
+    display: grid; place-items: center; padding-left: 2px;
+    background: rgba(255, 255, 255, 0.92); color: var(--c-accent);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  }
+  .vcta__text { display: flex; flex-direction: column; gap: 0.2rem; }
+  .vcta__kicker { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; opacity: 0.85; }
+  .vcta__label { font-size: 1.05rem; font-weight: 700; line-height: 1.2; }
+
+  @media (max-width: 520px) {
+    .vcta { gap: 0.7rem; padding-right: 1rem; }
+    .vcta__thumb { width: 48px; height: 64px; }
+    .vcta__label { font-size: 0.95rem; }
+  }
+
+  /* Modal */
+  .vmodal {
+    padding: 0; border: 0; background: transparent; color: var(--c-on-dark);
+    max-width: none; max-height: none; width: 100%; height: 100%;
+  }
+  .vmodal::backdrop { background: rgba(13, 32, 48, 0.96); backdrop-filter: blur(6px); }
+  .vmodal[open] { display: grid; place-items: center; }
+  .vmodal__panel {
+    position: relative;
+    display: grid; grid-template-columns: 1fr; gap: 1.5rem; align-items: center;
+    width: min(92vw, 860px); padding: 1rem;
+    max-height: 100dvh; overflow-y: auto;
+  }
+  @media (min-width: 820px) {
+    .vmodal__panel { grid-template-columns: auto 1fr; gap: 2.5rem; }
+  }
+  .vmodal__media {
+    justify-self: center;
+    height: min(78vh, 760px); aspect-ratio: 9 / 16; max-width: 86vw;
+    border-radius: 20px; overflow: hidden; background: #000;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  }
+  @media (max-width: 819px) {
+    .vmodal__panel { gap: 1.1rem; padding-top: 3.5rem; }
+    .vmodal__media { height: min(56dvh, 560px); }
+    .vmodal__cta { margin-top: 1.1rem; }
+  }
+  .vmodal__video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .vmodal__kicker { font-family: var(--font-sans); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--c-on-dark-soft); margin: 0; }
+  .vmodal__title {
+    font-family: var(--w-font-display); font-weight: 600; font-size: clamp(1.5rem, 2.4vw + 0.5rem, 2.4rem);
+    line-height: 1.1; margin: 0.6rem 0 0; max-width: 16ch; color: #fff;
+  }
+  .vmodal__cta { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
+  .vmodal__ghost { color: #fff; }
+  @media (max-width: 819px) {
+    .vmodal__copy { text-align: center; }
+    .vmodal__title { margin-inline: auto; }
+    .vmodal__cta { justify-content: center; }
+  }
+  .vmodal__close {
+    position: fixed; top: 1rem; right: 1rem; z-index: 2;
+    width: 44px; height: 44px; border-radius: 50%; border: 0; cursor: pointer;
+    display: grid; place-items: center;
+    background: rgba(255, 255, 255, 0.14); color: #fff;
+  }
+  .vmodal__close:hover { background: rgba(255, 255, 255, 0.24); }
+  .vmodal__close:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+
   @media (prefers-reduced-motion: reduce) {
-    .sticky-cta { transition: opacity 200ms linear; transform: none; }
-    .sticky-cta:not(.is-visible) { transform: none; }
-    .sticky-cta:hover { transform: none; }
+    .vcta { transition: opacity 200ms linear; transform: none; }
+    .vcta:not(.is-visible) { transform: none; }
+    .vcta:hover { transform: none; }
   }
 </style>
 
 <script>
-  const el = document.querySelector<HTMLElement>("[data-sticky-cta]");
-  if (el) {
+  const btn = document.querySelector<HTMLButtonElement>("[data-vcta]");
+  const dialog = document.querySelector<HTMLDialogElement>("[data-vmodal]");
+  const video = document.querySelector<HTMLVideoElement>("[data-vmodal-video]");
+  const close = document.querySelector<HTMLButtonElement>("[data-vmodal-close]");
+
+  if (btn) {
     let ticking = false;
     const update = () => {
       ticking = false;
@@ -92,7 +181,7 @@ const onContact = Astro.url.pathname.startsWith("/contact");
       const nearBottom =
         window.innerHeight + window.scrollY >
         document.documentElement.scrollHeight - 260;
-      el.classList.toggle("is-visible", past && !nearBottom);
+      btn.classList.toggle("is-visible", past && !nearBottom);
     };
     const onScroll = () => {
       if (ticking) return;
@@ -102,5 +191,25 @@ const onContact = Astro.url.pathname.startsWith("/contact");
     update();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll, { passive: true });
+  }
+
+  if (btn && dialog && video) {
+    const open = () => {
+      dialog.showModal();
+      document.documentElement.style.overflow = "hidden";
+      video.play().catch(() => {});
+    };
+    const shut = () => dialog.close();
+    btn.addEventListener("click", open);
+    close?.addEventListener("click", shut);
+    // Click on the backdrop (outside the panel) closes it.
+    dialog.addEventListener("click", (e) => {
+      const panel = dialog.querySelector(".vmodal__panel");
+      if (panel && !panel.contains(e.target as Node)) shut();
+    });
+    dialog.addEventListener("close", () => {
+      video.pause();
+      document.documentElement.style.overflow = "";
+    });
   }
 </script>

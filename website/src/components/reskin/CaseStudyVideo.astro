@@ -1,6 +1,6 @@
 ---
-// Homepage case study video: Cathal on the Shomera project. Copy and one
-// published SEO result on the left, portrait video on the right. The video
+// Homepage case study video: Cathal on the Shomera project. Copy and a link
+// to the case study on the left, portrait video on the right. The video
 // never autoplays; it loads metadata only until someone presses play.
 const video = "/videos/cathal-shomera.mp4";
 const poster = "/images/video/cathal-shomera-poster.jpg";
@@ -18,10 +18,6 @@ const poster = "/images/video/cathal-shomera-poster.jpg";
         bring in the right enquiries.
       </p>
       <p class="cv__body">Cathal explains how the pieces fit together.</p>
-      <div class="cv__stat">
-        <span class="cv__stat-num">51 of 77</span>
-        <span class="cv__stat-txt">tracked search terms in Google&rsquo;s top three, with 36 at number one (June 2026).</span>
-      </div>
       <a href="/work/shomera/" class="wbtn wbtn--primary cv__btn">Read the Shomera case study</a>
     </div>
 
@@ -58,15 +54,6 @@ const poster = "/images/video/cathal-shomera-poster.jpg";
     font-family: var(--w-font-body); font-size: var(--fs-body); line-height: var(--lh-body);
     color: var(--c-ink-soft); margin: 1.25rem 0 0; max-width: 46ch;
   }
-  .cv__stat {
-    display: flex; flex-direction: column; gap: 0.35rem;
-    margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--c-line); max-width: 46ch;
-  }
-  .cv__stat-num {
-    font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3);
-    line-height: 1.1; color: var(--c-ink);
-  }
-  .cv__stat-txt { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: 1.5; color: var(--c-ink-soft); }
   .cv__btn { margin-top: 2rem; }
 
   .cv__media {

@@ -4,8 +4,8 @@ import PageHero from "../components/reskin/PageHero.astro";
 
 // Where JotForm redirects after any successful form (contact enquiries and
 // event reservations both land here), so the copy stays generic. Kept out of
-// search (noindex) and free of the pre-footer / sticky CTAs so it reads as a
-// clean confirmation.
+// search (noindex) and free of the pre-footer CTA so it reads as a clean
+// confirmation.
 ---
 
 <Layout
@@ -13,7 +13,6 @@ import PageHero from "../components/reskin/PageHero.astro";
   description="Thank you. We'll be in touch."
   noindex={true}
   hidePreFooterCTA={true}
-  hideStickyMobileCTA={true}
 >
   <PageHero
     kicker="Message sent"
