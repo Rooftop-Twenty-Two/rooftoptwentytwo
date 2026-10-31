@@ -16,18 +16,19 @@ type PlatformCompare = {
 };
 type FeatureGrid = { kicker?: string; heading: string; intro?: string; items: { title: string; body: string; href?: string }[] };
 type StackPicks = { kicker?: string; heading: string; intro?: string; rows: { building: string; pick: string; why: string }[] };
+import ProcessShowcase, { type Showcase } from "../reskin/ProcessShowcase.astro";
 interface Props {
   name: string; metaTitle?: string; ctaName?: string; slug: string; cluster: string; isClusterParent: boolean;
   summary: string; metaDescription: string; heroEyebrow?: string;
   heroHeading: string; heroBody: string; whatItIs: string; whatsIncluded: string[];
   platformCompare?: PlatformCompare; featureGrid?: FeatureGrid; stackPicks?: StackPicks;
-  process: ProcessStep[]; sectorsThatBuy: string[]; relatedServices: string[];
+  process: ProcessStep[]; showcase?: Showcase; sectorsThatBuy: string[]; relatedServices: string[];
   relatedProgrammes: string[]; caseStudySlugs: string[]; faq: FAQ[];
 }
 const {
   name, metaTitle, ctaName, slug, cluster, isClusterParent, summary, metaDescription, heroEyebrow,
   heroHeading, heroBody, whatItIs, whatsIncluded, platformCompare, featureGrid, stackPicks,
-  process, sectorsThatBuy, relatedServices, caseStudySlugs, faq,
+  process, showcase, sectorsThatBuy, relatedServices, caseStudySlugs, faq,
 } = Astro.props;
 
 // Short term for the "Talk to us about …" CTAs; full name elsewhere.
@@ -119,6 +120,8 @@ const breadcrumbs = isClusterParent
 
   <!-- Optional page-specific showcase (e.g. the social media page) -->
   <slot name="showcase" />
+
+  {showcase && <ProcessShowcase {...showcase} />}
 
   {platformCompare && (
     <section class="ws-cmp">
@@ -217,7 +220,7 @@ const breadcrumbs = isClusterParent
     </section>
   )}
 
-  {process.length > 0 && (
+  {process.length > 0 && !showcase && (
     <section class="ws-proc">
       <div class="ws-proc__inner">
         <p class="kicker kicker--on-dark">How we work</p>

@@ -154,6 +154,48 @@ const services = defineCollection({
     process: z
       .array(z.object({ step: z.string(), label: z.string(), body: z.string() }))
       .default([]),
+    // Optional visual process with real project examples for each step, plus a
+    // gallery rail. When present it replaces the plain "The process" section.
+    showcase: z
+      .object({
+        kicker: z.string().optional(),
+        heading: z.string(),
+        intro: z.string().optional(),
+        steps: z.array(
+          z.object({
+            title: z.string(),
+            body: z.string(),
+            media: z
+              .array(
+                z.object({
+                  src: z.string(),
+                  alt: z.string(),
+                  caption: z.string().optional(),
+                  video: z.string().optional(),
+                })
+              )
+              .default([]),
+          })
+        ),
+        gallery: z
+          .object({
+            kicker: z.string().optional(),
+            heading: z.string(),
+            intro: z.string().optional(),
+            items: z.array(
+              z.object({
+                src: z.string(),
+                client: z.string(),
+                label: z.string(),
+                video: z.string().optional(),
+                portrait: z.boolean().optional(),
+              })
+            ),
+          })
+          .optional(),
+        next: z.object({ text: z.string(), label: z.string(), href: z.string() }).optional(),
+      })
+      .optional(),
     sectorsThatBuy: z.array(z.string()).default([]),
     relatedServices: z.array(z.string()).default([]),
     relatedProgrammes: z.array(z.string()).default([]),
@@ -209,6 +251,48 @@ const programmes = defineCollection({
     process: z
       .array(z.object({ step: z.string(), label: z.string(), body: z.string() }))
       .default([]),
+    // Optional visual process with real project examples for each step, plus a
+    // gallery rail. When present it replaces the plain "The process" section.
+    showcase: z
+      .object({
+        kicker: z.string().optional(),
+        heading: z.string(),
+        intro: z.string().optional(),
+        steps: z.array(
+          z.object({
+            title: z.string(),
+            body: z.string(),
+            media: z
+              .array(
+                z.object({
+                  src: z.string(),
+                  alt: z.string(),
+                  caption: z.string().optional(),
+                  video: z.string().optional(),
+                })
+              )
+              .default([]),
+          })
+        ),
+        gallery: z
+          .object({
+            kicker: z.string().optional(),
+            heading: z.string(),
+            intro: z.string().optional(),
+            items: z.array(
+              z.object({
+                src: z.string(),
+                client: z.string(),
+                label: z.string(),
+                video: z.string().optional(),
+                portrait: z.boolean().optional(),
+              })
+            ),
+          })
+          .optional(),
+        next: z.object({ text: z.string(), label: z.string(), href: z.string() }).optional(),
+      })
+      .optional(),
     sectorSlugs: z.array(z.string()).default([]),
     serviceSlugs: z.array(z.string()).default([]),
     faq: z.array(faqItemSchema).default([]),

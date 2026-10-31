@@ -1,0 +1,236 @@
+---
+// Visual process for service pages: each step shows real project examples
+// (images or short muted loops), followed by an optional gallery rail and a
+// "what comes next" link. Data lives in the service's frontmatter `showcase`.
+// Images open larger in a lightbox; videos play muted only while on screen.
+import Picture from "../Picture.astro";
+
+type Media = { src: string; alt: string; caption?: string; video?: string };
+type Step = { title: string; body: string; media: Media[] };
+type GalleryItem = { src: string; client: string; label: string; video?: string; portrait?: boolean };
+export type Showcase = {
+  kicker?: string;
+  heading: string;
+  intro?: string;
+  steps: Step[];
+  gallery?: { kicker?: string; heading: string; intro?: string; items: GalleryItem[] };
+  next?: { text: string; label: string; href: string };
+};
+
+const { kicker = "How we do it", heading, intro, steps, gallery, next } = Astro.props as Showcase;
+const pad = (n: number) => String(n + 1).padStart(2, "0");
+---
+
+<section class="ps">
+  <div class="ps-inner">
+    <div class="ps-head reveal">
+      <p class="kicker kicker--script">{kicker}</p>
+      <h2 class="ps-h2" set:html={heading} />
+      {intro && <p class="ps-intro">{intro}</p>}
+    </div>
+
+    <ol class="ps-steps">
+      {steps.map((s, i) => {
+        const [lead, ...rest] = s.media;
+        return (
+          <li class:list={["ps-step", { "ps-step--flip": i % 2 === 1 }]}>
+            <div class="ps-step__text reveal">
+              <span class="ps-step__n">{pad(i)}</span>
+              <h3 class="ps-step__t">{s.title}</h3>
+              <p class="ps-step__b">{s.body}</p>
+            </div>
+            {lead && (
+              <div class="ps-step__media reveal">
+                <figure class="ps-fig ps-fig--lead">
+                  {lead.video ? (
+                    <video class="ps-vid" data-ps-video data-src={lead.video} poster={lead.src} muted loop playsinline preload="none" aria-label={lead.alt}></video>
+                  ) : (
+                    <button type="button" class="ps-zoom" data-lb={lead.src} data-lb-cap={lead.caption ?? lead.alt} aria-label={`Enlarge: ${lead.alt}`}>
+                      <Picture src={lead.src} alt={lead.alt} loading="lazy" decoding="async" />
+                    </button>
+                  )}
+                  {lead.caption && <figcaption>{lead.caption}</figcaption>}
+                </figure>
+                {rest.length > 0 && (
+                  <div class:list={["ps-thumbs", `ps-thumbs--${Math.min(rest.length, 3)}`]}>
+                    {rest.slice(0, 3).map((m) => (
+                      <figure class="ps-fig">
+                        {m.video ? (
+                          <video class="ps-vid" data-ps-video data-src={m.video} poster={m.src} muted loop playsinline preload="none" aria-label={m.alt}></video>
+                        ) : (
+                          <button type="button" class="ps-zoom" data-lb={m.src} data-lb-cap={m.caption ?? m.alt} aria-label={`Enlarge: ${m.alt}`}>
+                            <Picture src={m.src} alt={m.alt} loading="lazy" decoding="async" />
+                          </button>
+                        )}
+                        {m.caption && <figcaption>{m.caption}</figcaption>}
+                      </figure>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </li>
+        );
+      })}
+    </ol>
+  </div>
+</section>
+
+{gallery && (
+  <section class="ps-gal">
+    <div class="ps-inner">
+      <div class="ps-head ps-head--split reveal">
+        <div>
+          {gallery.kicker && <p class="kicker kicker--script">{gallery.kicker}</p>}
+          <h2 class="ps-h2 ps-h2--light" set:html={gallery.heading} />
+        </div>
+        {gallery.intro && <p class="ps-intro ps-intro--light">{gallery.intro}</p>}
+      </div>
+    </div>
+    <div class="ps-rail" role="list">
+      {gallery.items.map((g) => (
+        <figure class:list={["ps-card", { "ps-card--portrait": g.portrait }]} role="listitem">
+          <div class="ps-card__img">
+            {g.video ? (
+              <video class="ps-vid" data-ps-video data-src={g.video} poster={g.src} muted loop playsinline preload="none" aria-label={`${g.client}: ${g.label}`}></video>
+            ) : (
+              <button type="button" class="ps-zoom" data-lb={g.src} data-lb-cap={`${g.client}: ${g.label}`} aria-label={`Enlarge: ${g.client}, ${g.label}`}>
+                <Picture src={g.src} alt={`${g.client}: ${g.label}`} loading="lazy" decoding="async" />
+              </button>
+            )}
+          </div>
+          <figcaption><b>{g.client}</b><span>{g.label}</span></figcaption>
+        </figure>
+      ))}
+    </div>
+    <p class="ps-inner ps-rail__hint" aria-hidden="true">Scroll for more &rarr;</p>
+  </section>
+)}
+
+{next && (
+  <section class="ps-next">
+    <div class="ps-inner ps-next__inner reveal">
+      <p class="ps-next__text">{next.text}</p>
+      <a href={next.href} class="wbtn wbtn--primary">{next.label} &rarr;</a>
+    </div>
+  </section>
+)}
+
+<dialog class="ps-lb" data-ps-lb aria-label="Enlarged image">
+  <button type="button" class="ps-lb__close" data-ps-lb-close aria-label="Close">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+  </button>
+  <figure class="ps-lb__fig">
+    <img data-ps-lb-img alt="" />
+    <figcaption data-ps-lb-cap></figcaption>
+  </figure>
+</dialog>
+
+<style>
+  .ps-inner { max-width: var(--w-container); margin: 0 auto; padding-inline: var(--w-gutter); }
+  .ps-head { max-width: 48rem; }
+  .ps-head--split { max-width: none; display: grid; gap: 1.25rem 4rem; align-items: end; }
+  @media (min-width: 960px) { .ps-head--split { grid-template-columns: 1.1fr 0.9fr; } }
+  .ps-h2 {
+    font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h2);
+    line-height: var(--lh-heading); letter-spacing: var(--tracking-display); margin: 0.5rem 0 0; color: var(--c-ink);
+  }
+  .ps-h2 :global(em) { font-style: normal; color: var(--c-accent); }
+  .ps-h2--light { color: #fff; }
+  .ps-h2--light :global(em) { color: var(--c-accent-2-bright); }
+  .ps-intro { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: var(--lh-body); color: var(--c-ink-soft); margin: 1rem 0 0; max-width: 50ch; }
+  .ps-intro--light { color: var(--c-on-dark-soft); }
+
+  .ps { background: var(--c-bg); padding-block: var(--w-section-y); }
+  .ps-steps { list-style: none; margin: clamp(2.5rem, 5vw, 4rem) 0 0; padding: 0; display: grid; gap: clamp(3rem, 7vw, 6rem); }
+  .ps-step { display: grid; gap: 1.75rem; align-items: start; }
+  @media (min-width: 960px) {
+    .ps-step { grid-template-columns: 0.8fr 1.2fr; gap: 4rem; }
+    .ps-step--flip .ps-step__text { order: 2; }
+    .ps-step__text { position: sticky; top: 7rem; }
+  }
+  .ps-step__n {
+    display: inline-grid; place-items: center; width: 3rem; height: 3rem; border-radius: 50%;
+    background: var(--c-dark); color: var(--c-accent-2-bright);
+    font-family: var(--w-font-display); font-weight: 600; font-size: 1.05rem;
+  }
+  .ps-step__t { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); line-height: 1.1; margin: 1rem 0 0; color: var(--c-ink); }
+  .ps-step__b { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: var(--lh-body); color: var(--c-ink-soft); margin: 0.85rem 0 0; max-width: 44ch; }
+
+  .ps-step__media { display: grid; gap: 0.9rem; }
+  .ps-fig { margin: 0; }
+  .ps-fig figcaption { font-family: var(--w-font-body); font-size: 0.85rem; color: var(--c-ink-soft); margin-top: 0.5rem; }
+  .ps-zoom { display: block; width: 100%; padding: 0; border: 0; background: #fff; cursor: zoom-in; border-radius: 14px; overflow: hidden; box-shadow: var(--w-shadow-soft); }
+  .ps-zoom :global(img) { width: 100%; height: auto; display: block; transition: transform var(--w-dur) var(--w-ease); }
+  .ps-zoom:hover :global(img) { transform: scale(1.02); }
+  .ps-zoom:focus-visible { outline: 3px solid var(--c-accent); outline-offset: 3px; }
+  .ps-thumbs { display: grid; gap: 0.9rem; }
+  .ps-thumbs--2 { grid-template-columns: 1fr 1fr; }
+  .ps-thumbs--3 { grid-template-columns: 1fr 1fr 1fr; }
+  @media (max-width: 560px) { .ps-thumbs--3 { grid-template-columns: 1fr 1fr; } .ps-thumbs--3 .ps-fig:nth-child(3) { display: none; } }
+  .ps-thumbs .ps-fig figcaption { font-size: 0.78rem; }
+  .ps-vid { width: 100%; height: auto; display: block; border-radius: 14px; background: #091826; box-shadow: var(--w-shadow-soft); }
+
+  .ps-gal { background: var(--c-dark); padding-block: var(--w-section-y); overflow: hidden; }
+  .ps-gal .kicker { color: var(--c-accent); }
+  .ps-rail {
+    --ps-edge: max(var(--w-gutter), calc((100vw - var(--w-container)) / 2 + var(--w-gutter)));
+    display: flex; gap: 1.25rem; overflow-x: auto; scroll-snap-type: x mandatory;
+    padding: 2.75rem var(--ps-edge) 1rem; scroll-padding-inline: var(--ps-edge);
+    scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.2) transparent;
+  }
+  .ps-card { margin: 0; flex: 0 0 min(84vw, 560px); scroll-snap-align: start; }
+  .ps-card--portrait { flex-basis: min(60vw, 260px); }
+  .ps-card__img { border-radius: 14px; overflow: hidden; }
+  .ps-card__img .ps-zoom { box-shadow: none; }
+  .ps-card figcaption { display: flex; flex-wrap: wrap; gap: 0.2rem 0.6rem; margin-top: 0.8rem; font-family: var(--w-font-body); font-size: 0.92rem; color: var(--c-on-dark-soft); }
+  .ps-card figcaption b { color: #fff; }
+  .ps-rail__hint { font-family: var(--w-font-body); font-size: 0.85rem; font-weight: 600; color: var(--c-on-dark-soft); margin-top: 0.5rem; }
+
+  .ps-next { background: var(--c-bg-alt); padding-block: clamp(2.5rem, 5vw, 4rem); }
+  .ps-next__inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.25rem; }
+  .ps-next__text { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); line-height: 1.2; color: var(--c-ink); margin: 0; max-width: 32ch; }
+
+  .ps-lb { padding: 0; border: 0; background: transparent; max-width: none; max-height: none; width: 100%; height: 100%; }
+  .ps-lb::backdrop { background: rgba(13, 32, 48, 0.94); }
+  .ps-lb[open] { display: grid; place-items: center; }
+  .ps-lb__fig { margin: 0; max-width: min(94vw, 1400px); }
+  .ps-lb__fig img { width: 100%; height: auto; max-height: 84vh; object-fit: contain; display: block; border-radius: 10px; }
+  .ps-lb__fig figcaption { font-family: var(--w-font-body); font-size: 0.95rem; color: var(--c-on-dark-soft); margin-top: 0.75rem; text-align: center; }
+  .ps-lb__close {
+    position: fixed; top: 1rem; right: 1rem; width: 44px; height: 44px; border-radius: 50%; border: 0; cursor: pointer;
+    display: grid; place-items: center; background: rgba(255, 255, 255, 0.14); color: #fff;
+  }
+</style>
+
+<script>
+  // Lightbox for showcase images.
+  const lb = document.querySelector<HTMLDialogElement>("[data-ps-lb]");
+  const lbImg = document.querySelector<HTMLImageElement>("[data-ps-lb-img]");
+  const lbCap = document.querySelector<HTMLElement>("[data-ps-lb-cap]");
+  if (lb && lbImg && lbCap) {
+    document.querySelectorAll<HTMLButtonElement>("[data-lb]").forEach((b) => {
+      b.addEventListener("click", () => {
+        lbImg.src = b.dataset.lb || "";
+        lbImg.alt = b.dataset.lbCap || "";
+        lbCap.textContent = b.dataset.lbCap || "";
+        lb.showModal();
+      });
+    });
+    lb.addEventListener("click", (e) => { if (e.target === lb) lb.close(); });
+    document.querySelector("[data-ps-lb-close]")?.addEventListener("click", () => lb.close());
+  }
+  // Muted loops play only while on screen.
+  const vids = Array.from(document.querySelectorAll<HTMLVideoElement>("[data-ps-video]"));
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (vids.length && !reduce && "IntersectionObserver" in window) {
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        const v = e.target as HTMLVideoElement;
+        if (e.isIntersecting) { if (!v.src && v.dataset.src) v.src = v.dataset.src; v.play().catch(() => {}); }
+        else v.pause();
+      }
+    }, { threshold: 0.3 });
+    vids.forEach((v) => io.observe(v));
+  }
+</script>
