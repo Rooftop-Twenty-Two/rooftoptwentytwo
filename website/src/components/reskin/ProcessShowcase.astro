@@ -29,64 +29,122 @@ const pad = (n: number) => String(n + 1).padStart(2, "0");
       {intro && <p class="ps-intro">{intro}</p>}
     </div>
 
-    <ol class="ps-steps">
+    <div class="ps-x" data-ps-x>
+      <div class="ps-tabs" role="tablist" aria-label="Process steps" data-ps-tabs>
+        {steps.map((s, i) => (
+          <button
+            type="button"
+            role="tab"
+            class="ps-tab"
+            id={`ps-tab-${i}`}
+            aria-controls={`ps-panel-${i}`}
+            aria-selected={i === 0 ? "true" : "false"}
+            tabindex={i === 0 ? 0 : -1}
+            data-ps-tab={i}
+          >
+            <span class="ps-tab__n">{pad(i)}</span>
+            <span class="ps-tab__t">{s.title}</span>
+          </button>
+        ))}
+      </div>
+      <div class="ps-progress" aria-hidden="true"><span data-ps-progress style={`width:${100 / steps.length}%`}></span></div>
+
       {steps.map((s, i) => {
-        const [lead, ...rest] = s.media;
+        const hasMedia = s.media.length > 0;
+        const hasPoints = (s.points && s.points.length > 0) || s.stat;
         return (
-          <li class:list={["ps-step", { "ps-step--flip": i % 2 === 1 }]}>
-            <div class="ps-step__text reveal">
-              <span class="ps-step__n">{pad(i)}</span>
-              <h3 class="ps-step__t">{s.title}</h3>
-              <p class="ps-step__b">{s.body}</p>
+          <div
+            class="ps-panel"
+            role="tabpanel"
+            id={`ps-panel-${i}`}
+            aria-labelledby={`ps-tab-${i}`}
+            hidden={i !== 0}
+            data-ps-panel={i}
+          >
+            <div class="ps-panel__text">
+              <p class="ps-panel__count">Step {i + 1} of {steps.length}</p>
+              <h3 class="ps-panel__t">{s.title}</h3>
+              <p class="ps-panel__b">{s.body}</p>
+              {hasMedia && s.points && s.points.length > 0 && (
+                <ul class="ps-points ps-points--compact">{s.points.map((pt) => <li>{pt}</li>)}</ul>
+              )}
+              <div class="ps-panel__nav">
+                <button type="button" class="ps-navbtn" data-ps-prev disabled={i === 0} aria-label="Previous step">
+                  <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                </button>
+                {i < steps.length - 1 ? (
+                  <button type="button" class="ps-navbtn ps-navbtn--next" data-ps-next>
+                    Next: {steps[i + 1].title}
+                    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                  </button>
+                ) : (
+                  <button type="button" class="ps-navbtn ps-navbtn--next" data-ps-first>
+                    Back to the start
+                  </button>
+                )}
+              </div>
             </div>
-            {!lead && ((s.points && s.points.length > 0) || s.stat) && (
-              <div class="ps-step__media reveal">
+
+            <div class="ps-panel__view">
+              {hasMedia ? (
+                <>
+                  <div class="ps-stage">
+                    {s.media.map((m, j) => (
+                      <figure class="ps-slide" hidden={j !== 0} data-ps-slide={j}>
+                        <div class="ps-slide__media">
+                          {m.video ? (
+                            <video class="ps-vid" data-ps-video data-src={m.video} poster={m.src} muted loop playsinline preload="none" aria-label={m.alt}></video>
+                          ) : (
+                            <button type="button" class="ps-zoom" data-lb={m.src} data-lb-cap={m.caption ?? m.alt} aria-label={`Enlarge: ${m.alt}`}>
+                              <Picture src={m.src} alt={m.alt} loading="lazy" decoding="async" />
+                            </button>
+                          )}
+                        </div>
+                        {m.caption && <figcaption>{m.caption}</figcaption>}
+                      </figure>
+                    ))}
+                  </div>
+                  {s.media.length > 1 && (
+                    <div class="ps-thumbs" aria-label="Examples for this step">
+                      {s.media.map((m, j) => (
+                        <button type="button" class="ps-thumb" data-ps-thumb={j} aria-pressed={j === 0 ? "true" : "false"} aria-label={`Show: ${m.caption ?? m.alt}`}>
+                          <Picture src={m.src} alt="" loading="lazy" decoding="async" />
+                          {m.video && <span class="ps-thumb__play" aria-hidden="true"><svg viewBox="0 0 24 24" width="12" height="12"><path d="M8 5v14l11-7z" fill="currentColor" /></svg></span>}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </>
+              ) : hasPoints ? (
                 <div class="ps-card-points">
                   {s.stat && (
                     <div class="ps-stat"><span class="ps-stat__v">{s.stat.value}</span><span class="ps-stat__l">{s.stat.label}</span></div>
                   )}
                   {s.points && s.points.length > 0 && (
-                    <ul class="ps-points">
-                      {s.points.map((pt) => <li>{pt}</li>)}
-                    </ul>
+                    <ul class="ps-points">{s.points.map((pt) => <li>{pt}</li>)}</ul>
                   )}
                 </div>
-              </div>
-            )}
-            {lead && (
-              <div class="ps-step__media reveal">
-                <figure class:list={["ps-fig ps-fig--lead", { "ps-fig--portrait": lead.portrait }]}>
-                  {lead.video ? (
-                    <video class="ps-vid" data-ps-video data-src={lead.video} poster={lead.src} muted loop playsinline preload="none" aria-label={lead.alt}></video>
-                  ) : (
-                    <button type="button" class="ps-zoom" data-lb={lead.src} data-lb-cap={lead.caption ?? lead.alt} aria-label={`Enlarge: ${lead.alt}`}>
-                      <Picture src={lead.src} alt={lead.alt} loading="lazy" decoding="async" />
-                    </button>
-                  )}
-                  {lead.caption && <figcaption>{lead.caption}</figcaption>}
-                </figure>
-                {rest.length > 0 && (
-                  <div class:list={["ps-thumbs", `ps-thumbs--${Math.min(rest.length, 3)}`]}>
-                    {rest.slice(0, 3).map((m) => (
-                      <figure class:list={["ps-fig", { "ps-fig--portrait": m.portrait }]}>
-                        {m.video ? (
-                          <video class="ps-vid" data-ps-video data-src={m.video} poster={m.src} muted loop playsinline preload="none" aria-label={m.alt}></video>
-                        ) : (
-                          <button type="button" class="ps-zoom" data-lb={m.src} data-lb-cap={m.caption ?? m.alt} aria-label={`Enlarge: ${m.alt}`}>
-                            <Picture src={m.src} alt={m.alt} loading="lazy" decoding="async" />
-                          </button>
-                        )}
-                        {m.caption && <figcaption>{m.caption}</figcaption>}
-                      </figure>
-                    ))}
-                  </div>
+              ) : null}
+            </div>
+            <div class="ps-panel__nav ps-panel__nav--mob">
+                <button type="button" class="ps-navbtn" data-ps-prev disabled={i === 0} aria-label="Previous step">
+                  <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                </button>
+                {i < steps.length - 1 ? (
+                  <button type="button" class="ps-navbtn ps-navbtn--next" data-ps-next>
+                    Next: {steps[i + 1].title}
+                    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                  </button>
+                ) : (
+                  <button type="button" class="ps-navbtn ps-navbtn--next" data-ps-first>
+                    Back to the start
+                  </button>
                 )}
               </div>
-            )}
-          </li>
+          </div>
         );
       })}
-    </ol>
+    </div>
   </div>
 </section>
 
@@ -156,56 +214,87 @@ const pad = (n: number) => String(n + 1).padStart(2, "0");
   .ps-intro--light { color: var(--c-on-dark-soft); }
 
   .ps { background: var(--c-bg); padding-block: var(--w-section-y); }
-  .ps-steps { list-style: none; margin: clamp(2.5rem, 5vw, 4rem) 0 0; padding: 0; display: grid; gap: clamp(3rem, 7vw, 6rem); }
-  .ps-step { display: grid; gap: 1.75rem; align-items: start; }
-  @media (min-width: 960px) {
-    .ps-step { grid-template-columns: 0.8fr 1.2fr; gap: 4rem; }
-    .ps-step--flip .ps-step__text { order: 2; }
-    .ps-step__text { position: sticky; top: 7rem; }
-  }
-  .ps-step__n {
-    display: inline-grid; place-items: center; width: 3rem; height: 3rem; border-radius: 50%;
-    background: var(--c-dark); color: var(--c-accent-2-bright);
-    font-family: var(--w-font-display); font-weight: 600; font-size: 1.05rem;
-  }
-  .ps-step__t { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); line-height: 1.1; margin: 1rem 0 0; color: var(--c-ink); }
-  .ps-step__b { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: var(--lh-body); color: var(--c-ink-soft); margin: 0.85rem 0 0; max-width: 44ch; }
 
-  .ps-step__media { display: grid; gap: 0.9rem; }
-  .ps-card-points { background: var(--c-bg-alt); border-radius: 18px; padding: clamp(1.5rem, 3vw, 2.5rem); }
+  /* Stepper */
+  .ps-x { margin-top: clamp(2rem, 4vw, 3rem); }
+  .ps-tabs { display: flex; gap: 0.6rem; overflow-x: auto; scrollbar-width: none; padding: 0.25rem 0.1rem; scroll-behavior: smooth; }
+  .ps-tabs::-webkit-scrollbar { display: none; }
+  .ps-tab {
+    flex: 1 0 9.5rem; display: flex; flex-direction: column; align-items: flex-start; gap: 0.35rem;
+    text-align: left; padding: 0.95rem 1.05rem; border-radius: 14px; cursor: pointer;
+    border: 1px solid var(--c-line); background: var(--c-bg); color: var(--c-ink);
+    font-family: var(--w-font-body); transition: background var(--w-dur-fast) var(--w-ease), border-color var(--w-dur-fast) var(--w-ease), transform var(--w-dur-fast) var(--w-ease);
+  }
+  .ps-tab:hover { border-color: var(--c-ink-soft); }
+  .ps-tab:focus-visible { outline: 3px solid var(--c-accent); outline-offset: 2px; }
+  .ps-tab__n { font-family: var(--w-font-display); font-weight: 600; font-size: 0.95rem; color: var(--c-accent); }
+  .ps-tab__t { font-weight: 700; font-size: 0.95rem; line-height: 1.25; }
+  .ps-tab[aria-selected="true"] { background: var(--c-dark); border-color: var(--c-dark); color: #fff; }
+  .ps-tab[aria-selected="true"] .ps-tab__n { color: var(--c-accent-2-bright); }
+  .ps-progress { height: 3px; background: var(--c-line); border-radius: 3px; margin-top: 0.9rem; overflow: hidden; }
+  .ps-progress span { display: block; height: 100%; background: var(--c-accent); border-radius: 3px; transition: width 400ms var(--w-ease); }
+
+  .ps-panel {
+    margin-top: 1.25rem; background: var(--c-bg-alt); border-radius: 22px;
+    padding: clamp(1.25rem, 3vw, 2.75rem); display: grid; gap: 1.75rem;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ps-panel__text, .ps-panel__view { min-width: 0; }
+  .ps-panel[hidden] { display: none; }
+  @media (min-width: 960px) { .ps-panel { grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr); gap: 3rem; align-items: center; } }
+  .ps-panel__count { font-family: var(--w-font-body); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--c-ink-soft); margin: 0; }
+  .ps-panel__t { font-family: var(--w-font-display); font-weight: 600; font-size: var(--fs-h3); line-height: 1.1; color: var(--c-ink); margin: 0.6rem 0 0; }
+  .ps-panel__b { font-family: var(--w-font-body); font-size: var(--fs-body); line-height: var(--lh-body); color: var(--c-ink-soft); margin: 0.9rem 0 0; max-width: 46ch; }
+  .ps-panel__nav { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.75rem; }
+  .ps-panel__nav--mob { display: none; }
+  @media (max-width: 959px) {
+    .ps-panel__text .ps-panel__nav { display: none; }
+    .ps-panel__nav--mob { display: flex; margin-top: 0; }
+  }
+  .ps-navbtn {
+    display: inline-flex; align-items: center; gap: 0.5rem; min-height: 44px; padding: 0 0.9rem;
+    border-radius: 999px; border: 1px solid var(--c-ink); background: transparent; color: var(--c-ink);
+    font-family: var(--w-font-body); font-weight: 700; font-size: 0.9rem; cursor: pointer;
+  }
+  .ps-navbtn:disabled { opacity: 0.3; cursor: default; }
+  .ps-navbtn--next { background: var(--c-dark); border-color: var(--c-dark); color: #fff; padding: 0 1.1rem; }
+  .ps-navbtn:focus-visible { outline: 3px solid var(--c-accent); outline-offset: 2px; }
+
+  .ps-stage { position: relative; aspect-ratio: 16 / 10; background: #fff; border-radius: 16px; overflow: hidden; box-shadow: var(--w-shadow-soft); }
+  .ps-slide { position: absolute; inset: 0; margin: 0; display: flex; flex-direction: column; }
+  .ps-slide[hidden] { display: none; }
+  .ps-slide__media { position: relative; flex: 1; min-height: 0; padding: clamp(0.6rem, 1.6vw, 1.25rem); }
+  .ps-slide figcaption { font-family: var(--w-font-body); font-size: 0.85rem; color: var(--c-ink-soft); padding: 0.65rem 1rem; border-top: 1px solid var(--c-line); background: #fff; }
+  .ps-zoom { display: block; width: 100%; height: 100%; padding: 0; border: 0; background: transparent; cursor: zoom-in; }
+  .ps-zoom :global(picture) { display: contents; }
+  .ps-zoom :global(img) { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .ps-zoom:focus-visible { outline: 3px solid var(--c-accent); outline-offset: 3px; }
+  .ps-slide .ps-vid { width: 100%; height: 100%; object-fit: contain; display: block; background: transparent; }
+
+  .ps-thumbs { display: flex; gap: 0.6rem; margin-top: 0.9rem; overflow-x: auto; scrollbar-width: none; }
+  .ps-thumb {
+    position: relative; flex: 0 0 auto; width: 96px; height: 64px; padding: 0; border-radius: 10px; overflow: hidden;
+    border: 2px solid transparent; background: #fff; cursor: pointer; opacity: 0.65; transition: opacity var(--w-dur-fast) var(--w-ease);
+  }
+  .ps-thumb :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+  .ps-thumb[aria-pressed="true"] { border-color: var(--c-accent); opacity: 1; }
+  .ps-thumb:hover { opacity: 1; }
+  .ps-thumb__play { position: absolute; right: 4px; bottom: 4px; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,0.92); color: var(--c-accent); }
+
+  .ps-card-points { background: #fff; border-radius: 18px; padding: clamp(1.5rem, 3vw, 2.5rem); box-shadow: var(--w-shadow-soft); }
   .ps-stat { display: flex; flex-direction: column; gap: 0.3rem; padding-bottom: 1.25rem; margin-bottom: 1.25rem; border-bottom: 1px solid var(--c-line); }
   .ps-stat:last-child { padding-bottom: 0; margin-bottom: 0; border-bottom: 0; }
   .ps-stat__v { font-family: var(--w-font-display); font-weight: 600; font-size: clamp(2.5rem, 4vw, 3.5rem); line-height: 1; color: var(--c-accent); }
   .ps-stat__l { font-family: var(--w-font-body); font-size: 1rem; line-height: 1.5; color: var(--c-ink-soft); max-width: 40ch; }
   .ps-points { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.85rem; }
   @media (min-width: 640px) { .ps-points { grid-template-columns: 1fr 1fr; gap: 0.85rem 1.75rem; } }
+  .ps-points--compact { margin-top: 1.25rem; grid-template-columns: 1fr !important; gap: 0.6rem; }
   .ps-points li { position: relative; padding-left: 2rem; font-family: var(--w-font-body); font-size: 1rem; line-height: 1.5; color: var(--c-ink); }
   .ps-points li::before {
     content: ""; position: absolute; left: 0; top: 0.15rem; width: 1.3rem; height: 1.3rem; border-radius: 50%;
     background: var(--c-dark) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 12.5l4 4 8-9' fill='none' stroke='%2301FFB2' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 0.8rem no-repeat;
   }
-  .ps-fig { margin: 0; }
-  .ps-fig figcaption { font-family: var(--w-font-body); font-size: 0.85rem; color: var(--c-ink-soft); margin-top: 0.5rem; }
-  .ps-zoom { display: block; width: 100%; padding: 0; border: 0; background: #fff; cursor: zoom-in; border-radius: 14px; overflow: hidden; box-shadow: var(--w-shadow-soft); }
-  .ps-zoom :global(img) { width: 100%; height: auto; display: block; transition: transform var(--w-dur) var(--w-ease); }
-  .ps-zoom:hover :global(img) { transform: scale(1.02); }
-  .ps-zoom:focus-visible { outline: 3px solid var(--c-accent); outline-offset: 3px; }
-  .ps-fig--lead .ps-zoom :global(img) { max-height: 620px; object-fit: cover; object-position: top; }
-  .ps-fig--lead.ps-fig--portrait { max-width: 340px; }
-  .ps-fig--lead.ps-fig--portrait .ps-zoom :global(img) { max-height: 600px; }
-  .ps-thumbs .ps-zoom { aspect-ratio: 16 / 10; }
-  .ps-thumbs .ps-zoom :global(img) { height: 100%; object-fit: cover; object-position: top; }
-  .ps-thumbs .ps-fig--portrait .ps-zoom { aspect-ratio: 3 / 4; }
-  .ps-thumbs { display: grid; gap: 0.9rem; }
-  .ps-thumbs--1 { grid-template-columns: 1fr 1fr; }
-  .ps-thumbs .ps-vid { aspect-ratio: 16 / 10; height: auto; object-fit: cover; }
-  .ps-thumbs .ps-fig--portrait .ps-vid { aspect-ratio: 3 / 4; }
-  .ps-thumbs--2 { grid-template-columns: 1fr 1fr; }
-  .ps-thumbs--3 { grid-template-columns: 1fr 1fr 1fr; }
-  @media (max-width: 560px) { .ps-thumbs--3 { grid-template-columns: 1fr 1fr; } .ps-thumbs--3 .ps-fig:nth-child(3) { display: none; } }
-  .ps-thumbs .ps-fig figcaption { font-size: 0.78rem; }
-  .ps-vid { width: 100%; height: auto; display: block; border-radius: 14px; background: #091826; box-shadow: var(--w-shadow-soft); }
-  .ps-fig--lead .ps-vid { max-height: 600px; object-fit: cover; }
+  .ps-vid { width: 100%; height: auto; display: block; border-radius: 14px; background: #091826; }
 
   .ps-gal { background: var(--c-dark); padding-block: var(--w-section-y); overflow: hidden; }
   .ps-gal .kicker { color: var(--c-accent); }
@@ -224,7 +313,7 @@ const pad = (n: number) => String(n + 1).padStart(2, "0");
   .ps-card:not(.ps-card--portrait) .ps-zoom { height: 100%; }
   .ps-card:not(.ps-card--portrait) .ps-zoom :global(img) { height: 100%; object-fit: contain; }
   .ps-card__img { border-radius: 14px; overflow: hidden; }
-  .ps-card__img .ps-zoom { box-shadow: none; }
+  .ps-card__img .ps-zoom { box-shadow: none; background: #fff; }
   .ps-card figcaption { display: flex; flex-wrap: wrap; gap: 0.2rem 0.6rem; margin-top: 0.8rem; font-family: var(--w-font-body); font-size: 0.92rem; color: var(--c-on-dark-soft); }
   .ps-card figcaption b { color: #fff; }
   .ps-rail__hint { font-family: var(--w-font-body); font-size: 0.85rem; font-weight: 600; color: var(--c-on-dark-soft); margin-top: 0.5rem; }
@@ -246,6 +335,46 @@ const pad = (n: number) => String(n + 1).padStart(2, "0");
 </style>
 
 <script>
+  // Stepper: tabs, prev/next, thumbnails.
+  const x = document.querySelector<HTMLElement>("[data-ps-x]");
+  if (x) {
+    const tabs = Array.from(x.querySelectorAll<HTMLButtonElement>("[data-ps-tab]"));
+    const panels = Array.from(x.querySelectorAll<HTMLElement>("[data-ps-panel]"));
+    const bar = x.querySelector<HTMLElement>("[data-ps-progress]");
+    const tabRow = x.querySelector<HTMLElement>("[data-ps-tabs]");
+    let current = 0;
+    const show = (i: number, focusTab = false) => {
+      current = (i + tabs.length) % tabs.length;
+      tabs.forEach((t, k) => { t.setAttribute("aria-selected", String(k === current)); t.tabIndex = k === current ? 0 : -1; });
+      panels.forEach((p, k) => { p.hidden = k !== current; });
+      if (bar) bar.style.width = `${((current + 1) / tabs.length) * 100}%`;
+      const t = tabs[current];
+      if (tabRow && t) tabRow.scrollTo({ left: t.offsetLeft - tabRow.offsetLeft - 8, behavior: "smooth" });
+      if (focusTab && t) t.focus();
+    };
+    tabs.forEach((t, k) => {
+      t.addEventListener("click", () => show(k));
+      t.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight") { e.preventDefault(); show(current + 1, true); }
+        if (e.key === "ArrowLeft") { e.preventDefault(); show(current - 1, true); }
+        if (e.key === "Home") { e.preventDefault(); show(0, true); }
+        if (e.key === "End") { e.preventDefault(); show(tabs.length - 1, true); }
+      });
+    });
+    const toTop = () => { const r = x.getBoundingClientRect(); if (r.top < 0) window.scrollBy({ top: r.top - 96, behavior: "smooth" }); };
+    x.querySelectorAll<HTMLButtonElement>("[data-ps-next]").forEach((b) => b.addEventListener("click", () => { show(current + 1); toTop(); }));
+    x.querySelectorAll<HTMLButtonElement>("[data-ps-prev]").forEach((b) => b.addEventListener("click", () => { show(current - 1); toTop(); }));
+    x.querySelectorAll<HTMLButtonElement>("[data-ps-first]").forEach((b) => b.addEventListener("click", () => { show(0); toTop(); }));
+    panels.forEach((p) => {
+      const slides = Array.from(p.querySelectorAll<HTMLElement>("[data-ps-slide]"));
+      const thumbs = Array.from(p.querySelectorAll<HTMLButtonElement>("[data-ps-thumb]"));
+      thumbs.forEach((th, j) => th.addEventListener("click", () => {
+        slides.forEach((sl, k) => { sl.hidden = k !== j; });
+        thumbs.forEach((o, k) => o.setAttribute("aria-pressed", String(k === j)));
+      }));
+    });
+  }
+
   // Lightbox for showcase images.
   const lb = document.querySelector<HTMLDialogElement>("[data-ps-lb]");
   const lbImg = document.querySelector<HTMLImageElement>("[data-ps-lb-img]");
