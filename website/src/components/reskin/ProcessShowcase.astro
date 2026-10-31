@@ -5,7 +5,7 @@
 // Images open larger in a lightbox; videos play muted only while on screen.
 import Picture from "../Picture.astro";
 
-type Media = { src: string; alt: string; caption?: string; video?: string };
+type Media = { src: string; alt: string; caption?: string; video?: string; portrait?: boolean };
 type Step = { title: string; body: string; media: Media[]; points?: string[]; stat?: { value: string; label: string } };
 type GalleryItem = { src: string; client: string; label: string; video?: string; portrait?: boolean };
 export type Showcase = {
@@ -55,7 +55,7 @@ const pad = (n: number) => String(n + 1).padStart(2, "0");
             )}
             {lead && (
               <div class="ps-step__media reveal">
-                <figure class="ps-fig ps-fig--lead">
+                <figure class:list={["ps-fig ps-fig--lead", { "ps-fig--portrait": lead.portrait }]}>
                   {lead.video ? (
                     <video class="ps-vid" data-ps-video data-src={lead.video} poster={lead.src} muted loop playsinline preload="none" aria-label={lead.alt}></video>
                   ) : (
@@ -68,7 +68,7 @@ const pad = (n: number) => String(n + 1).padStart(2, "0");
                 {rest.length > 0 && (
                   <div class:list={["ps-thumbs", `ps-thumbs--${Math.min(rest.length, 3)}`]}>
                     {rest.slice(0, 3).map((m) => (
-                      <figure class="ps-fig">
+                      <figure class:list={["ps-fig", { "ps-fig--portrait": m.portrait }]}>
                         {m.video ? (
                           <video class="ps-vid" data-ps-video data-src={m.video} poster={m.src} muted loop playsinline preload="none" aria-label={m.alt}></video>
                         ) : (
@@ -190,12 +190,22 @@ const pad = (n: number) => String(n + 1).padStart(2, "0");
   .ps-zoom :global(img) { width: 100%; height: auto; display: block; transition: transform var(--w-dur) var(--w-ease); }
   .ps-zoom:hover :global(img) { transform: scale(1.02); }
   .ps-zoom:focus-visible { outline: 3px solid var(--c-accent); outline-offset: 3px; }
+  .ps-fig--lead .ps-zoom :global(img) { max-height: 620px; object-fit: cover; object-position: top; }
+  .ps-fig--lead.ps-fig--portrait { max-width: 340px; }
+  .ps-fig--lead.ps-fig--portrait .ps-zoom :global(img) { max-height: 600px; }
+  .ps-thumbs .ps-zoom { aspect-ratio: 16 / 10; }
+  .ps-thumbs .ps-zoom :global(img) { height: 100%; object-fit: cover; object-position: top; }
+  .ps-thumbs .ps-fig--portrait .ps-zoom { aspect-ratio: 3 / 4; }
   .ps-thumbs { display: grid; gap: 0.9rem; }
+  .ps-thumbs--1 { grid-template-columns: 1fr 1fr; }
+  .ps-thumbs .ps-vid { aspect-ratio: 16 / 10; height: auto; object-fit: cover; }
+  .ps-thumbs .ps-fig--portrait .ps-vid { aspect-ratio: 3 / 4; }
   .ps-thumbs--2 { grid-template-columns: 1fr 1fr; }
   .ps-thumbs--3 { grid-template-columns: 1fr 1fr 1fr; }
   @media (max-width: 560px) { .ps-thumbs--3 { grid-template-columns: 1fr 1fr; } .ps-thumbs--3 .ps-fig:nth-child(3) { display: none; } }
   .ps-thumbs .ps-fig figcaption { font-size: 0.78rem; }
   .ps-vid { width: 100%; height: auto; display: block; border-radius: 14px; background: #091826; box-shadow: var(--w-shadow-soft); }
+  .ps-fig--lead .ps-vid { max-height: 600px; object-fit: cover; }
 
   .ps-gal { background: var(--c-dark); padding-block: var(--w-section-y); overflow: hidden; }
   .ps-gal .kicker { color: var(--c-accent); }
@@ -207,6 +217,12 @@ const pad = (n: number) => String(n + 1).padStart(2, "0");
   }
   .ps-card { margin: 0; flex: 0 0 min(84vw, 560px); scroll-snap-align: start; }
   .ps-card--portrait { flex-basis: min(60vw, 260px); }
+  .ps-card--portrait .ps-card__img { aspect-ratio: 9 / 16; background: #091826; }
+  .ps-card--portrait .ps-zoom, .ps-card--portrait .ps-vid { height: 100%; }
+  .ps-card--portrait .ps-zoom :global(img), .ps-card--portrait .ps-vid { height: 100%; object-fit: cover; object-position: top; }
+  .ps-card:not(.ps-card--portrait) .ps-card__img { aspect-ratio: 16 / 9; background: #fff; }
+  .ps-card:not(.ps-card--portrait) .ps-zoom { height: 100%; }
+  .ps-card:not(.ps-card--portrait) .ps-zoom :global(img) { height: 100%; object-fit: contain; }
   .ps-card__img { border-radius: 14px; overflow: hidden; }
   .ps-card__img .ps-zoom { box-shadow: none; }
   .ps-card figcaption { display: flex; flex-wrap: wrap; gap: 0.2rem 0.6rem; margin-top: 0.8rem; font-family: var(--w-font-body); font-size: 0.92rem; color: var(--c-on-dark-soft); }

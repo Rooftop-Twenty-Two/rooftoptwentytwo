@@ -174,6 +174,7 @@ const services = defineCollection({
                   alt: z.string(),
                   caption: z.string().optional(),
                   video: z.string().optional(),
+                  portrait: z.boolean().optional(),
                 })
               )
               .default([]),
@@ -273,6 +274,7 @@ const programmes = defineCollection({
                   alt: z.string(),
                   caption: z.string().optional(),
                   video: z.string().optional(),
+                  portrait: z.boolean().optional(),
                 })
               )
               .default([]),
