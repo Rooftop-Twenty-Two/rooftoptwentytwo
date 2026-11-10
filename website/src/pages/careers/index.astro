@@ -25,8 +25,8 @@ const benefits = [
     kicker="Careers"
     title="Grow your career on the <em>rooftop</em>."
     intro="We're an independent branding and digital studio in Dublin, a senior, in-house team that treats every client's growth like our own. If you do great work and want to do it alongside people who care, we'd love to hear from you."
-    primary={{ label: "See open roles", href: "#roles" }}
-    secondary={{ label: "Get in touch", href: "/contact/#contact" }}
+    primary={jobs.length > 0 ? { label: "See open roles", href: "#roles" } : { label: "Get in touch", href: "/contact/#contact" }}
+    secondary={jobs.length > 0 ? { label: "Get in touch", href: "/contact/#contact" } : undefined}
   />
 
   <!-- Why work here -->
