@@ -67,6 +67,8 @@ const retiredRedirects = {
   '/work/joseph-may/': { status: 301, destination: '/work/' },
   '/portfolio/joseph-may/': { status: 301, destination: '/work/' },
   '/latest/joseph-may-website-launch/': { status: 301, destination: '/latest/' },
+  // Paid Media Manager role taken off the site.
+  '/careers/paid-media-manager/': { status: 301, destination: '/careers/' },
   // Dublin Shuttles removed from the site.
   '/work/dublin-shuttles/': { status: 301, destination: '/work/' },
   '/portfolio/dublin-shuttles/': { status: 301, destination: '/work/' },
